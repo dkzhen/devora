@@ -8,6 +8,11 @@ export async function GET() {
         const activeAccounts = await prisma.account.count({ where: { status: 'active' } });
         const totalMessages = await prisma.message.count();
 
+        // Fetch API Endpoint Stats
+        const endpointStats = await prisma.apiEndpointStats.findMany({
+            orderBy: { hitCount: 'desc' }
+        });
+
         // Group messages by account for "Requests by API" chart (repurposed as Messages by Account)
         const messagesByAccount = await prisma.message.groupBy({
             by: ['accountId'],
@@ -68,7 +73,8 @@ export async function GET() {
             summary: {
                 totalAccounts,
                 totalMessages
-            }
+            },
+            apiStats: endpointStats // True API Endpoint hits
         });
     } catch (error) {
         console.error('Error fetching internal stats:', error);

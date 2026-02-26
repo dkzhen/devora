@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import prisma from '@/lib/db';
@@ -25,13 +26,14 @@ async function checkUltraAuth(request) {
 }
 
 export async function PATCH(request, { params }) {
+    trackApiHit(request);
     try {
         const authUser = await checkUltraAuth(request);
         if (!authUser) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
-        const userId = params.id;
+        const { id: userId } = await params;
         if (!userId) {
             return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
         }
@@ -67,13 +69,14 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+    trackApiHit(request);
     try {
         const authUser = await checkUltraAuth(request);
         if (!authUser) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
-        const userId = params.id;
+        const { id: userId } = await params;
         if (!userId) {
             return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
         }

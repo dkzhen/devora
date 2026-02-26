@@ -1,9 +1,11 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const { email, password } = await request.json();
 

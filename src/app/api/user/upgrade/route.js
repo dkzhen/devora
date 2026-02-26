@@ -1,8 +1,10 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { jwtVerify } from 'jose';
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const token = request.cookies.get('auth_token')?.value;
         if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });

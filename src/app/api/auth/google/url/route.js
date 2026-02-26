@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
@@ -7,6 +8,7 @@ import { generateAuthUrl } from '@/lib/services/gmail.service';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
+    trackApiHit(request);
     try {
         // 1. Authenticate User
         const cookieStore = await cookies();

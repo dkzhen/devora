@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { cookies } from 'next/headers';
@@ -17,6 +18,7 @@ async function getUser() {
 }
 
 export async function DELETE(request, { params }) {
+    trackApiHit(request);
     try {
         const { id, taskId } = await params;
         const user = await getUser();
@@ -45,6 +47,7 @@ export async function DELETE(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
+    trackApiHit(request);
     try {
         const { id, taskId } = await params;
         const user = await getUser();

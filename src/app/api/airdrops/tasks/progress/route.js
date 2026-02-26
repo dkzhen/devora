@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { cookies } from 'next/headers';
@@ -17,6 +18,7 @@ async function getUser() {
 }
 
 export async function GET(request) {
+    trackApiHit(request);
     try {
         const user = await getUser();
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -42,6 +44,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const user = await getUser();
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

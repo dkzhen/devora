@@ -1,6 +1,8 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request) {
+    trackApiHit(request);
     const response = NextResponse.json({ success: true });
 
     // Clear the auth cookie

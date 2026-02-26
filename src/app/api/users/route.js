@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import prisma from '@/lib/db';
@@ -26,6 +27,7 @@ async function checkUltraAuth(request) {
 }
 
 export async function GET(request) {
+    trackApiHit(request);
     try {
         const authUser = await checkUltraAuth(request);
         if (!authUser) {
@@ -51,6 +53,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const authUser = await checkUltraAuth(request);
         if (!authUser) {

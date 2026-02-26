@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { cookies } from 'next/headers';
@@ -17,6 +18,7 @@ async function getUser() {
 }
 
 export async function GET(request, { params }) {
+    trackApiHit(request);
     try {
         const { id } = await params;
         const tasks = await prisma.airdropTask.findMany({
@@ -31,6 +33,7 @@ export async function GET(request, { params }) {
 }
 
 export async function POST(request, { params }) {
+    trackApiHit(request);
     try {
         const { id } = await params;
         const user = await getUser();

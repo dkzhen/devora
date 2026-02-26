@@ -1,8 +1,10 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const { clientId, clientSecret } = await request.json();
 

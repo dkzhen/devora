@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
 import { checkGmail } from '@/lib/services/gmail.service';
 import { NextResponse } from 'next/server';
@@ -20,6 +21,7 @@ async function getAuthenticatedUser() {
 }
 
 export async function DELETE(request, { params }) {
+    trackApiHit(request);
     try {
         const user = await getAuthenticatedUser();
         if (!user) {
@@ -50,6 +52,7 @@ export async function DELETE(request, { params }) {
 
 // Check individual account
 export async function POST(request, { params }) {
+    trackApiHit(request);
     try {
         const user = await getAuthenticatedUser();
         if (!user) {

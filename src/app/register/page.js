@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '' });
     const [stats, setStats] = useState({ airdrops: 0, gmails: 0, apiHits: 0 });
 
     useEffect(() => {
@@ -25,18 +25,16 @@ export default function LoginPage() {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Login failed');
-            if (data.token) {
-                localStorage.setItem('auth_token', data.token);
-                localStorage.setItem('user_info', JSON.stringify(data.user));
-            }
-            window.location.href = '/';
+            if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+            // Redirect to login page instead of dashboard
+            window.location.href = '/login?registered=true';
         } catch (err) {
             setError(err.message);
         } finally {
@@ -61,16 +59,16 @@ export default function LoginPage() {
                     {/* Logo + heading */}
                     <div>
                         <div className="flex items-center gap-3 mb-8">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/30">
+                            <div className="w-9 h-9 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/30">
                                 M
                             </div>
                             <span className="text-lg font-black text-white tracking-tight">Devora</span>
                         </div>
                         <h1 className="text-3xl font-black text-white tracking-tight mb-2">
-                            Welcome back
+                            Create Account
                         </h1>
                         <p className="text-gray-500 text-sm leading-relaxed">
-                            Sign in to manage your airdrop portfolio and Gmail accounts.
+                            Sign up to start tracking your airdrop portfolio and Gmail accounts.
                         </p>
                     </div>
 
@@ -85,6 +83,14 @@ export default function LoginPage() {
                     {/* Form */}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="space-y-3">
+                            <input
+                                type="text"
+                                required
+                                placeholder="Full Name"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/8 focus:border-blue-500/50 focus:bg-white/8 focus:outline-none focus:ring-1 focus:ring-blue-500/30 text-white placeholder-gray-600 text-sm transition-all"
+                            />
                             <input
                                 type="email"
                                 required
@@ -116,26 +122,24 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="flex justify-end">
-                            <a href="#" className="text-xs text-gray-600 hover:text-blue-400 transition-colors">Forgot password?</a>
+                        <div className="pt-2">
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full py-3.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-white/10"
+                            >
+                                {loading ? (
+                                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    </svg>
+                                ) : null}
+                                {loading ? 'Creating account...' : 'Sign Up'}
+                            </button>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-white/10"
-                        >
-                            {loading ? (
-                                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                            ) : null}
-                            {loading ? 'Signing in...' : 'Sign In'}
-                        </button>
-
                         {/* Divider */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 py-2">
                             <div className="h-px bg-white/5 flex-1" />
                             <span className="text-xs text-gray-700">or continue with</span>
                             <div className="h-px bg-white/5 flex-1" />
@@ -161,8 +165,8 @@ export default function LoginPage() {
                     </form>
 
                     <p className="text-center text-sm text-gray-600">
-                        Not a member?{' '}
-                        <a href="/register" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">Register now</a>
+                        Already have an account?{' '}
+                        <a href="/login" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">Sign in</a>
                     </p>
                 </div>
             </div>
@@ -170,7 +174,7 @@ export default function LoginPage() {
             {/* Right panel — dark space visual */}
             <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center">
                 {/* Dark gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#0d1b3e] via-[#0a0f1e] to-[#080d1a]" />
+                <div className="absolute inset-0 bg-linear-to-br from-[#0d1b3e] via-[#0a0f1e] to-[#080d1a]" />
 
                 {/* Glowing orbs */}
                 <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
@@ -181,7 +185,7 @@ export default function LoginPage() {
                 <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
                 {/* Separator line */}
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/20 to-transparent" />
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-blue-500/20 to-transparent" />
 
                 {/* Content */}
                 <div className="relative z-10 px-12 w-full max-w-sm">
@@ -189,7 +193,7 @@ export default function LoginPage() {
                     <div className="mb-8 text-center">
                         <h2 className="text-2xl font-black text-white tracking-tight mb-2">
                             Track Every<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Opportunity</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">Opportunity</span>
                         </h2>
                         <p className="text-gray-600 text-xs">Airdrop hunting, email monitoring & API analytics in one place</p>
                     </div>
@@ -205,7 +209,7 @@ export default function LoginPage() {
                                 <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-0.5">Airdrop Tasks</div>
                                 <div className="text-2xl font-black text-white leading-none">{stats.airdrops}</div>
                                 <div className="mt-2 h-1 rounded-full bg-white/5">
-                                    <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-400" />
+                                    <div className="h-full w-4/5 rounded-full bg-linear-to-r from-blue-500 to-indigo-400" />
                                 </div>
                             </div>
                             <div className="text-right shrink-0">

@@ -1,7 +1,9 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const body = await request.json();
         const { name, link, description, sender } = body;
@@ -26,7 +28,8 @@ export async function POST(request) {
     }
 }
 
-export async function GET() {
+export async function GET(request) {
+    trackApiHit(request);
     try {
         const suggestions = await prisma.suggestedProject.findMany({
             orderBy: { createdAt: 'desc' }

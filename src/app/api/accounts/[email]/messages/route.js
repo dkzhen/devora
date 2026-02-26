@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
 import { getLatestMessages } from '@/lib/services/gmail.service';
 import { NextResponse } from 'next/server';
@@ -21,6 +22,7 @@ async function getAuthenticatedUser() {
 
 // Get messages for an account (from DB)
 export async function GET(request, { params }) {
+    trackApiHit(request);
     try {
         const user = await getAuthenticatedUser();
         if (!user) {
@@ -52,6 +54,7 @@ export async function GET(request, { params }) {
 
 // Trigger refresh from Gmail
 export async function POST(request, { params }) {
+    trackApiHit(request);
     try {
         const user = await getAuthenticatedUser();
         if (!user) {

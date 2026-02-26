@@ -134,3 +134,26 @@ model SuggestedProject {
 
   @@map("suggested_projects")
 }
+
+model ApiEndpointStats {
+  id        String   @id @default(uuid())
+  method    String
+  path      String   @unique
+  hitCount  Int      @default(0) @map("hit_count")
+  lastHit   DateTime @default(now()) @map("last_hit")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("api_endpoint_stats")
+}
+
+model MaintenanceConfig {
+  id        String   @id @default(uuid())
+  feature   String   @unique
+  label     String
+  enabled   Boolean  @default(false)
+  message   String?
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("maintenance_configs")
+}

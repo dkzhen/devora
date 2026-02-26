@@ -1,9 +1,11 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { jwtVerify } from 'jose';
 
 // Standardized Prisma Import & Error Fix
 export async function DELETE(request, { params }) {
+    trackApiHit(request);
     try {
         const { id } = await params;
         const token = request.cookies.get('auth_token')?.value;

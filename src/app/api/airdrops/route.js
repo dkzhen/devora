@@ -1,10 +1,12 @@
 
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request) {
+    trackApiHit(request);
     try {
         const airdrops = await prisma.airdrop.findMany({
             orderBy: { createdAt: 'desc' },
@@ -38,6 +40,7 @@ async function getUser() {
 }
 
 export async function POST(request) {
+    trackApiHit(request);
     try {
         const user = await getUser();
         if (!user || user.role !== 'ULTRA') {

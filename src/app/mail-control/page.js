@@ -27,6 +27,16 @@ export default async function MessagesPage() {
 
     if (!user || user.role === 'MEMBER') redirect('/upgrade');
 
+    // Check maintenance for non-ULTRA users
+    if (user.role !== 'ULTRA') {
+        const mConfig = await prisma.maintenanceConfig.findUnique({
+            where: { feature: 'mail-control' }
+        });
+        if (mConfig?.enabled) {
+            redirect(`/maintenance?feature=mail-control&message=${encodeURIComponent(mConfig.message || '')}`);
+        }
+    }
+
     const accounts = await getAccounts(userId);
 
     return (

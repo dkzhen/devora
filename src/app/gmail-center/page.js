@@ -33,6 +33,18 @@ function EmailListContent() {
                 const res = await fetch('/api/auth/me', { cache: 'no-store' });
                 if (res.ok) {
                     const data = await res.json();
+                    // Check maintenance (skip for ULTRA admins)
+                    if (data.user?.role !== 'ULTRA') {
+                        const mRes = await fetch('/api/maintenance', { cache: 'no-store' });
+                        if (mRes.ok) {
+                            const configs = await mRes.json();
+                            const cfg = configs.find(c => c.feature === 'gmail-center');
+                            if (cfg?.enabled) {
+                                router.push(`/maintenance?feature=gmail-center&message=${encodeURIComponent(cfg.message || '')}`);
+                                return;
+                            }
+                        }
+                    }
                     if (data.user?.role === 'MEMBER') {
                         router.push('/upgrade');
                         return;

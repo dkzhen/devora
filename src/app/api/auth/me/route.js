@@ -1,3 +1,4 @@
+import { trackApiHit } from '@/lib/monitoring';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import prisma from '@/lib/db';
@@ -5,6 +6,7 @@ import prisma from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
+    trackApiHit(request);
     const token = request.cookies.get('auth_token')?.value;
 
     if (!token) {

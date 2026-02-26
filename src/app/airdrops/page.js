@@ -322,18 +322,49 @@ export default function AirdropsPage() {
     const uniqueStatuses = Array.from(new Set(airdrops.map(a => a.status).filter(Boolean)));
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user_info');
-        if (storedUser) {
-            try {
-                setUser(JSON.parse(storedUser));
-            } catch (e) {
-                console.error(e);
+        const checkMaintenanceAndAuth = async () => {
+            let role = 'MEMBER';
+
+            // Auth Check
+            const storedUser = localStorage.getItem('user_info');
+            if (storedUser) {
+                try {
+                    const parsed = JSON.parse(storedUser);
+                    setUser(parsed);
+                    role = parsed.role || 'MEMBER';
+                } catch (e) {
+                    console.error(e);
+                }
+            } else {
+                try {
+                    const res = await fetch('/api/auth/me');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.user) {
+                            setUser(data.user);
+                            role = data.user.role || 'MEMBER';
+                        }
+                    }
+                } catch (e) { console.error(e); }
             }
-        } else {
-            fetch('/api/auth/me').then(res => res.json()).then(data => {
-                if (data.user) setUser(data.user);
-            }).catch(console.error);
-        }
+
+            // Maintenance Check (skip for ULTRA)
+            if (role !== 'ULTRA') {
+                try {
+                    const mRes = await fetch('/api/maintenance', { cache: 'no-store' });
+                    if (mRes.ok) {
+                        const configs = await mRes.json();
+                        const cfg = configs.find(c => c.feature === 'airdrops');
+                        if (cfg?.enabled) {
+                            window.location.href = `/maintenance?feature=airdrops&message=${encodeURIComponent(cfg.message || '')}`;
+                            return;
+                        }
+                    }
+                } catch (e) { console.error('Maintenance check failed', e); }
+            }
+        };
+
+        checkMaintenanceAndAuth();
 
         const fetchAirdrops = async () => {
             try {
