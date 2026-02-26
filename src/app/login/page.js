@@ -131,7 +131,7 @@ export default function LoginPage() {
 
                         {/* OAuth */}
                         <div className="flex gap-3 justify-center">
-                            <a href="/auth/google" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all">
+                            <a disabled href="/auth/google" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all">
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
                                     <path d="M23.766 12.2764C23.766 11.4607 23.6999 10.6406 23.5588 9.83807H12.24V14.4591H18.7217C18.4528 15.9494 17.5885 17.2678 16.323 18.1056V21.1039H20.19C22.4608 19.0139 23.766 15.9274 23.766 12.2764Z" fill="#4285F4" />
                                     <path d="M12.24 24.0008C15.4766 24.0008 18.2059 22.9382 20.1945 21.1039L16.3275 18.1055C15.2517 18.8375 13.8627 19.252 12.2445 19.252C9.11388 19.252 6.45946 17.1399 5.50705 14.3003H1.5166V17.3912C3.55371 21.4434 7.7029 24.0008 12.24 24.0008Z" fill="#34A853" />
@@ -139,10 +139,10 @@ export default function LoginPage() {
                                     <path d="M12.24 4.74966C13.9509 4.7232 15.6044 5.36697 16.8434 6.54867L20.2695 3.12262C18.1001 1.0855 15.2208 -0.034466 12.24 0.000808666C7.7029 0.000808666 3.55371 2.55822 1.5166 6.61481L5.50264 9.70575C6.45064 6.86173 9.10947 4.74966 12.24 4.74966Z" fill="#EA4335" />
                                 </svg>
                             </a>
-                            <button type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all">
+                            <button disabled type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all">
                                 <svg className="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
                             </button>
-                            <button type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all">
+                            <button disabled type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all">
                                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.1 1.88-2.61 5.79 1.07 7.22-.67 1.72-1.6 3.42-3.12 3.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.54 4.33-3.74 4.25z" /></svg>
                             </button>
                         </div>
