@@ -114,10 +114,10 @@ export async function GET(request) {
             }
         });
 
-        return NextResponse.redirect(new URL('/email-list?success=true&email=' + encodeURIComponent(userInfo.email), baseUrl || request.url));
+        return NextResponse.redirect(new URL('/gmail-center?success=true&email=' + encodeURIComponent(userInfo.email), baseUrl || request.url));
 
     } catch (err) {
         console.error('Auth callback error:', err);
-        return NextResponse.redirect(new URL('/email-list?error=auth_failed', baseUrl || request.url));
+        return NextResponse.redirect(new URL('/gmail-center?error=auth_failed', baseUrl || request.url));
     }
 }
