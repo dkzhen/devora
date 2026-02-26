@@ -1,30 +1,24 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-// Paths that do not require authentication
-const publicPaths = [
-    '/',
-    '/register',
-    '/airdrops',
-    '/login',
-    '/auth/google',
-    '/api/auth/login',
-    '/api/auth/google'
-];
+const publicPaths = ['/', '/login', '/auth/google'];
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
 
-    // 1. Allow public routes
-    const isPublic =
-        publicPaths.includes(pathname) ||
-        publicPaths.some(path => pathname.startsWith(path + '/'));
-
-    if (isPublic) {
+    // ✅ Skip API routes
+    if (pathname.startsWith('/api')) {
         return NextResponse.next();
     }
 
-    // 2. Check Token
+    // ✅ Allow public pages
+    if (
+        publicPaths.includes(pathname) ||
+        publicPaths.some(path => pathname.startsWith(path + '/'))
+    ) {
+        return NextResponse.next();
+    }
+
     const token = request.cookies.get('auth_token')?.value;
 
     if (!token) {
