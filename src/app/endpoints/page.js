@@ -393,7 +393,7 @@ export default function EndpointsPage() {
                             </p>
                         </div>
                         {/* Stats Row */}
-                        <div className="grid grid-cols-3 gap-3 shrink-0">
+                        <div className="grid flex-1 w-full grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
                             <StatCard
                                 label="Endpoints"
                                 value={totalEndpoints}
@@ -497,13 +497,19 @@ export default function EndpointsPage() {
                     {filteredCategories.map((cat, catIdx) => (
                         <div key={catIdx} className="bg-[#0f172a]/80 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
                             {/* Category Header */}
-                            <div className="px-6 py-4 border-b border-white/5 bg-linear-to-r from-blue-900/10 to-transparent flex items-center gap-3">
-                                <span className="text-xl">{cat.icon}</span>
-                                <div>
-                                    <h2 className="text-sm font-bold text-white">{cat.category}</h2>
-                                    <p className="text-[11px] text-gray-500">{cat.desc}</p>
+                            <div className="px-6 py-4 border-b border-white/5 bg-linear-to-r from-blue-900/10 to-transparent flex flex-col sm:flex-row sm:items-center gap-3">
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                    <span className="text-xl shrink-0">{cat.icon}</span>
+                                    <div className="min-w-0">
+                                        <h2 className="text-sm font-bold text-white truncate">{cat.category}</h2>
+                                        <p className="text-[11px] text-gray-500 truncate">{cat.desc}</p>
+                                    </div>
                                 </div>
-                                <span className="ml-auto text-[10px] text-gray-600 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">{cat.endpoints.length} endpoint{cat.endpoints.length !== 1 ? 's' : ''}</span>
+                                <div className="ml-10 sm:ml-auto">
+                                    <span className="inline-flex text-[10px] text-gray-600 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full shrink-0">
+                                        {cat.endpoints.length} endpoint{cat.endpoints.length !== 1 ? 's' : ''}
+                                    </span>
+                                </div>
                             </div>
 
                             {/* Endpoints */}
