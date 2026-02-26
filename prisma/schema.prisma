@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  email         String    @id
+  name          String
+  refreshToken  String    @map("refresh_token")
+  status        String    @default("active")
+  totalMessages Int       @default(0) @map("total_messages")
+  totalThreads  Int       @default(0) @map("total_threads")
+  lastCheck     DateTime  @default(now()) @map("last_check")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  messages      Message[]
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Message {
+  id         String   @id
+  subject    String
+  from       String
+  snippet    String   @db.Text
+  body       String?  @db.MediumText
+  receivedAt DateTime @default(now()) @map("received_at")
+  accountId  String   @map("account_id")
+  account    Account  @relation(fields: [accountId], references: [email], onDelete: Cascade)
+
+  @@index([accountId])
+  @@map("messages")
+}
+
+model User {
+  id                 String            @id @default(uuid())
+  email              String            @unique
+  password           String
+  name               String?
+  role               Role              @default(MEMBER)
+  googleClientId     String?           @map("google_client_id") @db.Text
+  googleClientSecret String?           @map("google_client_secret") @db.Text
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+  accounts           Account[]
+  airdropTasks       UserAirdropTask[]
+
+  @@map("users")
+}
+
+enum Role {
+  MEMBER
+  PRO
+  ULTRA
+}
+
+model Airdrop {
+  id              String    @id @default(uuid())
+  name            String
+  symbol          String?
+  icon            String?
+  status          String // e.g., "Confirmed", "Potential"
+  statusDate      DateTime?
+  score           Int? // Moni Score
+  taskType        String? // e.g., "Testnet, Social"
+  cost            String? // e.g., "$0"
+  time            String? // e.g., "16 min"
+  raise           String? // e.g., "$11.00M"
+  stage           String? // e.g., "Alpha"
+  projectType     String? // e.g., "Blockchain Infra"
+  description     String?   @db.Text
+  links           Json? // e.g., [{ name: "Website", url: "..." }]
+  fundsAndBackers Json? // e.g., [{ name: "Pantera Capital", icon: "..." }]
+  rewardDate      String? // e.g., "TBA"
+  rewardType      String? // e.g., "Airdrop"
+
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  tasks     AirdropTask[]
+
+  @@map("airdrops")
+}
+
+model AirdropTask {
+  id          String    @id @default(uuid())
+  title       String
+  description String?   @db.Text
+  category    String // e.g., "Social", "Mint NFT", "DePIN"
+  deadline    DateTime?
+  status      String    @default("Open") // "Open", "Closed"
+  steps       Json?
+
+  airdropId String  @map("airdrop_id")
+  airdrop   Airdrop @relation(fields: [airdropId], references: [id], onDelete: Cascade)
+
+  userProgress UserAirdropTask[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("airdrop_tasks")
+}
+
+model UserAirdropTask {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  taskId String      @map("task_id")
+  task   AirdropTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime? @map("completed_at")
+
+// Ensure a user can only have one progress record per task
+  @@unique([userId, taskId])
+  @@map("user_airdrop_tasks")
+}
+
+model SuggestedProject {
+  id          String   @id @default(uuid())
+  name        String
+  link        String
+  description String?  @db.Text
+  sender      String   @default("Anonymous")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("suggested_projects")
+}
