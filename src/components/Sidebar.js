@@ -121,7 +121,7 @@ export default function Sidebar() {
             {/* Search */}
             <div className="px-3 pb-2">
                 <div className="relative">
-                    <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input
@@ -129,7 +129,7 @@ export default function Sidebar() {
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Search menu..."
-                        className="w-full bg-white/4 border border-white/8 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-300 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/5 transition-all"
+                        className="w-full bg-white/4 border border-white/8 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-300 placeholder-gray-500 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/5 transition-all"
                     />
                     {search && (
                         <button
@@ -154,25 +154,25 @@ export default function Sidebar() {
                         );
                         return (
                             <div>
-                                <div className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-2 px-2">
+                                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 px-2">
                                     Results {results.length > 0 ? `(${results.length})` : ''}
                                 </div>
                                 {results.length === 0 ? (
-                                    <div className="px-3 py-4 text-center text-xs text-gray-600">No results found</div>
+                                    <div className="px-3 py-4 text-center text-xs text-gray-400">No results found</div>
                                 ) : (
                                     <div className="space-y-0.5">
                                         {results.map(item => {
                                             const isActive = pathname === item.href;
                                             const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops') || (item.href === '/endpoints' && user?.role !== 'ULTRA');
                                             if (isLocked) return (
-                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 cursor-not-allowed">
+                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
                                                     <svg className="w-3.5 h-3.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                                 </div>
                                             );
                                             return (
                                                 <Link key={item.href} href={item.href} onClick={() => { setIsOpen(false); setSearch(''); }}
-                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-500 hover:bg-white/5 hover:text-gray-200'}`}>
+                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
                                                     {item.icon}{item.name}
                                                     {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />}
                                                 </Link>
@@ -188,20 +188,20 @@ export default function Sidebar() {
                         <div className="space-y-4">
                             {menuCategories.map(cat => (
                                 <div key={cat.label}>
-                                    <div className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-1.5 px-2">{cat.label}</div>
+                                    <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 px-2">{cat.label}</div>
                                     <div className="space-y-0.5">
                                         {cat.items.map(item => {
                                             const isActive = pathname === item.href;
                                             const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops') || (item.href === '/endpoints' && user?.role !== 'ULTRA');
                                             if (isLocked) return (
-                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 cursor-not-allowed">
+                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
                                                     <svg className="w-3.5 h-3.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                                 </div>
                                             );
                                             return (
                                                 <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}
-                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-500 hover:bg-white/5 hover:text-gray-200'}`}>
+                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
                                                     {item.icon}{item.name}
                                                     {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />}
                                                 </Link>
@@ -224,7 +224,7 @@ export default function Sidebar() {
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-medium ${pathname === '/settings'
                             ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
-                            : 'text-gray-500 hover:bg-white/5 hover:text-gray-200'
+                            : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'
                             }`}
                     >
                         <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -254,7 +254,7 @@ export default function Sidebar() {
                         </div>
                         <button
                             onClick={handleLogout}
-                            className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                             title="Sign Out"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
