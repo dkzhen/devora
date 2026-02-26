@@ -10,12 +10,16 @@ export async function GET(request) {
     const code = searchParams.get('code');
     const error = searchParams.get('error');
 
+    const baseUrl = process.env.NODE_ENV === 'production'
+        ? process.env.BASE_URL_PROD
+        : process.env.BASE_URL_DEV;
+
     if (error) {
-        return NextResponse.redirect(new URL('/?error=' + error, request.url));
+        return NextResponse.redirect(new URL('/?error=' + error, baseUrl || request.url));
     }
 
     if (!code) {
-        return NextResponse.redirect(new URL('/?error=no_code', request.url));
+        return NextResponse.redirect(new URL('/?error=no_code', baseUrl || request.url));
     }
 
     try {
@@ -83,7 +87,7 @@ export async function GET(request) {
         // Upsert account in database
         if (!userId) {
             console.error('No user ID found in session for account linking');
-            return NextResponse.redirect(new URL('/login?error=session_expired', request.url));
+            return NextResponse.redirect(new URL('/login?error=session_expired', baseUrl || request.url));
         }
 
         await prisma.account.upsert({
@@ -107,10 +111,10 @@ export async function GET(request) {
             }
         });
 
-        return NextResponse.redirect(new URL('/email-list?success=true&email=' + encodeURIComponent(userInfo.email), request.url));
+        return NextResponse.redirect(new URL('/email-list?success=true&email=' + encodeURIComponent(userInfo.email), baseUrl || request.url));
 
     } catch (err) {
         console.error('Auth callback error:', err);
-        return NextResponse.redirect(new URL('/email-list?error=auth_failed', request.url));
+        return NextResponse.redirect(new URL('/email-list?error=auth_failed', baseUrl || request.url));
     }
 }
