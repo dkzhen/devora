@@ -10,9 +10,12 @@ export async function GET(request) {
     const code = searchParams.get('code');
     const error = searchParams.get('error');
 
-    const baseUrl = process.env.NODE_ENV === 'production'
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+    const protocol = request.headers.get('x-forwarded-proto') || (host && host.includes('localhost') ? 'http' : 'https');
+
+    const baseUrl = host ? `${protocol}://${host}` : (process.env.NODE_ENV === 'production'
         ? process.env.BASE_URL_PROD
-        : process.env.BASE_URL_DEV;
+        : process.env.BASE_URL_DEV);
 
     if (error) {
         return NextResponse.redirect(new URL('/?error=' + error, baseUrl || request.url));
