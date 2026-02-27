@@ -134,9 +134,18 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                         </label>
                         <button onClick={() => setIsEditing(true)} className="text-xs text-blue-600 font-semibold hover:underline">Edit</button>
                     </div>
-                    <code className="block font-mono text-sm text-gray-100 break-all">
-                        {formData.clientId}
-                    </code>
+                    <div className="flex items-center justify-between gap-3">
+                        <code className="block font-mono text-sm text-gray-100 break-all">
+                            {formData.clientId}
+                        </code>
+                        <button
+                            onClick={() => handleCopy(formData.clientId)}
+                            className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors shrink-0"
+                            title="Copy Client ID"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="bg-[#0f172a] p-4 rounded-xl border border-white/10">
@@ -147,7 +156,16 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                         <code className="flex-1 font-mono text-sm text-gray-100">
                             {maskedSecret}
                         </code>
-                        <span className="text-xs text-gray-400 italic">Hidden</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-xs text-gray-400 italic">Hidden</span>
+                            <button
+                                onClick={() => handleCopy(formData.clientSecret)}
+                                className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                title="Copy Client Secret"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

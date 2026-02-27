@@ -191,6 +191,7 @@ export default function EndpointsPage() {
                 { method: 'PATCH', path: '/api/users/:id', desc: 'Update a user role or details' },
                 { method: 'DELETE', path: '/api/users/:id', desc: 'Delete a user from the system' },
                 { method: 'POST', path: '/api/user/upgrade', desc: 'Save Google OAuth configuration for PRO upgrade' },
+                { method: 'PUT', path: '/api/user/profile', desc: 'Update user profile (Name & Email)', sampleBody: '{\n  "name": "New Name",\n  "email": "new.email@example.com"\n}' },
             ]
         },
         {

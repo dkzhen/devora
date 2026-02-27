@@ -4,6 +4,8 @@ import { jwtVerify } from 'jose';
 import prisma from '@/lib/db';
 import SettingsForm from '@/components/SettingsForm';
 
+import ProfileCard from '@/components/ProfileCard';
+
 export const dynamic = 'force-dynamic';
 
 const ROLE_COLORS = {
@@ -46,6 +48,15 @@ export default async function SettingsPage() {
     if (!user) redirect('/login');
     if (user.role === 'MEMBER') redirect('/');
 
+    if (user.role !== 'ULTRA') {
+        const maintenance = await prisma.maintenanceConfig.findUnique({
+            where: { feature: 'settings' }
+        });
+        if (maintenance?.enabled) {
+            redirect(`/maintenance?feature=settings&message=${encodeURIComponent(maintenance.message || '')}`);
+        }
+    }
+
     const roleGradient = ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER;
     const roleBadge = ROLE_BADGE[user.role] || ROLE_BADGE.MEMBER;
     const memberSince = new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
@@ -74,42 +85,13 @@ export default async function SettingsPage() {
                 </div>
             </div>
 
-            {/* Profile Card */}
-            <section className="relative overflow-hidden rounded-2xl bg-[#0f172a] border border-white/8 p-6">
-                <div className="flex items-start gap-5 mb-6">
-                    {/* Avatar */}
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${roleGradient} flex items-center justify-center text-white font-black text-lg shadow-lg shrink-0`}>
-                        {initials}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <h2 className="text-xl font-black text-white">{user.name}</h2>
-                            <span className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-lg border ${roleBadge}`}>
-                                {user.role}
-                            </span>
-                        </div>
-                        <p className="text-gray-500 text-sm mt-0.5">{user.email}</p>
-                        <p className="text-gray-700 text-xs mt-1">Member since {memberSince}</p>
-                    </div>
-                </div>
-
-                {/* Info grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {[
-                        { label: 'Full Name', value: user.name, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
-                        { label: 'Email Address', value: user.email, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
-                        { label: 'Member Since', value: memberSince, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
-                    ].map((item) => (
-                        <div key={item.label} className="p-4 rounded-xl bg-white/3 border border-white/5">
-                            <div className="flex items-center gap-2 text-gray-600 mb-2">
-                                {item.icon}
-                                <span className="text-[10px] uppercase tracking-widest font-bold">{item.label}</span>
-                            </div>
-                            <div className="text-sm font-semibold text-white truncate">{item.value}</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            <ProfileCard
+                user={user}
+                initials={initials}
+                roleBadge={roleBadge}
+                roleGradient={roleGradient}
+                memberSince={memberSince}
+            />
 
             {/* API Configuration */}
             <SettingsForm
