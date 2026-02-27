@@ -6,11 +6,11 @@ import { jwtVerify } from 'jose';
 export const dynamic = 'force-dynamic';
 
 const DEFAULT_FEATURES = [
-    { feature: 'settings', label: 'Account Settings', message: 'Account Settings is currently undergoing maintenance.' },
     { feature: 'airdrops', label: 'Airdrops', message: 'The Airdrops section is currently under maintenance. Please check back soon.' },
     { feature: 'gmail-center', label: 'Gmail Center', message: 'Gmail Center is temporarily unavailable while we make improvements.' },
     { feature: 'mail-control', label: 'Mail Control', message: 'Mail Control is undergoing scheduled maintenance.' },
-    { feature: 'endpoints', label: 'API Endpoints', message: 'The API Endpoints dashboard is currently under maintenance.' },
+    { feature: 'drive-center', label: 'Drive Center', message: 'Drive Center is currently undergoing maintenance.' },
+    { feature: 'chatbot', label: 'AI Chatbot', message: 'The AI Chatbot is currently receiving upgrades. Please check back later.' },
 ];
 
 async function getUser(request) {

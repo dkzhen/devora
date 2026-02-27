@@ -17,6 +17,7 @@ model Account {
   lastCheck     DateTime  @default(now()) @map("last_check")
   createdAt     DateTime  @default(now()) @map("created_at")
   messages      Message[]
+  driveFiles    DriveFile[]
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -39,6 +40,26 @@ model Message {
   @@map("messages")
 }
 
+model DriveFile {
+  id           String
+  name         String
+  mimeType     String
+  size         String?
+  iconLink     String?
+  webViewLink  String?
+  modifiedTime DateTime
+  folderId     String   @default("root") @map("folder_id")
+
+  accountId String   @map("account_id")
+  account   Account  @relation(fields: [accountId], references: [email], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([id, folderId])
+  @@index([accountId, folderId])
+  @@map("drive_files")
+}
+
 model User {
   id                 String            @id @default(uuid())
   email              String            @unique
@@ -51,6 +72,8 @@ model User {
   updatedAt          DateTime          @updatedAt @map("updated_at")
   accounts           Account[]
   airdropTasks       UserAirdropTask[]
+  groqCredential     GroqCredential?
+  chatSessions       ChatSession[]
 
   @@map("users")
 }
@@ -156,4 +179,57 @@ model MaintenanceConfig {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("maintenance_configs")
+}
+
+model GlobalConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String   @db.Text
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("global_configs")
+}
+
+model GroqCredential {
+  id               String   @id @default(uuid())
+  userId           String   @unique @map("user_id")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  apiKey           String   @db.Text @map("api_key") // Stored encrypted
+  promptTokens     Int      @default(0) @map("prompt_tokens")
+  completionTokens Int      @default(0) @map("completion_tokens")
+  totalTokens      Int      @default(0) @map("total_tokens")
+
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("groq_credentials")
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  title     String        @default("New Chat")
+  userId    String        @map("user_id")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String      @map("session_id")
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  role      String      // 'user' or 'assistant'
+  content   String      @db.Text
+  
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@map("chat_messages")
 }

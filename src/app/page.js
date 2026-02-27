@@ -30,6 +30,17 @@ export default function Dashboard() {
     const activeAccounts = requestsByStatus.find(s => s.name === 'Active Accounts')?.value || 0;
     const inactiveAccounts = requestsByStatus.find(s => s.name === 'Inactive Accounts')?.value || 0;
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
+                    <p className="text-xs text-gray-500 animate-pulse">Loading dashboard…</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             {/* Hero Header */}

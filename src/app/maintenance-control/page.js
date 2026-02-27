@@ -4,17 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; import { Plug, Wrench, CheckCircle2, Activity } from 'lucide-react';
 
 const FEATURE_ICONS = {
-    'settings': (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-    ),
     'airdrops': (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21v-6m0 0l-3 3m3-3l3 3" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5.5 11C5.5 7.41 8.41 4.5 12 4.5S18.5 7.41 18.5 11" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 11a9 9 0 0118 0" />
+            <line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="5.5" y2="11" />
+            <line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="18.5" y2="11" />
         </svg>
     ),
     'gmail-center': (
@@ -27,19 +23,24 @@ const FEATURE_ICONS = {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
     ),
-    'endpoints': (
+    'drive-center': (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
         </svg>
     ),
+    'chatbot': (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    )
 };
 
 const FEATURE_COLORS = {
-    'settings': { icon: 'text-zinc-400', bg: 'bg-zinc-500/10', border: 'border-zinc-500/20' },
     'airdrops': { icon: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
     'gmail-center': { icon: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
     'mail-control': { icon: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-    'endpoints': { icon: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    'drive-center': { icon: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+    'chatbot': { icon: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20' },
 };
 
 function ToggleSwitch({ enabled, onChange, loading }) {
@@ -141,6 +142,17 @@ export default function MaintenanceControlPage() {
     };
 
     const activeCount = configs.filter(c => c.enabled).length;
+
+    if (loading || !user) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
+                    <p className="text-xs text-gray-500 animate-pulse">Loading maintenance configs…</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">
