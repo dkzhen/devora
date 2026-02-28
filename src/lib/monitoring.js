@@ -10,8 +10,9 @@ import prisma from '@/lib/db';
  */
 export async function trackApiHit(request, customPath = null) {
     try {
-        const method = request.method;
-        const url = new URL(request.url);
+        const method = typeof request === 'string' ? 'GET' : request.method;
+        const urlStr = typeof request === 'string' ? request : request.url;
+        const url = new URL(urlStr, 'http://localhost');
 
         // Normalize path if no custom path is provided
         let path = customPath || url.pathname;

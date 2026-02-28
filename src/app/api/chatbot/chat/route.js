@@ -27,7 +27,7 @@ export async function POST(request) {
         await trackApiHit('/api/chatbot/chat');
 
         const body = await request.json();
-        const { messages, model = "llama-3.3-70b-versatile", sessionId } = body;
+        const { messages, model = "llama-3.3-70b-versatile", sessionId, maxTokens, responseLength = 'short' } = body;
 
         if (!messages || !Array.isArray(messages) || messages.length === 0) {
             return NextResponse.json({ error: 'Messages array is required' }, { status: 400 });
@@ -48,6 +48,16 @@ export async function POST(request) {
         // 3. Best Practice: Delay 200ms to prevent throttle burst
         await new Promise(r => setTimeout(r, 200));
 
+        // Inject a system prompt to constrain the length if "short" is selected
+        const systemPrompt = responseLength === 'short'
+            ? 'You are a helpful assistant. Please keep your answers concise, well-structured, and strictly limit your responses to a maximum of 5 short paragraphs.'
+            : 'You are a helpful assistant.';
+
+        const apiMessages = [
+            { role: 'system', content: systemPrompt },
+            ...messages
+        ];
+
         // 4. Request from Groq
         const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -57,7 +67,8 @@ export async function POST(request) {
             },
             body: JSON.stringify({
                 model: model,
-                messages: messages
+                messages: apiMessages,
+                ...(responseLength === 'custom' && maxTokens ? { max_tokens: maxTokens } : {})
             })
         });
 

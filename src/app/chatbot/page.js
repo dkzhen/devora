@@ -2,9 +2,17 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 const TypingEffect = ({ content, scrollTrigger, onComplete }) => {
     const [displayedContent, setDisplayedContent] = useState('');
+    const scrollTriggerRef = useRef(scrollTrigger);
+    const onCompleteRef = useRef(onComplete);
+
+    useEffect(() => {
+        scrollTriggerRef.current = scrollTrigger;
+        onCompleteRef.current = onComplete;
+    }, [scrollTrigger, onComplete]);
 
     useEffect(() => {
         let i = 0;
@@ -16,16 +24,16 @@ const TypingEffect = ({ content, scrollTrigger, onComplete }) => {
             if (i < content.length) {
                 setDisplayedContent(content.substring(0, i + charsPerTick));
                 i += charsPerTick;
-                if (scrollTrigger) scrollTrigger();
+                if (scrollTriggerRef.current) scrollTriggerRef.current();
             } else {
                 setDisplayedContent(content);
                 clearInterval(interval);
-                if (onComplete) onComplete();
+                if (onCompleteRef.current) onCompleteRef.current();
             }
         }, intervalMs);
 
         return () => clearInterval(interval);
-    }, [content, scrollTrigger, onComplete]);
+    }, [content]);
 
     return <>{displayedContent}</>;
 };
@@ -46,6 +54,9 @@ export default function ChatbotPage() {
     const [selectedModel, setSelectedModel] = useState('llama-3.3-70b-versatile');
     const [showKeyModal, setShowKeyModal] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [maxTokens, setMaxTokens] = useState(2000);
+    const [responseLength, setResponseLength] = useState('long'); // 'short' | 'long' (now Recommended) | 'custom'
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
 
     const [sessions, setSessions] = useState([]);
     const [currentSessionId, setCurrentSessionId] = useState(null);
@@ -234,6 +245,8 @@ export default function ChatbotPage() {
                 body: JSON.stringify({
                     model: selectedModel,
                     sessionId: activeSessionId,
+                    maxTokens,
+                    responseLength,
                     // send previous context + new message
                     messages: newMessages.map(m => ({ role: m.role, content: m.content }))
                 })
@@ -445,6 +458,80 @@ export default function ChatbotPage() {
                         </div>
                     )}
 
+                    {showSettingsModal && (
+                        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                            <div className="w-full max-w-sm bg-[#0c1628] border border-white/10 rounded-2xl p-6 shadow-2xl relative">
+                                <h3 className="text-lg font-bold text-white mb-1">Chat Settings</h3>
+                                <p className="text-xs text-gray-400 mb-5">Configure response limits</p>
+
+                                <div className="mb-4">
+                                    <label className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-2">
+                                        Response Mode
+                                    </label>
+                                    <div className="flex bg-black/20 p-1 rounded-xl border border-white/5 relative">
+                                        <button
+                                            onClick={() => setResponseLength('short')}
+                                            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all z-10 ${responseLength === 'short' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                        >
+                                            Short
+                                        </button>
+                                        <button
+                                            onClick={() => setResponseLength('long')}
+                                            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all z-10 ${responseLength === 'long' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                        >
+                                            Recommended
+                                        </button>
+                                        <button
+                                            onClick={() => setResponseLength('custom')}
+                                            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all z-10 ${responseLength === 'custom' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                        >
+                                            Custom
+                                        </button>
+
+                                        {/* Sliding Toggle Background */}
+                                        <div
+                                            className="absolute top-1 bottom-1 w-[calc(33.33%-4px)] bg-emerald-600/30 border border-emerald-500/30 rounded-lg transition-transform duration-300 ease-out z-0"
+                                            style={{
+                                                transform: responseLength === 'short'
+                                                    ? 'translateX(0)'
+                                                    : responseLength === 'long'
+                                                        ? 'translateX(calc(100% + 4px))'
+                                                        : 'translateX(calc(200% + 8px))'
+                                            }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-2 text-center">
+                                        {responseLength === 'short' && 'AI will summarize strictly to max 5 paragraphs.'}
+                                        {responseLength === 'long' && 'AI will answer naturally with no hard limits or forced summaries.'}
+                                        {responseLength === 'custom' && 'You define the absolute maximum token cut-off.'}
+                                    </p>
+                                </div>
+
+                                <div className={`mb-6 transition-opacity ${responseLength !== 'custom' ? 'opacity-50 pointer-events-none' : ''}`}>
+                                    <label className="text-xs text-gray-500 font-medium uppercase tracking-wider flex justify-between mb-2">
+                                        <span>Max Tokens (Absolute limit)</span>
+                                        <span className="text-emerald-400">{responseLength !== 'custom' ? 'Auto' : maxTokens}</span>
+                                    </label>
+                                    <input
+                                        type="range"
+                                        min="100"
+                                        max="4000"
+                                        step="100"
+                                        value={maxTokens}
+                                        onChange={(e) => setMaxTokens(parseInt(e.target.value))}
+                                        className="w-full accent-emerald-500"
+                                        disabled={responseLength !== 'custom'}
+                                    />
+                                    <p className="text-[10px] text-gray-500 mt-1">Hard limit cut-off. High limits may cause Groq API errors.</p>
+                                </div>
+
+                                <div className="border-t border-white/10 pt-4 flex gap-3">
+                                    <button onClick={() => setShowSettingsModal(false)} className="w-full py-2 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 rounded-xl text-sm font-medium transition-colors border border-emerald-500/30">Done</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* --- Top Navbar --- */}
                     <div className="flex items-center justify-between p-3 border-b border-white/5 bg-black/20 backdrop-blur-md z-10 shrink-0">
                         <div className="flex items-center gap-3">
@@ -495,6 +582,14 @@ export default function ChatbotPage() {
                             </div>
 
                             <button
+                                onClick={() => setShowSettingsModal(true)}
+                                className="p-2 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                                title="Chat Settings"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                            </button>
+
+                            <button
                                 onClick={() => setShowKeyModal(true)}
                                 className="p-2 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
                                 title="API Settings"
@@ -520,18 +615,21 @@ export default function ChatbotPage() {
                                         </div>
                                     )}
 
-                                    <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-3 shadow-md whitespace-pre-wrap ${msg.role === 'user' ? 'bg-linear-to-tr from-blue-600 to-indigo-600 text-white rounded-br-none' : 'bg-white/5 border border-white/10 text-gray-200 rounded-bl-none'}`}>
+                                    <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-3 shadow-md ${msg.role === 'user' ? 'bg-linear-to-tr from-blue-600 to-indigo-600 text-white rounded-br-none whitespace-pre-wrap' : 'bg-white/5 border border-white/10 text-gray-200 rounded-bl-none overflow-x-auto'}`}>
                                         {msg.isTyping ? (
-                                            <TypingEffect
-                                                content={msg.content}
-                                                scrollTrigger={scrollToBottom}
-                                                onComplete={() => {
-                                                    // Optional: remove typing flag if desired
-                                                    // This prevents re-typing on re-renders, but since Next.js Fast Refresh
-                                                    // might cause issues, it's safer to leave as is unless it's a problem. 
-                                                    // A proper fix would mutate the messages state to remove isTyping.
-                                                }}
-                                            />
+                                            <div className="prose prose-invert prose-sm max-w-none">
+                                                <TypingEffect
+                                                    content={msg.content}
+                                                    scrollTrigger={scrollToBottom}
+                                                    onComplete={() => {
+                                                        setMessages(prev => prev.map((m, idx) => idx === i ? { ...m, isTyping: false } : m));
+                                                    }}
+                                                />
+                                            </div>
+                                        ) : msg.role === 'assistant' ? (
+                                            <div className="prose prose-invert prose-sm max-w-none">
+                                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                            </div>
                                         ) : (
                                             msg.content
                                         )}
