@@ -14,6 +14,7 @@ function MaintenanceContent() {
         'gmail-center': 'Gmail Center',
         'mail-control': 'Mail Control',
         'endpoints': 'API Endpoints',
+        'app-library': 'App Library',
     };
 
     const featureLabel = featureLabels[feature] || feature;

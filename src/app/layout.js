@@ -1,5 +1,11 @@
 import Sidebar from "@/components/Sidebar";
+import localFont from 'next/font/local';
 import "./globals.css";
+
+const passeroFont = localFont({
+    src: '../../public/fonts/PasseroOne-Regular.ttf',
+    variable: '--font-passero',
+});
 
 export const metadata = {
     title: "Devora - Track Work",
@@ -10,7 +16,7 @@ import { Providers } from "./providers";
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en" className="dark">
+        <html lang="en" className={`${passeroFont.variable} dark`}>
             <body className="antialiased min-h-screen bg-[#080d1a] text-gray-100 flex flex-col md:flex-row">
                 <Providers>
                     <Sidebar />

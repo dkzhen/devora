@@ -322,16 +322,13 @@ export default function AirdropsPage() {
     const uniqueStatuses = Array.from(new Set(airdrops.map(a => a.status).filter(Boolean)));
 
     useEffect(() => {
-        const checkMaintenanceAndAuth = async () => {
-            let role = 'MEMBER';
-
+        const checkAuth = async () => {
             // Auth Check
             const storedUser = localStorage.getItem('user_info');
             if (storedUser) {
                 try {
                     const parsed = JSON.parse(storedUser);
                     setUser(parsed);
-                    role = parsed.role || 'MEMBER';
                 } catch (e) {
                     console.error(e);
                 }
@@ -342,29 +339,15 @@ export default function AirdropsPage() {
                         const data = await res.json();
                         if (data.user) {
                             setUser(data.user);
-                            role = data.user.role || 'MEMBER';
                         }
                     }
                 } catch (e) { console.error(e); }
             }
 
-            // Maintenance Check (skip for ULTRA)
-            if (role !== 'ULTRA') {
-                try {
-                    const mRes = await fetch('/api/maintenance', { cache: 'no-store' });
-                    if (mRes.ok) {
-                        const configs = await mRes.json();
-                        const cfg = configs.find(c => c.feature === 'airdrops');
-                        if (cfg?.enabled) {
-                            window.location.href = `/maintenance?feature=airdrops&message=${encodeURIComponent(cfg.message || '')}`;
-                            return;
-                        }
-                    }
-                } catch (e) { console.error('Maintenance check failed', e); }
-            }
+            // Maintenance check handled globally in providers.js
         };
 
-        checkMaintenanceAndAuth();
+        checkAuth();
 
         const fetchAirdrops = async () => {
             try {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; import { Plug, Wrench, CheckCircle2, Activity } from 'lucide-react';
+import { useRouter } from 'next/navigation'; import { Plug, Wrench, CheckCircle2, Activity, Plus, X, Edit2, Trash2 } from 'lucide-react';
 
 const FEATURE_ICONS = {
     'airdrops': (
@@ -65,6 +65,19 @@ export default function MaintenanceControlPage() {
     const [toast, setToast] = useState(null);
     const [editingMessage, setEditingMessage] = useState(null);
     const [messageInput, setMessageInput] = useState('');
+
+    // Add feature state
+    const [isAddingFeature, setIsAddingFeature] = useState(false);
+    const [newFeatureId, setNewFeatureId] = useState('');
+    const [newFeatureLabel, setNewFeatureLabel] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Edit feature state
+    const [editingFeatureConfig, setEditingFeatureConfig] = useState(null); // stores the original feature string
+    const [editFeatureId, setEditFeatureId] = useState('');
+    const [editFeatureLabel, setEditFeatureLabel] = useState('');
+    const [isEditSubmitting, setIsEditSubmitting] = useState(false);
+
     const router = useRouter();
 
     const showToast = (message, type = 'success') => {
@@ -141,6 +154,113 @@ export default function MaintenanceControlPage() {
         }
     };
 
+    const handleAddFeature = async (e) => {
+        e.preventDefault();
+
+        if (!newFeatureId.trim() || !newFeatureLabel.trim()) {
+            showToast('Please fill in both fields', 'warning');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const res = await fetch('/api/maintenance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    feature: newFeatureId.trim(),
+                    label: newFeatureLabel.trim()
+                }),
+            });
+
+            if (res.ok) {
+                const newConfig = await res.json();
+                setConfigs(prev => [...prev, newConfig].sort((a, b) => a.feature.localeCompare(b.feature)));
+                showToast('Feature added successfully', 'success');
+
+                // Reset form
+                setNewFeatureId('');
+                setNewFeatureLabel('');
+                setIsAddingFeature(false);
+            } else {
+                const errorData = await res.json();
+                showToast(errorData.error || 'Failed to add feature', 'error');
+            }
+        } catch {
+            showToast('An error occurred', 'error');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteFeature = async (featureStr, labelStr) => {
+        if (!window.confirm(`Are you sure you want to permanently delete the maintenance configuration for "${labelStr}"?`)) {
+            return;
+        }
+
+        setToggling(prev => ({ ...prev, [featureStr]: true }));
+        try {
+            const res = await fetch(`/api/maintenance/${featureStr}`, { method: 'DELETE' });
+            if (res.ok) {
+                setConfigs(prev => prev.filter(c => c.feature !== featureStr));
+                showToast('Feature deleted', 'success');
+            } else {
+                const errorData = await res.json();
+                showToast(errorData.error || 'Failed to delete feature', 'error');
+            }
+        } catch {
+            showToast('An error occurred', 'error');
+        } finally {
+            setToggling(prev => ({ ...prev, [featureStr]: false }));
+        }
+    };
+
+    const handleOpenEditModal = (config) => {
+        setEditingFeatureConfig(config.feature);
+        setEditFeatureId(config.feature);
+        setEditFeatureLabel(config.label);
+    };
+
+    const handleEditFeatureSubmit = async (e) => {
+        e.preventDefault();
+        if (!editFeatureId.trim() || !editFeatureLabel.trim()) {
+            showToast('Please fill in both fields', 'warning');
+            return;
+        }
+
+        setIsEditSubmitting(true);
+        try {
+            const res = await fetch(`/api/maintenance/${editingFeatureConfig}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    newFeature: editFeatureId.trim(),
+                    label: editFeatureLabel.trim()
+                }),
+            });
+
+            if (res.ok) {
+                const updatedConfig = await res.json();
+                setConfigs(prev => {
+                    const idx = prev.findIndex(c => c.feature === editingFeatureConfig);
+                    if (idx === -1) return prev;
+                    const newArr = [...prev];
+                    newArr[idx] = updatedConfig;
+                    return newArr.sort((a, b) => a.feature.localeCompare(b.feature));
+                });
+                showToast('Feature updated', 'success');
+                setEditingFeatureConfig(null);
+            } else {
+                const errorData = await res.json();
+                showToast(errorData.error || 'Failed to update feature', 'error');
+            }
+        } catch {
+            showToast('An error occurred', 'error');
+        } finally {
+            setIsEditSubmitting(false);
+        }
+    };
+
     const activeCount = configs.filter(c => c.enabled).length;
 
     if (loading || !user) {
@@ -210,16 +330,25 @@ export default function MaintenanceControlPage() {
                             </nav>
                             <h1 className="text-4xl font-black tracking-tight">
                                 <span className="text-white">System </span>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500">Maintenance</span>
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 via-orange-400 to-amber-500">Maintenance</span>
                             </h1>
                             <p className="text-gray-400 mt-2 text-sm">Toggle feature availability and manage maintenance messages</p>
                         </div>
-                        {activeCount > 0 && (
-                            <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-sm font-bold">
-                                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                                {activeCount} Active
-                            </div>
-                        )}
+                        <div className="flex flex-col items-end gap-3">
+                            {activeCount > 0 && (
+                                <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-sm font-bold">
+                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                                    {activeCount} Active
+                                </div>
+                            )}
+                            <button
+                                onClick={() => setIsAddingFeature(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl text-blue-300 text-sm font-bold transition-colors"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Add Feature
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -242,7 +371,18 @@ export default function MaintenanceControlPage() {
 
             {/* Feature cards */}
             <div className="space-y-1">
-                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest px-1 mb-3">Feature Controls</h2>
+                <div className="flex items-center justify-between mb-3 px-1">
+                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Feature Controls</h2>
+
+                    {/* Mobile Add Button */}
+                    <button
+                        onClick={() => setIsAddingFeature(true)}
+                        className="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg text-blue-300 text-[11px] font-bold transition-colors"
+                    >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add
+                    </button>
+                </div>
 
                 {loading ? (
                     Array.from({ length: 4 }).map((_, i) => (
@@ -278,13 +418,35 @@ export default function MaintenanceControlPage() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-white text-base">{config.label}</div>
+                                                    <div className="font-bold text-white text-base flex items-center gap-2">
+                                                        {config.label}
+                                                    </div>
                                                     <div className="text-xs text-gray-500 font-mono">/{config.feature}</div>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-2.5">
+                                                {/* Mini actions */}
+                                                <div className="flex items-center mr-1">
+                                                    <button
+                                                        onClick={() => handleOpenEditModal(config)}
+                                                        disabled={isToggling}
+                                                        className="p-1.5 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                                        title="Edit Config"
+                                                    >
+                                                        <Edit2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteFeature(config.feature, config.label)}
+                                                        disabled={isToggling}
+                                                        className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                        title="Delete Config"
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+
                                                 {/* Status badge */}
-                                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${config.enabled
+                                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border hidden sm:inline-block ${config.enabled
                                                     ? 'bg-amber-500/15 text-amber-300 border-amber-500/25'
                                                     : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25'
                                                     }`}>
@@ -368,6 +530,171 @@ export default function MaintenanceControlPage() {
                     </p>
                 </div>
             </div>
+
+            {/* Add Feature Modal */}
+            {isAddingFeature && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsAddingFeature(false)} />
+                    <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up">
+                        <div className="flex items-center justify-between p-5 border-b border-white/5">
+                            <h3 className="text-lg font-bold text-white">Add Custom Feature</h3>
+                            <button
+                                onClick={() => setIsAddingFeature(false)}
+                                disabled={isSubmitting}
+                                className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleAddFeature} className="p-5 space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                    Feature Display Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={newFeatureLabel}
+                                    onChange={(e) => {
+                                        setNewFeatureLabel(e.target.value);
+                                        // Auto-generate slug if it's empty
+                                        if (!newFeatureId) {
+                                            setNewFeatureId(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
+                                        }
+                                    }}
+                                    placeholder="e.g. Chatbot Alpha"
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all"
+                                    autoFocus
+                                    required
+                                />
+                                <p className="text-[10px] text-gray-500 mt-1 pl-1">The name users will see.</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                    URL ID / Slug
+                                </label>
+                                <input
+                                    type="text"
+                                    value={newFeatureId}
+                                    onChange={(e) => setNewFeatureId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                                    placeholder="e.g. chatbot-alpha"
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all font-mono"
+                                    required
+                                />
+                                <p className="text-[10px] text-gray-500 mt-1 pl-1">Used internally and in routes (lowercase, no spaces).</p>
+                            </div>
+
+                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 mt-4">
+                                <Activity className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                                <p className="text-[11px] text-amber-200/80 leading-relaxed">
+                                    A default maintenance message will be generated automatically. You can edit it after creating the feature.
+                                </p>
+                            </div>
+
+                            <div className="pt-2 flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddingFeature(false)}
+                                    disabled={isSubmitting}
+                                    className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-gray-300 transition-all disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting || !newFeatureId || !newFeatureLabel}
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-semibold text-white shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                                            Adding...
+                                        </>
+                                    ) : (
+                                        'Add Feature'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Feature Modal */}
+            {editingFeatureConfig && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isEditSubmitting && setEditingFeatureConfig(null)} />
+                    <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up">
+                        <div className="flex items-center justify-between p-5 border-b border-white/5">
+                            <h3 className="text-lg font-bold text-white">Edit Feature Data</h3>
+                            <button
+                                onClick={() => setEditingFeatureConfig(null)}
+                                disabled={isEditSubmitting}
+                                className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleEditFeatureSubmit} className="p-5 space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                    Feature Display Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={editFeatureLabel}
+                                    onChange={(e) => setEditFeatureLabel(e.target.value)}
+                                    placeholder="e.g. Chatbot Alpha"
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all"
+                                    autoFocus
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                    URL ID / Slug
+                                </label>
+                                <input
+                                    type="text"
+                                    value={editFeatureId}
+                                    onChange={(e) => setEditFeatureId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                                    placeholder="e.g. chatbot-alpha"
+                                    className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all font-mono"
+                                    required
+                                />
+                            </div>
+
+                            <div className="pt-2 flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingFeatureConfig(null)}
+                                    disabled={isEditSubmitting}
+                                    className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-gray-300 transition-all disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isEditSubmitting || !editFeatureId || !editFeatureLabel}
+                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-semibold text-white shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                >
+                                    {isEditSubmitting ? (
+                                        <>
+                                            <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        'Save Changes'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

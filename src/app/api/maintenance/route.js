@@ -47,3 +47,43 @@ export async function GET() {
         return NextResponse.json({ error: 'Failed to fetch maintenance configs' }, { status: 500 });
     }
 }
+
+// POST - Create a new maintenance config (ULTRA only)
+export async function POST(request) {
+    try {
+        const user = await getUser(request);
+        if (!user || user.role !== 'ULTRA') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const body = await request.json();
+        const { feature, label } = body;
+
+        if (!feature || !label) {
+            return NextResponse.json({ error: 'Feature ID and Label are required' }, { status: 400 });
+        }
+
+        // Auto-generate template message
+        const message = `The ${label} section is currently under maintenance. Please check back soon.`;
+
+        const newConfig = await prisma.maintenanceConfig.create({
+            data: {
+                feature: feature.toLowerCase().replace(/\s+/g, '-'), // Ensure it's a valid slug
+                label,
+                enabled: false,
+                message,
+            },
+        });
+
+        return NextResponse.json(newConfig, { status: 201 });
+    } catch (error) {
+        console.error('Failed to create maintenance config:', error);
+
+        // Handle unique constraint violation
+        if (error.code === 'P2002') {
+            return NextResponse.json({ error: 'A feature with this ID already exists' }, { status: 409 });
+        }
+
+        return NextResponse.json({ error: 'Failed to create maintenance config' }, { status: 500 });
+    }
+}

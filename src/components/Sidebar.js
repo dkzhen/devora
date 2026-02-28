@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import SidebarSkeleton from './SidebarSkeleton';
 
 const ROLE_COLORS = {
@@ -78,7 +79,24 @@ export default function Sidebar() {
                 {
                     name: 'Chatbot',
                     href: '/chatbot',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+                    icon: (
+                        <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor">
+                                <path d="M11 8h2c2.828 0 4.243 0 5.121.879C19 9.757 19 11.172 19 14s0 4.243-.879 5.121C17.243 20 15.828 20 13 20h-1s-.5 2-4 2c0 0 1-1.009 1-2.017c-1.553-.047-2.48-.22-3.121-.862C5 18.243 5 16.828 5 14s0-4.243.879-5.121C6.757 8 8.172 8 11 8m8 3.5h.5c.935 0 1.402 0 1.75.201a1.5 1.5 0 0 1 .549.549c.201.348.201.815.201 1.75s0 1.402-.201 1.75a1.5 1.5 0 0 1-.549.549c-.348.201-.815.201-1.75.201H19m-14-5h-.5c-.935 0-1.402 0-1.75.201a1.5 1.5 0 0 0-.549.549C2 12.598 2 13.065 2 14s0 1.402.201 1.75a1.5 1.5 0 0 0 .549.549c.348.201.815.201 1.75.201H5m8.5-13a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M12 5v3m-3 4v1m6-1v1" />
+                                <path d="M10 16.5s.667.5 2 .5s2-.5 2-.5" />
+                            </g>
+                        </svg>
+                    )
+                },
+                {
+                    name: 'App Library',
+                    href: '/app-library',
+                    icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14"><path fill="currentColor" fillRule="evenodd" d="M.352 1.305c0-.025.001-.05.003-.073l5.63 5.629l-5.63 5.63a.917.917 0 0 1-.003-.073zM1.61 13.357c.1-.019.2-.053.298-.102l6.943-3.527l-1.806-1.806zm6.496-6.496l2.152 2.152l2.586-1.314c.719-.365.719-1.31 0-1.675L10.257 4.71zm.745-2.866L1.908.468A1.122 1.122 0 0 0 1.61.366L7.045 5.8z" clipRule="evenodd" /></svg>
+                },
+                {
+                    name: 'HTTP Client',
+                    href: '/http-client',
+                    icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 306" fill="currentColor"><path d="M256 66.28C255.732 29.408 224.974 0 188.102 0H67.96C31.366 0 .719 28.947.01 65.553a66.896 66.896 0 0 0 66.85 68.097h53.676a3.894 3.894 0 0 1 1.552 7.412L39.803 177.13C15.463 187.92-.163 212.112.011 238.736c.279 36.878 31.017 66.312 67.902 66.312H96.07c37.144 0 68.07-29.79 68.012-66.935c-.076-27.213-16.624-51.67-41.856-61.86a3.855 3.855 0 0 1-.065-7.1l94.11-41.266c24.316-10.808 39.916-34.998 39.73-61.607Z" /></svg>
                 },
             ]
         },
@@ -93,12 +111,12 @@ export default function Sidebar() {
                 {
                     name: 'Mail Control',
                     href: '/mail-control',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14"><path fill="currentColor" fillRule="evenodd" d="m1.25 6.164l2.393 1.533v3.687H1.535a.284.284 0 0 1-.285-.282zm2.518-4.409C2.143.715 0 1.875 0 3.808v7.294c0 .849.69 1.533 1.535 1.533h2.733c.345 0 .625-.28.625-.625V8.498l1.77 1.134a.63.63 0 0 0 .674 0l1.77-1.134v3.511c0 .346.28.625.625.625h2.733c.846 0 1.536-.684 1.536-1.532V3.808c0-1.433-1.178-2.441-2.45-2.443a2.44 2.44 0 0 0-1.32.39l-.836.536l-.012.009L7 3.826L4.605 2.29zm5.34 2.205l-1.77 1.134a.63.63 0 0 1-.675 0L4.893 3.96v3.053L7 8.363l2.107-1.35zm1.25 3.737l2.393-1.533v4.938a.284.284 0 0 1-.286.283h-2.108z" clipRule="evenodd" /></svg>
                 },
                 {
                     name: 'Drive Center',
                     href: '/drive-center',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+                    icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 464 408"><path fill="currentColor" d="m140 35l73 128L73 408L0 280zm43 245h280l-73 128H110zm268-21H305L158 3h146z" /></svg>
                 },
 
             ]
@@ -136,11 +154,11 @@ export default function Sidebar() {
     const SidebarContent = () => (
         <aside className="h-full w-64 bg-[#0a0f1e] border-r border-white/5 flex flex-col">
             {/* Logo */}
-            <div className="px-5 py-5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-blue-500/30">
-                    D
+            <div className="px-5 py-5  flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative">
+                    <Image src="/icons/devora-icon.png" alt="Devora" fill className="object-cover" />
                 </div>
-                <span className="text-lg font-black text-white tracking-tight">Devora</span>
+                <span className="text-xl font-passero text-white tracking-wide mt-1">Devora</span>
             </div>
 
             {/* Search */}
@@ -187,8 +205,8 @@ export default function Sidebar() {
                                 ) : (
                                     <div className="space-y-0.5">
                                         {results.map(item => {
-                                            const isActive = pathname === item.href;
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
                                             if (isLocked) return (
                                                 <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
@@ -216,8 +234,8 @@ export default function Sidebar() {
                                     <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 px-2">{cat.label}</div>
                                     <div className="space-y-0.5">
                                         {cat.items.map(item => {
-                                            const isActive = pathname === item.href;
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
                                             if (isLocked) return (
                                                 <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
@@ -312,7 +330,8 @@ export default function Sidebar() {
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                             )}
                         </button>
-                        <span className="text-sm font-black text-white tracking-tight">Devora</span>
+
+                        <span className="text-xl font-passero text-white tracking-wide mt-1">Devora</span>
                     </div>
 
                     {/* Right — user avatar */}
