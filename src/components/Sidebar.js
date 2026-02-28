@@ -156,7 +156,7 @@ export default function Sidebar() {
             {/* Logo */}
             <div className="px-5 py-5  flex items-center gap-3">
                 <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative">
-                    <Image src="/icons/devora-icon.png" alt="Devora" fill className="object-cover" />
+                    <img src="/icons/devora-icon.png" alt="Devora" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-xl font-passero text-white tracking-wide mt-1">Devora</span>
             </div>
