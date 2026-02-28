@@ -128,13 +128,13 @@ function KVTable({ rows, onChange, placeholder = ['Key', 'Value'] }) {
                         value={row.key}
                         onChange={e => update(row.id, 'key', e.target.value)}
                         placeholder={placeholder[0]}
-                        className="flex-1 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono"
+                        className="flex-1 min-w-0 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono"
                     />
                     <input
                         value={row.val}
                         onChange={e => update(row.id, 'val', e.target.value)}
                         placeholder={placeholder[1]}
-                        className="flex-1 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono"
+                        className="flex-1 min-w-0 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono"
                     />
                     <button
                         onClick={() => remove(row.id)}
@@ -360,7 +360,12 @@ export default function HttpClientPage() {
     const [responseTab, setResponseTab] = useState('body');
     const [showEnvModal, setShowEnvModal] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    useEffect(() => {
+        // Default to OPEN on desktop, CLOSED on mobile
+        if (window.innerWidth >= 768) setSidebarOpen(true);
+    }, []);
     const [expandedFolders, setExpandedFolders] = useState({});
     const [renamingFolder, setRenamingFolder] = useState(null);
     const [renamingRequest, setRenamingRequest] = useState(null);
@@ -564,7 +569,6 @@ export default function HttpClientPage() {
             <div className="flex border-b border-white/5">
                 <button onClick={() => setSidebarTab('collections')} className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${sidebarTab === 'collections' ? 'text-blue-300 border-b-2 border-blue-500 bg-blue-500/5' : 'text-gray-600 hover:text-gray-400'}`}>Collections</button>
                 <button onClick={() => setSidebarTab('history')} className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${sidebarTab === 'history' ? 'text-blue-300 border-b-2 border-blue-500 bg-blue-500/5' : 'text-gray-600 hover:text-gray-400'}`}>History</button>
-                <button onClick={() => setSidebarTab('endpoints')} className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${sidebarTab === 'endpoints' ? 'text-blue-300 border-b-2 border-blue-500 bg-blue-500/5' : 'text-gray-600 hover:text-gray-400'}`}>Endpoints</button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
@@ -647,46 +651,7 @@ export default function HttpClientPage() {
                     </>
                 )}
 
-                {sidebarTab === 'endpoints' && (
-                    <div className="space-y-4 pt-1 pb-4">
-                        {apiCategories.map((cat, idx) => (
-                            <div key={idx}>
-                                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-2 mb-1.5 flex items-center gap-1.5">
-                                    <span className="text-blue-400/70">{cat.icon}</span>
-                                    {cat.category}
-                                </div>
-                                <div className="space-y-0.5">
-                                    {cat.endpoints.map((ep, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => {
-                                                const req = newRequest();
-                                                req.method = ep.method;
-                                                // Removed hardcoded localhost:3000 to use relative path and avoid NetworkError
-                                                req.url = ep.path;
-                                                req.name = ep.desc; // default as description
-                                                if (ep.sampleBody) {
-                                                    req.bodyType = 'json';
-                                                    req.body = ep.sampleBody;
-                                                }
-                                                // Handle sample Headers (like content-type json automatically)
-                                                if (ep.method !== 'GET' && ep.method !== 'DELETE') {
-                                                    req.headers = [{ id: uid(), key: 'Content-Type', val: 'application/json', enabled: true }];
-                                                }
-                                                setActiveRequest(req);
-                                            }}
-                                            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/4 transition-colors text-left group"
-                                            title={ep.desc}
-                                        >
-                                            <span className={`text-[9px] font-bold shrink-0 ${METHOD_COLORS[ep.method] || 'text-gray-400'}`}>{ep.method.slice(0, 4)}</span>
-                                            <span className="flex-1 text-[11px] text-gray-400 truncate font-mono">{ep.path}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+
             </div>
         </div>
     );

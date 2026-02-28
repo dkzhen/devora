@@ -4,35 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; import { Plug, Wrench, CheckCircle2, Activity, Plus, X, Edit2, Trash2 } from 'lucide-react';
 
 const FEATURE_ICONS = {
-    'airdrops': (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21v-6m0 0l-3 3m3-3l3 3" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5.5 11C5.5 7.41 8.41 4.5 12 4.5S18.5 7.41 18.5 11" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 11a9 9 0 0118 0" />
-            <line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="5.5" y2="11" />
-            <line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="18.5" y2="11" />
-        </svg>
-    ),
-    'gmail-center': (
-        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" />
-        </svg>
-    ),
-    'mail-control': (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-    ),
-    'drive-center': (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-        </svg>
-    ),
-    'chatbot': (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-        </svg>
-    )
+    'airdrops': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Airdrops" />,
+    'gmail-center': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Gmail" />,
+    'mail-control': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Mail" />,
+    'drive-center': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Drive" />,
+    'chatbot': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Chatbot" />,
+    'app-library': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="App Library" />,
+    'http-client': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="HTTP Client" />,
 };
 
 const FEATURE_COLORS = {
@@ -412,9 +390,9 @@ export default function MaintenanceControlPage() {
                                         {/* Header row */}
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-11 h-11 rounded-xl ${colors.bg} border ${colors.border} flex items-center justify-center ${colors.icon}`}>
+                                                <div className={`w-11 h-11 rounded-xl ${colors.bg} border ${colors.border} flex items-center justify-center`}>
                                                     {FEATURE_ICONS[config.feature] || (
-                                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" /></svg>
+                                                        <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt={config.label} />
                                                     )}
                                                 </div>
                                                 <div>

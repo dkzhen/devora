@@ -76,16 +76,16 @@ function MaintenanceContent() {
                     </p>
 
                     {/* Info blocks */}
-                    <div className="grid grid-cols-3 gap-3 mb-8">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
                         {[
-                            { icon: <Wrench className="w-6 h-6 mx-auto text-amber-400/80" />, label: 'Maintenance', sub: 'In Progress' },
-                            { icon: <Zap className="w-6 h-6 mx-auto text-blue-400/80" />, label: 'Service', sub: 'Upgrading' },
-                            { icon: <Rocket className="w-6 h-6 mx-auto text-purple-400/80" />, label: 'ETA', sub: 'Coming Soon' },
+                            { icon: <Wrench className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-amber-400/80" />, label: 'Status', sub: 'In Progress' },
+                            { icon: <Zap className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-blue-400/80" />, label: 'Service', sub: 'Upgrading' },
+                            { icon: <Rocket className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-purple-400/80" />, label: 'ETA', sub: 'Coming Soon' },
                         ].map((item, i) => (
-                            <div key={i} className="bg-white/3 border border-white/8 rounded-2xl p-3 text-center">
-                                <div className="text-2xl mb-1">{item.icon}</div>
-                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.label}</div>
-                                <div className="text-xs font-semibold text-white mt-0.5">{item.sub}</div>
+                            <div key={i} className="bg-white/3 border border-white/8 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center overflow-hidden">
+                                <div className="flex justify-center mb-1">{item.icon}</div>
+                                <div className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider sm:tracking-widest truncate">{item.label}</div>
+                                <div className="text-[10px] sm:text-xs font-semibold text-white mt-0.5 truncate">{item.sub}</div>
                             </div>
                         ))}
                     </div>

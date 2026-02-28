@@ -28,9 +28,6 @@ export async function GET() {
             color: '#34A853' // Green
         }));
 
-        // Mock time data for "Traffic" line chart (since we don't track historical message arrival time in a way that maps to API requests easily without complex query)
-        // We will just show a flat or simulated line for now, or maybe "Messages Received Over Time" if we use receivedAt
-
         // Let's try to get messages received in last 24h for line chart
         const oneDayAgo = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
         const recentMessages = await prisma.message.findMany({
@@ -63,6 +60,115 @@ export async function GET() {
             requests: hourlyCounts[time]
         }));
 
+        // --- NEW REAL DB DATA FOR DASHBOARD REFINEMENTS --- //
+
+        const COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EC4899'];
+
+        // Fetch Top 5 Airdrops by Task Count
+        const topAirdropsRaw = await prisma.airdrop.findMany({
+            include: {
+                _count: { select: { tasks: true } }
+            },
+            orderBy: { tasks: { _count: 'desc' } },
+            take: 5
+        });
+
+        const topAirdrops = topAirdropsRaw.map((a, idx) => ({
+            name: a.name,
+            tasks: a._count.tasks,
+            color: COLORS[idx % COLORS.length]
+        }));
+
+        // Fetch Total AI Token Usage across all GroqCredential records
+        const groqStats = await prisma.groqCredential.aggregate({
+            _sum: {
+                promptTokens: true,
+                completionTokens: true
+            }
+        });
+        const promptTokens = groqStats._sum.promptTokens || 0;
+        const completionTokens = groqStats._sum.completionTokens || 0;
+
+        const tokenUsage = [
+            { name: 'Prompt', value: promptTokens, color: '#3B82F6' },
+            { name: 'Completion', value: completionTokens, color: '#8B5CF6' }
+        ];
+
+        // Fetch Total Gmail Messages and Threads
+        const accountStats = await prisma.account.aggregate({
+            _sum: {
+                totalMessages: true,
+                totalThreads: true
+            }
+        });
+
+        const gmailActivity = [
+            { name: 'Messages', value: accountStats._sum.totalMessages || 0, color: '#10B981' }, // Green
+            { name: 'Threads', value: accountStats._sum.totalThreads || 0, color: '#3B82F6' } // Blue
+        ];
+
+        // Fetch Drive Insights Data
+        const driveFiles = await prisma.driveFile.findMany({
+            select: { size: true, mimeType: true, accountId: true }
+        });
+
+        let totalStorageBytes = 0;
+        const driveAccountIds = new Set();
+        const fileTypesMap = { Images: 0, Documents: 0, Videos: 0, Folders: 0, Other: 0 };
+        const filesPerAccountMap = {};
+
+        driveFiles.forEach(file => {
+            driveAccountIds.add(file.accountId);
+            if (file.size) totalStorageBytes += parseInt(file.size, 10) || 0;
+
+            const mime = file.mimeType.toLowerCase();
+            if (mime.includes('image/')) fileTypesMap.Images++;
+            else if (mime.includes('video/')) fileTypesMap.Videos++;
+            else if (mime.includes('pdf') || mime.includes('document') || mime.includes('text/') || mime.includes('sheet') || mime.includes('presentation')) fileTypesMap.Documents++;
+            else if (mime.includes('folder')) fileTypesMap.Folders++;
+            else fileTypesMap.Other++;
+
+            if (!filesPerAccountMap[file.accountId]) filesPerAccountMap[file.accountId] = 0;
+            filesPerAccountMap[file.accountId]++;
+        });
+
+        const formatBytes = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        };
+
+        const maskName = (name) => {
+            if (!name) return 'Unknown';
+            if (name.length <= 3) return name;
+            return name[0] + '...' + name[name.length - 1];
+        };
+
+        const driveInsights = {
+            summary: {
+                totalStorage: formatBytes(totalStorageBytes),
+                totalFiles: driveFiles.length,
+                connectedAccounts: driveAccountIds.size
+            },
+            fileTypes: [
+                { name: 'Images', value: fileTypesMap.Images, color: '#F59E0B' },
+                { name: 'Documents', value: fileTypesMap.Documents, color: '#3B82F6' },
+                { name: 'Videos', value: fileTypesMap.Videos, color: '#EC4899' },
+                { name: 'Folders', value: fileTypesMap.Folders, color: '#10B981' },
+                { name: 'Other', value: fileTypesMap.Other, color: '#6B7280' }
+            ].filter(t => t.value > 0),
+            filesPerAccount: Object.entries(filesPerAccountMap).map(([account, count], index) => {
+                const username = account.split('@')[0];
+                return {
+                    name: maskName(username),
+                    value: count,
+                    color: ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EC4899'][index % 5]
+                };
+            }).sort((a, b) => b.value - a.value).slice(0, 5)
+        };
+
         return NextResponse.json({
             totalRequests: totalRequestsData, // Repurposed as "Messages Over Time"
             requestsByApi: formattedMessagesByAccount, // Repurposed as "Messages by Account"
@@ -74,7 +180,11 @@ export async function GET() {
                 totalAccounts,
                 totalMessages
             },
-            apiStats: endpointStats // True API Endpoint hits
+            apiStats: endpointStats, // True API Endpoint hits
+            topAirdrops,
+            tokenUsage,
+            gmailActivity,
+            driveInsights
         });
     } catch (error) {
         console.error('Error fetching internal stats:', error);

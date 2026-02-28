@@ -44,26 +44,6 @@ export default function NotFound() {
                         The page you&apos;re looking for doesn&apos;t exist, was moved, or was deleted. Double-check the URL or navigate back to safety.
                     </p>
 
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
-
-                    {/* Quick links */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                        {[
-                            { label: 'Dashboard', href: '/', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg> },
-                            { label: 'Airdrops', href: '/airdrops', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21v-6m0 0l-3 3m3-3l3 3" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5.5 11C5.5 7.41 8.41 4.5 12 4.5S18.5 7.41 18.5 11" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 11a9 9 0 0118 0" /></svg> },
-                            { label: 'Gmail Center', href: '/gmail-center', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
-                            { label: 'Mail Control', href: '/mail-control', icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
-                        ].map((link, i) => (
-                            <a
-                                key={i}
-                                href={link.href}
-                                className="flex items-center gap-2 px-4 py-2.5 bg-white/4 hover:bg-white/8 border border-white/8 hover:border-blue-500/30 rounded-xl text-sm text-gray-300 hover:text-white font-medium transition-all group"
-                            >
-                                <span className="text-gray-500 group-hover:text-blue-400 transition-colors">{link.icon}</span>
-                                {link.label}
-                            </a>
-                        ))}
-                    </div>
 
                     {/* Main CTA */}
                     <a

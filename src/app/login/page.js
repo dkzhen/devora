@@ -61,10 +61,10 @@ export default function LoginPage() {
                     {/* Logo + heading */}
                     <div>
                         <div className="flex items-center gap-3 mb-8">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/30">
-                                M
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative">
+                                <img src="/icons/devora-icon.png" alt="Devora" className="w-full h-full object-cover" />
                             </div>
-                            <span className="text-lg font-black text-white tracking-tight">Devora</span>
+                            <span className="text-xl font-passero text-white tracking-wide mt-1">Devora</span>
                         </div>
                         <h1 className="text-3xl font-black text-white tracking-tight mb-2">
                             Welcome back
