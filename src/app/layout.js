@@ -1,18 +1,80 @@
 import Sidebar from "@/components/Sidebar";
-import localFont from 'next/font/local';
+import localFont from "next/font/local";
 import "./globals.css";
+import { Providers } from "./providers";
 
 const passeroFont = localFont({
-    src: '../../public/fonts/PasseroOne-Regular.ttf',
-    variable: '--font-passero',
+    src: "../../public/fonts/PasseroOne-Regular.ttf",
+    variable: "--font-passero",
 });
 
 export const metadata = {
-    title: "Devora - Track Work",
-    description: "Track your work efficiently",
-};
+    metadataBase: new URL("https://devora.dkzhen.org"), // ganti domain kamu
 
-import { Providers } from "./providers";
+    title: {
+        default: "Devora — One Platform. Endless Possibilities.",
+        template: "%s | Devora",
+    },
+
+    description:
+        "Devora is a unified platform to organize, automate, and manage tools and connected services in one place.",
+
+    keywords: [
+        "devora",
+        "automation platform",
+        "productivity tools",
+        "workflow automation",
+        "api client",
+        "chatbot tools",
+        "developer tools",
+        "digital workspace",
+        "all in one platform",
+        "automation dashboard",
+        "bot tools",
+        "saas platform",
+    ],
+
+    authors: [{ name: "Devora" }],
+    creator: "Devora",
+    publisher: "Devora",
+
+    openGraph: {
+        title: "Devora — One Platform. Endless Possibilities.",
+        description:
+            "Manage tools, automation, and integrations in one powerful platform.",
+        url: "https://devora.dkzhen.org",
+        siteName: "Devora",
+        images: [
+            {
+                url: "/og-image.png",
+                width: 1200,
+                height: 630,
+                alt: "Devora Platform",
+            },
+        ],
+        locale: "en_US",
+        type: "website",
+    },
+
+    twitter: {
+        card: "summary_large_image",
+        title: "Devora — One Platform. Endless Possibilities.",
+        description:
+            "Manage tools, automation, and integrations in one powerful platform.",
+        images: ["/og-image.png"],
+    },
+
+    robots: {
+        index: true,
+        follow: true,
+    },
+
+    icons: {
+        icon: "/icons/devora-icon.png",
+        shortcut: "/icons/devora-icon.png",
+        apple: "/icons/devora-icon.png",
+    },
+};
 
 export default function RootLayout({ children }) {
     return (

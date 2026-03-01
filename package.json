@@ -1,8 +1,8 @@
 {
-  "name": "google-api",
+  "name": "devora",
   "version": "1.0.0",
-  "description": "Modern dashboard management akun Gmail berbasis OAuth untuk menyimpan refresh token dan melakukan maintenance API read-only agar akun tetap aktif.",
-  "main": "server.js",
+  "description": "Devora is an all-in-one platform to manage tools, automation, and connected services in one place.",
+
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,9 +15,30 @@
   "prisma": {
     "seed": "node prisma/seed.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "devora",
+    "automation",
+    "productivity",
+    "workflow",
+    "tools platform",
+    "dashboard",
+    "api client",
+    "http client",
+    "chatbot",
+    "integration",
+    "gmail tools",
+    "google drive tools",
+    "developer tools",
+    "workspace",
+    "automation platform",
+    "all-in-one platform",
+    "digital workspace",
+    "bot tools",
+    "saas",
+    "management tools"
+  ],
+  "author": "dkzhen",
+  "license": "MIT",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "googleapis": "^171.4.0",
