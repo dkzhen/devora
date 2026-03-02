@@ -74,8 +74,20 @@ model User {
   airdropTasks       UserAirdropTask[]
   groqCredential     GroqCredential?
   chatSessions       ChatSession[]
+  telegramUpdates    TelegramUpdate[]
 
   @@map("users")
+}
+
+model TelegramUpdate {
+  id        BigInt   @id // Telegram update_id
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Json     // Full JSON payload
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("telegram_updates")
 }
 
 enum Role {
@@ -232,4 +244,35 @@ model ChatMessage {
   createdAt DateTime    @default(now()) @map("created_at")
 
   @@map("chat_messages")
+}
+
+model App {
+  id            String       @id @default(uuid())
+  name          String
+  developer     String?      // Developer or company name
+  category      String
+  description   String       @db.Text
+  iconStatic    String?      @map("icon_static") // Direct link or empty string if using Telegram
+  downloadCount Int          @default(0) @map("download_count")
+  viewCount     Int          @default(0) @map("view_count")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  versions      AppVersion[]
+
+  @@map("apps")
+}
+
+model AppVersion {
+  id             String   @id @default(uuid())
+  appId          String   @map("app_id")
+  app            App      @relation(fields: [appId], references: [id], onDelete: Cascade)
+  version        String
+  androidVersion String?  @map("android_version") // e.g. "5.0+"
+  features       String?  @db.Text // Can be stored as serialized JSON or multiline string
+  apkUrl         String   @map("apk_url") // Telegram file URL or direct link
+  imageUrl       String?  @map("image_url") // Telegram file URL or direct link
+  releaseDate    DateTime @default(now()) @map("release_date")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("app_versions")
 }

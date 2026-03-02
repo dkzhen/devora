@@ -89,7 +89,7 @@ export default function ChatbotPage() {
                     const mData = await mRes.json();
                     const cfg = mData.find(c => c.feature === 'chatbot');
                     if (cfg && cfg.enabled && userRole !== 'ULTRA') {
-                        window.location.href = `/maintenance?feature=chatbot&message=${encodeURIComponent(cfg.message || '')}`;
+                        router.replace(`/maintenance?feature=chatbot&message=${encodeURIComponent(cfg.message || '')}`);
                         return;
                     }
                 }
@@ -431,7 +431,7 @@ export default function ChatbotPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmittingKey || !apiKeyInput.trim()}
-                                className="w-full py-4 bg-linear-to-r from-emerald-600 via-teal-600 to-emerald-600 bg-[length:200%_auto] hover:bg-right text-white rounded-2xl text-sm font-black uppercase tracking-[0.15em] transition-all duration-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-2xl shadow-emerald-500/20 flex items-center justify-center gap-3 relative overflow-hidden"
+                                className="w-full py-4 bg-linear-to-r from-emerald-600 via-teal-600 to-emerald-600 bg-size-[200%_auto] hover:bg-right text-white rounded-2xl text-sm font-black uppercase tracking-[0.15em] transition-all duration-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-2xl shadow-emerald-500/20 flex items-center justify-center gap-3 relative overflow-hidden"
                             >
                                 {isSubmittingKey ? (
                                     <>

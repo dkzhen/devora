@@ -23,6 +23,7 @@ export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [user, setUser] = useState(null);
+    const [maintenanceConfigs, setMaintenanceConfigs] = useState([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -48,7 +49,18 @@ export default function Sidebar() {
                 setUser(null);
             }
         };
+        const fetchMaintenance = async () => {
+            try {
+                const res = await fetch('/api/maintenance', { cache: 'no-store' });
+                if (res.ok) {
+                    const data = await res.json();
+                    setMaintenanceConfigs(data);
+                }
+            } catch { }
+        };
+
         fetchUser();
+        fetchMaintenance();
     }, [router]);
 
     const handleLogout = async () => {
@@ -118,7 +130,11 @@ export default function Sidebar() {
                     href: '/drive-center',
                     icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 464 408"><path fill="currentColor" d="m140 35l73 128L73 408L0 280zm43 245h280l-73 128H110zm268-21H305L158 3h146z" /></svg>
                 },
-
+                {
+                    name: 'Telegram Console',
+                    href: '/telegram-console',
+                    icon: <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fillRule="evenodd" clipRule="evenodd" d="M23.1117 4.49449C23.4296 2.94472 21.9074 1.65683 20.4317 2.227L2.3425 9.21601C0.694517 9.85273 0.621087 12.1572 2.22518 12.8975L6.1645 14.7157L8.03849 21.2746C8.13583 21.6153 8.40618 21.8791 8.74917 21.968C9.09216 22.0568 9.45658 21.9576 9.70712 21.707L12.5938 18.8203L16.6375 21.8531C17.8113 22.7334 19.5019 22.0922 19.7967 20.6549L23.1117 4.49449ZM3.0633 11.0816L21.1525 4.0926L17.8375 20.2531L13.1 16.6999C12.7019 16.4013 12.1448 16.4409 11.7929 16.7928L10.5565 18.0292L10.928 15.9861L18.2071 8.70703C18.5614 8.35278 18.5988 7.79106 18.2947 7.39293C17.9906 6.99479 17.4389 6.88312 17.0039 7.13168L6.95124 12.876L3.0633 11.0816ZM8.17695 14.4791L8.78333 16.6015L9.01614 15.321C9.05253 15.1209 9.14908 14.9366 9.29291 14.7928L11.5128 12.573L8.17695 14.4791Z" fill="currentColor"></path> </g></svg>
+                },
             ]
         },
         {
@@ -132,17 +148,17 @@ export default function Sidebar() {
                 {
                     name: 'Endpoints',
                     href: '/endpoints',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                    icon: <svg className="w-4.5 h-4.5" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" fillRule="evenodd" d="M.5 2.75a2.25 2.25 0 114.28.97l1.345 1.344.284-.284a2.25 2.25 0 013.182 0l.284.284 1.344-1.344a2.25 2.25 0 111.06 1.06l-1.343 1.345.284.284a2.25 2.25 0 010 3.182l-.284-.284 1.344 1.344a2.25 2.25 0 11-1.06 1.06l-1.345-1.343-.284.284a2.25 2.25 0 01-3.182 0l-.284-.284-1.344 1.344a2.25 2.25 0 11-1.06-1.06l1.343-1.345-.284-.284a2.25 2.25 0 010-3.182l.284-.284L3.72 4.781A2.25 2.25 0 01.5 2.75zM2.75 2a.75.75 0 100 1.5.75.75 0 000-1.5zm0 10.5a.75.75 0 100 1.5.75.75 0 000-1.5zm9.75.75a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM13.25 2a.75.75 0 100 1.5.75.75 0 000-1.5zM7.47 5.841a.75.75 0 011.06 0L10.16 7.47a.75.75 0 010 1.06L8.53 10.16a.75.75 0 01-1.06 0L5.84 8.53a.75.75 0 010-1.06L7.47 5.84z" clipRule="evenodd"></path></svg>
                 },
                 {
                     name: 'Maintenance',
                     href: '/maintenance-control',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    icon: <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 427.323 427.323"><g><path d="M373.679,263.601c-55.111-51.291-110.833-105.896-169.762-152.797c13.082-57.855-31.26-127.056-99.707-107.389 c-6.248,1.796-9.031,6.674-9.226,11.737c-4.207,4.381-6.28,10.681-2.629,16.393c10.553,16.512,30.867,30.324,48.187,43.168 c-3.764,3.399-7.563,6.757-11.313,10.166c-3.824,3.475-7.651,6.948-11.472,10.425l-5.736,5.212 c-3.544,6.439-5.701,7.459-6.471,3.06c-3.453-0.999-15.049-13.271-18.767-16.083c-9.355-7.083-18.722-14.007-28.782-20.06 c-5.179-3.116-10.053-0.204-11.867,4.135c-0.437,0.164-0.991-0.001-1.368,0.275c-27.247,19.989-17.748,73.064,8.066,90.04 c25.301,16.636,66.447,19.65,97.889,8.753c49.894,62.49,108.493,132.423,171.243,181.466c21.402,16.729,56.583,25.425,71.46,2.155 C424.664,326.104,399.42,287.558,373.679,263.601z M378.355,340.455c-6.482,4.772-14.387,5.319-23.046,2.992 c-0.516-1.167-1.349-2.206-2.774-2.742c-10.28-3.879-18.443-22.19-11.628-31.533c6.937-9.519,18.232-6.784,28.09-6.061 c0.887,0.065,1.657-0.354,2.462-0.634C377.606,314.727,380.647,327.457,378.355,340.455z"></path> <path d="M194.213,264.78c2.704-3.6,1.447-9.787-1.641-12.732c-5.827-5.566-11.56-11.116-17.974-16 c-3.641-2.778-7.39-0.988-9.591,2.111c-1.54,0.105-3.037,0.605-4.214,1.555c-12.836,10.371-26.433,23.792-36.952,37.238 c-12.483-4.069-28.285-7.8-29.461,4.113c-29.584,20.679-54.143,48.868-80.85,72.997c-5.43,4.908-3.405,13.507,2.205,17.121 c20.776,13.372,37.269,29.351,50.741,50.08c4.402,6.773,13.527,8.238,19.509,2.512c31.367-30.032,79.601-65.696,66.102-112.561 c0.443-0.311,0.906-0.488,1.333-0.885C168.472,296.382,181.899,281.185,194.213,264.78z"></path> <path d="M412.29,45.041c-13.418-26.02-45.3-21.835-65.29-6.552c-29.043,22.208-63.145,51.65-84.972,80.842 c-1.993,2.667-1.422,5.838,0.138,8.485c-1.217,2.5-1.551,5.418,0.824,8.112c7.808,8.851,16.691,16.71,25.119,24.958 c7.446,7.286,14.103,15.172,25.165,14.478c2.154-0.135,3.871-0.934,5.352-1.981c0.155-0.011,0.287,0.055,0.438,0.038 c32.215-3.517,47.551-37.674,68.79-58.256C406.369,97.221,426.243,72.091,412.29,45.041z"></path> </g></svg>
                 },
                 {
                     name: 'Config',
                     href: '/config',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    icon: <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 48 48"><g> <g> <g> <path d="M24,48v-8c-8.836,0-16-7.164-16-16c0-8.837,7.164-16,16-16V0h-5.021v4.661 c-2.212,0.573-4.284,1.494-6.129,2.735L9.857,4.402l-5.656,5.657l3.042,3.042c-1.163,1.784-2.036,3.766-2.583,5.883H0v10.032h4.66 c0.56,2.164,1.458,4.192,2.66,6.008l-3.118,3.119l5.656,5.655l3.119-3.118c1.819,1.205,3.853,2.104,6.023,2.664V48H24z" /> <path d="M24,29c-2.762,0-5-2.238-5-5c0-2.761,2.238-5,5-5v-4c-4.971,0-9,4.029-9,9c0,4.971,4.029,9,9,9V29z" /> <path d="M36.218,48V37.129C43.188,33.699,48,26.547,48,18.253C48,10.436,43.729,3.629,37.402,0v17.741 l-10.447,9.161V48H36.218z" /> </g> </g> </g></svg>
                 },
             ]
         },
@@ -206,7 +222,8 @@ export default function Sidebar() {
                                     <div className="space-y-0.5">
                                         {results.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
                                             if (isLocked) return (
                                                 <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
@@ -217,7 +234,11 @@ export default function Sidebar() {
                                                 <Link key={item.href} href={item.href} onClick={() => { setIsOpen(false); setSearch(''); }}
                                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
                                                     {item.icon}{item.name}
-                                                    {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />}
+                                                    {isMaintenance ? (
+                                                        <svg className="ml-auto w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 6.25C12.4142 6.25 12.75 6.58579 12.75 7V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V7C11.25 6.58579 11.5858 6.25 12 6.25Z" fill="#f5c211"></path> <path d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z" fill="#f5c211"></path> <path fillRule="evenodd" clipRule="evenodd" d="M12 1.25C11.2954 1.25 10.6519 1.44359 9.94858 1.77037C9.26808 2.08656 8.48039 2.55304 7.49457 3.13685L6.74148 3.58283C5.75533 4.16682 4.96771 4.63324 4.36076 5.07944C3.73315 5.54083 3.25177 6.01311 2.90334 6.63212C2.55548 7.25014 2.39841 7.91095 2.32306 8.69506C2.24999 9.45539 2.24999 10.3865 2.25 11.556V12.444C2.24999 13.6135 2.24999 14.5446 2.32306 15.3049C2.39841 16.0891 2.55548 16.7499 2.90334 17.3679C3.25177 17.9869 3.73315 18.4592 4.36076 18.9206C4.96771 19.3668 5.75533 19.8332 6.74148 20.4172L7.4946 20.8632C8.48038 21.447 9.2681 21.9135 9.94858 22.2296C10.6519 22.5564 11.2954 22.75 12 22.75C12.7046 22.75 13.3481 22.5564 14.0514 22.2296C14.7319 21.9134 15.5196 21.447 16.5054 20.8632L17.2585 20.4172C18.2446 19.8332 19.0323 19.3668 19.6392 18.9206C20.2669 18.4592 20.7482 17.9869 21.0967 17.3679C21.4445 16.7499 21.6016 16.0891 21.6769 15.3049C21.75 14.5446 21.75 13.6135 21.75 12.4441V11.556C21.75 10.3866 21.75 9.45538 21.6769 8.69506C21.6016 7.91095 21.4445 7.25014 21.0967 6.63212C20.7482 6.01311 20.2669 5.54083 19.6392 5.07944C19.0323 4.63324 18.2447 4.16683 17.2585 3.58285L16.5054 3.13685C15.5196 2.55303 14.7319 2.08656 14.0514 1.77037C13.3481 1.44359 12.7046 1.25 12 1.25ZM8.22524 4.44744C9.25238 3.83917 9.97606 3.41161 10.5807 3.13069C11.1702 2.85676 11.5907 2.75 12 2.75C12.4093 2.75 12.8298 2.85676 13.4193 3.13069C14.0239 3.41161 14.7476 3.83917 15.7748 4.44744L16.4609 4.85379C17.4879 5.46197 18.2109 5.89115 18.7508 6.288C19.2767 6.67467 19.581 6.99746 19.7895 7.36788C19.9986 7.73929 20.1199 8.1739 20.1838 8.83855C20.2492 9.51884 20.25 10.378 20.25 11.5937V12.4063C20.25 13.622 20.2492 14.4812 20.1838 15.1614C20.1199 15.8261 19.9986 16.2607 19.7895 16.6321C19.581 17.0025 19.2767 17.3253 18.7508 17.712C18.2109 18.1089 17.4879 18.538 16.4609 19.1462L15.7748 19.5526C14.7476 20.1608 14.0239 20.5884 13.4193 20.8693C12.8298 21.1432 12.4093 21.25 12 21.25C11.5907 21.25 11.1702 21.1432 10.5807 20.8693C9.97606 20.5884 9.25238 20.1608 8.22524 19.5526L7.53909 19.1462C6.5121 18.538 5.78906 18.1089 5.24924 17.712C4.72326 17.3253 4.419 17.0025 4.2105 16.6321C4.00145 16.2607 3.88005 15.8261 3.81618 15.1614C3.7508 14.4812 3.75 13.622 3.75 12.4063V11.5937C3.75 10.378 3.7508 9.51884 3.81618 8.83855C3.88005 8.1739 4.00145 7.73929 4.2105 7.36788C4.419 6.99746 4.72326 6.67467 5.24924 6.288C5.78906 5.89115 6.5121 5.46197 7.53909 4.85379L8.22524 4.44744Z" fill="#f5c211"></path> </g></svg>
+                                                    ) : isActive && (
+                                                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />
+                                                    )}
                                                 </Link>
                                             );
                                         })}
@@ -235,7 +256,9 @@ export default function Sidebar() {
                                     <div className="space-y-0.5">
                                         {cat.items.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
+
                                             if (isLocked) return (
                                                 <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
@@ -246,7 +269,11 @@ export default function Sidebar() {
                                                 <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}
                                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
                                                     {item.icon}{item.name}
-                                                    {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />}
+                                                    {isMaintenance ? (
+                                                        <svg className="ml-auto w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 6.25C12.4142 6.25 12.75 6.58579 12.75 7V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V7C11.25 6.58579 11.5858 6.25 12 6.25Z" fill="#f5c211"></path> <path d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z" fill="#f5c211"></path> <path fillRule="evenodd" clipRule="evenodd" d="M12 1.25C11.2954 1.25 10.6519 1.44359 9.94858 1.77037C9.26808 2.08656 8.48039 2.55304 7.49457 3.13685L6.74148 3.58283C5.75533 4.16682 4.96771 4.63324 4.36076 5.07944C3.73315 5.54083 3.25177 6.01311 2.90334 6.63212C2.55548 7.25014 2.39841 7.91095 2.32306 8.69506C2.24999 9.45539 2.24999 10.3865 2.25 11.556V12.444C2.24999 13.6135 2.24999 14.5446 2.32306 15.3049C2.39841 16.0891 2.55548 16.7499 2.90334 17.3679C3.25177 17.9869 3.73315 18.4592 4.36076 18.9206C4.96771 19.3668 5.75533 19.8332 6.74148 20.4172L7.4946 20.8632C8.48038 21.447 9.2681 21.9135 9.94858 22.2296C10.6519 22.5564 11.2954 22.75 12 22.75C12.7046 22.75 13.3481 22.5564 14.0514 22.2296C14.7319 21.9134 15.5196 21.447 16.5054 20.8632L17.2585 20.4172C18.2446 19.8332 19.0323 19.3668 19.6392 18.9206C20.2669 18.4592 20.7482 17.9869 21.0967 17.3679C21.4445 16.7499 21.6016 16.0891 21.6769 15.3049C21.75 14.5446 21.75 13.6135 21.75 12.4441V11.556C21.75 10.3866 21.75 9.45538 21.6769 8.69506C21.6016 7.91095 21.4445 7.25014 21.0967 6.63212C20.7482 6.01311 20.2669 5.54083 19.6392 5.07944C19.0323 4.63324 18.2447 4.16683 17.2585 3.58285L16.5054 3.13685C15.5196 2.55303 14.7319 2.08656 14.0514 1.77037C13.3481 1.44359 12.7046 1.25 12 1.25ZM8.22524 4.44744C9.25238 3.83917 9.97606 3.41161 10.5807 3.13069C11.1702 2.85676 11.5907 2.75 12 2.75C12.4093 2.75 12.8298 2.85676 13.4193 3.13069C14.0239 3.41161 14.7476 3.83917 15.7748 4.44744L16.4609 4.85379C17.4879 5.46197 18.2109 5.89115 18.7508 6.288C19.2767 6.67467 19.581 6.99746 19.7895 7.36788C19.9986 7.73929 20.1199 8.1739 20.1838 8.83855C20.2492 9.51884 20.25 10.378 20.25 11.5937V12.4063C20.25 13.622 20.2492 14.4812 20.1838 15.1614C20.1199 15.8261 19.9986 16.2607 19.7895 16.6321C19.581 17.0025 19.2767 17.3253 18.7508 17.712C18.2109 18.1089 17.4879 18.538 16.4609 19.1462L15.7748 19.5526C14.7476 20.1608 14.0239 20.5884 13.4193 20.8693C12.8298 21.1432 12.4093 21.25 12 21.25C11.5907 21.25 11.1702 21.1432 10.5807 20.8693C9.97606 20.5884 9.25238 20.1608 8.22524 19.5526L7.53909 19.1462C6.5121 18.538 5.78906 18.1089 5.24924 17.712C4.72326 17.3253 4.419 17.0025 4.2105 16.6321C4.00145 16.2607 3.88005 15.8261 3.81618 15.1614C3.7508 14.4812 3.75 13.622 3.75 12.4063V11.5937C3.75 10.378 3.7508 9.51884 3.81618 8.83855C3.88005 8.1739 4.00145 7.73929 4.2105 7.36788C4.419 6.99746 4.72326 6.67467 5.24924 6.288C5.78906 5.89115 6.5121 5.46197 7.53909 4.85379L8.22524 4.44744Z" fill="#f5c211"></path> </g></svg>
+                                                    ) : isActive && (
+                                                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />
+                                                    )}
                                                 </Link>
                                             );
                                         })}
@@ -279,14 +306,14 @@ export default function Sidebar() {
                 {!user ? (
                     <Link
                         href="/login"
-                        className="flex items-center justify-center gap-2 w-full p-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all font-semibold text-sm shadow-lg shadow-blue-700/25 active:scale-95 border border-white/10"
+                        className="flex items-center justify-center gap-2 w-full p-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all font-semibold text-sm shadow-lg shadow-blue-700/25 active:scale-95 border border-white/10"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                         Sign In
                     </Link>
                 ) : (
                     <div className="flex items-center gap-3 p-2.5 bg-white/4 rounded-xl border border-white/8">
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER} flex items-center justify-center text-xs font-black text-white shadow-sm shrink-0`}>
+                        <div className={`w-8 h-8 rounded-lg bg-linear-to-br ${ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER} flex items-center justify-center text-xs font-black text-white shadow-sm shrink-0`}>
                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -315,7 +342,7 @@ export default function Sidebar() {
                 {/* Glass background */}
                 <div className="absolute inset-0 bg-[#080d1a]/80 backdrop-blur-xl" />
                 {/* Gradient bottom border */}
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/30 to-transparent" />
 
                 <div className="relative flex items-center justify-between h-full px-4">
                     {/* Hamburger + Brand */}
@@ -336,7 +363,7 @@ export default function Sidebar() {
 
                     {/* Right — user avatar */}
                     {user ? (
-                        <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER} flex items-center justify-center text-xs font-black text-white shadow-sm`}>
+                        <div className={`w-8 h-8 rounded-xl bg-linear-to-br ${ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER} flex items-center justify-center text-xs font-black text-white shadow-sm`}>
                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                         </div>
                     ) : (

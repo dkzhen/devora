@@ -98,5 +98,32 @@ export const apiCategories = [
             { method: 'DELETE', path: '/api/chatbot/session/:id', desc: 'Delete a conversation session completely' },
             { method: 'POST', path: '/api/chatbot/chat', desc: 'Send a prompt to Groq API via Server', sampleBody: '{\n  "messages": [\n    { "role": "user", "content": "Hello!" }\n  ],\n  "model": "llama-3.3-70b-versatile",\n  "sessionId": "..."\n}' }
         ]
+    },
+    {
+        category: 'Telegram Console',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>,
+        desc: 'Endpoints for monitoring and managing Telegram bot updates',
+        endpoints: [
+            { method: 'GET', path: '/api/telegram/updates', desc: 'Fetch latest Telegram updates with optional database sync', sampleBody: '?sync=true' },
+            { method: 'GET', path: '/api/telegram/avatar/:chatId', desc: 'Retrieve profile picture for a specific Telegram chat' },
+            { method: 'GET', path: '/api/telegram/storage-config', desc: 'Retrieve current Telegram storage topic IDs (APK, Icons, Metadata)' },
+            { method: 'POST', path: '/api/telegram/test-storage', desc: 'Validate storage topics by sending a test message', sampleBody: '{\n  "topicId": "123",\n  "type": "APK"\n}' },
+            { method: 'GET', path: '/api/telegram/download/:fileId', desc: 'Stream and download a file (like APK) directly from Telegram servers' },
+            { method: 'GET', path: '/api/telegram/image/:fileId', desc: 'Fetch and serve an image file directly from Telegram servers' },
+        ]
+    },
+    {
+        category: 'App Library',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14"><path fill="currentColor" fillRule="evenodd" d="M.352 1.305c0-.025.001-.05.003-.073l5.63 5.629l-5.63 5.63a.917.917 0 0 1-.003-.073zM1.61 13.357c.1-.019.2-.053.298-.102l6.943-3.527l-1.806-1.806zm6.496-6.496l2.152 2.152l2.586-1.314c.719-.365.719-1.31 0-1.675L10.257 4.71zm.745-2.866L1.908.468A1.122 1.122 0 0 0 1.61.366L7.045 5.8z" clipRule="evenodd" /></svg>,
+        desc: 'Endpoints for managing applications, versions, and Telegram uploads',
+        endpoints: [
+            { method: 'GET', path: '/api/apps', desc: 'Retrieve all applications and their historical versions' },
+            { method: 'GET', path: '/api/apps/:id', desc: 'Get detailed information and version history for a specific app' },
+            { method: 'DELETE', path: '/api/apps/:id', desc: 'Permanently remove an app and all its associated versions (ULTRA)' },
+            { method: 'POST', path: '/api/apps/:id/view', desc: 'Increment the view count for an app' },
+            { method: 'DELETE', path: '/api/apps/:id/versions/:versionId', desc: 'Delete a specific version of an app (ULTRA)' },
+            { method: 'POST', path: '/api/telegram/upload', desc: 'Upload a brand new app (APK + Icon) to Telegram topics (Multipart FormData)' },
+            { method: 'POST', path: '/api/telegram/upload-version', desc: 'Upload a new version for an existing app to Telegram (Multipart FormData)' },
+        ]
     }
 ];

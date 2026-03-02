@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import LockedFeatureScreen from '@/components/LockedFeatureScreen';
 
 // --- Syntax Highlighter ---
 function JsonHighlight({ value }) {
@@ -81,6 +82,7 @@ const methodColors = {
 export default function EndpointsPage() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isLocked, setIsLocked] = useState(false);
     const [apiStats, setApiStats] = useState([]);
     const router = useRouter();
 
@@ -140,7 +142,8 @@ export default function EndpointsPage() {
             }
 
             if (userRole !== 'ULTRA') {
-                router.push('/');
+                setIsLocked(true);
+                setLoading(false);
                 return;
             }
 
@@ -169,6 +172,16 @@ export default function EndpointsPage() {
     };
 
     const totalHits = apiStats.reduce((acc, s) => acc + s.hitCount, 0);
+
+    if (isLocked) {
+        return (
+            <div className="min-h-screen bg-[#080d1a] px-6 pb-20">
+                <div className="max-w-7xl mx-auto pt-24 md:pt-12">
+                    <LockedFeatureScreen featureName="The API Endpoints explorer" />
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
         return (

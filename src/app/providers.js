@@ -8,6 +8,7 @@ export function Providers({ children }) {
     const router = useRouter();
     const [configs, setConfigs] = useState(null);
     const [user, setUser] = useState(null);
+    const [authInitialized, setAuthInitialized] = useState(false);
 
     // Initial load of user and configs
     useEffect(() => {
@@ -29,6 +30,7 @@ export function Providers({ children }) {
                 } catch { }
             }
             setUser(currentUser);
+            setAuthInitialized(true);
 
             // Load Configs
             try {
@@ -45,14 +47,23 @@ export function Providers({ children }) {
 
     // Check maintenance on route changes or config load
     useEffect(() => {
-        if (!configs || !pathname) return;
+        if (!authInitialized || !configs || !pathname) return;
 
-        // ULTRA users skip maintenance blocks
-        if (user && user.role === 'ULTRA') return;
+        const basePath = pathname.split('/')[1];
 
-        // Identify which feature relates to the current path
-        const basePath = pathname.split('/')[1]; // e.g. "app-library" or "airdrops"
-        if (!basePath) return;
+        // 1. Redirect ULTRA users AWAY from maintenance page if they land there
+        if (user?.role === 'ULTRA' && basePath === 'maintenance') {
+            const searchParams = new URLSearchParams(window.location.search);
+            const feature = searchParams.get('feature');
+            router.replace(feature ? `/${feature}` : '/');
+            return;
+        }
+
+        // 2. Skip maintenance check for ULTRA admins
+        if (user?.role === 'ULTRA') return;
+
+        // 3. Identify which feature relates to the current path
+        if (!basePath || basePath === 'maintenance') return;
 
         // We check if the current active feature matches the database configs
         const relevantConfig = configs.find(c => c.feature === basePath);
@@ -60,7 +71,7 @@ export function Providers({ children }) {
         if (relevantConfig && relevantConfig.enabled) {
             router.replace(`/maintenance?feature=${basePath}&message=${encodeURIComponent(relevantConfig.message || '')}`);
         }
-    }, [pathname, configs, user, router]);
+    }, [pathname, configs, user, router, authInitialized]);
 
     return <>{children}</>;
 }
