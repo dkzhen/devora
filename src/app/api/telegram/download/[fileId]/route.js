@@ -23,7 +23,8 @@ async function getAuthenticatedUser() {
 
 export async function GET(request, { params }) {
     try {
-        const { fileId } = await params;
+        const resolvedParams = params instanceof Promise ? await params : params;
+        const { fileId } = resolvedParams;
         await trackApiHit(request, `/api/telegram/download/:fileId`);
         // Authenticate user
         const user = await getAuthenticatedUser();
@@ -47,11 +48,19 @@ export async function GET(request, { params }) {
         const botToken = decrypt(botTokenConfig.value);
 
         // Fetch file info from Telegram
-        const fileRes = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`, {
-            signal: AbortSignal.timeout(15000)
-        });
+        const fileRes = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`);
 
-        const fileData = await fileRes.json();
+        if (!fileRes.ok) {
+            return new NextResponse("Telegram HTTP Error: " + fileRes.status, { status: 502 });
+        }
+
+        const rawText = await fileRes.text();
+        let fileData;
+        try {
+            fileData = JSON.parse(rawText);
+        } catch {
+            return new NextResponse("Invalid JSON from Telegram", { status: 502 });
+        }
 
         if (!fileData.ok) {
             console.error('Telegram getFile Error:', fileData);
@@ -62,42 +71,43 @@ export async function GET(request, { params }) {
         const fileUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
 
         // Fetch the actual file
-        const downloadRes = await fetch(fileUrl, {
-            signal: AbortSignal.timeout(30000) // longer timeout for potentially large files
-        });
+        const downloadRes = await fetch(fileUrl);
 
         if (!downloadRes.ok) {
             return new NextResponse('Failed to download file from Telegram', { status: 502 });
         }
 
-        const fileBuffer = await downloadRes.arrayBuffer();
-
-        // Increment download count on the parent App
-        try {
-            const versionRecord = await prisma.appVersion.findFirst({
-                where: { apkUrl: fileId },
-                select: { appId: true }
-            });
-            if (versionRecord) {
-                await prisma.app.update({
-                    where: { id: versionRecord.appId },
-                    data: { downloadCount: { increment: 1 } }
+        // Increment download count on the parent App (fire and forget to not block stream)
+        const updateCount = async () => {
+            try {
+                const versionRecord = await prisma.appVersion.findFirst({
+                    where: { apkUrl: fileId },
+                    select: { appId: true }
                 });
+                if (versionRecord) {
+                    await prisma.app.update({
+                        where: { id: versionRecord.appId },
+                        data: { downloadCount: { increment: 1 } }
+                    });
+                }
+            } catch (countErr) {
+                console.error('Failed to increment download count:', countErr);
             }
-        } catch (countErr) {
-            console.error('Failed to increment download count:', countErr);
-        }
+        };
+        updateCount();
 
         // Try to guess a filename if possible, otherwise generic default
         const fileName = filePath.split('/').pop() || 'download.apk';
 
-        return new NextResponse(fileBuffer, {
-            headers: {
-                'Content-Type': downloadRes.headers.get('Content-Type') || 'application/vnd.android.package-archive',
-                'Content-Disposition': `attachment; filename="${fileName}"`,
-                'Content-Length': fileBuffer.byteLength.toString(),
-            }
-        });
+        const headers = new Headers();
+        headers.set('Content-Type', downloadRes.headers.get('Content-Type') || 'application/vnd.android.package-archive');
+        headers.set('Content-Disposition', `attachment; filename="${fileName}"`);
+        const contentLength = downloadRes.headers.get('Content-Length');
+        if (contentLength) {
+            headers.set('Content-Length', contentLength);
+        }
+
+        return new NextResponse(downloadRes.body, { headers });
 
     } catch (error) {
         console.error('Download Proxy Error:', error);

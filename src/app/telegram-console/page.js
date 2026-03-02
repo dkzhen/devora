@@ -403,7 +403,17 @@ export default function TelegramConsolePage() {
         try {
             const endpoint = shouldSync ? '/api/telegram/updates?sync=true' : '/api/telegram/updates';
             const res = await fetch(endpoint);
-            const data = await res.json();
+
+            let data;
+            try {
+                data = await res.json();
+            } catch (jsonError) {
+                // If it fails to parse JSON, the server likely returned a 502/500 HTML
+                setApiError('Received an invalid or HTML response from the server.');
+                setIsAutoSync(false);
+                if (!isBackground) setLoading(false);
+                return;
+            }
 
             setLastSyncTime(new Date());
 
@@ -628,7 +638,7 @@ export default function TelegramConsolePage() {
                                 <svg className="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                             </div>
                             <p className="text-base font-bold text-gray-300">No events found.</p>
-                            <p className="text-sm mt-2 text-gray-500 max-w-sm text-center">Awaiting incoming signals from your Telegram Bot. Events will appear here automatically.</p>
+                            <p className="text-sm mt-2 text-gray-500 max-w-sm text-center">No history in database yet. Click <span className="text-blue-400 font-semibold">Pull Latest</span> above to sync from Telegram for the first time.</p>
                         </div>
                     ) : (
                         <div className="p-5 md:p-8 relative">

@@ -34,75 +34,74 @@ export async function GET(request) {
         const { searchParams } = new URL(request.url);
         const shouldSync = searchParams.get('sync') === 'true';
 
-        // Check if we already have updates in the DB
-        const dbUpdateCount = await prisma.telegramUpdate.count({
-            where: { userId: user.id }
-        });
-
-        // Sync if requested OR if we have no history at all
-        if (shouldSync || dbUpdateCount === 0) {
+        // ONLY sync when explicitly requested (auto-sync or manual pull)
+        // On initial page load, we skip Telegram API and serve from DB directly
+        if (shouldSync) {
             try {
-                // Fetch the BOT_TOKEN_TELEGRAM from Global Configs
                 const configRecord = await prisma.globalConfig.findUnique({
                     where: { key: 'BOT_TOKEN_TELEGRAM' }
                 });
 
-                if (configRecord) {
-                    // Decrypt the token
-                    const botToken = decrypt(configRecord.value);
-                    if (botToken) {
-                        // Fetch updates from Telegram API (increased timeout for better stability)
-                        const telegramRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates`, { signal: AbortSignal.timeout(8000) });
-
-                        if (telegramRes.ok) {
-                            const telegramData = await telegramRes.json();
-                            if (telegramData.ok && Array.isArray(telegramData.result)) {
-                                const updates = telegramData.result;
-
-                                // Sync with Database
-                                // 1. Get existing IDs for this user
-                                const existingIds = await prisma.telegramUpdate.findMany({
-                                    where: { userId: user.id },
-                                    select: { id: true }
-                                });
-                                const existingIdSet = new Set(existingIds.map(u => u.id.toString()));
-
-                                // 2. Filter for new updates
-                                const newUpdates = updates.filter(u => !existingIdSet.has(u.update_id.toString()));
-
-                                // 3. Save new updates
-                                if (newUpdates.length > 0) {
-                                    await prisma.telegramUpdate.createMany({
-                                        data: newUpdates.map(u => ({
-                                            id: BigInt(u.update_id),
-                                            userId: user.id,
-                                            data: u
-                                        })),
-                                        skipDuplicates: true
-                                    });
-                                }
-                            }
-                        }
-                    } else {
-                        return NextResponse.json({ error: 'BOT_TOKEN_NOT_FOUND' }, { status: 404 });
-                    }
-                } else {
+                if (!configRecord) {
                     return NextResponse.json({ error: 'BOT_TOKEN_NOT_FOUND' }, { status: 404 });
                 }
-            } catch (syncError) {
-                const isTimeout = syncError.name === 'AbortError' || syncError.code === 'ETIMEDOUT' || syncError.cause?.code === 'ETIMEDOUT';
-                console.error(`[Telegram Sync Recovery] ${isTimeout ? 'Network Timeout (8s)' : 'Fetch Error'}: ${syncError.message}`);
-                // Continue to return DB updates even if sync fails
-            }
 
-            // If we just sync-failed and have no data, return a specific error
-            const finalCount = await prisma.telegramUpdate.count({ where: { userId: user.id } });
-            if (finalCount === 0) {
-                return NextResponse.json({ error: 'Failed to sync with Telegram and no history found.' }, { status: 502 });
+                const botToken = decrypt(configRecord.value);
+                if (!botToken) {
+                    return NextResponse.json({ error: 'BOT_TOKEN_NOT_FOUND' }, { status: 404 });
+                }
+
+                // Fetch updates from Telegram API with a safe timeout
+                const telegramRes = await fetch(
+                    `https://api.telegram.org/bot${botToken}/getUpdates`,
+                    { signal: AbortSignal.timeout(20000) }
+                );
+
+                if (telegramRes.ok) {
+                    const rawText = await telegramRes.text();
+                    let telegramData;
+                    try {
+                        telegramData = JSON.parse(rawText);
+                    } catch (e) {
+                        console.error('[Telegram Sync] Invalid JSON from Telegram:', rawText.slice(0, 200));
+                        telegramData = null;
+                    }
+
+                    if (telegramData && telegramData.ok && Array.isArray(telegramData.result)) {
+                        const updates = telegramData.result;
+
+                        if (updates.length > 0) {
+                            // Get existing IDs for this user
+                            const existingIds = await prisma.telegramUpdate.findMany({
+                                where: { userId: user.id },
+                                select: { id: true }
+                            });
+                            const existingIdSet = new Set(existingIds.map(u => u.id.toString()));
+
+                            // Filter and save new updates
+                            const newUpdates = updates.filter(u => !existingIdSet.has(u.update_id.toString()));
+                            if (newUpdates.length > 0) {
+                                await prisma.telegramUpdate.createMany({
+                                    data: newUpdates.map(u => ({
+                                        id: BigInt(u.update_id),
+                                        userId: user.id,
+                                        data: u
+                                    })),
+                                    skipDuplicates: true
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    console.warn('[Telegram Sync] Telegram returned non-OK status:', telegramRes.status);
+                }
+            } catch (syncError) {
+                // Log the error and continue — serve whatever we have in DB
+                console.error('[Telegram Sync Recovery]', syncError.message);
             }
         }
 
-        // Return from DB
+        // Always return from DB (both on initial load and after sync)
         return await returnDbUpdates(user.id);
 
     } catch (error) {

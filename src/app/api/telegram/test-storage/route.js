@@ -58,13 +58,22 @@ export async function POST(request) {
                 message_thread_id: parseInt(topicId),
                 text: text,
                 parse_mode: 'Markdown'
-            }),
-            signal: AbortSignal.timeout(10000)
+            })
         });
 
-        const data = await response.json();
+        if (!response.ok) {
+            return NextResponse.json({ error: 'Telegram HTTP Error', status: response.status }, { status: 502 });
+        }
 
-        if (!response.ok || !data.ok) {
+        const rawText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch {
+            return NextResponse.json({ error: 'Invalid JSON from Telegram' }, { status: 502 });
+        }
+
+        if (!data.ok) {
             return NextResponse.json({ error: data.description || 'Telegram API Error' }, { status: response.status });
         }
 
