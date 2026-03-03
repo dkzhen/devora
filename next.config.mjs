@@ -13,6 +13,12 @@ const nextConfig = {
             },
         ],
     },
+    serverExternalPackages: ['jose', 'bcrypt'], // Added for Prisma/crypto stability if needed later
+    experimental: {
+        serverActions: {
+            bodySizeLimit: '500mb',
+        },
+    },
 };
 
 export default nextConfig;

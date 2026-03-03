@@ -21,6 +21,9 @@ async function getAuthenticatedUser() {
     }
 }
 
+// Next.js App Router specific configuration to allow large file uploads
+export const maxDuration = 60; // Max timeout for Vercel/similar hostings
+
 export async function POST(req) {
     try {
         await trackApiHit(req);
