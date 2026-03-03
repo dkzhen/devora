@@ -25,12 +25,10 @@ export default function AppLibraryPage() {
     const [androidVersion, setAndroidVersion] = useState('');
     const [category, setCategory] = useState('Mod');
     const [description, setDescription] = useState('');
-    const [apkFile, setApkFile] = useState(null);
-    const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [apkFileId, setApkFileId] = useState('');
+    const [imageFileId, setImageFileId] = useState('');
     const [submittingApp, setSubmittingApp] = useState(false);
-    const fileInputRef = useRef(null);
-    const imageInputRef = useRef(null);
+
 
     const [apps, setApps] = useState([]);
 
@@ -179,42 +177,10 @@ export default function AppLibraryPage() {
         (app.description && app.description.toLowerCase().includes(search.toLowerCase()))
     );
 
-    const handleApkSelect = (e) => {
-        const file = e.target.files[0];
-        if (file && file.name.endsWith('.apk')) {
-            setApkFile(file);
-        } else if (file) {
-            showToast('Please select a valid .apk file');
-            e.target.value = '';
-        }
-    };
-
-    const handleImageSelect = (e) => {
-        const file = e.target.files[0];
-        if (file && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp')) {
-            setImageFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => setImagePreview(reader.result);
-            reader.readAsDataURL(file);
-        } else if (file) {
-            showToast('Please select a valid image (JPG, PNG, WEBP)');
-            e.target.value = '';
-        }
-    };
-
-    const formatBytes = (bytes, decimals = 2) => {
-        if (!+bytes) return '0 Bytes';
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-    };
-
     const handleSubmitApp = async (e) => {
         e.preventDefault();
-        if (!appName || !version || !apkFile) {
-            showToast('Please fill in all required fields and select an APK.');
+        if (!appName || !version || !apkFileId) {
+            showToast('Please fill in all required fields and provide an APK File ID.');
             return;
         }
 
@@ -226,8 +192,8 @@ export default function AppLibraryPage() {
         formData.append('androidVersion', androidVersion);
         formData.append('category', category);
         formData.append('description', description);
-        formData.append('apkFile', apkFile);
-        if (imageFile) formData.append('imageFile', imageFile);
+        formData.append('apkFileId', apkFileId);
+        if (imageFileId) formData.append('imageFileId', imageFileId);
 
         try {
             const res = await fetch('/api/telegram/upload', {
@@ -245,9 +211,8 @@ export default function AppLibraryPage() {
                 setAndroidVersion('');
                 setCategory('Utility');
                 setDescription('');
-                setApkFile(null);
-                setImageFile(null);
-                setImagePreview(null);
+                setApkFileId('');
+                setImageFileId('');
 
                 // Refresh apps
                 const refreshRes = await fetch('/api/apps');
@@ -642,46 +607,25 @@ export default function AppLibraryPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">APK File <span className="text-red-400">*</span></label>
-                                        <div
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className={`relative flex flex-col items-center justify-center p-5 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${apkFile ? 'border-blue-500/40 bg-blue-500/5' : 'border-white/10 bg-[#0a0d16] hover:border-blue-500/30'}`}
-                                        >
-                                            <input type="file" accept=".apk" className="hidden" ref={fileInputRef} onChange={handleApkSelect} />
-                                            {apkFile ? (
-                                                <div className="text-center">
-                                                    <svg className="w-6 h-6 text-blue-400 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                                    <p className="text-sm font-bold text-gray-200 truncate max-w-[150px] mx-auto">{apkFile.name}</p>
-                                                    <p className="text-[10px] text-blue-400 font-mono">{formatBytes(apkFile.size)}</p>
-                                                </div>
-                                            ) : (
-                                                <div className="text-center">
-                                                    <svg className="w-6 h-6 text-gray-600 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                                    <p className="text-xs text-gray-300 font-semibold mb-0.5">Upload APK</p>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                                        <input
+                                            required
+                                            type="text"
+                                            value={apkFileId}
+                                            onChange={(e) => setApkFileId(e.target.value)}
+                                            placeholder="Paste Telegram file ID here"
+                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors font-mono"
+                                        />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Icon (Optional)</label>
-                                        <div
-                                            onClick={() => imageInputRef.current?.click()}
-                                            className={`relative flex flex-col items-center justify-center p-5 border-2 border-dashed rounded-xl cursor-pointer transition-colors overflow-hidden ${imagePreview ? 'border-fuchsia-500/40 bg-fuchsia-500/5' : 'border-white/10 bg-[#0a0d16] hover:border-fuchsia-500/30'}`}
-                                        >
-                                            <input type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" ref={imageInputRef} onChange={handleImageSelect} />
-                                            {imagePreview ? (
-                                                <div className="text-center relative w-full h-full flex flex-col items-center justify-center">
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img src={imagePreview} alt="Preview" className="w-10 h-10 object-cover rounded-lg mb-1 shadow border border-white/10 mx-auto" />
-                                                    <p className="text-[10px] text-fuchsia-400 font-mono">{formatBytes(imageFile.size)}</p>
-                                                </div>
-                                            ) : (
-                                                <div className="text-center">
-                                                    <svg className="w-6 h-6 text-gray-600 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                    <p className="text-xs text-gray-300 font-semibold mb-0.5">Upload Icon</p>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Icon File ID (Optional)</label>
+                                        <input
+                                            type="text"
+                                            value={imageFileId}
+                                            onChange={(e) => setImageFileId(e.target.value)}
+                                            placeholder="Paste Telegram photo ID here"
+                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-fuchsia-500/50 transition-colors font-mono"
+                                        />
                                     </div>
                                 </div>
 
@@ -696,10 +640,10 @@ export default function AppLibraryPage() {
                                     </button>
                                     <button
                                         type="submit"
-                                        disabled={submittingApp || !appName || !version || !apkFile}
+                                        disabled={submittingApp || !appName || !version || !apkFileId}
                                         className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {submittingApp ? 'Uploading...' : 'Upload & Save App'}
+                                        {submittingApp ? 'Saving...' : 'Save App'}
                                     </button>
                                 </div>
                             </form>

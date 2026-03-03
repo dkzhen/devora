@@ -19,9 +19,8 @@ export default function AppDetailPage() {
     const [newVersion, setNewVersion] = useState('');
     const [newAndroidVersion, setNewAndroidVersion] = useState('');
     const [newFeatures, setNewFeatures] = useState('');
-    const [apkFile, setApkFile] = useState(null);
+    const [apkFileId, setApkFileId] = useState('');
     const [submittingVersion, setSubmittingVersion] = useState(false);
-    const fileInputRef = useRef(null);
 
     // Delete state
     const [confirmDeleteApp, setConfirmDeleteApp] = useState(false);
@@ -220,35 +219,16 @@ export default function AppDetailPage() {
         }
     };
 
-    const handleApkSelect = (e) => {
-        const file = e.target.files[0];
-        if (file && file.name.endsWith('.apk')) {
-            setApkFile(file);
-        } else if (file) {
-            showToast('Please select a valid .apk file');
-            e.target.value = '';
-        }
-    };
-
-    const formatBytes = (bytes, decimals = 2) => {
-        if (!+bytes) return '0 Bytes';
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-    };
-
     const handleSubmitVersion = async (e) => {
         e.preventDefault();
-        if (!newVersion || !apkFile) { showToast('Please provide version and APK file.'); return; }
+        if (!newVersion || !apkFileId) { showToast('Please provide version and APK File ID.'); return; }
 
         setSubmittingVersion(true);
         const formData = new FormData();
         formData.append('appId', appId);
         formData.append('appName', app.name);
         formData.append('version', newVersion);
-        formData.append('apkFile', apkFile);
+        formData.append('apkFileId', apkFileId);
         if (newAndroidVersion) formData.append('androidVersion', newAndroidVersion);
         if (newFeatures) formData.append('features', newFeatures);
 
@@ -262,7 +242,7 @@ export default function AppDetailPage() {
                 setNewVersion('');
                 setNewAndroidVersion('');
                 setNewFeatures('');
-                setApkFile(null);
+                setApkFileId('');
 
                 const refreshRes = await fetch('/api/apps');
                 const refreshData = await refreshRes.json();
@@ -785,39 +765,31 @@ export default function AppDetailPage() {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block">APK File <span className="text-red-400">*</span></label>
-                                    <div
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className={`flex flex-col items-center justify-center p-5 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${apkFile ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-white/10 bg-[#0a0d16] hover:border-white/20'}`}
-                                    >
-                                        <input type="file" accept=".apk" className="hidden" ref={fileInputRef} onChange={handleApkSelect} />
-                                        {apkFile ? (
-                                            <div className="text-center">
-                                                <svg className="w-7 h-7 text-emerald-400 mx-auto mb-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                                <p className="text-sm font-semibold text-gray-200 truncate max-w-[220px]">{apkFile.name}</p>
-                                                <p className="text-xs text-emerald-400 font-mono mt-0.5">{formatBytes(apkFile.size)}</p>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center">
-                                                <svg className="w-7 h-7 text-gray-600 mx-auto mb-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                                <p className="text-sm text-gray-400 font-medium">Click to select APK</p>
-                                                <p className="text-xs text-gray-600 mt-0.5">.apk files only</p>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={apkFileId}
+                                        onChange={(e) => setApkFileId(e.target.value)}
+                                        placeholder="Paste Telegram file ID here"
+                                        className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/40 transition-colors font-mono"
+                                    />
+                                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                                        Telegram Document File ID
+                                    </p>
                                 </div>
 
                                 <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
                                     <button type="button" onClick={() => setShowAddVersionModal(false)} disabled={submittingVersion} className="px-4 py-2 border border-white/10 hover:bg-white/5 text-gray-400 text-sm font-medium rounded-xl transition-colors">
                                         Cancel
                                     </button>
-                                    <button type="submit" disabled={submittingVersion || !newVersion || !apkFile} className="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={submittingVersion || !newVersion || !apkFileId} className="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50">
                                         {submittingVersion ? (
                                             <>
                                                 <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
-                                                Uploading...
+                                                Saving...
                                             </>
-                                        ) : 'Upload Release'}
+                                        ) : 'Save Release'}
                                     </button>
                                 </div>
                             </form>

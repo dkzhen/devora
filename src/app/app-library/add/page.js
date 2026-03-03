@@ -16,20 +16,10 @@ export default function AddAppPage() {
     const [version, setVersion] = useState('');
     const [category, setCategory] = useState('Mod');
     const [description, setDescription] = useState('');
-    const [apkFile, setApkFile] = useState(null);
-    const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
-
-    // Storage Config State for readonly display
-    const [storageConfig, setStorageConfig] = useState({
-        TELEGRAM_STORAGE_CHAT_ID: 'Loading...',
-        TELEGRAM_STORAGE_TOPIC_APK: 'Loading...',
-        TELEGRAM_STORAGE_TOPIC_IMAGES: 'Loading...'
-    });
+    const [apkFileId, setApkFileId] = useState('');
+    const [imageFileId, setImageFileId] = useState('');
 
     const router = useRouter();
-    const fileInputRef = useRef(null);
-    const imageInputRef = useRef(null);
 
     useEffect(() => {
         const init = async () => {
@@ -62,24 +52,6 @@ export default function AddAppPage() {
             }
 
             setIsUltra(true);
-
-            // Fetch Storage Config for Display
-            try {
-                const res = await fetch('/api/telegram/storage-config');
-                const data = await res.json();
-                if (data.success && data.config) {
-                    setStorageConfig(data.config);
-                } else {
-                    setStorageConfig({
-                        TELEGRAM_STORAGE_CHAT_ID: 'Not Configured',
-                        TELEGRAM_STORAGE_TOPIC_APK: 'Not Configured',
-                        TELEGRAM_STORAGE_TOPIC_IMAGES: 'Not Configured'
-                    });
-                }
-            } catch (error) {
-                console.error('Error fetching config:', error);
-            }
-
             setLoading(false);
         };
         init();
@@ -90,45 +62,11 @@ export default function AddAppPage() {
         setTimeout(() => setToast(null), 4000);
     };
 
-    const handleApkSelect = (e) => {
-        const file = e.target.files[0];
-        if (file && file.name.endsWith('.apk')) {
-            setApkFile(file);
-        } else if (file) {
-            showToast('Please select a valid .apk file', 'error');
-            e.target.value = ''; // Reset
-        }
-    };
-
-    const handleImageSelect = (e) => {
-        const file = e.target.files[0];
-        if (file && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp')) {
-            setImageFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        } else if (file) {
-            showToast('Please select a valid image (JPG, PNG, WEBP)', 'error');
-            e.target.value = '';
-        }
-    };
-
-    const formatBytes = (bytes, decimals = 2) => {
-        if (!+bytes) return '0 Bytes';
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!appName || !version || !apkFile) {
-            showToast('Please fill in all required fields and select an APK.', 'error');
+        if (!appName || !version || !apkFileId) {
+            showToast('Please fill in all required fields and enter an APK File ID.', 'error');
             return;
         }
 
@@ -138,8 +76,8 @@ export default function AddAppPage() {
         formData.append('version', version);
         formData.append('category', category);
         formData.append('description', description);
-        formData.append('apkFile', apkFile);
-        if (imageFile) formData.append('imageFile', imageFile);
+        formData.append('apkFileId', apkFileId);
+        if (imageFileId) formData.append('imageFileId', imageFileId);
 
         try {
             const res = await fetch('/api/telegram/upload', {
@@ -195,7 +133,7 @@ export default function AddAppPage() {
 
                 <div className="flex flex-col gap-1">
                     <h1 className="text-3xl font-black text-white tracking-tight">Add New App</h1>
-                    <p className="text-gray-400 text-sm">Upload your application. Files are automatically forwarded and stored securely in your dedicated Telegram topics.</p>
+                    <p className="text-gray-400 text-sm">Create your application record. Direct file IDs are securely attached.</p>
                 </div>
             </div>
 
@@ -257,110 +195,44 @@ export default function AddAppPage() {
                     </div>
                 </div>
 
-                {/* 2. Files Upload */}
+                {/* 2. File IDs */}
                 <div className="space-y-6">
                     <div className="flex items-center gap-2 border-b border-white/5 pb-3">
                         <div className="w-6 h-6 rounded bg-purple-500/10 text-purple-400 flex items-center justify-center">
                             <span className="text-xs font-black">2</span>
                         </div>
-                        <h2 className="text-lg font-bold text-gray-200">Files Upload</h2>
+                        <h2 className="text-lg font-bold text-gray-200">File Storage Links</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* APK Upload */}
-                        <div className="space-y-3">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">APK File <span className="text-red-400">*</span></label>
-                            <div
-                                onClick={() => fileInputRef.current?.click()}
-                                className={`relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-[16px] cursor-pointer transition-all ${apkFile ? 'border-indigo-500/40 bg-indigo-500/5' : 'border-white/10 bg-[#0a0d16] hover:border-indigo-500/30'}`}
-                            >
-                                <input
-                                    type="file"
-                                    accept=".apk"
-                                    className="hidden"
-                                    ref={fileInputRef}
-                                    onChange={handleApkSelect}
-                                />
-                                {apkFile ? (
-                                    <div className="text-center space-y-2">
-                                        <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-xl mx-auto flex items-center justify-center mb-3">
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
-                                        </div>
-                                        <p className="text-sm font-bold text-gray-200 truncate max-w-[200px]">{apkFile.name}</p>
-                                        <p className="text-xs text-indigo-400 font-mono">{formatBytes(apkFile.size)}</p>
-                                    </div>
-                                ) : (
-                                    <div className="text-center">
-                                        <svg className="w-10 h-10 text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                        <p className="text-sm text-gray-300 font-semibold mb-1">Click to browse</p>
-                                        <p className="text-xs text-gray-500">Android Package (.apk)</p>
-                                    </div>
-                                )}
-                            </div>
-                            <p className="text-[10px] text-gray-500 uppercase tracking-widest flex items-center gap-1">
-                                <svg className="w-3 h-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                                Uploads to Telegram APK Topic
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                            <input
+                                required
+                                type="text"
+                                value={apkFileId}
+                                onChange={(e) => setApkFileId(e.target.value)}
+                                placeholder="Paste Telegram file ID here"
+                                className="w-full bg-[#0a0d16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-colors font-mono"
+                            />
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                                Telegram Document File ID
                             </p>
                         </div>
 
-                        {/* Image Upload */}
-                        <div className="space-y-3">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Icon (Optional)</label>
-                            <div
-                                onClick={() => imageInputRef.current?.click()}
-                                className={`relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-[16px] cursor-pointer transition-all overflow-hidden ${imagePreview ? 'border-fuchsia-500/40 bg-fuchsia-500/5' : 'border-white/10 bg-[#0a0d16] hover:border-fuchsia-500/30'}`}
-                            >
-                                <input
-                                    type="file"
-                                    accept=".jpg,.jpeg,.png,.webp"
-                                    className="hidden"
-                                    ref={imageInputRef}
-                                    onChange={handleImageSelect}
-                                />
-                                {imagePreview ? (
-                                    <div className="text-center relative w-full h-full flex flex-col items-center justify-center">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-2xl mb-3 shadow-lg border border-white/10" />
-                                        <p className="text-sm font-bold text-gray-200 truncate max-w-[200px]">{imageFile.name}</p>
-                                        <p className="text-xs text-fuchsia-400 font-mono">{formatBytes(imageFile.size)}</p>
-                                    </div>
-                                ) : (
-                                    <div className="text-center">
-                                        <svg className="w-10 h-10 text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                        <p className="text-sm text-gray-300 font-semibold mb-1">Upload Icon</p>
-                                        <p className="text-xs text-gray-500">JPG, PNG, WEBP</p>
-                                    </div>
-                                )}
-                            </div>
-                            <p className="text-[10px] text-gray-500 uppercase tracking-widest flex items-center gap-1">
-                                <svg className="w-3 h-3 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                Uploads to Telegram Image Topic
+                        <div className="space-y-2">
+                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Icon File ID (Optional)</label>
+                            <input
+                                type="text"
+                                value={imageFileId}
+                                onChange={(e) => setImageFileId(e.target.value)}
+                                placeholder="Paste Telegram photo ID here"
+                                className="w-full bg-[#0a0d16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-fuchsia-500/50 transition-colors font-mono"
+                            />
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                                Telegram Photo File ID
                             </p>
                         </div>
-                    </div>
-                </div>
-
-                {/* Storage Info Badge */}
-                <div className="bg-[#0a0d16] border border-white/5 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-gray-200">Active Storage Route</p>
-                            <p className="text-xs text-gray-500">Files will be sent here</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 text-[10px] font-mono font-medium">
-                        <span className="bg-gray-800/50 text-gray-400 px-2.5 py-1.5 rounded-lg border border-white/5 flex items-center gap-1">
-                            CHAT: <span className="text-gray-200">{storageConfig.TELEGRAM_STORAGE_CHAT_ID}</span>
-                        </span>
-                        <span className="bg-indigo-500/10 text-indigo-400 px-2.5 py-1.5 rounded-lg border border-indigo-500/10 flex items-center gap-1">
-                            APK: <span className="text-indigo-300">TID_{storageConfig.TELEGRAM_STORAGE_TOPIC_APK}</span>
-                        </span>
-                        <span className="bg-fuchsia-500/10 text-fuchsia-400 px-2.5 py-1.5 rounded-lg border border-fuchsia-500/10 flex items-center gap-1">
-                            IMG: <span className="text-fuchsia-300">TID_{storageConfig.TELEGRAM_STORAGE_TOPIC_IMAGES}</span>
-                        </span>
                     </div>
                 </div>
 
@@ -383,7 +255,7 @@ export default function AddAppPage() {
                         {submitting ? (
                             <>
                                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                Uploading to Telegram...
+                                Saving to Database...
                             </>
                         ) : (
                             <>
