@@ -18,6 +18,7 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '500mb',
         },
+        proxyClientMaxBodySize: '500mb', // Bypasses middleware 10mb limit
     },
 };
 
