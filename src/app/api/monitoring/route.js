@@ -64,14 +64,18 @@ export async function GET() {
 
         const COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EC4899'];
 
-        // Fetch Top 5 Airdrops by Task Count
+        // Fetch Top 5 Airdrops by Task Count (Only Public Projects)
         const topAirdropsRaw = await prisma.airdrop.findMany({
+            where: { isPublic: true },
             include: {
                 _count: { select: { tasks: true } }
             },
             orderBy: { tasks: { _count: 'desc' } },
             take: 5
         });
+
+        // Fetch Total Airdrops Count (All projects, private or public)
+        const totalAirdrops = await prisma.airdrop.count();
 
         const topAirdrops = topAirdropsRaw.map((a, idx) => ({
             name: a.name,
@@ -182,6 +186,7 @@ export async function GET() {
             },
             apiStats: endpointStats, // True API Endpoint hits
             topAirdrops,
+            totalAirdrops,
             tokenUsage,
             gmailActivity,
             driveInsights

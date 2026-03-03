@@ -139,7 +139,7 @@ export default function Dashboard() {
 
             {/* Row 2 — Feature Preview Sections */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-                <AirdropActivity data={stats?.topAirdrops || []} />
+                <AirdropActivity data={stats?.topAirdrops || []} total={stats?.totalAirdrops || 0} />
                 <TokenUsageCard data={stats?.tokenUsage || []} />
                 <GmailActivityCard data={stats?.gmailActivity || []} />
                 <DriveInsightsCard data={stats?.driveInsights} />

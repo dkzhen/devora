@@ -26,6 +26,51 @@ export default function AirdropDetailPage() {
     const [telegramSuccess, setTelegramSuccess] = useState(false);
     const [telegramError, setTelegramError] = useState(null);
     const [customBannerUrl, setCustomBannerUrl] = useState('');
+    const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
+
+    const handleToggleVisibility = async () => {
+        setIsTogglingVisibility(true);
+        try {
+            const res = await fetch(`/api/airdrops/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isPublic: !airdrop.isPublic })
+            });
+            if (res.ok) {
+                setAirdrop(prev => ({ ...prev, isPublic: !prev.isPublic, publishStatus: !prev.isPublic ? 'APPROVED' : 'NONE' }));
+            } else {
+                alert('Failed to update visibility');
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsTogglingVisibility(false);
+        }
+    };
+
+    const [isPublishRequesting, setIsPublishRequesting] = useState(false);
+
+    const handlePublishRequest = async (action) => {
+        // action can be 'PENDING', 'APPROVED', 'REJECTED'
+        setIsPublishRequesting(true);
+        try {
+            const res = await fetch(`/api/airdrops/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ publishStatus: action })
+            });
+            if (res.ok) {
+                const updatedAirdrop = await res.json();
+                setAirdrop(updatedAirdrop);
+            } else {
+                alert('Failed to update publish status');
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsPublishRequesting(false);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -269,14 +314,38 @@ export default function AirdropDetailPage() {
 
     if (!airdrop) {
         return (
-            <div className="p-8 text-center">
-                <h2 className="text-2xl font-bold text-white">Project not found</h2>
-                <button
-                    onClick={() => router.back()}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
-                >
-                    Back to List
-                </button>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] p-8">
+                <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0f172a]/50 p-10 text-center backdrop-blur-xl shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5" />
+
+                    <div className="relative z-10 flex flex-col items-center">
+                        {/* Icon Container */}
+                        <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-[#0f172a] shadow-inner border border-white/5">
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-gray-500/10 to-transparent blur-md"></div>
+                            <svg className="h-10 w-10 text-gray-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+
+                        <h2 className="mb-3 text-2xl font-black text-white tracking-tight">Project Not Found</h2>
+                        <p className="mb-8 text-sm text-gray-400 leading-relaxed">
+                            The airdrop you're looking for doesn't exist, has been removed, or is currently set to private.
+                        </p>
+
+                        <button
+                            onClick={() => router.push('/airdrops')}
+                            className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#0f172a] px-6 py-3.5 w-full text-sm font-bold text-gray-300 transition-all border border-white/10 hover:border-blue-500/40 hover:text-white"
+                        >
+                            <span className="relative z-10 flex items-center gap-2 transition-transform group-hover:-translate-x-1">
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                                Back to Airdrops
+                            </span>
+                            <div className="absolute inset-0 z-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 opacity-0 transition-opacity group-hover:opacity-100" />
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -310,7 +379,7 @@ export default function AirdropDetailPage() {
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/30 to-indigo-600/30 blur-md" />
                         <div className="relative w-24 h-24 rounded-2xl bg-[#0f172a]/10 border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm">
                             {airdrop.icon
-                                ? <img src={airdrop.icon} alt={airdrop.name} className="w-16 h-16 object-contain" />
+                                ? <img src={airdrop.icon} alt={airdrop.name} className="w-16 h-16 object-contain" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/digital-currency.png'; }} />
                                 : <span className="text-3xl font-black text-white">{airdrop.name[0]}</span>
                             }
                         </div>
@@ -372,8 +441,74 @@ export default function AirdropDetailPage() {
                         </div>
                     ))}
 
-                    {/* Post to Telegram Button - ULTRA only */}
-                    {user?.role === 'ULTRA' && (
+                    <div className="flex items-center gap-2 bg-[#0f172a]/5 border border-white/10 backdrop-blur-sm px-4 py-2 rounded-xl text-sm">
+                        <span className="text-gray-500 font-medium">Visibility:</span>
+                        <span className={airdrop.isPublic ? "text-green-400 font-semibold" : "text-gray-400 font-semibold"}>
+                            {airdrop.isPublic ? 'PUBLIC' : 'PRIVATE'}
+                        </span>
+                        {!airdrop.isPublic && airdrop.publishStatus === 'PENDING' && (
+                            <span className="ml-2 text-yellow-400 font-bold border border-yellow-500/30 px-1.5 py-0.5 rounded text-[10px] bg-yellow-500/20">
+                                PENDING
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Publish/Unpublish Button - ULTRA only */}
+                    {user?.role === 'ULTRA' && airdrop.publishStatus !== 'PENDING' && (
+                        <button
+                            onClick={handleToggleVisibility}
+                            disabled={isTogglingVisibility}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-gray-500/30 bg-gradient-to-r from-gray-600/20 to-gray-600/20 hover:bg-gray-700/40 text-gray-300 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {isTogglingVisibility ? 'Updating...' : (airdrop.isPublic ? 'Unpublish' : 'Publish')}
+                        </button>
+                    )}
+
+                    {/* Owner Request Publish Buttons */}
+                    {user?.id === airdrop.userId && !airdrop.isPublic && user?.role !== 'ULTRA' && (
+                        <>
+                            {(airdrop.publishStatus === 'NONE' || airdrop.publishStatus === 'REJECTED') && (
+                                <button
+                                    onClick={() => handlePublishRequest('PENDING')}
+                                    disabled={isPublishRequesting}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-blue-500/30 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 hover:from-blue-600/40 hover:to-indigo-600/40 text-blue-300 hover:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    {isPublishRequesting ? 'Requesting...' : 'Request Publish'}
+                                </button>
+                            )}
+                            {airdrop.publishStatus === 'PENDING' && (
+                                <button
+                                    disabled
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border border-yellow-500/30 bg-yellow-500/10 text-yellow-300 opacity-80 cursor-not-allowed"
+                                >
+                                    Pending Validation...
+                                </button>
+                            )}
+                        </>
+                    )}
+
+                    {/* ULTRA Accept/Decline Buttons for PENDING */}
+                    {user?.role === 'ULTRA' && !airdrop.isPublic && airdrop.publishStatus === 'PENDING' && (
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handlePublishRequest('APPROVED')}
+                                disabled={isPublishRequesting}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-green-500/30 bg-green-500/10 hover:bg-green-500/20 text-green-400 hover:text-green-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                {isPublishRequesting ? 'Processing...' : 'Accept Publish'}
+                            </button>
+                            <button
+                                onClick={() => handlePublishRequest('REJECTED')}
+                                disabled={isPublishRequesting}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                Decline
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Post to Telegram Button - ULTRA only, only on public */}
+                    {user?.role === 'ULTRA' && airdrop.isPublic && (
                         <button
                             onClick={handleTelegramPreview}
                             disabled={telegramLoading}
@@ -495,7 +630,7 @@ export default function AirdropDetailPage() {
                                 <div className="text-center py-8 text-gray-500">No tasks available for this project.</div>
                             )}
                         </div>
-                        {user && user.role === 'ULTRA' && (
+                        {user && (user.role === 'ULTRA' || airdrop?.userId === user.id) && (
                             <button
                                 onClick={() => setShowAddTask(true)}
                                 className="mt-4 w-full py-3 rounded-xl border-2 border-dashed border-gray-700 text-gray-400 font-medium hover:border-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-2"
@@ -550,7 +685,7 @@ export default function AirdropDetailPage() {
 
                         {/* Active Task Detail Box */}
                         <div className="bg-gray-900 rounded-3xl border border-gray-800 p-8 min-h-[500px]">
-                            {showAddTask && user && user.role === 'ULTRA' ? (
+                            {showAddTask && user && (user.role === 'ULTRA' || airdrop?.userId === user.id) ? (
                                 <div className="max-w-xl mx-auto">
                                     <div className="flex items-center justify-between mb-8">
                                         <h2 className="text-2xl font-bold text-white">Create New Task</h2>
@@ -779,7 +914,7 @@ export default function AirdropDetailPage() {
                                                     </button>
                                                 )}
                                             </div>
-                                            {user?.role === 'ULTRA' && (
+                                            {user && (user.role === 'ULTRA' || airdrop?.userId === user.id) && (
                                                 <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                                                     <button
                                                         onClick={() => {

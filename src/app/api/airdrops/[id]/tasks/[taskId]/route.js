@@ -22,8 +22,17 @@ export async function DELETE(request, { params }) {
     try {
         const { id, taskId } = await params;
         const user = await getUser();
-        if (!user || user.role !== 'ULTRA') {
-            return NextResponse.json({ error: 'Unauthorized. Only ULTRA admins can delete tasks.' }, { status: 403 });
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+        }
+
+        const airdrop = await prisma.airdrop.findUnique({ where: { id } });
+        if (!airdrop) {
+            return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        }
+
+        if (user.role !== 'ULTRA' && airdrop.userId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized. You can only delete tasks from your own projects.' }, { status: 403 });
         }
 
         // Verify task exists and belongs to airdrop
@@ -51,8 +60,17 @@ export async function PUT(request, { params }) {
     try {
         const { id, taskId } = await params;
         const user = await getUser();
-        if (!user || user.role !== 'ULTRA') {
-            return NextResponse.json({ error: 'Unauthorized. Only ULTRA admins can edit tasks.' }, { status: 403 });
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+        }
+
+        const airdrop = await prisma.airdrop.findUnique({ where: { id } });
+        if (!airdrop) {
+            return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        }
+
+        if (user.role !== 'ULTRA' && airdrop.userId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized. You can only edit tasks from your own projects.' }, { status: 403 });
         }
 
         const body = await request.json();

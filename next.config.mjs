@@ -14,12 +14,7 @@ const nextConfig = {
         ],
     },
     serverExternalPackages: ['jose', 'bcrypt'], // Added for Prisma/crypto stability if needed later
-    experimental: {
-        serverActions: {
-            bodySizeLimit: '500mb',
-        },
-        proxyClientMaxBodySize: '500mb', // Bypasses middleware 10mb limit
-    },
+
 };
 
 export default nextConfig;

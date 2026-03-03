@@ -26,7 +26,7 @@ export default async function DriveCenterPage() {
         user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { role: true } });
     } catch { redirect('/login'); }
 
-    if (!user || user.role === 'MEMBER') redirect('/settings');
+    if (!user || user.role === 'MEMBER') redirect('/upgrade');
 
     // Check maintenance for non-ULTRA users
     if (user.role !== 'ULTRA') {

@@ -71,10 +71,12 @@ model User {
   createdAt          DateTime          @default(now()) @map("created_at")
   updatedAt          DateTime          @updatedAt @map("updated_at")
   accounts           Account[]
+  airdrops           Airdrop[]
   airdropTasks       UserAirdropTask[]
   groqCredential     GroqCredential?
   chatSessions       ChatSession[]
   telegramUpdates    TelegramUpdate[]
+  httpClientData     Json?             @map("http_client_data")
 
   @@map("users")
 }
@@ -115,6 +117,11 @@ model Airdrop {
   fundsAndBackers Json? // e.g., [{ name: "Pantera Capital", icon: "..." }]
   rewardDate      String? // e.g., "TBA"
   rewardType      String? // e.g., "Airdrop"
+
+  userId          String?   @map("user_id")
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  isPublic        Boolean   @default(false) @map("is_public")
+  publishStatus   String    @default("NONE") @map("publish_status")
 
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")

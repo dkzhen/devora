@@ -222,7 +222,7 @@ export default function Sidebar() {
                                     <div className="space-y-0.5">
                                         {results.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
                                             const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
                                             if (isLocked) return (
                                                 <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
@@ -256,7 +256,7 @@ export default function Sidebar() {
                                     <div className="space-y-0.5">
                                         {cat.items.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA') || (item.href === '/drive-center' && user?.role !== 'PRO' && user?.role !== 'ULTRA');
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
                                             const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
 
                                             if (isLocked) return (

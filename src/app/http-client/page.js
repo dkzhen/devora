@@ -373,36 +373,48 @@ export default function HttpClientPage() {
     const [sidebarTab, setSidebarTab] = useState('collections'); // 'collections' | 'history' | 'endpoints'
     const saveMenuRef = useRef(null);
 
-    // Fetch logged-in user
+    // Fetch logged-in user and data
     useEffect(() => {
         fetch('/api/auth/me')
             .then(r => r.ok ? r.json() : null)
-            .then(data => { setUser(data?.user || null); setUserLoading(false); })
+            .then(data => {
+                setUser(data?.user || null);
+                setUserLoading(false);
+
+                if (data?.user) {
+                    // Fetch HTTP client data from DB
+                    fetch('/api/http-client')
+                        .then(r => r.ok ? r.json() : null)
+                        .then(hdata => {
+                            if (hdata?.data) {
+                                if (hdata.data.collections) setCollections(hdata.data.collections);
+                                if (hdata.data.environments) setEnvironments(hdata.data.environments);
+                                if (hdata.data.activeEnvId) setActiveEnvId(hdata.data.activeEnvId);
+                                if (hdata.data.history) setHistory(hdata.data.history);
+                            }
+                        })
+                        .catch(err => console.error('Error fetching http client data:', err));
+                }
+            })
             .catch(() => setUserLoading(false));
     }, []);
 
     const isLoggedIn = !!user;
 
-
-    // Persist to localStorage
+    // Persist to Database on changes (debounced)
     useEffect(() => {
-        try {
-            const s = localStorage.getItem('hc_state');
-            if (s) {
-                const d = JSON.parse(s);
-                if (d.collections) setCollections(d.collections);
-                if (d.environments) setEnvironments(d.environments);
-                if (d.activeEnvId) setActiveEnvId(d.activeEnvId);
-                if (d.history) setHistory(d.history);
-            }
-        } catch { }
-    }, []);
+        if (!isLoggedIn || userLoading) return;
 
-    useEffect(() => {
-        try {
-            localStorage.setItem('hc_state', JSON.stringify({ collections, environments, activeEnvId, history }));
-        } catch { }
-    }, [collections, environments, activeEnvId, history]);
+        const timer = setTimeout(() => {
+            fetch('/api/http-client', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ collections, environments, activeEnvId, history }),
+            }).catch(err => console.error('Error saving http client data:', err));
+        }, 1000); // 1s debounce
+
+        return () => clearTimeout(timer);
+    }, [collections, environments, activeEnvId, history, isLoggedIn, userLoading]);
 
     // Close save menu on outside click
     useEffect(() => {
@@ -693,13 +705,15 @@ export default function HttpClientPage() {
 
             {/* ── Toolbar (controls above the workspace) ── */}
             <div className="flex flex-wrap items-center gap-3">
-                <button
-                    onClick={() => setSidebarOpen(o => !o)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${sidebarOpen ? 'bg-blue-500/10 text-blue-300 border-blue-500/20' : 'bg-white/5 text-gray-400 border-white/10 hover:text-gray-200 hover:bg-white/8'}`}
-                >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                    Collections
-                </button>
+                {isLoggedIn && (
+                    <button
+                        onClick={() => setSidebarOpen(o => !o)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${sidebarOpen ? 'bg-blue-500/10 text-blue-300 border-blue-500/20' : 'bg-white/5 text-gray-400 border-white/10 hover:text-gray-200 hover:bg-white/8'}`}
+                    >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                        Collections
+                    </button>
+                )}
                 <button
                     onClick={() => { setActiveRequest(newRequest()); setResponse(null); }}
                     className="flex items-center gap-1.5 px-3 py-2 bg-white/5 hover:bg-white/8 border border-white/10 rounded-xl text-xs text-gray-300 font-semibold transition-colors"
@@ -708,30 +722,34 @@ export default function HttpClientPage() {
                     New Request
                 </button>
                 <div className="flex items-center gap-2 ml-auto">
-                    <select
-                        value={activeEnvId || ''}
-                        onChange={e => setActiveEnvId(e.target.value || null)}
-                        className="bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-blue-500/30 appearance-none max-w-40"
-                    >
-                        <option value="">No Environment</option>
-                        {environments.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-                    </select>
-                    <button
-                        onClick={() => setShowEnvModal(true)}
-                        title="Manage Environments"
-                        className="p-2 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-colors border border-white/10"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" /></svg>
-                    </button>
+                    {isLoggedIn && (
+                        <>
+                            <select
+                                value={activeEnvId || ''}
+                                onChange={e => setActiveEnvId(e.target.value || null)}
+                                className="bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-blue-500/30 appearance-none max-w-40"
+                            >
+                                <option value="">No Environment</option>
+                                {environments.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                            </select>
+                            <button
+                                onClick={() => setShowEnvModal(true)}
+                                title="Manage Environments"
+                                className="p-2 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-colors border border-white/10"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" /></svg>
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
 
             {/* ── HTTP Client workspace ── */}
-            <div className={sidebarOpen ? "grid md:grid-cols-[260px_1fr] gap-4 items-start" : "flex flex-col gap-4 items-start w-full"}>
+            <div className={(isLoggedIn && sidebarOpen) ? "grid md:grid-cols-[260px_1fr] gap-4 items-start" : "flex flex-col gap-4 items-start w-full"}>
 
                 {/* Sidebar — on mobile it's hidden/shown via state as overlay */}
                 {/* Desktop: always shows as left column; Mobile: overlay drawer */}
-                {sidebarOpen && (
+                {isLoggedIn && sidebarOpen && (
                     <>
                         {/* Mobile backdrop */}
                         <div

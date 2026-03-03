@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-export default function AirdropActivity({ data = [] }) {
+export default function AirdropActivity({ data = [], total = 0 }) {
     return (
         <div className="relative overflow-hidden rounded-2xl bg-[#0d121f]/50 backdrop-blur-xl border border-white/8 p-6 flex flex-col h-full group">
             {/* Header */}
@@ -62,7 +62,7 @@ export default function AirdropActivity({ data = [] }) {
 
             {/* Footer accent */}
             <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-gray-600">
-                <span>Active Projects</span>
+                <span>Active Projects: <span className="text-white">{total}</span></span>
                 <span className="text-blue-500">Updated Live</span>
             </div>
         </div>

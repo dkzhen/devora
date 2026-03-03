@@ -37,8 +37,17 @@ export async function POST(request, { params }) {
     try {
         const { id } = await params;
         const user = await getUser();
-        if (!user || user.role !== 'ULTRA') {
-            return NextResponse.json({ error: 'Unauthorized. Only ULTRA admins can add tasks.' }, { status: 403 });
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+        }
+
+        const airdrop = await prisma.airdrop.findUnique({ where: { id } });
+        if (!airdrop) {
+            return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        }
+
+        if (user.role !== 'ULTRA' && airdrop.userId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized. You can only add tasks to your own projects.' }, { status: 403 });
         }
 
         const body = await request.json();

@@ -26,8 +26,21 @@ export async function DELETE(request, { params }) {
         const { id } = await params;
         const user = await getUser();
 
-        if (!user || user.role !== 'ULTRA') {
-            return NextResponse.json({ error: 'Unauthorized. Only ULTRA admins can delete projects.' }, { status: 403 });
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+        }
+
+        const airdrop = await prisma.airdrop.findUnique({ where: { id } });
+        if (!airdrop) {
+            return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        }
+
+        if (user.role === 'ULTRA') {
+            if (!airdrop.isPublic && airdrop.publishStatus !== 'PENDING' && airdrop.userId !== user.id) {
+                return NextResponse.json({ error: 'Not found' }, { status: 404 }); // Hide completely from ULTRA
+            }
+        } else if (airdrop.userId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized. You can only delete your own projects.' }, { status: 403 });
         }
 
         // Delete the airdrop (cascade deletes tasks and progress automatically)
@@ -48,16 +61,55 @@ export async function PUT(request, { params }) {
         const { id } = await params;
         const user = await getUser();
 
-        if (!user || user.role !== 'ULTRA') {
-            return NextResponse.json({ error: 'Unauthorized. Only ULTRA admins can update projects.' }, { status: 403 });
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+        }
+
+        const airdrop = await prisma.airdrop.findUnique({ where: { id } });
+        if (!airdrop) {
+            return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        }
+
+        if (user.role === 'ULTRA') {
+            if (!airdrop.isPublic && airdrop.publishStatus !== 'PENDING' && airdrop.userId !== user.id) {
+                return NextResponse.json({ error: 'Not found' }, { status: 404 }); // Hide completely from ULTRA
+            }
+        } else if (airdrop.userId !== user.id) {
+            return NextResponse.json({ error: 'Unauthorized. You can only update your own projects.' }, { status: 403 });
         }
 
         const body = await request.json();
         const {
             name, icon, description, raise, score, symbol,
             rewardDate, rewardType, status, cost, time, taskType, stage,
-            projectType, links
+            projectType, links, publishStatus
         } = body;
+
+        let newIsPublic = airdrop.isPublic;
+        let newPublishStatus = airdrop.publishStatus;
+
+        if (user.role === 'ULTRA') {
+            if (body.isPublic !== undefined) {
+                newIsPublic = body.isPublic;
+                if (publishStatus === undefined) {
+                    newPublishStatus = newIsPublic ? 'APPROVED' : 'NONE';
+                }
+            }
+
+            // Handle publish specific actions from ULTRA
+            if (publishStatus === 'APPROVED') {
+                newIsPublic = true;
+                newPublishStatus = 'APPROVED';
+            } else if (publishStatus === 'REJECTED') {
+                newIsPublic = false;
+                newPublishStatus = 'NONE'; // Reset so they can request again
+            }
+        } else if (airdrop.userId === user.id) {
+            // Owner can request publish
+            if (publishStatus === 'PENDING' && !airdrop.isPublic) {
+                newPublishStatus = 'PENDING';
+            }
+        }
 
         // Logic check: Limit "New" status projects to max 5
         let currentStatus = status;
@@ -103,6 +155,8 @@ export async function PUT(request, { params }) {
                 stage,
                 projectType,
                 links,
+                isPublic: newIsPublic,
+                publishStatus: newPublishStatus,
                 updatedAt: new Date(),
                 // Only update status date if status changed, handled roughly outside, but for now we let it be or update it
                 ...(status && { statusDate: new Date() })

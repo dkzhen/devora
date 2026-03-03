@@ -5,24 +5,6 @@ import prisma from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request) {
-    trackApiHit(request);
-    try {
-        const airdrops = await prisma.airdrop.findMany({
-            orderBy: { createdAt: 'desc' },
-            include: {
-                tasks: {
-                    select: { category: true }
-                }
-            }
-        });
-        return NextResponse.json(airdrops);
-    } catch (error) {
-        console.error('Failed to fetch airdrops:', error);
-        return NextResponse.json({ error: 'Failed to fetch airdrops' }, { status: 500 });
-    }
-}
-
 import { cookies } from 'next/headers';
 import * as jose from 'jose';
 
@@ -39,12 +21,53 @@ async function getUser() {
     } catch (e) { return null; }
 }
 
+export async function GET(request) {
+    trackApiHit(request);
+    try {
+        const user = await getUser();
+        let whereClause = {};
+
+        if (!user) {
+            whereClause = { isPublic: true };
+        } else if (user.role === 'ULTRA') {
+            whereClause = {
+                OR: [
+                    { isPublic: true },
+                    { userId: user.id },
+                    { publishStatus: 'PENDING' }
+                ]
+            };
+        } else {
+            whereClause = {
+                OR: [
+                    { isPublic: true },
+                    { userId: user.id }
+                ]
+            };
+        }
+
+        const airdrops = await prisma.airdrop.findMany({
+            where: whereClause,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                tasks: {
+                    select: { category: true }
+                }
+            }
+        });
+        return NextResponse.json(airdrops);
+    } catch (error) {
+        console.error('Failed to fetch airdrops:', error);
+        return NextResponse.json({ error: 'Failed to fetch airdrops' }, { status: 500 });
+    }
+}
+
 export async function POST(request) {
     trackApiHit(request);
     try {
         const user = await getUser();
-        if (!user || user.role !== 'ULTRA') {
-            return NextResponse.json({ error: 'Unauthorized. Only ULTRA admins can add projects.' }, { status: 403 });
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized. You must be logged in to add projects.' }, { status: 401 });
         }
 
         const body = await request.json();
@@ -97,6 +120,9 @@ export async function POST(request) {
                 stage,
                 projectType,
                 links,
+                userId: user.id,
+                isPublic: user.role === 'ULTRA' && body.isPublic === true ? true : false,
+                publishStatus: user.role === 'ULTRA' && body.isPublic === true ? 'APPROVED' : 'NONE',
                 statusDate: new Date()
             }
         });
