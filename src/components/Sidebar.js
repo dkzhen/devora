@@ -84,11 +84,6 @@ export default function Sidebar() {
                     icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                 },
                 {
-                    name: 'Airdrops',
-                    href: '/airdrops',
-                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21v-6m0 0l-3 3m3-3l3 3" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5.5 11C5.5 7.41 8.41 4.5 12 4.5S18.5 7.41 18.5 11" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 11a9 9 0 0118 0" /><line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="5.5" y2="11" /><line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="18.5" y2="11" /></svg>
-                },
-                {
                     name: 'Chatbot',
                     href: '/chatbot',
                     icon: (
@@ -101,6 +96,17 @@ export default function Sidebar() {
                     )
                 },
                 {
+                    name: 'Airdrops',
+                    href: '/airdrops',
+                    icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21v-6m0 0l-3 3m3-3l3 3" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5.5 11C5.5 7.41 8.41 4.5 12 4.5S18.5 7.41 18.5 11" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 11a9 9 0 0118 0" /><line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="5.5" y2="11" /><line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="18.5" y2="11" /></svg>
+                },
+
+                {
+                    name: 'Temp Mail',
+                    href: '/temp-mail',
+                    icon: <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11.5947 19H6.2C5.07989 19 4.51984 19 4.09202 18.782C3.71569 18.5903 3.40973 18.2843 3.21799 17.908C3 17.4802 3 16.9201 3 15.8V8.2C3 7.0799 3 6.51984 3.21799 6.09202C3.40973 5.71569 3.71569 5.40973 4.09202 5.21799C4.51984 5 5.0799 5 6.2 5H17.8C18.9201 5 19.4802 5 19.908 5.21799C20.2843 5.40973 20.5903 5.71569 20.782 6.09202C21 6.51984 21 7.0799 21 8.2V12M20.6067 8.26229L15.5499 11.6335C14.2669 12.4888 13.6254 12.9165 12.932 13.0827C12.3192 13.2295 11.6804 13.2295 11.0677 13.0827C10.3743 12.9165 9.73279 12.4888 8.44975 11.6335L3.14746 8.09863M18 13.5L19.4107 15.5584L21.8042 16.2639L20.2825 18.2416L20.3511 20.7361L18 19.9L15.6489 20.7361L15.7175 18.2416L14.1958 16.2639L16.5893 15.5584L18 13.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                },
+                {
                     name: 'App Library',
                     href: '/app-library',
                     icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14"><path fill="currentColor" fillRule="evenodd" d="M.352 1.305c0-.025.001-.05.003-.073l5.63 5.629l-5.63 5.63a.917.917 0 0 1-.003-.073zM1.61 13.357c.1-.019.2-.053.298-.102l6.943-3.527l-1.806-1.806zm6.496-6.496l2.152 2.152l2.586-1.314c.719-.365.719-1.31 0-1.675L10.257 4.71zm.745-2.866L1.908.468A1.122 1.122 0 0 0 1.61.366L7.045 5.8z" clipRule="evenodd" /></svg>
@@ -110,11 +116,7 @@ export default function Sidebar() {
                     href: '/http-client',
                     icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 306" fill="currentColor"><path d="M256 66.28C255.732 29.408 224.974 0 188.102 0H67.96C31.366 0 .719 28.947.01 65.553a66.896 66.896 0 0 0 66.85 68.097h53.676a3.894 3.894 0 0 1 1.552 7.412L39.803 177.13C15.463 187.92-.163 212.112.011 238.736c.279 36.878 31.017 66.312 67.902 66.312H96.07c37.144 0 68.07-29.79 68.012-66.935c-.076-27.213-16.624-51.67-41.856-61.86a3.855 3.855 0 0 1-.065-7.1l94.11-41.266c24.316-10.808 39.916-34.998 39.73-61.607Z" /></svg>
                 },
-                {
-                    name: 'Temp Mail',
-                    href: '/temp-mail',
-                    icon: <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11.5947 19H6.2C5.07989 19 4.51984 19 4.09202 18.782C3.71569 18.5903 3.40973 18.2843 3.21799 17.908C3 17.4802 3 16.9201 3 15.8V8.2C3 7.0799 3 6.51984 3.21799 6.09202C3.40973 5.71569 3.71569 5.40973 4.09202 5.21799C4.51984 5 5.0799 5 6.2 5H17.8C18.9201 5 19.4802 5 19.908 5.21799C20.2843 5.40973 20.5903 5.71569 20.782 6.09202C21 6.51984 21 7.0799 21 8.2V12M20.6067 8.26229L15.5499 11.6335C14.2669 12.4888 13.6254 12.9165 12.932 13.0827C12.3192 13.2295 11.6804 13.2295 11.0677 13.0827C10.3743 12.9165 9.73279 12.4888 8.44975 11.6335L3.14746 8.09863M18 13.5L19.4107 15.5584L21.8042 16.2639L20.2825 18.2416L20.3511 20.7361L18 19.9L15.6489 20.7361L15.7175 18.2416L14.1958 16.2639L16.5893 15.5584L18 13.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
-                },
+
             ]
         },
         {
