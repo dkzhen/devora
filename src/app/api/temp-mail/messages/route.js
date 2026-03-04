@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
+import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
 
 const API_BASE = 'https://api.mail.tm';
 
 export async function GET(req) {
+    trackApiHit(req);
     try {
         const authHeader = req.headers.get('authorization');
         if (!authHeader) {

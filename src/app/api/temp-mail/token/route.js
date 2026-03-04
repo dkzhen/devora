@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { trackApiHit } from '@/lib/monitoring';
 
 const API_BASE = 'https://api.mail.tm';
 
 export async function POST(req) {
+    trackApiHit(req);
     try {
         const body = await req.json();
         const { address, password } = body;

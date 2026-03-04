@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { trackApiHit } from '@/lib/monitoring';
 
 const API_BASE = 'https://api.mail.tm';
 
 export async function GET(req) {
+    trackApiHit(req);
     try {
         const { searchParams } = new URL(req.url);
         const page = searchParams.get('page') || '1';

@@ -31,8 +31,10 @@ export const apiCategories = [
         endpoints: [
             { method: 'GET', path: '/api/airdrops', desc: 'Retrieve all airdrop projects' },
             { method: 'POST', path: '/api/airdrops', desc: 'Create a new airdrop project', sampleBody: '{\n  "name": "Test Project",\n  "taskType": "Social",\n  "status": "Potential"\n}', autoCleanupEndpoint: '/api/airdrops/:id' },
+            { method: 'GET', path: '/api/airdrops/:id', desc: 'Get specific details of an airdrop project' },
             { method: 'PUT', path: '/api/airdrops/:id', desc: 'Update an existing airdrop project' },
             { method: 'DELETE', path: '/api/airdrops/:id', desc: 'Delete an airdrop project' },
+            { method: 'PATCH', path: '/api/airdrops/:id/toggle', desc: 'Toggle the status (active/inactive) of an airdrop project' },
             { method: 'GET', path: '/api/airdrops/:id/tasks', desc: 'Get all tasks for a specific airdrop' },
             { method: 'POST', path: '/api/airdrops/:id/tasks', desc: 'Create a new task for an airdrop' },
             { method: 'PUT', path: '/api/airdrops/:id/tasks/:taskId', desc: 'Update a specific task' },
@@ -124,6 +126,21 @@ export const apiCategories = [
             { method: 'DELETE', path: '/api/apps/:id/versions/:versionId', desc: 'Delete a specific version of an app (ULTRA)' },
             { method: 'POST', path: '/api/telegram/upload', desc: 'Upload a brand new app (APK + Icon) to Telegram topics (Multipart FormData)' },
             { method: 'POST', path: '/api/telegram/upload-version', desc: 'Upload a new version for an existing app to Telegram (Multipart FormData)' },
+        ]
+    },
+    {
+        category: 'Temp Mail',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
+        desc: 'Endpoints for generating and managing anonymous temporary emails via Mail.tm',
+        endpoints: [
+            { method: 'GET', path: '/api/temp-mail/domains', desc: 'Retrieve a list of available active email domains' },
+            { method: 'GET', path: '/api/temp-mail/accounts', desc: 'Retrieve all generated temporary email accounts for the user' },
+            { method: 'POST', path: '/api/temp-mail/accounts', desc: 'Create a new anonymous temporary email address', sampleBody: '{\n  "domain": "cliptik.net"\n}' },
+            { method: 'DELETE', path: '/api/temp-mail/accounts/:id', desc: 'Permanently delete a temporary email account' },
+            { method: 'POST', path: '/api/temp-mail/token', desc: 'Generate or retrieve the Mail.tm JWT authorization token for an account', sampleBody: '{\n  "accountId": "12345"\n}' },
+            { method: 'GET', path: '/api/temp-mail/messages', desc: 'Retrieve the inbox messages list for a specific account', sampleBody: '?accountId=12345' },
+            { method: 'GET', path: '/api/temp-mail/messages/:id', desc: 'Retrieve the full details and HTML content of a specific email message' },
+            { method: 'GET', path: '/api/temp-mail/image', desc: 'Proxy inline images to bypass CORS and tracking pixels in emails', sampleBody: '?url=https://...' }
         ]
     }
 ];

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { trackApiHit } from '@/lib/monitoring';
 
 export async function GET(req) {
+    trackApiHit(req);
     try {
         const authHeader = req.headers.get('authorization');
         if (!authHeader) {

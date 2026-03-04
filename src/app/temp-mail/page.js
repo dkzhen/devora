@@ -466,7 +466,7 @@ export default function TempMail() {
                                         {messageContent.html ? (
                                             <div
                                                 dangerouslySetInnerHTML={{ __html: messageContent.html.join('') }}
-                                                className="w-full h-full pb-10 text-gray-200 [&_*]:!text-gray-200 [&_*]:!bg-transparent [&_*]:!border-gray-700"
+                                                className="w-full h-full pb-10 text-gray-200 **:text-gray-200! **:bg-transparent! **:border-gray-700!"
                                             />
                                         ) : messageContent.text ? (
                                             <div className="whitespace-pre-wrap font-sans text-sm text-gray-300 pb-10">

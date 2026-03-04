@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
+import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
 
 const API_BASE = 'https://api.mail.tm';
 
 export async function POST(req) {
+    trackApiHit(req);
     try {
         const body = await req.json();
         const { address, password } = body;
@@ -45,6 +47,7 @@ export async function POST(req) {
 }
 
 export async function DELETE(req) {
+    trackApiHit(req);
     try {
         const authHeader = req.headers.get('authorization');
         const { searchParams } = new URL(req.url);
