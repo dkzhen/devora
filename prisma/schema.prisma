@@ -283,3 +283,32 @@ model AppVersion {
 
   @@map("app_versions")
 }
+
+model TempMailAccount {
+  id        String   @id
+  address   String   @unique
+  password  String
+  token     String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  messages  TempMailMessage[]
+
+  @@map("temp_mail_accounts")
+}
+
+model TempMailMessage {
+  id          String   @id
+  msgid       String?  @db.Text
+  fromName    String?
+  fromAddress String?
+  subject     String?  @db.Text
+  intro       String?  @db.Text
+  seen        Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  accountId   String          @map("account_id")
+  account     TempMailAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@map("temp_mail_messages")
+}

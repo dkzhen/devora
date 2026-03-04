@@ -10,7 +10,11 @@ async function verifyAuth(request) {
     try {
         const secret = new TextEncoder().encode(process.env.JWT_SECRET);
         const { payload } = await jwtVerify(token, secret);
-        return payload; // { id, email, role }
+        // Map payload sub to id since JWT stores the user's ID in the 'sub' field
+        return {
+            ...payload,
+            id: payload.sub || payload.id
+        };
     } catch (error) {
         return null;
     }
