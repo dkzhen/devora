@@ -142,5 +142,16 @@ export const apiCategories = [
             { method: 'GET', path: '/api/temp-mail/messages/:id', desc: 'Retrieve the full details and HTML content of a specific email message' },
             { method: 'GET', path: '/api/temp-mail/image', desc: 'Proxy inline images to bypass CORS and tracking pixels in emails', sampleBody: '?url=https://...' }
         ]
+    },
+    {
+        category: 'Quick Vault',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10V18C3 19.1046 3.89543 20 5 20H10M3 10V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V10M3 10H21M21 10V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M14 17.4286C14 16.9552 14.3838 16.5714 14.8571 16.5714H19.1429C19.6162 16.5714 20 16.9552 20 17.4286V20.1429C20 20.6162 19.6162 21 19.1429 21H14.8571C14.3838 21 14 20.6162 14 20.1429V17.4286Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M15.7143 15.2857C15.7143 14.5756 16.2899 14 17 14C17.7101 14 18.2857 14.5756 18.2857 15.2857V16.5714H15.7143V15.2857Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><circle cx="6" cy="7" r="1" fill="currentColor"></circle><circle cx="9" cy="7" r="1" fill="currentColor"></circle></svg>,
+        desc: 'Endpoints for managing securely encrypted private vault credentials',
+        endpoints: [
+            { method: 'GET', path: '/api/quick-vault', desc: 'Retrieve all decrypted vault items for the authenticated user' },
+            { method: 'POST', path: '/api/quick-vault', desc: 'Add a new vault item and store its value encrypted in the database', sampleBody: '{\n  "category": "social",\n  "label": "Twitter Password",\n  "value": "super_secret"\n}' },
+            { method: 'PUT', path: '/api/quick-vault/:id', desc: 'Update an existing vault item (re-encrypts value if provided)', sampleBody: '{\n  "category": "work",\n  "label": "New Label"\n}' },
+            { method: 'DELETE', path: '/api/quick-vault/:id', desc: 'Securely delete a vault item if it belongs to the authenticated user' }
+        ]
     }
 ];

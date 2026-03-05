@@ -59,19 +59,19 @@ export default function Dashboard() {
             {/* Desktop Header */}
             <div className="hidden md:block relative overflow-hidden rounded-2xl mb-6">
                 <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-amber-600/10 blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-red-500/10 blur-3xl pointer-events-none" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
                 <div className="relative z-10 p-8 flex items-end justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
-                            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em]">System Monitoring</span>
+                            <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-pulse" />
+                            <span className="text-[10px] font-bold text-amber-400 uppercase tracking-[0.2em]">System Monitoring</span>
                         </div>
                         <h1 className="text-4xl font-black tracking-tight">
                             <span className="text-white">Overall </span>
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-cyan-400">Dashboard</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 via-orange-500 to-red-500">Dashboard</span>
                         </h1>
                         <p className="text-gray-400 mt-2 text-sm leading-relaxed max-w-xl">
                             Real-time analytics and management for your accounts, messages, and automation.
@@ -86,7 +86,7 @@ export default function Dashboard() {
                                 <span className="text-sm font-black text-white">Real-time / 24h</span>
                             </div>
                             <div className="w-px h-8 bg-white/10 relative z-10" />
-                            <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 relative z-10">
+                            <div className="w-8 h-8 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 relative z-10">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             </div>
                         </div>
@@ -97,18 +97,18 @@ export default function Dashboard() {
             {/* Mobile Header */}
             <div className="md:hidden relative overflow-hidden rounded-2xl mb-2">
                 <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                <div className="absolute -top-8 -left-8 w-52 h-52 rounded-full bg-blue-600/20 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-12 right-0 w-44 h-44 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
+                <div className="absolute -top-8 -left-8 w-52 h-52 rounded-full bg-amber-600/20 blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-12 right-0 w-44 h-44 rounded-full bg-red-500/20 blur-3xl pointer-events-none" />
                 <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
                 <div className="relative z-10 p-5 pt-4">
                     <div className="flex items-center gap-2 mb-3">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
-                        <span className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em]">Monitoring</span>
+                        <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-pulse" />
+                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-[0.2em]">Monitoring</span>
                     </div>
                     <div>
                         <h1 className="text-2xl font-black text-white tracking-tight leading-none">
-                            Overall <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-400">Dashboard</span>
+                            Overall <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-red-500">Dashboard</span>
                         </h1>
                         <p className="text-gray-400 text-xs mt-1.5 leading-relaxed">System activity analytics</p>
                     </div>

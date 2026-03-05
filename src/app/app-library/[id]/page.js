@@ -319,9 +319,9 @@ export default function AppDetailPage() {
                             {/* Large icon */}
                             <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl border border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-2xl" style={{ background: 'linear-gradient(145deg, #111827, #1e2740)' }}>
                                 {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
-                                    <img src={`/api/telegram/image/${app.versions[0].imageUrl}`} alt={app.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/default-app-icon.svg'; }} />
+                                    <img src={`/api/telegram/image/${app.versions[0].imageUrl}`} alt={app.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/android.png'; }} />
                                 ) : app.iconStatic && app.iconStatic !== '📦' ? (
-                                    <img src={app.iconStatic} alt={app.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/default-app-icon.svg'; }} />
+                                    <img src={app.iconStatic} alt={app.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/android.png'; }} />
                                 ) : (
                                     <svg width="44" height="44" viewBox="0 0 512 512" fill="currentColor" className="text-blue-400/50">
                                         <path d="M256,0C114.6,0,0,114.6,0,256s114.6,256,256,256s256-114.6,256-256S397.4,0,256,0z M415.8,415.7 c-20.8,20.8-44.9,37.1-71.8,48.4c-27.8,11.8-57.4,17.7-88,17.7c-30.5,0-60.1-6-88-17.7c-26.9-11.4-51.1-27.7-71.8-48.4 c-20.8-20.8-37.1-44.9-48.4-71.8C36,316.1,30,286.5,30,256s6-60.1,17.7-88c11.4-26.9,27.7-51.1,48.4-71.8 c20.9-20.8,45-37.1,71.9-48.5C195.9,36,225.5,30,256,30s60.1,6,88,17.7c26.9,11.4,51.1,27.7,71.8,48.4 c20.8,20.8,37.1,44.9,48.4,71.8c11.8,27.8,17.7,57.4,17.7,88c0,30.5-6,60.1-17.7,88C452.8,370.8,436.5,395,415.8,415.7z" />

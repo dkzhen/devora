@@ -116,7 +116,11 @@ export default function Sidebar() {
                     href: '/http-client',
                     icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 306" fill="currentColor"><path d="M256 66.28C255.732 29.408 224.974 0 188.102 0H67.96C31.366 0 .719 28.947.01 65.553a66.896 66.896 0 0 0 66.85 68.097h53.676a3.894 3.894 0 0 1 1.552 7.412L39.803 177.13C15.463 187.92-.163 212.112.011 238.736c.279 36.878 31.017 66.312 67.902 66.312H96.07c37.144 0 68.07-29.79 68.012-66.935c-.076-27.213-16.624-51.67-41.856-61.86a3.855 3.855 0 0 1-.065-7.1l94.11-41.266c24.316-10.808 39.916-34.998 39.73-61.607Z" /></svg>
                 },
-
+                {
+                    name: 'Quick Vault',
+                    href: '/quick-vault',
+                    icon: <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10V18C3 19.1046 3.89543 20 5 20H10M3 10V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V10M3 10H21M21 10V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M14 17.4286C14 16.9552 14.3838 16.5714 14.8571 16.5714H19.1429C19.6162 16.5714 20 16.9552 20 17.4286V20.1429C20 20.6162 19.6162 21 19.1429 21H14.8571C14.3838 21 14 20.6162 14 20.1429V17.4286Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M15.7143 15.2857C15.7143 14.5756 16.2899 14 17 14C17.7101 14 18.2857 14.5756 18.2857 15.2857V16.5714H15.7143V15.2857Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><circle cx="6" cy="7" r="1" fill="currentColor"></circle><circle cx="9" cy="7" r="1" fill="currentColor"></circle></svg>
+                },
             ]
         },
         {
@@ -338,6 +342,13 @@ export default function Sidebar() {
                         </button>
                     </div>
                 )}
+
+                {/* Developer Credit */}
+                <div className="pt-2 pb-1 text-center">
+                    <span className="text-[10px] text-gray-500/80">
+                        Developed by <a href="https://dkzhen.org" target="_blank" rel="noopener noreferrer" className="text-purple-400/80 hover:text-purple-400 transition-colors font-medium">Zhen</a>
+                    </span>
+                </div>
             </div>
         </aside>
     );

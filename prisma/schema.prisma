@@ -76,6 +76,7 @@ model User {
   groqCredential     GroqCredential?
   chatSessions       ChatSession[]
   telegramUpdates    TelegramUpdate[]
+  quickVaultItems    QuickVaultItem[]
   httpClientData     Json?             @map("http_client_data")
 
   @@map("users")
@@ -311,4 +312,17 @@ model TempMailMessage {
 
   @@index([accountId])
   @@map("temp_mail_messages")
+}
+
+model QuickVaultItem {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  String   // e.g. "social", "crypto", "exchange"
+  label     String
+  value     String   @db.Text // Encrypted value
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@index([userId])
+  @@map("quick_vault_items")
 }

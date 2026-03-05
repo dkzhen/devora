@@ -453,7 +453,7 @@ export default function AppLibraryPage() {
                                                     className="w-full h-full object-cover"
                                                     onError={(e) => {
                                                         e.target.onerror = null;
-                                                        e.target.src = '/icons/default-app-icon.svg';
+                                                        e.target.src = '/icons/android.png';
                                                     }}
                                                 />
                                             ) : app.iconStatic && app.iconStatic !== '📦' ? (
@@ -463,7 +463,7 @@ export default function AppLibraryPage() {
                                                     className="w-full h-full object-cover"
                                                     onError={(e) => {
                                                         e.target.onerror = null;
-                                                        e.target.src = '/icons/default-app-icon.svg';
+                                                        e.target.src = '/icons/android.png';
                                                     }}
                                                 />
                                             ) : (
