@@ -34,8 +34,15 @@ export async function POST(req) {
                         password: password
                     }
                 });
+
+                // Increment generated emails count
+                await prisma.tempMailStats.upsert({
+                    where: { id: 1 },
+                    update: { emailsGenerated: { increment: 1 } },
+                    create: { id: 1, emailsGenerated: 1 }
+                });
             } catch (dbErr) {
-                console.error('Failed to save temp mail account to DB', dbErr);
+                console.error('Failed to save temp mail account or update stats in DB', dbErr);
             }
         }
 

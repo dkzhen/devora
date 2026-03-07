@@ -326,3 +326,12 @@ model QuickVaultItem {
   @@index([userId])
   @@map("quick_vault_items")
 }
+
+model TempMailStats {
+  id               Int      @id @default(1)
+  emailsGenerated  Int      @default(0) @map("emails_generated")
+  messagesReceived Int      @default(0) @map("messages_received")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("temp_mail_stats")
+}

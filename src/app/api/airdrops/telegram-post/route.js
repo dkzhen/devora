@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
+import prisma from '@/lib/db';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -8,9 +11,26 @@ const BASE_URL = process.env.NODE_ENV === 'production'
     : process.env.BASE_URL_DEV;
 
 /**
+ * Get user ID from session
+ */
+const getUserId = async () => {
+    try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get('auth_token')?.value;
+        if (!token) return null;
+
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret);
+        return payload.sub;
+    } catch {
+        return null;
+    }
+};
+
+/**
  * Generate Telegram caption using Groq AI (HTML parse mode)
  */
-async function generateCaption(airdrop, tasks) {
+async function generateCaption(airdrop, tasks, userId) {
     // Telegram strips <a> tags with localhost URLs, so we force the prod URL for the post
     const publicBaseUrl = process.env.BASE_URL_PROD || 'https://devora.dkzhen.org';
     const detailUrl = `${publicBaseUrl}/airdrops/${airdrop.id}`;
@@ -90,6 +110,19 @@ Return ONLY the Telegram post HTML text, nothing else.`;
 
     // Strip any markdown code block wrappers if AI accidentally added them
     caption = caption.replace(/^```html?\n?/i, '').replace(/\n?```$/i, '').trim();
+
+    // Track Usage
+    const usage = data.usage;
+    if (usage && userId) {
+        await prisma.groqCredential.update({
+            where: { userId },
+            data: {
+                promptTokens: { increment: usage.prompt_tokens || 0 },
+                completionTokens: { increment: usage.completion_tokens || 0 },
+                totalTokens: { increment: usage.total_tokens || 0 }
+            }
+        }).catch(e => console.error("[telegram-post] Failed to update token usage:", e));
+    }
 
     return caption;
 }
@@ -179,8 +212,9 @@ export async function POST(request) {
         const imageUrl = providedImageUrl !== undefined ? providedImageUrl : (airdrop.icon || null);
 
         if (action === 'preview') {
+            const userId = await getUserId();
             const [caption, channelInfo] = await Promise.all([
-                generateCaption(airdrop, tasks),
+                generateCaption(airdrop, tasks, userId),
                 getTelegramChannelInfo()
             ]);
 

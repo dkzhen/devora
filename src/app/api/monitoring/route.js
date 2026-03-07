@@ -173,6 +173,11 @@ export async function GET() {
             }).sort((a, b) => b.value - a.value).slice(0, 5)
         };
 
+        // Fetch Temp Mail Stats
+        const tempMailStats = await prisma.tempMailStats.findUnique({
+            where: { id: 1 }
+        }) || { emailsGenerated: 0, messagesReceived: 0 };
+
         return NextResponse.json({
             totalRequests: totalRequestsData, // Repurposed as "Messages Over Time"
             requestsByApi: formattedMessagesByAccount, // Repurposed as "Messages by Account"
@@ -189,7 +194,8 @@ export async function GET() {
             totalAirdrops,
             tokenUsage,
             gmailActivity,
-            driveInsights
+            driveInsights,
+            tempMailStats
         });
     } catch (error) {
         console.error('Error fetching internal stats:', error);

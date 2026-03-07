@@ -35,7 +35,16 @@ export async function GET(req) {
 
                 if (messages.length > 0 && accountId) {
                     try {
+                        let newMessagesCount = 0;
                         for (const msg of messages) {
+                            const exists = await prisma.tempMailMessage.findUnique({
+                                where: { id: msg.id }
+                            });
+
+                            if (!exists) {
+                                newMessagesCount++;
+                            }
+
                             await prisma.tempMailMessage.upsert({
                                 where: { id: msg.id },
                                 update: { seen: msg.seen || false },
@@ -52,8 +61,16 @@ export async function GET(req) {
                                 }
                             });
                         }
+
+                        if (newMessagesCount > 0) {
+                            await prisma.tempMailStats.upsert({
+                                where: { id: 1 },
+                                update: { messagesReceived: { increment: newMessagesCount } },
+                                create: { id: 1, messagesReceived: newMessagesCount }
+                            });
+                        }
                     } catch (dbErr) {
-                        console.error('Error saving messages to DB:', dbErr);
+                        console.error('Error saving messages or updating stats in DB:', dbErr);
                     }
                 }
 

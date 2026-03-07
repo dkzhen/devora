@@ -16,7 +16,7 @@ const COLORS = {
     orange: 'from-orange-500/20 to-amber-500/5 text-orange-400 border-orange-500/20 shadow-orange-500/10',
 };
 
-export default function DashboardStatCard({ title, value, color, iconType }) {
+export default function DashboardStatCard({ title, value, color, iconType, subtitle }) {
     return (
         <div className={`group relative overflow-hidden rounded-2xl border bg-linear-to-br ${COLORS[color]} p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}>
             {/* Gloss effect */}
@@ -34,7 +34,7 @@ export default function DashboardStatCard({ title, value, color, iconType }) {
                 </div>
                 <div className="flex items-center gap-1.5 mt-2">
                     <div className="w-1 h-1 rounded-full bg-current animate-pulse" />
-                    <span className="text-[10px] font-medium opacity-60">Live metrics</span>
+                    <span className="text-[10px] font-medium opacity-60">{subtitle || 'Live metrics'}</span>
                 </div>
             </div>
 

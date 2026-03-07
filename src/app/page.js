@@ -130,10 +130,11 @@ export default function Dashboard() {
                     iconType="green"
                 />
                 <DashboardStatCard
-                    title="Total Apps"
-                    value="24"
+                    title="Temp Mail Stats"
+                    value={`${stats?.tempMailStats?.emailsGenerated || 0} / ${stats?.tempMailStats?.messagesReceived || 0}`}
                     color="purple"
                     iconType="purple"
+                    subtitle="Emails / Messages"
                 />
             </div>
 
