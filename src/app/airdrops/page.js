@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity, Trophy, ListTodo, CircleDollarSign } from 'lucide-react';
+import { ActionHero, HeroHeader, LoadingState } from '@/components/HeroHeader';
+import LoadingImage from '@/components/LoadingImage';
 
 function StatCard({ title, value, icon, color, subtext }) {
     return (
@@ -25,13 +27,18 @@ function AirdropRow({ airdrop, user, onDelete, onEdit }) {
 
     return (
         <tr
-            className="hover:bg-[#0f172a] transition-colors border-b border-white/8 last:border-0 cursor-pointer"
+            className="group hover:bg-[#0a0e1a]/90 transition-all border-b border-blue-500/10 last:border-0 cursor-pointer hover:shadow-[inset_4px_0_0_rgba(59,130,246,0.5)]"
             onClick={() => router.push(`/airdrops/${airdrop.id}`)}
         >
             <td className="py-4 px-4 w-1/3">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-lg shrink-0 overflow-hidden">
-                        {airdrop.icon ? <img src={airdrop.icon} alt={airdrop.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/digital-currency.png'; }} /> : airdrop.name[0]}
+                    <div className="w-10 h-10 rounded-xl bg-[#0f172a] border border-blue-500/30 flex items-center justify-center text-lg shrink-0 overflow-hidden shadow-[0_0_10px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-shadow">
+                        <LoadingImage 
+                            src={airdrop.icon} 
+                            alt={airdrop.name} 
+                            className="w-full h-full object-cover" 
+                            fallback="/icons/digital-currency.png"
+                        />
                     </div>
                     <div>
                         <div className="font-bold text-white flex items-center gap-2">
@@ -455,11 +462,15 @@ export default function AirdropsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-                    <p className="text-xs text-gray-500 animate-pulse">Loading airdrops…</p>
-                </div>
+            <div className="space-y-8">
+                <HeroHeader
+                    title="Drop"
+                    badge="Hunting"
+                    description="Track and manage your airdrop activities"
+                    colorTheme="blue"
+                    breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Airdrops' }]}
+                />
+                <LoadingState message="Scanning blockchain for airdrops..." colorTheme="blue" />
             </div>
         );
     }
@@ -471,100 +482,45 @@ export default function AirdropsPage() {
                     {toast.message}
                 </div>
             )}
-            {/* ===== MOBILE HEADER (futuristic) ===== */}
-            <div className="md:hidden relative overflow-hidden rounded-2xl mb-2">
-                {/* Background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                {/* Glowing orbs */}
-                <div className="absolute -top-8 -left-8 w-52 h-52 rounded-full bg-blue-600/20 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-12 right-0 w-44 h-44 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
-                {/* Grid overlay */}
-                <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <HeroHeader
+                title="Drop"
+                badge="Hunting"
+                description="Track and manage your airdrop activities"
+                colorTheme="blue"
+                breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Airdrops' }]}
+                actionContent={
+                    <button
+                        onClick={() => setShowSuggestModal(true)}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-600/80 to-indigo-600/80 hover:from-blue-500/90 hover:to-indigo-500/90 text-white rounded-xl text-sm font-semibold shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all active:scale-95 border border-blue-500/30 backdrop-blur-sm"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        Suggest Project
+                    </button>
+                }
+            />
 
-                <div className="relative z-10 p-5 pt-4">
-                    {/* Breadcrumb */}
-                    <nav className="flex text-xs text-blue-300/70 mb-4" aria-label="Breadcrumb">
-                        <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </a>
-                        <svg className="w-3 h-3 mx-1.5 text-blue-400/40 mt-px self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="font-semibold text-blue-200">Airdrops</span>
-                    </nav>
-
-                    {/* Title row */}
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                        <div>
-                            <h1 className="text-2xl font-black text-white tracking-tight leading-none">
-                                Drop <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Hunting</span>
-                            </h1>
-                            <p className="text-gray-400 text-xs mt-1.5 leading-relaxed">Track and manage your airdrop activities</p>
-                        </div>
-                        {/* Suggest button */}
-                        <button
-                            onClick={() => setShowSuggestModal(true)}
-                            className="shrink-0 flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-700/30 transition-all active:scale-95 border border-white/10"
-                        >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                            Suggest
-                        </button>
+            {/* Mobile Stats chips */}
+            <div className="md:hidden grid grid-cols-4 gap-2">
+                {[
+                    { icon: <Activity className="w-5 h-5 text-blue-400" />, label: 'New Activity', value: newActivityCount.toString(), color: 'text-white' },
+                    { icon: <Trophy className="w-5 h-5 text-orange-400" />, label: 'Confirmed', value: confirmedCount.toString(), color: 'text-white' },
+                    { icon: <ListTodo className="w-5 h-5 text-purple-400" />, label: 'To Check', value: toCheckCount.toString(), color: 'text-white' },
+                    { icon: <CircleDollarSign className="w-5 h-5 text-emerald-400" />, label: 'Avg. Raised', value: formattedRaised, color: 'text-emerald-400' },
+                ].map((stat, i) => (
+                    <div key={i} className="bg-[#0f172a]/40 border border-blue-500/10 rounded-xl p-2 flex flex-col items-center text-center shadow-lg shadow-black/20 backdrop-blur-md">
+                        <span className="flex items-center justify-center p-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-1">{stat.icon}</span>
+                        <span className={`text-sm font-black tracking-tight ${stat.color}`}>{stat.value}</span>
+                        <span className="text-[9px] text-blue-400/60 mt-0.5 leading-none font-bold uppercase tracking-wider">{stat.label}</span>
                     </div>
-
-                    {/* Stats chips */}
-                    <div className="grid grid-cols-4 gap-2 mt-4">
-                        {[
-                            { icon: <Activity className="w-5 h-5 text-blue-400" />, label: 'New Activity', value: newActivityCount.toString(), color: 'text-white' },
-                            { icon: <Trophy className="w-5 h-5 text-orange-400" />, label: 'Confirmed', value: confirmedCount.toString(), color: 'text-white' },
-                            { icon: <ListTodo className="w-5 h-5 text-purple-400" />, label: 'To Check', value: toCheckCount.toString(), color: 'text-white' },
-                            { icon: <CircleDollarSign className="w-5 h-5 text-emerald-400" />, label: 'Avg. Raised', value: formattedRaised, color: 'text-emerald-400' },
-                        ].map((stat, i) => (
-                            <div key={i} className="bg-[#0f172a]/5 border border-white/10 rounded-xl p-2 flex flex-col items-center text-center">
-                                <span className="flex items-center justify-center p-1.5 rounded-full bg-white/5 mb-1">{stat.icon}</span>
-                                <span className={`text-sm font-bold ${stat.color}`}>{stat.value}</span>
-                                <span className="text-[9px] text-gray-500 mt-0.5 leading-none">{stat.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* ===== DESKTOP HEADER ===== */}
-            <div className="hidden md:block">
-                <div className="relative overflow-hidden rounded-2xl mb-6">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                    <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                    <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-                    <div className="relative z-10 p-8 flex items-end justify-between">
-                        <div>
-                            <nav className="flex text-xs text-blue-300/60 mb-4">
-                                <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                    Dashboard
-                                </a>
-                                <svg className="w-3 h-3 mx-2 text-blue-400/30 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                <span className="text-blue-200 font-semibold">Airdrops</span>
-                            </nav>
-                            <h1 className="text-4xl font-black tracking-tight">
-                                <span className="text-white">Drop </span>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">Hunting</span>
-                            </h1>
-                            <p className="text-gray-400 mt-2 text-sm">Track and manage your airdrop activities</p>
-                        </div>
-                        <button
-                            onClick={() => setShowSuggestModal(true)}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-xl shadow-blue-700/30 transition-all active:scale-95 border border-white/10"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                            Suggest Project
-                        </button>
-                    </div>
-                </div>
+                ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                <div className="hidden md:flex xl:col-span-1 bg-gray-900 rounded-2xl p-6 relative overflow-hidden text-white flex-col justify-between">
-                    <h3 className="text-gray-400 text-sm font-medium mb-4">Current Activity Overview</h3>
+                <div className="hidden md:flex xl:col-span-1 bg-[#0a0e1a]/80 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] rounded-2xl p-6 relative overflow-hidden text-white flex-col justify-between group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full pointer-events-none group-hover:bg-blue-500/20 transition-colors" />
+                    <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-blue-500 to-transparent" />
+                    <span className="absolute bottom-0 right-0 w-16 h-1 bg-linear-to-l from-indigo-500 to-transparent" />
+                    <h3 className="text-blue-400/80 text-sm font-bold uppercase tracking-wider mb-4 border-b border-blue-500/10 pb-2 relative z-10">Activity Overview</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
@@ -595,7 +551,7 @@ export default function AirdropsPage() {
 
                 {/* Next Reward - MOBILE */}
                 <div className="md:hidden relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a]" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a]" />
                     <div className="absolute -top-6 right-4 w-36 h-36 rounded-full bg-indigo-600/20 blur-2xl pointer-events-none" />
                     <div className="relative z-10 p-4">
                         <div className="flex justify-between items-center mb-3">
@@ -608,7 +564,7 @@ export default function AirdropsPage() {
                             <div className="text-4xl font-black text-white tracking-tight">Now</div>
                             <div className="flex-1 bg-[#0f172a]/5 border border-white/10 rounded-xl px-3 py-2.5 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-pink-500/30">S</div>
+                                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-pink-500/30">S</div>
                                     <span className="font-bold text-sm text-white">Sentient</span>
                                 </div>
                                 <span className="text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition-colors">Claim →</span>
@@ -617,7 +573,7 @@ export default function AirdropsPage() {
                     </div>
                 </div>
                 {/* Next Reward - DESKTOP */}
-                <div className="hidden md:flex xl:col-span-1 relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] rounded-2xl border border-indigo-900/40 p-6 flex-col justify-between">
+                <div className="hidden md:flex xl:col-span-1 relative overflow-hidden bg-linear-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] rounded-2xl border border-indigo-900/40 p-6 flex-col justify-between">
                     <div className="absolute -top-6 right-4 w-36 h-36 rounded-full bg-indigo-600/20 blur-2xl pointer-events-none" />
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-indigo-300/60 text-xs font-semibold uppercase tracking-widest">Events</h3>
@@ -629,7 +585,7 @@ export default function AirdropsPage() {
                         <div className="text-4xl font-black text-white tracking-tight">Now</div>
                         <div className="flex-1 bg-[#0f172a]/5 border border-white/10 rounded-xl p-3 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-sm font-bold text-white shadow-md shadow-pink-500/30">S</div>
+                                <div className="w-9 h-9 rounded-full bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center text-sm font-bold text-white shadow-md shadow-pink-500/30">S</div>
                                 <span className="font-bold text-sm text-white">Sentient</span>
                             </div>
                             <span className="text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition-colors">Claim →</span>
@@ -639,7 +595,7 @@ export default function AirdropsPage() {
 
                 {/* Suggested Projects – MOBILE */}
                 <div className="md:hidden relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-[#0d1a2e]" />
+                    <div className="absolute inset-0 bg-linear-to-br from-gray-900 to-[#0d1a2e]" />
                     <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-blue-700/10 blur-2xl pointer-events-none" />
                     <div className="relative z-10 p-4">
                         <div className="flex items-center gap-2 mb-3">
@@ -682,9 +638,13 @@ export default function AirdropsPage() {
                     </div>
                 </div>
                 {/* Suggested Projects – DESKTOP */}
-                <div className="hidden md:block xl:col-span-2 bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-gray-400 text-sm font-medium">Suggested Projects</h3>
+                <div className="hidden md:block xl:col-span-2 bg-[#0a0e1a]/80 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] rounded-2xl p-6 relative overflow-hidden group">
+                    <div className="absolute bottom-0 right-0 w-40 h-40 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none group-hover:bg-indigo-500/20 transition-colors" />
+                    <span className="absolute top-0 right-0 w-1 h-16 bg-linear-to-b from-blue-500 to-transparent" />
+                    <span className="absolute bottom-0 left-0 w-1 h-16 bg-linear-to-t from-indigo-500 to-transparent" />
+                    
+                    <div className="flex justify-between items-center mb-4 relative z-10 border-b border-blue-500/10 pb-2">
+                        <h3 className="text-blue-400/80 text-sm font-bold uppercase tracking-wider">Suggested Projects</h3>
                         {recommendedProjects.length > 0 && (
                             <span className="px-2 py-0.5 rounded-full bg-blue-600/20 text-blue-400 text-xs font-bold border border-blue-600/30">{recommendedProjects.length}</span>
                         )}
@@ -732,7 +692,7 @@ export default function AirdropsPage() {
             <div className="md:hidden space-y-3">
                 {/* Mobile Filter Bar */}
                 <div className="relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-[#0c1628]" />
+                    <div className="absolute inset-0 bg-linear-to-br from-gray-900 to-[#0c1628]" />
                     <div className="relative z-10 p-3 space-y-2">
                         {/* Row 1: Search inputs */}
                         <div className="grid grid-cols-2 gap-2">
@@ -775,7 +735,7 @@ export default function AirdropsPage() {
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                             </div>
                             {user && (
-                                <button onClick={() => setShowAddModal(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-700/30 transition-all active:scale-95 border border-white/10">
+                                <button onClick={() => setShowAddModal(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-700/30 transition-all active:scale-95 border border-white/10">
                                     <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                     Add Project
                                 </button>
@@ -824,15 +784,20 @@ export default function AirdropsPage() {
                         return (
                             <div
                                 key={airdrop.id}
-                                className="relative overflow-hidden rounded-2xl bg-[#0f172a]/5 border border-white/10 active:scale-[0.99] transition-all cursor-pointer"
+                                className="group relative overflow-hidden rounded-2xl bg-[#0a0e1a]/80 backdrop-blur-md border border-blue-500/10 active:scale-[0.99] transition-all cursor-pointer hover:border-blue-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
                                 onClick={() => window.location.href = `/airdrops/${airdrop.id}`}
                             >
                                 {/* Glow accent for new */}
-                                {airdrop.status === 'New' && <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />}
-                                <div className="p-3 flex items-center gap-3">
+                                {airdrop.status === 'New' && <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/60 to-transparent" />}
+                                <div className="p-3 flex items-center gap-3 relative z-10">
                                     {/* Project Icon */}
-                                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center text-lg shrink-0 overflow-hidden border border-white/10 shadow-md">
-                                        {airdrop.icon ? <img src={airdrop.icon} alt={airdrop.name} className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = '/icons/digital-currency.png'; }} /> : <span className="text-white font-bold">{airdrop.name[0]}</span>}
+                                    <div className="w-11 h-11 rounded-xl bg-[#0f172a] shadow-[0_0_10px_rgba(59,130,246,0.15)] group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] flex items-center justify-center text-lg shrink-0 overflow-hidden border border-blue-500/30">
+                                        <LoadingImage 
+                                            src={airdrop.icon} 
+                                            alt={airdrop.name} 
+                                            className="w-full h-full object-cover" 
+                                            fallback="/icons/digital-currency.png"
+                                        />
                                     </div>
                                     {/* Project Info */}
                                     <div className="flex-1 min-w-0">
@@ -876,8 +841,7 @@ export default function AirdropsPage() {
             {/* ===== DESKTOP: Filter Bar + Table ===== */}
             <div className="hidden md:block space-y-4">
                 {/* Futuristic Filter Bar */}
-                <div className="relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-[#0c1628]" />
+                <div className="relative overflow-hidden rounded-2xl border border-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.03)] bg-[#0a0e1a]/80 backdrop-blur-xl">
                     <div className="relative z-10 px-5 py-3 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-wrap">
                             {/* Project Name */}
@@ -925,7 +889,7 @@ export default function AirdropsPage() {
                         </div>
                         {/* Add button */}
                         {user ? (
-                            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-blue-700/25 transition-all active:scale-95 border border-white/10">
+                            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-blue-700/25 transition-all active:scale-95 border border-white/10">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Add Project
                             </button>
@@ -937,11 +901,11 @@ export default function AirdropsPage() {
                     </div>
                 </div>
                 {/* Table */}
-                <div className="relative overflow-hidden rounded-2xl border border-white/5">
+                <div className="relative overflow-hidden rounded-2xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] bg-[#0a0e1a]/80 backdrop-blur-xl">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-gradient-to-r from-gray-900 to-[#0c1628] text-xs uppercase text-blue-300/50 font-bold tracking-widest border-b border-white/5">
+                                <tr className="bg-linear-to-r from-blue-900/10 to-indigo-900/10 text-xs uppercase text-blue-400/80 font-bold tracking-widest border-b border-blue-500/20">
                                     <th className="py-4 px-6 w-1/3">Name</th>
                                     <th className="py-4 px-6">Task Type</th>
                                     <th className="py-4 px-6">Status</th>
@@ -976,11 +940,11 @@ export default function AirdropsPage() {
                         </table>
                     </div>
                     {/* Pagination */}
-                    <div className="bg-gradient-to-r from-gray-900 to-[#0c1628] px-6 py-3 border-t border-white/5 flex justify-between items-center">
-                        <span className="text-xs text-gray-500">Showing {filteredAirdrops.length} projects</span>
+                    <div className="bg-blue-900/10 px-6 py-3 border-t border-blue-500/20 flex justify-between items-center relative z-10">
+                        <span className="text-xs text-blue-400/60 font-medium">Showing {filteredAirdrops.length} projects</span>
                         <div className="flex gap-2">
-                            <button className="px-4 py-1.5 rounded-xl text-xs font-medium text-gray-400 bg-[#0f172a]/5 border border-white/10 hover:bg-[#0f172a]/10 transition-colors">Previous</button>
-                            <button className="px-4 py-1.5 rounded-xl text-xs font-medium text-gray-400 bg-[#0f172a]/5 border border-white/10 hover:bg-[#0f172a]/10 transition-colors">Next</button>
+                            <button className="px-4 py-1.5 rounded-xl text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all active:scale-95 shadow-[0_0_10px_rgba(59,130,246,0.1)]">Previous</button>
+                            <button className="px-4 py-1.5 rounded-xl text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all active:scale-95 shadow-[0_0_10px_rgba(59,130,246,0.1)]">Next</button>
                         </div>
                     </div>
                 </div>

@@ -55,7 +55,7 @@ export async function POST(req) {
                 developer: developer || null,
                 category: category,
                 description: description || '',
-                iconStatic: imageFileId ? null : '📦',
+                iconStatic: imageFileId || null,
                 versions: {
                     create: {
                         version: version,

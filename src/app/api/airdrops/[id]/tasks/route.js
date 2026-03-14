@@ -21,10 +21,26 @@ export async function GET(request, { params }) {
     trackApiHit(request);
     try {
         const { id } = await params;
-        const tasks = await prisma.airdropTask.findMany({
+        const user = await getUser();
+        
+        let tasks = await prisma.airdropTask.findMany({
             where: { airdropId: id },
             orderBy: { createdAt: 'asc' }
         });
+        
+        // Filter out private steps if the user is not the task creator
+        tasks = tasks.map(task => {
+            const isCreator = user && task.userId === user.id;
+            let steps = Array.isArray(task.steps) ? task.steps : [];
+            
+            steps = steps.filter(step => step.isPrivate !== true || isCreator);
+            
+            return {
+                ...task,
+                steps
+            };
+        });
+        
         return NextResponse.json(tasks);
     } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -60,12 +76,18 @@ export async function POST(request, { params }) {
         const task = await prisma.airdropTask.create({
             data: {
                 airdropId: id,
+                userId: user.id,
                 title,
                 description,
                 category,
                 deadline: deadline ? new Date(deadline) : null,
                 status: status || 'Open',
-                steps: steps || []
+                steps: Array.isArray(steps) ? steps.map(s => ({
+                    ...s,
+                    image: s.image || null,
+                    link: s.link || null,
+                    isPrivate: !!s.isPrivate
+                })) : []
             }
         });
 

@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:setup": "prisma generate && prisma db push && node prisma/seed.js",
     "db:update": "npx prisma db push",
-    "prod:run": "npx next start -p 2600 -H 0.0.0.0"
+    "prod:run": "npx next start -p 2600 -H 0.0.0.0",
+    "dev:pc": "NODE_OPTIONS=--dns-result-order=ipv4first next dev"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

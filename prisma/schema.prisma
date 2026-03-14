@@ -72,12 +72,15 @@ model User {
   updatedAt          DateTime          @updatedAt @map("updated_at")
   accounts           Account[]
   airdrops           Airdrop[]
+  createdAirdropTasks AirdropTask[]
   airdropTasks       UserAirdropTask[]
   groqCredential     GroqCredential?
   chatSessions       ChatSession[]
   telegramUpdates    TelegramUpdate[]
   quickVaultItems    QuickVaultItem[]
   httpClientData     Json?             @map("http_client_data")
+  heroSmsApiKey      String?           @map("hero_sms_api_key") @db.Text
+  telSession        TelSession?
 
   @@map("users")
 }
@@ -142,6 +145,9 @@ model AirdropTask {
 
   airdropId String  @map("airdrop_id")
   airdrop   Airdrop @relation(fields: [airdropId], references: [id], onDelete: Cascade)
+
+  userId    String? @map("user_id")
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   userProgress UserAirdropTask[]
 
@@ -334,4 +340,20 @@ model TempMailStats {
   updatedAt        DateTime @updatedAt @map("updated_at")
 
   @@map("temp_mail_stats")
+}
+
+model TelSession {
+  id            String   @id @default(uuid())
+  userId        String   @unique @map("user_id")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xDevice       String   @db.Text @map("x_device")
+  authorization String   @db.Text
+  accessAuth    String   @db.Text @map("access_auth")
+  webMsisdn     String   @map("web_msisdn")
+  hash          String   @db.Text
+  transactionId String   @map("transaction_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("tel_sessions")
 }

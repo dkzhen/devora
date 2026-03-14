@@ -45,12 +45,25 @@ async function generateCaption(airdrop, tasks, userId) {
         linksStr = '';
     }
 
-    const taskSummary = tasks.slice(0, 10).map((t, i) =>
-        `${i + 1}. ${t.title} (${t.category}) — Status: ${t.status}${t.deadline ? ` | Until: ${new Date(t.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}` : ''}`
-    ).join('\n');
+    const taskSummary = tasks.slice(0, 10).map((t, i) => {
+        let stepsInfo = '';
+        if (t.steps && Array.isArray(t.steps)) {
+            const publicSteps = t.steps.filter(s => s.isPrivate !== true);
+            if (publicSteps.length > 0) {
+                stepsInfo = '\n  Steps:\n' + publicSteps.map((s, idx) => `  - ${s.text} ${s.link ? '(Link: ' + s.link + ')' : ''}`).join('\n');
+            }
+        }
+        return `Task ${i + 1}: ${t.title} (${t.category}) — Status: ${t.status}${t.deadline ? ` | Until: ${new Date(t.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}` : ''}${stepsInfo}`;
+    }).join('\n\n');
+
+    const isUpdate = tasks.length === 1;
 
     const prompt = `You are a crypto airdrop content writer for a Telegram channel.
-Create an attractive, informative Telegram post using Telegram HTML formatting for the following airdrop project.
+Create an attractive, informative Telegram post using Telegram HTML formatting.
+
+${isUpdate
+    ? `This is an UPDATE for an existing project. Focus on the NEW TASK details. Do not repeat too much project background.`
+    : `This is a NEW project introduction. Provide a full overview.`}
 
 Project Data:
 - Name: ${airdrop.name}
@@ -64,24 +77,26 @@ Project Data:
 - Official Links:
 ${linksStr || 'N/A'}
 
-Tasks (${tasks.length} total):
+Tasks Information:
 ${taskSummary || 'No tasks yet'}
 
 Detail Page: ${detailUrl}
 
 Requirements:
 1. Use Telegram HTML formatting ONLY: <b>bold</b>, <i>italic</i>, <code>code</code>, <a href="url">text</a>
-2. Start with an eye-catching header emoji and bold project name, followed by a short, informative sentence about what this project is and why it's worth joining.
-3. Include project type, status, raised amount, and reward date in a neat list.
-4. Provide a clear, step-by-step guide based on the tasks. Format them as "Step 1", "Step 2", etc. If a task has a link, use <a href="url">Task Name</a>. Be as informative as possible for each step.
+2. ${isUpdate
+    ? `Start with an "Update" header emoji (e.g. 🔄 or 📢) and the project name. Mention that a NEW TASK is available.`
+    : `Start with an eye-catching header emoji and bold project name, followed by a short, informative sentence about what this project is.`}
+3. ${isUpdate
+    ? `Briefly list project type and status. Focus most of the post on the Step-by-Step guide for the task(s) provided.`
+    : `Include project type, status, raised amount, and reward date in a neat list.`}
+4. Provide a clear, step-by-step guide based on the tasks and their specific steps. Format them clearly (e.g. "Step 1", "Step 2"). Include links within the text using <a href="url">Link Text</a> when appropriate.
 5. End with a clear call-to-action: <a href="${detailUrl}">📋 View Full Details</a>
 6. STRICT RULE: DO NOT include any hashtags (#) anywhere in the post.
 7. Keep it informative but well-structured with clear line breaks so it's easy to read on mobile.
 8. Do NOT use &amp; &lt; &gt; escape sequences in your output — use raw & < > only in HTML tags
 9. Do NOT wrap output in code blocks or XML — just return the raw HTML text
-10. Telegram only supports these HTML tags: <b>, <i>, <u>, <s>, <code>, <pre>, <a href="...">
-
-Return ONLY the Telegram post HTML text, nothing else.`;
+10. Telegram only supports these HTML tags: <b>, <i>, <u>, <s>, <code>, <pre>, <a href="...">`;
 
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',

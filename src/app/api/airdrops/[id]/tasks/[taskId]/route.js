@@ -93,7 +93,12 @@ export async function PUT(request, { params }) {
                 category: category !== undefined ? category : existingTask.category,
                 deadline: deadline !== undefined ? (deadline ? new Date(deadline) : null) : existingTask.deadline,
                 status: status !== undefined ? status : existingTask.status,
-                steps: steps !== undefined ? steps : existingTask.steps
+                steps: steps !== undefined ? (Array.isArray(steps) ? steps.map(s => ({
+                    ...s,
+                    image: s.image || null,
+                    link: s.link || null,
+                    isPrivate: !!s.isPrivate
+                })) : []) : existingTask.steps
             }
         });
 

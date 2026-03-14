@@ -106,7 +106,7 @@ export async function POST(request) {
         const airdrop = await prisma.airdrop.create({
             data: {
                 name,
-                icon,
+                icon: icon || null,
                 description,
                 raise,
                 score,

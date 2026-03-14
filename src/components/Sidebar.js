@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import SidebarSkeleton from './SidebarSkeleton';
+import LoadingImage from './LoadingImage';
 
 const ROLE_COLORS = {
     ULTRA: 'from-purple-500 to-pink-500',
@@ -121,6 +122,41 @@ export default function Sidebar() {
                     href: '/quick-vault',
                     icon: <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10V18C3 19.1046 3.89543 20 5 20H10M3 10V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V10M3 10H21M21 10V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M14 17.4286C14 16.9552 14.3838 16.5714 14.8571 16.5714H19.1429C19.6162 16.5714 20 16.9552 20 17.4286V20.1429C20 20.6162 19.6162 21 19.1429 21H14.8571C14.3838 21 14 20.6162 14 20.1429V17.4286Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M15.7143 15.2857C15.7143 14.5756 16.2899 14 17 14C17.7101 14 18.2857 14.5756 18.2857 15.2857V16.5714H15.7143V15.2857Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><circle cx="6" cy="7" r="1" fill="currentColor"></circle><circle cx="9" cy="7" r="1" fill="currentColor"></circle></svg>
                 },
+                {
+                    name: 'Smart OTP',
+                    href: '/smart-otp',
+                    icon: (
+                        <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M14.86,15.82v4.77A1.92,1.92,0,0,1,13,22.5H3.41A1.92,1.92,0,0,1,1.5,20.59V3.41A1.92,1.92,0,0,1,3.41,1.5H13a1.92,1.92,0,0,1,1.91,1.91V6.27" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M10.09,2.45H6.27a1,1,0,0,1-.95-1h5.73A1,1,0,0,1,10.09,2.45Z" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="7.23" y1="19.64" x2="9.14" y2="19.64" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M9.14,11.05V13L7.23,15.82h10.5a4.78,4.78,0,0,0,4.77-4.77h0a4.78,4.78,0,0,0-4.77-4.78H13.91A4.77,4.77,0,0,0,9.14,11.05Z" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="12" y1="11.05" x2="13.91" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="14.86" y1="11.05" x2="16.77" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="17.73" y1="11.05" x2="19.64" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
+                            </g>
+                        </svg>
+                    )
+                },
+                {
+                    name: 'Telkomsel Client',
+                    href: '/telkomsel-client',
+                    icon: (
+                        <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <line fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="1.91" x1="15.82" y1="6.25" x2="15.82" y2="12.93"></line>
+                                <line fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="1.91" x1="12" y1="8.16" x2="12" y2="12.93"></line>
+                                <line fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="1.91" x1="8.18" y1="10.07" x2="8.18" y2="12.93"></line>
+                                <path fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="1.91" d="M1.5,5.3v9.54a3.82,3.82,0,0,0,3.82,3.82H7.23v2.86L13,18.66h5.73a3.82,3.82,0,0,0,3.82-3.82V5.3a3.82,3.82,0,0,0-3.82-3.82H5.32A3.82,3.82,0,0,0,1.5,5.3Z"></path>
+                            </g>
+                        </svg>
+                    )
+                },
             ]
         },
         {
@@ -179,28 +215,37 @@ export default function Sidebar() {
     if (!mounted) return <SidebarSkeleton />;
 
     const SidebarContent = () => (
-        <aside className="h-full w-64 bg-[#0a0f1e] border-r border-white/5 flex flex-col">
+        <aside className="relative h-full w-64 bg-[#040811] border-r border-blue-500/20 flex flex-col overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.08),0_0_1px_rgba(59,130,246,0.3)]">
+            {/* Cyberpunk Background Grid & Glow */}
+            <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.02) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-blue-600/10 blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500/60 via-blue-500/15 to-transparent pointer-events-none" />
+
             {/* Logo */}
-            <div className="px-5 py-5  flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative">
-                    <img src="/icons/devora-icon.png" alt="Devora" className="w-full h-full object-cover" />
+            <div className="relative px-5 py-5 flex items-center gap-3 z-10 border-b border-blue-500/10 bg-gradient-to-r from-[#040811] via-[#060c1c] to-[#040811]">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                    <img src="/icons/devora-icon-dark.png" alt="Devora" className="w-full h-full object-cover" />
+                    <span className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-white/30 pointer-events-none" />
                 </div>
-                <span className="text-xl font-passero text-white tracking-wide mt-1">Devora</span>
+                <span className="text-xl font-passero tracking-wide mt-1 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-400">Devora</span>
             </div>
 
             {/* Search */}
-            <div className="px-3 pb-2">
-                <div className="relative">
-                    <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="relative z-10 px-4 py-4">
+                <div className="relative group">
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-blue-500/60 pointer-events-none group-focus-within:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input
                         type="text"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        placeholder="Search menu..."
-                        className="w-full bg-white/4 border border-white/8 rounded-lg pl-8 pr-3 py-1.5 text-xs text-gray-300 placeholder-gray-500 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/5 transition-all"
+                        placeholder="Search system..."
+                        className="w-full bg-[#03060d] border border-blue-900/40 rounded pl-9 pr-8 py-2 text-xs text-blue-100 placeholder-blue-500/40 focus:outline-none focus:border-blue-500/50 focus:bg-blue-950/20 focus:shadow-[0_0_12px_rgba(59,130,246,0.15)] transition-all font-mono tracking-wide"
                     />
+                    <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-blue-500/40 pointer-events-none rounded-tl" />
+                    <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-blue-500/40 pointer-events-none rounded-br" />
                     {search && (
                         <button
                             onClick={() => setSearch('')}
@@ -215,7 +260,7 @@ export default function Sidebar() {
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 px-3 py-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <nav className="relative z-10 flex-1 px-3 py-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
                 {(() => {
                     const q = search.trim().toLowerCase();
                     if (q) {
@@ -224,8 +269,9 @@ export default function Sidebar() {
                         );
                         return (
                             <div>
-                                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 px-2">
-                                    Results {results.length > 0 ? `(${results.length})` : ''}
+                                <div className="text-[9px] font-black text-blue-500/60 uppercase tracking-[0.2em] mb-3 px-3 flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded bg-blue-500/20 border border-blue-500/40" />
+                                    Results {results.length > 0 ? `[${results.length}]` : ''}
                                 </div>
                                 {results.length === 0 ? (
                                     <div className="px-3 py-4 text-center text-xs text-gray-400">No results found</div>
@@ -236,14 +282,15 @@ export default function Sidebar() {
                                             const isLocked = (!user && item.href !== '/' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client' && item.href !== '/temp-mail') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
                                             const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
                                             if (isLocked) return (
-                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
+                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded text-[11px] font-mono font-medium text-gray-600 cursor-not-allowed border border-transparent bg-transparent">
                                                     <div className="flex items-center gap-3">{item.icon}{item.name}</div>
                                                     <svg className="w-3.5 h-3.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                                 </div>
                                             );
                                             return (
                                                 <Link key={item.href} href={item.href} onClick={() => { setIsOpen(false); setSearch(''); }}
-                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
+                                                    className={`group relative flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200 text-[11px] font-mono font-medium overflow-hidden ${isActive ? 'bg-blue-500/[0.08] text-blue-300 border border-blue-500/30 shadow-[inset_4px_0_0_rgba(59,130,246,0.6)]' : 'text-gray-400 border border-transparent hover:bg-blue-500/5 hover:border-blue-500/20 hover:text-blue-200'}`}>
+                                                    {isActive && <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-blue-500/10 to-transparent pointer-events-none" />}
                                                     {item.icon}{item.name}
                                                     {isMaintenance ? (
                                                         <svg className="ml-auto w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 6.25C12.4142 6.25 12.75 6.58579 12.75 7V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V7C11.25 6.58579 11.5858 6.25 12 6.25Z" fill="#f5c211"></path> <path d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z" fill="#f5c211"></path> <path fillRule="evenodd" clipRule="evenodd" d="M12 1.25C11.2954 1.25 10.6519 1.44359 9.94858 1.77037C9.26808 2.08656 8.48039 2.55304 7.49457 3.13685L6.74148 3.58283C5.75533 4.16682 4.96771 4.63324 4.36076 5.07944C3.73315 5.54083 3.25177 6.01311 2.90334 6.63212C2.55548 7.25014 2.39841 7.91095 2.32306 8.69506C2.24999 9.45539 2.24999 10.3865 2.25 11.556V12.444C2.24999 13.6135 2.24999 14.5446 2.32306 15.3049C2.39841 16.0891 2.55548 16.7499 2.90334 17.3679C3.25177 17.9869 3.73315 18.4592 4.36076 18.9206C4.96771 19.3668 5.75533 19.8332 6.74148 20.4172L7.4946 20.8632C8.48038 21.447 9.2681 21.9135 9.94858 22.2296C10.6519 22.5564 11.2954 22.75 12 22.75C12.7046 22.75 13.3481 22.5564 14.0514 22.2296C14.7319 21.9134 15.5196 21.447 16.5054 20.8632L17.2585 20.4172C18.2446 19.8332 19.0323 19.3668 19.6392 18.9206C20.2669 18.4592 20.7482 17.9869 21.0967 17.3679C21.4445 16.7499 21.6016 16.0891 21.6769 15.3049C21.75 14.5446 21.75 13.6135 21.75 12.4441V11.556C21.75 10.3866 21.75 9.45538 21.6769 8.69506C21.6016 7.91095 21.4445 7.25014 21.0967 6.63212C20.7482 6.01311 20.2669 5.54083 19.6392 5.07944C19.0323 4.63324 18.2447 4.16683 17.2585 3.58285L16.5054 3.13685C15.5196 2.55303 14.7319 2.08656 14.0514 1.77037C13.3481 1.44359 12.7046 1.25 12 1.25ZM8.22524 4.44744C9.25238 3.83917 9.97606 3.41161 10.5807 3.13069C11.1702 2.85676 11.5907 2.75 12 2.75C12.4093 2.75 12.8298 2.85676 13.4193 3.13069C14.0239 3.41161 14.7476 3.83917 15.7748 4.44744L16.4609 4.85379C17.4879 5.46197 18.2109 5.89115 18.7508 6.288C19.2767 6.67467 19.581 6.99746 19.7895 7.36788C19.9986 7.73929 20.1199 8.1739 20.1838 8.83855C20.2492 9.51884 20.25 10.378 20.25 11.5937V12.4063C20.25 13.622 20.2492 14.4812 20.1838 15.1614C20.1199 15.8261 19.9986 16.2607 19.7895 16.6321C19.581 17.0025 19.2767 17.3253 18.7508 17.712C18.2109 18.1089 17.4879 18.538 16.4609 19.1462L15.7748 19.5526C14.7476 20.1608 14.0239 20.5884 13.4193 20.8693C12.8298 21.1432 12.4093 21.25 12 21.25C11.5907 21.25 11.1702 21.1432 10.5807 20.8693C9.97606 20.5884 9.25238 20.1608 8.22524 19.5526L7.53909 19.1462C6.5121 18.538 5.78906 18.1089 5.24924 17.712C4.72326 17.3253 4.419 17.0025 4.2105 16.6321C4.00145 16.2607 3.88005 15.8261 3.81618 15.1614C3.7508 14.4812 3.75 13.622 3.75 12.4063V11.5937C3.75 10.378 3.7508 9.51884 3.81618 8.83855C3.88005 8.1739 4.00145 7.73929 4.2105 7.36788C4.419 6.99746 4.72326 6.67467 5.24924 6.288C5.78906 5.89115 6.5121 5.46197 7.53909 4.85379L8.22524 4.44744Z" fill="#f5c211"></path> </g></svg>
@@ -260,10 +307,13 @@ export default function Sidebar() {
                     }
 
                     return (
-                        <div className="space-y-4">
-                            {menuCategories.map(cat => (
-                                <div key={cat.label}>
-                                    <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 px-2">{cat.label}</div>
+                        <div className="space-y-6 pb-4">
+                            {menuCategories.map((cat, idx) => (
+                                <div key={cat.label} className={idx > 0 ? "pt-5 border-t border-blue-900/20" : ""}>
+                                    <div className="text-[9px] font-black text-blue-500/60 uppercase tracking-[0.2em] mb-3 px-3 flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 rounded-sm bg-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                                        {cat.label}
+                                    </div>
                                     <div className="space-y-0.5">
                                         {cat.items.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -271,14 +321,14 @@ export default function Sidebar() {
                                             const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
 
                                             if (isLocked) return (
-                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 cursor-not-allowed">
-                                                    <div className="flex items-center gap-3">{item.icon}{item.name}</div>
+                                                <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded text-[11px] font-mono font-medium text-gray-600 bg-transparent border border-transparent cursor-not-allowed">
+                                                    <div className="flex items-center gap-3 opacity-60">{item.icon}{item.name}</div>
                                                     <svg className="w-3.5 h-3.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                                 </div>
                                             );
                                             return (
                                                 <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}
-                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${isActive ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}>
+                                                    className={`group relative flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200 text-[11px] font-mono font-bold tracking-wide overflow-hidden ${isActive ? 'bg-gradient-to-r from-blue-900/30 to-blue-500/5 text-blue-300 border border-blue-500/30 shadow-[inset_3px_0_0_rgba(59,130,246,0.8)]' : 'text-gray-400 border border-transparent hover:bg-blue-500/[0.03] hover:border-blue-500/20 hover:text-blue-200'}`}>
                                                     {item.icon}{item.name}
                                                     {isMaintenance ? (
                                                         <svg className="ml-auto w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 6.25C12.4142 6.25 12.75 6.58579 12.75 7V13C12.75 13.4142 12.4142 13.75 12 13.75C11.5858 13.75 11.25 13.4142 11.25 13V7C11.25 6.58579 11.5858 6.25 12 6.25Z" fill="#f5c211"></path> <path d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z" fill="#f5c211"></path> <path fillRule="evenodd" clipRule="evenodd" d="M12 1.25C11.2954 1.25 10.6519 1.44359 9.94858 1.77037C9.26808 2.08656 8.48039 2.55304 7.49457 3.13685L6.74148 3.58283C5.75533 4.16682 4.96771 4.63324 4.36076 5.07944C3.73315 5.54083 3.25177 6.01311 2.90334 6.63212C2.55548 7.25014 2.39841 7.91095 2.32306 8.69506C2.24999 9.45539 2.24999 10.3865 2.25 11.556V12.444C2.24999 13.6135 2.24999 14.5446 2.32306 15.3049C2.39841 16.0891 2.55548 16.7499 2.90334 17.3679C3.25177 17.9869 3.73315 18.4592 4.36076 18.9206C4.96771 19.3668 5.75533 19.8332 6.74148 20.4172L7.4946 20.8632C8.48038 21.447 9.2681 21.9135 9.94858 22.2296C10.6519 22.5564 11.2954 22.75 12 22.75C12.7046 22.75 13.3481 22.5564 14.0514 22.2296C14.7319 21.9134 15.5196 21.447 16.5054 20.8632L17.2585 20.4172C18.2446 19.8332 19.0323 19.3668 19.6392 18.9206C20.2669 18.4592 20.7482 17.9869 21.0967 17.3679C21.4445 16.7499 21.6016 16.0891 21.6769 15.3049C21.75 14.5446 21.75 13.6135 21.75 12.4441V11.556C21.75 10.3866 21.75 9.45538 21.6769 8.69506C21.6016 7.91095 21.4445 7.25014 21.0967 6.63212C20.7482 6.01311 20.2669 5.54083 19.6392 5.07944C19.0323 4.63324 18.2447 4.16683 17.2585 3.58285L16.5054 3.13685C15.5196 2.55303 14.7319 2.08656 14.0514 1.77037C13.3481 1.44359 12.7046 1.25 12 1.25ZM8.22524 4.44744C9.25238 3.83917 9.97606 3.41161 10.5807 3.13069C11.1702 2.85676 11.5907 2.75 12 2.75C12.4093 2.75 12.8298 2.85676 13.4193 3.13069C14.0239 3.41161 14.7476 3.83917 15.7748 4.44744L16.4609 4.85379C17.4879 5.46197 18.2109 5.89115 18.7508 6.288C19.2767 6.67467 19.581 6.99746 19.7895 7.36788C19.9986 7.73929 20.1199 8.1739 20.1838 8.83855C20.2492 9.51884 20.25 10.378 20.25 11.5937V12.4063C20.25 13.622 20.2492 14.4812 20.1838 15.1614C20.1199 15.8261 19.9986 16.2607 19.7895 16.6321C19.581 17.0025 19.2767 17.3253 18.7508 17.712C18.2109 18.1089 17.4879 18.538 16.4609 19.1462L15.7748 19.5526C14.7476 20.1608 14.0239 20.5884 13.4193 20.8693C12.8298 21.1432 12.4093 21.25 12 21.25C11.5907 21.25 11.1702 21.1432 10.5807 20.8693C9.97606 20.5884 9.25238 20.1608 8.22524 19.5526L7.53909 19.1462C6.5121 18.538 5.78906 18.1089 5.24924 17.712C4.72326 17.3253 4.419 17.0025 4.2105 16.6321C4.00145 16.2607 3.88005 15.8261 3.81618 15.1614C3.7508 14.4812 3.75 13.622 3.75 12.4063V11.5937C3.75 10.378 3.7508 9.51884 3.81618 8.83855C3.88005 8.1739 4.00145 7.73929 4.2105 7.36788C4.419 6.99746 4.72326 6.67467 5.24924 6.288C5.78906 5.89115 6.5121 5.46197 7.53909 4.85379L8.22524 4.44744Z" fill="#f5c211"></path> </g></svg>
@@ -297,18 +347,20 @@ export default function Sidebar() {
             </nav>
 
             {/* Footer */}
-            <div className="p-3 border-t border-white/5 space-y-1">
+            <div className="relative z-10 p-4 border-t border-blue-500/10 space-y-2 bg-gradient-to-t from-[#01030a] to-transparent">
+                {/* Overlay neon line on footer top */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent pointer-events-none" />
                 {/* Settings - PRO/ULTRA only */}
                 {(user?.role === 'PRO' || user?.role === 'ULTRA') && (
                     <Link
                         href="/settings"
                         onClick={() => setIsOpen(false)}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-medium ${pathname === '/settings'
-                            ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
-                            : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'
+                        className={`flex items-center gap-2.5 px-3 py-2 rounded transition-all text-[11px] font-mono font-bold tracking-wide ${pathname === '/settings'
+                            ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                            : 'text-gray-400 hover:bg-blue-500/5 border border-transparent hover:border-blue-500/20 hover:text-gray-200'
                             }`}
                     >
-                        <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         Settings
                     </Link>
                 )}
@@ -317,25 +369,29 @@ export default function Sidebar() {
                 {!user ? (
                     <Link
                         href="/login"
-                        className="flex items-center justify-center gap-2 w-full p-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all font-semibold text-sm shadow-lg shadow-blue-700/25 active:scale-95 border border-white/10"
+                        className="flex items-center justify-center gap-2 w-full p-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded font-black text-[10px] uppercase tracking-[0.18em] transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] border border-blue-400/20 active:scale-95"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                         Sign In
                     </Link>
                 ) : (
-                    <div className="flex items-center gap-3 p-2.5 bg-white/4 rounded-xl border border-white/8">
-                        <div className={`w-8 h-8 rounded-lg bg-linear-to-br ${ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER} flex items-center justify-center text-xs font-black text-white shadow-sm shrink-0`}>
-                            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                        </div>
+                    <div className="flex items-center gap-3 p-3 bg-blue-500/[0.04] rounded border border-blue-500/15 shadow-[inset_0_0_10px_rgba(59,130,246,0.05)]">
+                        <LoadingImage
+                            src="https://picsum.photos/200"
+                            alt="Profile"
+                            containerClassName="w-8 h-8 rounded flex items-center justify-center text-xs font-black text-white border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.2)] shrink-0 overflow-hidden"
+                            className="w-full h-full object-cover"
+                        />
                         <div className="flex-1 min-w-0">
-                            <div className="text-sm font-semibold text-white truncate">{user.name || 'User'}</div>
-                            <span className={`inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${ROLE_BADGE[user.role] || ROLE_BADGE.MEMBER}`}>
+                            <div className="text-[11px] font-bold text-blue-100 truncate tracking-wide">{user.name || 'User'}</div>
+                            <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 mt-1 rounded-sm border bg-blue-500/10 text-blue-400 border-blue-500/25 text-[8px] font-black uppercase tracking-[0.18em]">
+                                <span className="w-1 h-1 rounded-full bg-blue-400" />
                                 {user.role || 'MEMBER'}
                             </span>
                         </div>
                         <button
                             onClick={handleLogout}
-                            className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-1.5 text-blue-400/60 hover:text-blue-300 hover:bg-blue-500/10 rounded transition-colors border border-transparent hover:border-blue-500/20"
                             title="Sign Out"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
@@ -344,9 +400,9 @@ export default function Sidebar() {
                 )}
 
                 {/* Developer Credit */}
-                <div className="pt-2 pb-1 text-center">
-                    <span className="text-[10px] text-gray-500/80">
-                        Developed by <a href="https://dkzhen.org" target="_blank" rel="noopener noreferrer" className="text-purple-400/80 hover:text-purple-400 transition-colors font-medium">Zhen</a>
+                <div className="pt-2 text-center">
+                    <span className="text-[9px] text-blue-500/50 font-mono">
+                        Developed by <a href="https://dkzhen.org" target="_blank" rel="noopener noreferrer" className="text-blue-400/80 hover:text-blue-300 transition-colors font-bold tracking-wider">Zhen</a>
                     </span>
                 </div>
             </div>
@@ -357,16 +413,16 @@ export default function Sidebar() {
         <>
             {/* Mobile Top Bar */}
             <header className="md:hidden fixed top-0 left-0 right-0 z-50 h-14">
-                {/* Glass background */}
-                <div className="absolute inset-0 bg-[#080d1a]/80 backdrop-blur-xl" />
-                {/* Gradient bottom border */}
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/30 to-transparent" />
+                {/* Cyberpunk Mobile Header */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#030611] via-[#05091a] to-[#030611] border-b border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]" />
+                <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.02) 1px, transparent 1px)', backgroundSize: '12px 12px' }} />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent pointer-events-none" />
 
                 <div className="relative flex items-center justify-between h-full px-4">
                     {/* Hamburger + Brand */}
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-3">
                         <button
-                            className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/8 transition-all active:scale-95"
+                            className="w-9 h-9 flex items-center justify-center rounded border border-blue-500/20 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all active:scale-95 bg-[#040811] shadow-[0_0_10px_rgba(59,130,246,0.05)]"
                             onClick={() => setIsOpen(!isOpen)}
                         >
                             {isOpen ? (
@@ -376,14 +432,20 @@ export default function Sidebar() {
                             )}
                         </button>
 
-                        <span className="text-xl font-passero text-white tracking-wide mt-1">Devora</span>
+                        <span className="text-xl font-passero tracking-wide mt-1 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-400">Devora</span>
                     </div>
 
                     {/* Right — user avatar */}
                     {user ? (
-                        <div className={`w-8 h-8 rounded-xl bg-linear-to-br ${ROLE_COLORS[user.role] || ROLE_COLORS.MEMBER} flex items-center justify-center text-xs font-black text-white shadow-sm`}>
-                            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                        </div>
+                        <LoadingImage
+                            src="https://picsum.photos/200"
+                            alt="Profile"
+                            containerClassName="w-8 h-8 rounded flex items-center justify-center text-xs font-black text-white border border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.2)]"
+                            className="w-full h-full object-cover rounded"
+                            loaderWrapperClassName="absolute inset-0 bg-blue-500/10 flex items-center justify-center rounded"
+                        >
+                            <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-400 border-[1.5px] border-[#030611] z-10" />
+                        </LoadingImage>
                     ) : (
                         <div className="w-8 h-8" />
                     )}

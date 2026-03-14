@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+
+import { HeroHeader, LoadingState } from '@/components/HeroHeader';
+import LoadingImage from '@/components/LoadingImage';
 import Link from 'next/link';
 
 
@@ -230,299 +233,277 @@ export default function AppLibraryPage() {
         }
     };
 
+
     return (
         <div className="space-y-8">
             {toast && (
-                <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium bg-blue-500">
+                <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium bg-linear-to-r from-blue-600 via-fuchsia-600 to-purple-600 animate-pulse border border-blue-400/40">
                     {toast}
                 </div>
             )}
 
-            <div className="relative overflow-hidden rounded-2xl mb-6">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+            {/* Hero Header Cyberpunk */}
+            <HeroHeader
+                breadcrumbs={[
+                    { label: 'Dashboard', href: '/', icon: (
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    ) },
+                    { label: 'App Library' }
+                ]}
+                title="App"
+                badge="Library"
+                description="Discover, download, and share applications. Keep up entirely with all our latest app versions."
+                colorTheme="blue"
+            />
 
-                <div className="relative z-10 p-5 md:p-8">
-                    <nav className="flex text-xs text-blue-300/60 mb-4">
-                        <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </a>
-                        <svg className="w-3 h-3 mx-2 text-blue-400/30 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="text-blue-200 font-semibold">App Library</span>
-                    </nav>
-                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-                        <div className="flex flex-col gap-1">
-                            <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-                                <span className="text-white">App </span>
-                                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">Library</span>
-                            </h1>
-                            <p className="text-gray-400 text-sm max-w-xl">Discover, download, and share applications. Keep up entirely with all our latest app versions.</p>
-                        </div>
-
-                        <div className="flex items-center gap-3 self-start md:self-end mb-1">
-                            {isUltra && (
-                                <button
-                                    onClick={() => {
-                                        if (!configComplete) {
-                                            setBotTokenMissing(false);
-                                            setShowConfig(true);
-                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                            showToast('Please complete storage configuration first.');
-                                        } else {
-                                            setShowAddAppModal(true);
-                                        }
-                                    }}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors border ${!configComplete ? 'bg-amber-500/10 border-amber-500/50 text-amber-500 hover:bg-amber-500/20' : 'bg-emerald-600/10 border-emerald-500/50 text-emerald-500 hover:bg-emerald-600/20'}`}
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-                                    Add New App
-                                </button>
-                            )}
-                            <button
-                                disabled={!isUltra}
-                                onClick={() => setShowConfig(!showConfig)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors border ${!isUltra ? 'bg-white/5 border-white/5 text-gray-600 cursor-not-allowed grayscale' : showConfig ? 'bg-blue-500/10 border-blue-500 text-blue-400 shadow-lg shadow-blue-500/10' : 'bg-white/5 border-white/10 text-gray-400 hover:border-blue-500/50 hover:text-blue-400'}`}
-                            >
-                                {!isUltra ? (
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                ) : (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                )}
-                                {showConfig ? 'Close Settings' : 'Storage Settings'}
-                            </button>
-                        </div>
+            {/* Main Action Bar: Search + Buttons */}
+            <div className="flex flex-col md:flex-row gap-4 mb-2 item-center">
+                {/* Search box with Cyberpunk style */}
+                <div className="flex-1 relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-blue-500/60 group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                     </div>
+                    <input
+                        type="text"
+                        placeholder="Search apps by name, category, or description..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="w-full pl-11 pr-4 py-3 bg-[#070b14] border border-blue-500/20 rounded-xl text-xs text-blue-100 placeholder:text-blue-500/30 focus:border-blue-500/40 focus:ring-2 focus:ring-blue-500/5 focus:outline-none font-mono transition-all shadow-[inset_0_0_10px_rgba(59,130,246,0.05)]"
+                    />
+                </div>
+
+                {/* Tombol Add & Settings */}
+                <div className="flex gap-2 shrink-0">
+                    {isUltra && (
+                        <button
+                            onClick={() => {
+                                if (!configComplete) {
+                                    setBotTokenMissing(false);
+                                    setShowConfig(true);
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    showToast('Please complete storage configuration first.');
+                                } else {
+                                    setShowAddAppModal(true);
+                                }
+                            }}
+                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!configComplete ? 'bg-amber-500/5 border-amber-500/30 text-amber-500 hover:bg-amber-500/10 shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'bg-emerald-500/5 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.1)]'}`}
+                            aria-label="Add New App"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+                            <span className="hidden sm:inline">Add Release</span>
+                        </button>
+                    )}
+                    <button
+                        disabled={!isUltra}
+                        onClick={() => setShowConfig(!showConfig)}
+                        className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!isUltra ? 'opacity-20 cursor-not-allowed grayscale' : showConfig ? 'bg-blue-500 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-blue-500/5 border-blue-500/30 text-blue-400 hover:bg-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.1)]'}`}
+                        aria-label="Storage Settings"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span className="hidden sm:inline">{showConfig ? 'Active' : 'Configs'}</span>
+                    </button>
                 </div>
             </div>
 
-            {/* Storage Config Section (ULTRA only) */}
-            {isUltra && showConfig && (
-                <div>
-                    {botTokenMissing ? (
-                        <div className="bg-[#0d111c] border border-white/10 rounded-[20px] overflow-hidden shadow-2xl relative max-w-[520px] mx-auto">
-                            <div className="absolute top-0 inset-x-0 h-[2px] bg-linear-to-r from-orange-500 to-amber-400" />
-                            <div className="p-10 flex flex-col items-center text-center">
-                                <div className="w-14 h-14 bg-[#1a1f2e] border border-orange-500/20 rounded-full flex items-center justify-center mb-6">
-                                    <svg className="w-7 h-7 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                </div>
-                                <div className="space-y-2 mb-8">
-                                    <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 bg-orange-500/5 px-3 py-1 rounded-full border border-orange-500/10 mb-2">Configuration Required</span>
-                                    <h2 className="text-2xl font-bold text-white tracking-tight">Missing Bot Token</h2>
-                                    <p className="max-w-[400px] mx-auto text-gray-400 text-sm leading-relaxed">The storage module requires a Telegram Bot Token. Please add this key to your global configuration first:</p>
-                                </div>
-                                <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText('BOT_TOKEN_TELEGRAM');
-                                        setTokenCopied(true);
-                                        setTimeout(() => setTokenCopied(false), 2000);
-                                    }}
-                                    className={`flex items-center gap-2 px-4 py-2 bg-[#161b29] border rounded-xl font-mono text-xs mb-8 transition-colors group ${tokenCopied ? 'border-emerald-500/50 text-emerald-400' : 'border-white/5 text-blue-400 hover:border-blue-500/30'}`}
-                                >
-                                    <span className={tokenCopied ? 'text-emerald-600' : 'text-gray-600'}>$</span>
-                                    <span className="font-bold tracking-wider">BOT_TOKEN_TELEGRAM</span>
-                                    {tokenCopied ? (
-                                        <svg className="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                                    ) : (
-                                        <svg className="w-3.5 h-3.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                                    )}
-                                </button>
-                                <Link href="/config" className="w-full sm:w-auto">
-                                    <button className="w-full px-8 py-3.5 bg-linear-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-sm rounded-xl shadow-lg transition-colors">Go to Global Configurations</button>
-                                </Link>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="bg-[#0d111c] border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative">
-                            <div className="absolute top-0 inset-x-0 h-[2px] bg-linear-to-r from-blue-600 to-indigo-400" />
-                            <div className="p-6 md:p-8 space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h2 className="text-xl font-bold text-white tracking-tight">Telegram Storage Configuration</h2>
-                                        <p className="text-xs text-gray-500 mt-1 uppercase font-black tracking-widest">Apk Distribution module settings</p>
+
+            {/* Loading State & Content */}
+            {loading ? (
+                <LoadingState colorTheme="blue" message="Loading App Library..." />
+            ) : (
+                <div className="relative space-y-8">
+                    {/* Storage Config Section (ULTRA only) - MOVED ABOVE GRID */}
+                    {isUltra && showConfig && (
+                        <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-300">
+                            {botTokenMissing ? (
+                                <div className="bg-[#0d111c] border border-orange-500/20 rounded-[20px] overflow-hidden shadow-2xl relative max-w-3xl mx-auto">
+                                    <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-orange-500 to-amber-400" />
+                                    <div className="p-8 flex flex-col items-center text-center">
+                                        <div className="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-full flex items-center justify-center mb-6">
+                                            <svg className="w-7 h-7 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                        </div>
+                                        <div className="space-y-2 mb-8">
+                                            <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 bg-orange-500/5 px-3 py-1 rounded-full border border-orange-500/10 mb-2">Configuration Required</span>
+                                            <h2 className="text-xl font-bold text-white tracking-tight text-center">Missing Bot Token</h2>
+                                            <p className="max-w-md mx-auto text-gray-400 text-sm leading-relaxed text-center">The storage module requires a Telegram Bot Token. Please add this key to your global configuration first:</p>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                navigator.clipboard.writeText('BOT_TOKEN_TELEGRAM');
+                                                setTokenCopied(true);
+                                                setTimeout(() => setTokenCopied(false), 2000);
+                                            }}
+                                            className={`flex items-center gap-2 px-4 py-2 bg-[#161b29] border rounded-xl font-mono text-xs mb-8 transition-colors group ${tokenCopied ? 'border-emerald-500/50 text-emerald-400' : 'border-white/5 text-blue-400 hover:border-blue-500/30'}`}
+                                        >
+                                            <span className={tokenCopied ? 'text-emerald-600' : 'text-gray-600'}>$</span>
+                                            <span className="font-bold tracking-wider">BOT_TOKEN_TELEGRAM</span>
+                                            {tokenCopied ? (
+                                                <svg className="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                            ) : (
+                                                <svg className="w-3.5 h-3.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                            )}
+                                        </button>
+                                        <Link href="/config">
+                                            <button className="px-8 py-3.5 bg-linear-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg transition-colors">Go to Global Configurations</button>
+                                        </Link>
                                     </div>
                                 </div>
+                            ) : (
+                                <div className="bg-[#090b14] border border-blue-500/20 rounded-2xl overflow-hidden shadow-2xl relative">
+                                    <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-blue-500/50 to-transparent" />
+                                    <div className="p-6 md:p-8 space-y-6">
+                                        <div className="flex items-center justify-between border-b border-blue-500/10 pb-4">
+                                            <div>
+                                                <h2 className="text-base font-bold text-white tracking-tight">Storage Parameters</h2>
+                                                <p className="text-[10px] text-blue-500/60 mt-0.5 uppercase font-black tracking-widest">Telegram Cloud Integration</p>
+                                            </div>
+                                            <button onClick={() => setShowConfig(false)} className="text-gray-500 hover:text-white transition-colors">
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                        </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {/* Group Chat ID */}
-                                    <div className="space-y-2 md:col-span-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                            <svg className="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                                            Target Group Chat ID
-                                        </label>
-                                        <div className="relative group">
-                                            <input
-                                                type="text"
-                                                value={config.TELEGRAM_STORAGE_CHAT_ID}
-                                                onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_CHAT_ID: e.target.value })}
-                                                placeholder="-100xxxxxxxxxx"
-                                                className="w-full bg-[#070b14] border border-white/5 rounded-xl px-10 py-3 font-mono text-sm text-white focus:outline-hidden focus:border-blue-500/50 transition-colors"
-                                            />
-                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 font-mono text-xs">#</div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {/* Group Chat ID */}
+                                            <div className="space-y-2 lg:col-span-1">
+                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                                    Target Chat ID
+                                                </label>
+                                                <div className="relative group">
+                                                    <input
+                                                        type="text"
+                                                        value={config.TELEGRAM_STORAGE_CHAT_ID}
+                                                        onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_CHAT_ID: e.target.value })}
+                                                        placeholder="-100xxxxxxxxxx"
+                                                        className="w-full bg-[#05070a] border border-blue-500/10 rounded-xl px-4 py-2.5 font-mono text-xs text-blue-100 placeholder:text-gray-700 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* APK Topic */}
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                                    <span>APK Topic ID</span>
+                                                    <button
+                                                        onClick={() => handleTestSync('apk', config.TELEGRAM_STORAGE_TOPIC_APK)}
+                                                        disabled={testing === 'apk'}
+                                                        className="text-[9px] font-black text-blue-500 hover:text-blue-400 transition-colors"
+                                                    >
+                                                        {testing === 'apk' ? 'Sending...' : 'Test'}
+                                                    </button>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    value={config.TELEGRAM_STORAGE_TOPIC_APK}
+                                                    onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_TOPIC_APK: e.target.value })}
+                                                    className="w-full bg-[#05070a] border border-blue-500/10 rounded-xl px-4 py-2.5 font-mono text-xs text-blue-100 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                                />
+                                            </div>
+
+                                            {/* Image Topic */}
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                                    <span>Image Topic ID</span>
+                                                    <button
+                                                        onClick={() => handleTestSync('images', config.TELEGRAM_STORAGE_TOPIC_IMAGES)}
+                                                        disabled={testing === 'images'}
+                                                        className="text-[9px] font-black text-blue-500 hover:text-blue-400 transition-colors"
+                                                    >
+                                                        {testing === 'images' ? 'Sending...' : 'Test'}
+                                                    </button>
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    value={config.TELEGRAM_STORAGE_TOPIC_IMAGES}
+                                                    onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_TOPIC_IMAGES: e.target.value })}
+                                                    className="w-full bg-[#05070a] border border-blue-500/10 rounded-xl px-4 py-2.5 font-mono text-xs text-blue-100 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex pt-4">
+                                            <button
+                                                onClick={handleSaveConfig}
+                                                disabled={saving}
+                                                className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.2)] transition-all disabled:opacity-50"
+                                            >
+                                                {saving ? 'Synchronizing...' : 'Save Configuration'}
+                                            </button>
                                         </div>
                                     </div>
-
-                                    {/* APK Topic */}
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
-                                            <span className="flex items-center gap-2">APK Topic ID</span>
-                                            <button
-                                                onClick={() => handleTestSync('apk', config.TELEGRAM_STORAGE_TOPIC_APK)}
-                                                disabled={testing === 'apk'}
-                                                className="text-[9px] font-black text-blue-500 hover:text-blue-300 uppercase tracking-tighter transition-colors"
-                                            >
-                                                {testing === 'apk' ? 'Testing...' : 'Test Sync'}
-                                            </button>
-                                        </label>
-                                        <input
-                                            type="number"
-                                            value={config.TELEGRAM_STORAGE_TOPIC_APK}
-                                            onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_TOPIC_APK: e.target.value })}
-                                            className="w-full bg-[#070b14] border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-white focus:outline-hidden focus:border-indigo-500/50 transition-colors"
-                                        />
-                                    </div>
-
-                                    {/* Image Topic */}
-                                    <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
-                                            <span className="flex items-center gap-2">Image Topic ID</span>
-                                            <button
-                                                onClick={() => handleTestSync('images', config.TELEGRAM_STORAGE_TOPIC_IMAGES)}
-                                                disabled={testing === 'images'}
-                                                className="text-[9px] font-black text-blue-500 hover:text-blue-300 uppercase tracking-tighter transition-colors"
-                                            >
-                                                {testing === 'images' ? 'Testing...' : 'Test Sync'}
-                                            </button>
-                                        </label>
-                                        <input
-                                            type="number"
-                                            value={config.TELEGRAM_STORAGE_TOPIC_IMAGES}
-                                            onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_TOPIC_IMAGES: e.target.value })}
-                                            className="w-full bg-[#070b14] border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-white focus:outline-hidden focus:border-purple-500/50 transition-colors"
-                                        />
-                                    </div>
                                 </div>
-
-                                <div className="flex pt-2">
+                            )}
+                        </div>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 transition-colors">
+                        {filteredApps.map((app) => (
+                            <div
+                                key={app.id}
+                                onClick={() => router.push(`/app-library/${app.id}`)}
+                                className="relative group overflow-hidden rounded-2xl border border-blue-500/30 bg-linear-to-br from-[#0a0e1a] via-[#0d1b3e] to-[#110a17] shadow-[0_0_30px_0_rgba(59,130,246,0.18)] hover:shadow-blue-500/40 hover:border-blue-500/70 transition-all duration-300 p-5 flex flex-col gap-3 neon-card cursor-pointer"
+                            >
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className="w-16 h-16 rounded-xl overflow-hidden border border-blue-500/30 bg-[#0a0e1a] flex items-center justify-center">
+                                        {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
+                                            <LoadingImage
+                                                src={`/api/telegram/image/${app.versions[0].imageUrl}`}
+                                                alt={app.name}
+                                                className="w-full h-full object-cover rounded-xl"
+                                            />
+                                        ) : app.iconStatic && app.iconStatic !== '📦' ? (
+                                            <LoadingImage
+                                                src={app.iconStatic}
+                                                alt={app.name}
+                                                className="w-full h-full object-cover rounded-xl"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-blue-500/40 font-black text-2xl">?</div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-base font-bold text-blue-200 group-hover:text-blue-400 transition-colors truncate">{app.name}</span>
+                                            <span className="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono uppercase tracking-widest">{app.category}</span>
+                                        </div>
+                                        <div className="text-xs text-blue-400/70 font-mono">v{app.versions && app.versions.length > 0 ? app.versions[0].version : '1.0.0'}{app.androidVersion && (<span className='ml-1'>({app.androidVersion})</span>)}</div>
+                                        <div className="text-xs text-blue-400/50 mt-1 line-clamp-2">{app.description}</div>
+                                    </div>
                                     <button
-                                        onClick={handleSaveConfig}
-                                        disabled={saving}
-                                        className="w-full md:w-auto px-10 py-3 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black uppercase tracking-widest text-[11px] rounded-xl shadow-xl shadow-blue-500/10 transition-colors disabled:opacity-50"
+                                        onClick={e => { e.stopPropagation(); handleCopyLink(e, app.id); }}
+                                        className="shrink-0 p-2 text-blue-400 hover:text-blue-200 hover:bg-blue-500/10 rounded-xl transition-colors"
+                                        title="Copy Link"
                                     >
-                                        {saving ? 'Saving...' : 'Update Storage Parameters'}
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                                     </button>
                                 </div>
+                                <div className="flex-1">
+                                    <p className="text-sm text-blue-300/80 line-clamp-2 leading-relaxed mb-4 font-mono">{app.description}</p>
+                                </div>
+                                <div className="pt-4 border-t border-blue-500/10 flex items-center justify-between mt-auto">
+                                    <div className="flex items-center gap-2 text-xs text-blue-400/80 font-mono">
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
+                                        Latest: <span className="font-semibold text-blue-200">{app.versions && app.versions.length > 0 ? app.versions[0].version : 'v1.0.0'}</span>
+                                    </div>
+                                    <div className="text-xs font-semibold text-indigo-400 flex items-center gap-1 transition-colors">
+                                        Details
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                    </div>
+                                </div>
                             </div>
+                        ))}
+                    </div>
+                    {filteredApps.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-20 text-blue-400/70 border border-dashed border-blue-500/20 rounded-3xl bg-[#0a0e1a]/40 mt-8">
+                            <svg className="w-12 h-12 mb-4 opacity-50 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                            <h3 className="text-lg font-bold text-blue-200">No Apps Found</h3>
+                            <p className="text-sm mt-1">Try modifying your search criteria.</p>
                         </div>
                     )}
                 </div>
             )}
 
-            {/* Search Bar */}
-            <div className="relative mb-6">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                </div>
-                <input
-                    type="text"
-                    placeholder="Search apps by name, description, or category..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-gray-900 border border-white/10 hover:border-blue-500/30 rounded-2xl text-sm text-gray-100 placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors shadow-lg shadow-black/20"
-                />
-            </div>
 
-            <div className="relative">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 transition-colors">
-                    {filteredApps.map((app) => (
-                        <div
-                            key={app.id}
-                            onClick={() => router.push(`/app-library/${app.id}`)}
-                            className="bg-gray-900/50 border border-white/10 hover:border-blue-500/40 rounded-2xl p-5 transition-colors cursor-pointer flex flex-col justify-between hover:bg-gray-800/80"
-                        >
-                            <div>
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3 w-full">
-                                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-white/5 flex items-center justify-center shadow-inner shrink-0 overflow-hidden">
-                                            {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
-                                                <img
-                                                    src={`/api/telegram/image/${app.versions[0].imageUrl}`}
-                                                    alt={app.name}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => {
-                                                        e.target.onerror = null;
-                                                        e.target.src = '/icons/android.png';
-                                                    }}
-                                                />
-                                            ) : app.iconStatic && app.iconStatic !== '📦' ? (
-                                                <img
-                                                    src={app.iconStatic}
-                                                    alt={app.name}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => {
-                                                        e.target.onerror = null;
-                                                        e.target.src = '/icons/android.png';
-                                                    }}
-                                                />
-                                            ) : (
-                                                <div className="text-white/90 group-hover:text-white transition-opacity">
-                                                    <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor">
-                                                        <path d="M256,0C114.6,0,0,114.6,0,256s114.6,256,256,256s256-114.6,256-256S397.4,0,256,0z M415.8,415.7 c-20.8,20.8-44.9,37.1-71.8,48.4c-27.8,11.8-57.4,17.7-88,17.7c-30.5,0-60.1-6-88-17.7c-26.9-11.4-51.1-27.7-71.8-48.4 c-20.8-20.8-37.1-44.9-48.4-71.8C36,316.1,30,286.5,30,256s6-60.1,17.7-88c11.4-26.9,27.7-51.1,48.4-71.8 c20.9-20.8,45-37.1,71.9-48.5C195.9,36,225.5,30,256,30s60.1,6,88,17.7c26.9,11.4,51.1,27.7,71.8,48.4 c20.8,20.8,37.1,44.9,48.4,71.8c11.8,27.8,17.7,57.4,17.7,88c0,30.5-6,60.1-17.7,88C452.8,370.8,436.5,395,415.8,415.7z"></path>
-                                                        <path d="M294.2,150.3l2.8-4.2l2.8-4.1l6.2-9.3c0.8-1.1,0.5-2.7-0.7-3.4c-1.1-0.8-2.7-0.5-3.4,0.7l-6.6,9.9l-2.8,4.2l-2.8,4.2 c-9-3.5-18.9-5.4-29.5-5.4c-10.5,0-20.5,1.9-29.5,5.4l-2.8-4.2l-2.8-4.2l-6.6-9.9c-0.8-1.1-2.3-1.4-3.4-0.7 c-1.1,0.8-1.4,2.3-0.7,3.4l6.2,9.3l2.8,4.1l2.8,4.2c-21,9.8-35.3,28.3-35.3,49.6h138.7C329.5,178.6,315.3,160.1,294.2,150.3z M230.4,180c-4.1,0-7.4-3.3-7.4-7.4s3.3-7.4,7.4-7.4c4.1,0,7.4,3.3,7.4,7.4C237.8,176.7,234.5,180,230.4,180z M289.8,180 c-4.1,0-7.4-3.3-7.4-7.4s3.3-7.4,7.4-7.4c4.1,0,7.4,3.3,7.4,7.4C297.3,176.7,294,180,289.8,180z"></path>
-                                                        <path d="M191.8,209.8h-1.1v12.3v10.1v86.6c0,8.7,7,15.7,15.7,15.7h11.3c-0.4,1.3-0.6,2.7-0.6,4.1v0.8v5V370 c0,8.2,6.7,14.9,14.9,14.9s14.9-6.7,14.9-14.9v-25.6v-5v-0.8c0-1.4-0.2-2.8-0.6-4.1h27.6c-0.4,1.3-0.6,2.7-0.6,4.1v0.8v5V370 c0,8.2,6.7,14.9,14.9,14.9c8.2,0,14.9-6.7,14.9-14.9v-25.6v-5v-0.8c0-1.4-0.2-2.8-0.6-4.1h11.3c8.7,0,15.7-7,15.7-15.7v-86.6v-10.1 v-12.4h-1.1H191.8V209.8z"></path>
-                                                        <path d="M166,209.8c-8.2,0-14.9,6.7-14.9,14.9v63.6c0,8.2,6.7,14.9,14.9,14.9c8.2,0,14.9-6.7,14.9-14.9v-63.6 C180.8,216.4,174.2,209.8,166,209.8z"></path>
-                                                        <path d="M354.3,209.8c-8.2,0-14.9,6.7-14.9,14.9v63.6c0,8.2,6.7,14.9,14.9,14.9c8.2,0,14.9-6.7,14.9-14.9v-63.6 C369.1,216.4,362.5,209.8,354.3,209.8z"></path>
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <h3 className="text-white font-bold text-base truncate">{app.name}</h3>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <span className="text-xs text-blue-400 font-medium bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">{app.category}</span>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleCopyLink(e, app.id);
-                                            }}
-                                            className="shrink-0 p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-colors"
-                                            title="Copy Link"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed mb-4">
-                                    {app.description}
-                                </p>
-                            </div>
-
-                            <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-xs text-gray-500">
-                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
-                                    Latest: <span className="font-semibold text-gray-300">{app.versions && app.versions.length > 0 ? app.versions[0].version : 'v1.0.0'}</span>
-                                </div>
-                                <div className="text-xs font-semibold text-indigo-400 flex items-center gap-1 transition-colors">
-                                    Details
-                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {filteredApps.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-500 border border-dashed border-white/10 rounded-3xl bg-gray-900/20">
-                    <svg className="w-12 h-12 mb-4 opacity-50 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                    <h3 className="text-lg font-bold text-gray-300">No Apps Found</h3>
-                    <p className="text-sm mt-1">Try modifying your search criteria.</p>
-                </div>
-            )}
+            {/* Card dan grid lama dihapus, hanya pakai versi cyberpunk/neon yang baru */}
             {/* Add App Modal */}
             {showAddAppModal && (
                 <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => !submittingApp && setShowAddAppModal(false)}>
@@ -530,7 +511,7 @@ export default function AppLibraryPage() {
                         <div className="p-6 md:p-8 space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-xl font-black text-white tracking-tight">Add New App</h3>
+                                    <h3 className="text-lg font-black text-white tracking-tight">Add New App</h3>
                                     <p className="text-sm text-gray-400 mt-1">Upload a new application to the library</p>
                                 </div>
                                 <button onClick={() => !submittingApp && setShowAddAppModal(false)} className="text-gray-500 hover:text-white transition-colors" disabled={submittingApp}>

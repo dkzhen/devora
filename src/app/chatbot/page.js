@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
+import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 
 const TypingEffect = ({ content, scrollTrigger, onComplete }) => {
     const [displayedContent, setDisplayedContent] = useState('');
@@ -286,12 +287,24 @@ export default function ChatbotPage() {
         }
     };
 
+    const breadcrumbs = [
+        { label: 'Dashboard', href: '/', icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
+        { label: 'Chatbot' }
+    ];
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-                    <p className="text-xs text-gray-500 animate-pulse">Checking credentials…</p>
+            <div className="flex flex-col h-[calc(100vh-5rem)] md:h-[calc(100vh-2rem)] space-y-4 md:space-y-6">
+                <HeroHeader
+                    title="AI"
+                    badge="Chatbot"
+                    description="Powered by Groq Intelligence"
+                    colorTheme="emerald"
+                    breadcrumbs={breadcrumbs}
+                    className="shrink-0"
+                />
+                <div className="flex-1 relative flex items-center justify-center min-h-0 bg-linear-to-b from-[#071310] to-[#010302] border border-emerald-500/20 rounded-3xl shadow-[0_0_20px_rgba(16,185,129,0.05)] overflow-hidden">
+                    <LoadingState message="Locating Groq credentials..." colorTheme="emerald" />
                 </div>
             </div>
         );
@@ -300,130 +313,121 @@ export default function ChatbotPage() {
     // ---------------------------------------------
     // SETUP KEY VIEW
     // ---------------------------------------------
-    const HeroHeader = () => (
-        <div className="relative overflow-hidden rounded-2xl shrink-0">
-            <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-            <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
-            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-            <div className="relative z-10 p-5 md:p-8 flex flex-row items-center justify-between gap-3">
-                <div>
-                    <nav className="flex text-xs text-emerald-300/60 mb-3 items-center gap-2">
-                        <a href="/" className="flex items-center gap-1 hover:text-emerald-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </a>
-                        <svg className="w-3 h-3 text-emerald-400/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="text-emerald-200 font-semibold">Chatbot</span>
-                    </nav>
-                    <h1 className="text-2xl md:text-4xl font-black tracking-tight">
-                        <span className="text-white">AI </span>
-                        <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-teal-400 to-cyan-400">Chatbot</span>
-                    </h1>
-                    <p className="text-gray-400 mt-1 text-xs md:text-sm">Powered by Groq Intelligence</p>
-                </div>
-            </div>
-        </div>
-    );
 
     if (!hasCredential && !showKeyModal) {
         return (
             <div className="flex flex-col h-[calc(100vh-5rem)] md:h-[calc(100vh-2rem)] space-y-4 md:space-y-6">
-                <HeroHeader />
-                <div className="flex-1 flex flex-col bg-[#0f172a] border border-white/10 rounded-3xl p-5 md:p-12 shadow-2xl relative overflow-y-auto custom-scrollbar min-h-0">
-                    <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-emerald-500 to-teal-500 pointer-events-none" />
-                    <div className="absolute top-0 inset-x-0 h-32 bg-emerald-500/5 blur-3xl pointer-events-none" />
+                <HeroHeader
+                    title="AI"
+                    badge="Chatbot"
+                    description="Powered by Groq Intelligence"
+                    colorTheme="emerald"
+                    breadcrumbs={breadcrumbs}
+                    className="shrink-0"
+                />
+                <div className="flex-1 relative min-h-0 bg-linear-to-b from-[#071310] to-[#010302] border border-emerald-500/20 rounded-3xl shadow-[0_0_20px_rgba(16,185,129,0.05)] overflow-hidden">
+                    {/* Top neon accent */}
+                    <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/50 to-transparent opacity-50 pointer-events-none z-10" />
+                    <div className="absolute top-0 inset-x-0 h-32 bg-emerald-500/5 blur-3xl pointer-events-none z-10" />
 
-                    <div className="flex-1 min-h-0 hidden md:block" />
+                    {/* Fixed Corner brackets */}
+                    <span className="absolute top-4 left-4 w-5 h-5 border-t border-l border-emerald-500/30 pointer-events-none z-20" />
+                    <span className="absolute top-4 right-4 w-5 h-5 border-t border-r border-emerald-500/30 pointer-events-none z-20" />
+                    <span className="absolute bottom-4 left-4 w-5 h-5 border-b border-l border-emerald-500/15 pointer-events-none z-20" />
+                    <span className="absolute bottom-4 right-4 w-5 h-5 border-b border-r border-emerald-500/15 pointer-events-none z-20" />
 
-                    <div className="w-full max-w-2xl text-center space-y-5 md:space-y-6 relative z-10 mx-auto py-4 md:py-0 shrink-0">
-                        <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-2xl md:rounded-3xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-inner overflow-hidden">
-                            <img src="/icons/chatbot.png" alt="Chatbot" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
-                        </div>
+                    <div className="absolute inset-0 overflow-y-auto custom-scrollbar p-5 md:p-12 flex flex-col">
+                        <div className="flex-1 min-h-0 hidden md:block" />
 
-                        <div>
-                            <h2 className="text-2xl md:text-3xl font-black text-white mb-2 md:mb-3">Connect Groq Intelligence</h2>
-                            <p className="text-gray-400 text-sm md:text-lg leading-relaxed text-balance max-w-xl mx-auto">
-                                To unlock ultra-fast AI generation capabilities, simply provide your free Groq API Key.
-                                Your credentials are <strong className="text-emerald-400">AES-256 encrypted</strong> directly to your account.
-                            </p>
-                        </div>
+                        <div className="w-full max-w-2xl text-center space-y-5 md:space-y-6 relative z-10 mx-auto py-4 md:py-0 shrink-0">
+                            <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-2xl md:rounded-3xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-inner overflow-hidden">
+                                <img src="/icons/chatbot.png" alt="Chatbot" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+                            </div>
 
-                        {/* Guidelines Section */}
-                        <div className="max-w-xl mx-auto w-full text-left relative group/guide">
-                            {/* Guideline Card - Enhanced Glassmorphism */}
-                            <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#0d121f]/40 backdrop-blur-2xl shadow-2xl shadow-black/50 transition-all duration-500 group-hover/guide:shadow-emerald-500/5">
-                                {/* Subtle inner glow */}
-                                <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 via-transparent to-teal-500/5 pointer-events-none" />
+                            <div>
+                                <h2 className="text-2xl md:text-3xl font-black text-white mb-2 md:mb-3">Connect Groq Intelligence</h2>
+                                <p className="text-gray-400 text-sm md:text-lg leading-relaxed text-balance max-w-xl mx-auto">
+                                    To unlock ultra-fast AI generation capabilities, simply provide your free Groq API Key.
+                                    Your credentials are <strong className="text-emerald-400">AES-256 encrypted</strong> directly to your account.
+                                </p>
+                            </div>
 
-                                {/* Top accent line */}
-                                <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/30 to-transparent" />
+                            {/* Guidelines Section */}
+                            <div className="max-w-xl mx-auto w-full text-left relative group/guide">
+                                {/* Guideline Card - Enhanced Glassmorphism */}
+                                <div className="relative rounded-2xl overflow-hidden border border-emerald-500/20 bg-[#0d121f]/40 backdrop-blur-2xl shadow-[0_0_20px_rgba(16,185,129,0.05)] transition-all duration-500 group-hover/guide:shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+                                    {/* Subtle inner glow */}
+                                    <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 via-transparent to-teal-500/5 pointer-events-none" />
 
-                                {/* Header row */}
-                                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 relative z-10">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-inner">
-                                            <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    {/* Top accent line */}
+                                    <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/30 to-transparent" />
+
+                                    {/* Header row */}
+                                    <div className="flex items-center justify-between px-6 py-4 border-b border-emerald-500/10 relative z-10">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-[inset_0_0_10px_rgba(16,185,129,0.2)]">
+                                                <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </div>
+                                            <span className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.2em]">
+                                                {guidelineLang === 'en' ? 'Setup Guide' : 'Panduan Setup'}
+                                            </span>
                                         </div>
-                                        <span className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.2em]">
-                                            {guidelineLang === 'en' ? 'Setup Guide' : 'Panduan Setup'}
-                                        </span>
+
+                                        {/* Professional Language Toggle */}
+                                        <div className="flex items-center bg-black/60 rounded-full p-1 border border-emerald-500/20 shadow-inner">
+                                            <button type="button" onClick={() => setGuidelineLang('en')}
+                                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${guidelineLang === 'en' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'text-emerald-500/50 hover:text-emerald-300'}`}>
+                                                EN
+                                            </button>
+                                            <button type="button" onClick={() => setGuidelineLang('id')}
+                                                className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${guidelineLang === 'id' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'text-emerald-500/50 hover:text-emerald-300'}`}>
+                                                ID
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    {/* Professional Language Toggle */}
-                                    <div className="flex items-center bg-black/40 rounded-full p-1 border border-white/5 shadow-inner">
-                                        <button type="button" onClick={() => setGuidelineLang('en')}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${guidelineLang === 'en' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-gray-500 hover:text-gray-300'}`}>
-                                            EN
-                                        </button>
-                                        <button type="button" onClick={() => setGuidelineLang('id')}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${guidelineLang === 'id' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-gray-500 hover:text-gray-300'}`}>
-                                            ID
-                                        </button>
+                                    {/* Steps - Modern List */}
+                                    <div className="px-6 py-5 space-y-4 relative z-10">
+                                        {(guidelineLang === 'en' ? [
+                                            <>Create a free account at <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors underline decoration-emerald-500/40 underline-offset-4">console.groq.com</a></>,
+                                            <>Navigate to the <span className="text-white font-medium">API Keys</span> section in the sidebar.</>,
+                                            <>Click <span className="text-white font-medium">"Create API Key"</span> and provide a name.</>,
+                                            <>Copy the key (starts with <code className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/40 font-mono text-[10px] shadow-[inset_0_0_5px_rgba(16,185,129,0.2)] uppercase">gsk_</code>) and paste below.</>
+                                        ] : [
+                                            <>Buat akun gratis di <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors underline decoration-emerald-500/40 underline-offset-4">console.groq.com</a></>,
+                                            <>Buka bagian <span className="text-white font-medium">API Keys</span> di menu samping.</>,
+                                            <>Klik <span className="text-white font-medium">"Create API Key"</span> dan beri nama.</>,
+                                            <>Salin key (diawali <code className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/40 font-mono text-[10px] shadow-[inset_0_0_5px_rgba(16,185,129,0.2)] uppercase">gsk_</code>) dan tempel di bawah.</>
+                                        ]).map((step, i) => (
+                                            <div key={i} className="flex items-start gap-4">
+                                                <div className="shrink-0 w-6 h-6 rounded-lg bg-emerald-500/5 border border-emerald-500/20 text-emerald-400/80 text-[10px] font-black flex items-center justify-center mt-0.5 shadow-sm">{i + 1}</div>
+                                                <p className="text-sm text-gray-400/90 leading-relaxed font-medium">{step}</p>
+                                            </div>
+                                        ))}
                                     </div>
-                                </div>
-
-                                {/* Steps - Modern List */}
-                                <div className="px-6 py-5 space-y-4 relative z-10">
-                                    {(guidelineLang === 'en' ? [
-                                        <>Create a free account at <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors underline decoration-emerald-500/30 underline-offset-4">console.groq.com</a></>,
-                                        <>Navigate to the <span className="text-white font-medium">API Keys</span> section in the sidebar.</>,
-                                        <>Click <span className="text-white font-medium">"Create API Key"</span> and provide a name.</>,
-                                        <>Copy the key (starts with <code className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/20 font-mono text-[10px] uppercase">gsk_</code>) and paste below.</>
-                                    ] : [
-                                        <>Buat akun gratis di <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors underline decoration-emerald-500/30 underline-offset-4">console.groq.com</a></>,
-                                        <>Buka bagian <span className="text-white font-medium">API Keys</span> di menu samping.</>,
-                                        <>Klik <span className="text-white font-medium">"Create API Key"</span> dan beri nama.</>,
-                                        <>Salin key (diawali <code className="bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/20 font-mono text-[10px] uppercase">gsk_</code>) dan tempel di bawah.</>
-                                    ]).map((step, i) => (
-                                        <div key={i} className="flex items-start gap-4">
-                                            <div className="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 text-gray-400 text-[10px] font-black flex items-center justify-center mt-0.5 shadow-sm">{i + 1}</div>
-                                            <p className="text-sm text-gray-400 leading-relaxed font-medium">{step}</p>
-                                        </div>
-                                    ))}
                                 </div>
                             </div>
-                        </div>
+                        </div> {/* This div was missing, closing the w-full max-w-2xl container */}
 
                         {/* Token Input Form - Sleek Design */}
                         <form onSubmit={handleKeySubmit} className="max-w-xl mx-auto w-full space-y-4 pt-2">
                             <div className="relative group/input">
-                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within/input:text-emerald-400 transition-colors pointer-events-none">
+                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within/input:text-emerald-400 transition-colors pointer-events-none z-10">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
                                 </div>
                                 <input
                                     type="text"
                                     value={apiKeyInput}
                                     onChange={(e) => setApiKeyInput(e.target.value)}
-                                    className="w-full bg-black/40 border border-white/10 rounded-2xl pl-13 pr-6 py-4 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all font-mono tracking-wider shadow-inner"
+                                    className="w-full bg-black/60 border border-emerald-500/20 rounded-2xl pl-13 pr-6 py-4 text-emerald-100 text-sm placeholder-emerald-900/60 focus:outline-none focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all font-mono tracking-wider shadow-[inset_0_0_15px_rgba(0,0,0,0.5)]"
                                     placeholder="gsk_••••••••••••••••••••••••••••••••"
                                     required
                                 />
                             </div>
 
                             {keyError && (
-                                <div className="flex items-center gap-2 px-2 text-red-400 text-xs font-semibold animate-pulse">
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <div className="flex items-center gap-2 px-2 text-red-400 text-[10px] uppercase tracking-widest font-black animate-pulse">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     {keyError}
                                 </div>
                             )}
@@ -431,7 +435,7 @@ export default function ChatbotPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmittingKey || !apiKeyInput.trim()}
-                                className="w-full py-4 bg-linear-to-r from-emerald-600 via-teal-600 to-emerald-600 bg-size-[200%_auto] hover:bg-right text-white rounded-2xl text-sm font-black uppercase tracking-[0.15em] transition-all duration-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-2xl shadow-emerald-500/20 flex items-center justify-center gap-3 relative overflow-hidden"
+                                className="w-full py-4 bg-linear-to-r from-emerald-600/20 via-teal-600/20 to-emerald-600/20 hover:from-emerald-500/30 hover:via-teal-500/30 hover:to-emerald-500/30 border border-emerald-500/40 hover:border-emerald-400/60 bg-[length:200%_auto] hover:bg-right text-emerald-400 hover:text-emerald-300 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all duration-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] flex items-center justify-center gap-3 relative overflow-hidden group"
                             >
                                 {isSubmittingKey ? (
                                     <>
@@ -458,14 +462,24 @@ export default function ChatbotPage() {
     // CHAT VIEW
     // ---------------------------------------------
     return (
-        <div className="flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] space-y-6">
+        <div className="flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] space-y-4 md:space-y-6">
 
-            <HeroHeader />
+            <HeroHeader
+                title="AI"
+                badge="Chatbot"
+                description="Powered by Groq Intelligence"
+                colorTheme="emerald"
+                breadcrumbs={breadcrumbs}
+                className="shrink-0"
+            />
 
-            <div className="flex-1 flex bg-[#0f172a] rounded-3xl border border-white/10 overflow-hidden relative min-h-0 shadow-2xl">
+            <div className="flex-1 flex bg-linear-to-b from-[#071310] to-[#010302] rounded-3xl border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)] overflow-hidden relative min-h-0">
+
+                {/* Top neon accent */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-500/50 to-transparent pointer-events-none opacity-50" />
 
                 {/* --- Sidebar History --- */}
-                <div className={`${isSidebarOpen ? 'w-64 border-r border-white/5 opacity-100' : 'w-0 opacity-0 overflow-hidden'} transition-all duration-300 flex flex-col bg-[#0f172a] md:bg-black/20 shrink-0 absolute md:relative z-30 h-full`}>
+                <div className={`${isSidebarOpen ? 'w-64 border-r border-emerald-500/20 opacity-100' : 'w-0 opacity-0 overflow-hidden'} transition-all duration-300 flex flex-col bg-[#030806] md:bg-black/20 shrink-0 absolute md:relative z-30 h-full`}>
                     <div className="p-4">
                         <button onClick={createNewSession} className="w-full flex items-center gap-2 px-4 py-3 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/20 transition-colors text-sm font-semibold">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -498,16 +512,16 @@ export default function ChatbotPage() {
 
                     {/* --- Modals for Settings --- */}
                     {showKeyModal && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                            <div className="w-full max-w-sm bg-[#0c1628] border border-white/10 rounded-2xl p-6 shadow-2xl relative">
-                                <h3 className="text-lg font-bold text-white mb-1">API Key Settings</h3>
-                                <p className="text-xs text-gray-400 mb-5">Manage your stored credentials</p>
+                        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                            <div className="w-full max-w-sm bg-linear-to-b from-[#071310] to-[#030806] border border-emerald-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(16,185,129,0.1)] relative">
+                                <h3 className="text-lg font-black text-white tracking-widest uppercase mb-1">API Key Settings</h3>
+                                <p className="text-[10px] text-emerald-400/60 uppercase tracking-widest font-bold mb-5">Manage credentials</p>
 
                                 <div className="mb-4">
-                                    <label className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-1">Current Masked Key</label>
+                                    <label className="text-[9px] text-emerald-500 font-bold uppercase tracking-[0.2em] block mb-1.5">Current Masked Key</label>
                                     <div className="flex items-center gap-2">
-                                        <code className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-xs text-emerald-400 break-all">{maskedKey}</code>
-                                        <button onClick={handleCopyKey} className="shrink-0 p-2 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors border border-white/5" title="Copy Raw Key">
+                                        <code className="flex-1 bg-black/40 border border-emerald-500/20 rounded-lg px-3 py-2 text-xs text-emerald-400 break-all">{maskedKey}</code>
+                                        <button onClick={handleCopyKey} className="shrink-0 p-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg text-emerald-400 hover:text-emerald-300 transition-colors" title="Copy Raw Key">
                                             {copied ? (
                                                 <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                             ) : (
@@ -518,65 +532,65 @@ export default function ChatbotPage() {
                                 </div>
 
                                 <form onSubmit={handleKeySubmit} className="mb-6">
-                                    <label className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-1">Replace Key</label>
+                                    <label className="text-[9px] text-emerald-500 font-bold uppercase tracking-[0.2em] block mb-1.5">Replace Key</label>
                                     <input
                                         type="text"
                                         value={apiKeyInput}
                                         onChange={(e) => setApiKeyInput(e.target.value)}
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500/50 transition-colors text-sm mb-2"
+                                        className="w-full bg-black/40 border border-emerald-500/20 rounded-lg px-3 py-2 text-emerald-100 placeholder-emerald-900 focus:outline-none focus:border-emerald-500/50 transition-colors text-sm mb-2"
                                         placeholder="Paste new gsk_..."
                                     />
-                                    {keyError && <p className="text-red-400 text-xs mb-2">{keyError}</p>}
+                                    {keyError && <p className="text-red-400 text-[10px] uppercase font-bold tracking-wider mb-2">{keyError}</p>}
                                     <button
                                         type="submit"
                                         disabled={isSubmittingKey || !apiKeyInput.trim()}
-                                        className="w-full py-2 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 rounded-lg text-sm font-semibold transition-all disabled:opacity-50 border border-emerald-500/30"
+                                        className="w-full py-2 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-50 border border-emerald-500/30 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]"
                                     >
                                         Update Key
                                     </button>
                                 </form>
 
-                                <div className="border-t border-white/10 pt-4 flex gap-3">
-                                    <button onClick={() => { setShowKeyModal(false); setApiKeyInput(''); setKeyError(''); }} className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-colors">Close</button>
-                                    <button onClick={handleDeleteKey} className="flex-1 py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 rounded-xl text-sm font-medium transition-colors">Remove Key</button>
+                                <div className="border-t border-emerald-500/10 pt-4 flex gap-3">
+                                    <button onClick={() => { setShowKeyModal(false); setApiKeyInput(''); setKeyError(''); }} className="flex-1 py-2 bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors">Close</button>
+                                    <button onClick={handleDeleteKey} className="flex-1 py-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors">Remove Key</button>
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {showSettingsModal && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                            <div className="w-full max-w-sm bg-[#0c1628] border border-white/10 rounded-2xl p-6 shadow-2xl relative">
-                                <h3 className="text-lg font-bold text-white mb-1">Chat Settings</h3>
-                                <p className="text-xs text-gray-400 mb-5">Configure response limits</p>
+                        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                            <div className="w-full max-w-sm bg-linear-to-b from-[#071310] to-[#030806] border border-emerald-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(16,185,129,0.1)] relative">
+                                <h3 className="text-lg font-black text-white tracking-widest uppercase mb-1">Chat Settings</h3>
+                                <p className="text-[10px] text-emerald-400/60 font-bold uppercase tracking-widest mb-5">Configure response limits</p>
 
                                 <div className="mb-4">
-                                    <label className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-2">
+                                    <label className="text-[9px] text-emerald-500 font-bold uppercase tracking-[0.2em] block mb-2">
                                         Response Mode
                                     </label>
-                                    <div className="flex bg-black/20 p-1 rounded-xl border border-white/5 relative">
+                                    <div className="flex bg-black/40 p-1 rounded-xl border border-emerald-500/20 relative">
                                         <button
                                             onClick={() => setResponseLength('short')}
-                                            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all z-10 ${responseLength === 'short' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-10 ${responseLength === 'short' ? 'text-white' : 'text-emerald-500/60 hover:text-emerald-400'}`}
                                         >
                                             Short
                                         </button>
                                         <button
                                             onClick={() => setResponseLength('long')}
-                                            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all z-10 ${responseLength === 'long' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-10 ${responseLength === 'long' ? 'text-white' : 'text-emerald-500/60 hover:text-emerald-400'}`}
                                         >
-                                            Recommended
+                                            Normal
                                         </button>
                                         <button
                                             onClick={() => setResponseLength('custom')}
-                                            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all z-10 ${responseLength === 'custom' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all z-10 ${responseLength === 'custom' ? 'text-white' : 'text-emerald-500/60 hover:text-emerald-400'}`}
                                         >
                                             Custom
                                         </button>
 
                                         {/* Sliding Toggle Background */}
                                         <div
-                                            className="absolute top-1 bottom-1 w-[calc(33.33%-4px)] bg-emerald-600/30 border border-emerald-500/30 rounded-lg transition-transform duration-300 ease-out z-0"
+                                            className="absolute top-1 bottom-1 w-[calc(33.33%-4px)] bg-emerald-600/30 border border-emerald-500/30 rounded-lg transition-transform duration-300 ease-out z-0 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
                                             style={{
                                                 transform: responseLength === 'short'
                                                     ? 'translateX(0)'
@@ -594,9 +608,9 @@ export default function ChatbotPage() {
                                 </div>
 
                                 <div className={`mb-6 transition-opacity ${responseLength !== 'custom' ? 'opacity-50 pointer-events-none' : ''}`}>
-                                    <label className="text-xs text-gray-500 font-medium uppercase tracking-wider flex justify-between mb-2">
+                                    <label className="text-[9px] text-emerald-500 font-bold uppercase tracking-[0.2em] flex justify-between mb-2">
                                         <span>Max Tokens (Absolute limit)</span>
-                                        <span className="text-emerald-400">{responseLength !== 'custom' ? 'Auto' : maxTokens}</span>
+                                        <span className="text-emerald-300">{responseLength !== 'custom' ? 'Auto' : maxTokens}</span>
                                     </label>
                                     <input
                                         type="range"
@@ -608,18 +622,18 @@ export default function ChatbotPage() {
                                         className="w-full accent-emerald-500"
                                         disabled={responseLength !== 'custom'}
                                     />
-                                    <p className="text-[10px] text-gray-500 mt-1">Hard limit cut-off. High limits may cause Groq API errors.</p>
+                                    <p className="text-[10px] text-emerald-400/50 mt-1">Hard limit cut-off. High limits may cause Groq API errors.</p>
                                 </div>
 
-                                <div className="border-t border-white/10 pt-4 flex gap-3">
-                                    <button onClick={() => setShowSettingsModal(false)} className="w-full py-2 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 rounded-xl text-sm font-medium transition-colors border border-emerald-500/30">Done</button>
+                                <div className="border-t border-emerald-500/10 pt-4 flex gap-3">
+                                    <button onClick={() => setShowSettingsModal(false)} className="w-full py-2 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors border border-emerald-500/30 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]">Done</button>
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {/* --- Top Navbar --- */}
-                    <div className="flex items-center justify-between p-3 border-b border-white/5 bg-black/20 backdrop-blur-md z-10 shrink-0">
+                    <div className="flex items-center justify-between p-3 border-b border-emerald-500/10 bg-[#030806]/50 backdrop-blur-md z-10 shrink-0">
                         <div className="flex items-center gap-3">
                             <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 hover:text-white transition-colors border border-white/5">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>
@@ -701,9 +715,9 @@ export default function ChatbotPage() {
                                         </div>
                                     )}
 
-                                    <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-3 shadow-md ${msg.role === 'user' ? 'bg-linear-to-tr from-blue-600 to-indigo-600 text-white rounded-br-none whitespace-pre-wrap' : 'bg-white/5 border border-white/10 text-gray-200 rounded-bl-none overflow-x-auto'}`}>
+                                    <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-3 shadow-md ${msg.role === 'user' ? 'bg-linear-to-tr from-emerald-600 to-teal-600 border mx-1 border-emerald-400/30 text-white rounded-br-none whitespace-pre-wrap shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-black/40 border border-emerald-500/20 text-emerald-50/90 rounded-bl-none overflow-x-auto shadow-[0_0_15px_rgba(16,185,129,0.05)]'}`}>
                                         {msg.isTyping ? (
-                                            <div className="prose prose-invert prose-sm max-w-none">
+                                            <div className="prose prose-invert prose-emerald prose-sm max-w-none">
                                                 <TypingEffect
                                                     content={msg.content}
                                                     scrollTrigger={scrollToBottom}
@@ -713,7 +727,7 @@ export default function ChatbotPage() {
                                                 />
                                             </div>
                                         ) : msg.role === 'assistant' ? (
-                                            <div className="prose prose-invert prose-sm max-w-none">
+                                            <div className="prose prose-invert prose-emerald prose-sm max-w-none">
                                                 <ReactMarkdown>{msg.content}</ReactMarkdown>
                                             </div>
                                         ) : (
@@ -722,8 +736,8 @@ export default function ChatbotPage() {
                                     </div>
 
                                     {msg.role === 'user' && (
-                                        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-1 shadow-inner">
-                                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center shrink-0 mt-1 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                                            <svg className="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                         </div>
                                     )}
                                 </div>
@@ -735,10 +749,10 @@ export default function ChatbotPage() {
                                 <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-1 overflow-hidden">
                                     <img src="/icons/chatbot.png" alt="Thinking" className="w-5 h-5 object-contain animate-pulse" />
                                 </div>
-                                <div className="bg-white/5 border border-white/10 text-gray-400 rounded-2xl rounded-bl-none px-4 py-3 flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                <div className="bg-black/40 border border-emerald-500/20 rounded-2xl rounded-bl-none px-4 py-3 flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                                    <span className="w-1.5 h-1.5 bg-emerald-500/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                    <span className="w-1.5 h-1.5 bg-emerald-400/80 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                    <span className="w-1.5 h-1.5 bg-teal-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                                 </div>
                             </div>
                         )}
@@ -747,7 +761,8 @@ export default function ChatbotPage() {
                     </div>
 
                     {/* --- Input Box --- */}
-                    <div className="p-4 border-t border-white/5 bg-black/20 backdrop-blur-md shrink-0">
+                    <div className="p-4 border-t border-emerald-500/10 bg-[#030806]/80 backdrop-blur-md shrink-0 relative">
+                        <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-emerald-500/30 to-transparent pointer-events-none opacity-50" />
                         <form onSubmit={sendMessage} className="relative flex items-end gap-2 max-w-4xl mx-auto">
                             <textarea
                                 value={inputMessage}
@@ -758,21 +773,21 @@ export default function ChatbotPage() {
                                         sendMessage(e);
                                     }
                                 }}
-                                placeholder="Type a message..."
-                                className="w-full bg-black/30 border border-white/10 rounded-2xl px-4 py-3 md:py-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all resize-none min-h-[50px] max-h-32 [&::-webkit-scrollbar]:hidden"
+                                placeholder="Init Groq connection..."
+                                className="w-full bg-black/40 border border-emerald-500/20 rounded-2xl px-4 py-3 md:py-4 text-sm text-emerald-50 placeholder-emerald-800 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/40 transition-all resize-none min-h-[50px] max-h-32 [&::-webkit-scrollbar]:hidden shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"
                                 style={{ height: inputMessage.split('\n').length * 24 + 26, scrollbarWidth: 'none' }}
                                 disabled={isThinking}
                             />
                             <button
                                 type="submit"
                                 disabled={!inputMessage.trim() || isThinking}
-                                className="shrink-0 p-3 md:p-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-0.5"
+                                className="shrink-0 p-3 md:p-4 bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500/40 text-emerald-400 rounded-2xl transition-all disabled:opacity-30 disabled:grayscale disabled:border-white/5 disabled:bg-white/5 disabled:text-gray-600 disabled:cursor-not-allowed mb-0.5 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                             </button>
                         </form>
                         <div className="text-center mt-2 pb-1">
-                            <span className="text-[10px] text-gray-600">AI models can make mistakes. Verify important information.</span>
+                            <span className="text-[9px] font-bold text-emerald-500/40 uppercase tracking-widest">Groq Intelligence Node Active</span>
                         </div>
                     </div>
                 </div>

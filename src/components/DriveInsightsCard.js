@@ -10,19 +10,31 @@ export default function DriveInsightsCard({ data }) {
     const filesPerAccount = data?.filesPerAccount || [];
 
     return (
-        <div className="relative overflow-hidden rounded-2xl bg-[#0d121f]/50 backdrop-blur-xl border border-white/8 p-6 flex flex-col h-full group">
+        <div className="relative overflow-hidden rounded-lg bg-linear-to-b from-[#110a17] to-[#0a060e] border border-purple-500/20 p-6 flex flex-col h-full group shadow-[0_0_15px_rgba(168,85,247,0.05)]">
+            {/* Top neon accent */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-purple-500/50 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
+            
+            {/* Corner brackets */}
+            <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t border-l border-purple-500/40 pointer-events-none" />
+            <span className="absolute top-2 right-2 w-3.5 h-3.5 border-t border-r border-purple-500/40 pointer-events-none" />
+            <span className="absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l border-purple-500/15 pointer-events-none" />
+            <span className="absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r border-purple-500/15 pointer-events-none" />
+
+            {/* Gloss effect */}
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="relative z-10 flex items-center justify-between mb-6 border-b border-purple-500/10 pb-4">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
-                        <HardDrive className="w-5 h-5" />
+                    <div className="p-1.5 rounded-md bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                        <HardDrive className="w-4 h-4" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-white tracking-tight">Drive Insights</h3>
-                        <p className="text-xs text-gray-500">Storage & File Analytics</p>
+                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Drive Insights</h3>
+                        <p className="text-[10px] font-bold text-purple-400/60 uppercase tracking-widest mt-0.5">Storage & File Analytics</p>
                     </div>
                 </div>
-                <Link href="/drive" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-purple-400 text-xs font-bold uppercase tracking-wider transition-colors">
+                <Link href="/drive" className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-purple-500/20 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 text-[9px] font-black uppercase tracking-[0.1em] transition-all shadow-[0_0_10px_rgba(168,85,247,0.1)]">
                     View Details
                     <ExternalLink className="w-3.5 h-3.5" />
                 </Link>

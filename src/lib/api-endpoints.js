@@ -153,5 +153,28 @@ export const apiCategories = [
             { method: 'PUT', path: '/api/quick-vault/:id', desc: 'Update an existing vault item (re-encrypts value if provided)', sampleBody: '{\n  "category": "work",\n  "label": "New Label"\n}' },
             { method: 'DELETE', path: '/api/quick-vault/:id', desc: 'Securely delete a vault item if it belongs to the authenticated user' }
         ]
+    },
+    {
+        category: 'Smart OTP',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>,
+        desc: 'Endpoints for virtual number rental and SMS OTP services via Hero SMS',
+        endpoints: [
+            { method: 'GET', path: '/api/smart-otp/balance', desc: 'Retrieve current virtual number service balance' },
+            { method: 'GET', path: '/api/smart-otp/config', desc: 'Get configuration status for Smart OTP provider' },
+            { method: 'POST', path: '/api/smart-otp/config', desc: 'Update provider API credentials', sampleBody: '{\n  "apiKey": "your_hero_sms_key"\n}' },
+            { method: 'DELETE', path: '/api/smart-otp/config', desc: 'Remove provider configuration from user profile' },
+            { method: 'GET', path: '/api/smart-otp/countries', desc: 'List all available countries for virtual numbers' },
+            { method: 'GET', path: '/api/smart-otp/services', desc: 'List available services (Telegram, Google, etc) for a country', sampleBody: '?country=0' },
+            { method: 'GET', path: '/api/smart-otp/operators', desc: 'List available mobile operators for a country', sampleBody: '?country=0' },
+            { method: 'GET', path: '/api/smart-otp/prices', desc: 'Get real-time pricing for a service in a country', sampleBody: '?service=tg&country=0' },
+            { method: 'POST', path: '/api/smart-otp/number', desc: 'Purchase/Order a new virtual number', sampleBody: '{\n  "service": "tg",\n  "country": "0",\n  "maxPrice": 10\n}' },
+            { method: 'GET', path: '/api/smart-otp/number', desc: 'Get SMS status for a specific activation', sampleBody: '?id=12345' },
+            { method: 'DELETE', path: '/api/smart-otp/number', desc: 'Relase or cancel a virtual number early', sampleBody: '?id=12345' },
+            { method: 'GET', path: '/api/smart-otp/status', desc: 'Check activation status (Hero SMS/SMS-Activate compatible)', sampleBody: '?id=12345' },
+            { method: 'PUT', path: '/api/smart-otp/status', desc: 'Update activation status (Ready, Complete, Resend)', sampleBody: '{\n  "id": "12345",\n  "status": 3\n}' },
+            { method: 'GET', path: '/api/smart-otp/activations', desc: 'List all currently active virtual numbers' },
+            { method: 'GET', path: '/api/smart-otp/history', desc: 'Retrieve historical orders and activations records' },
+            { method: 'GET', path: '/api/smart-otp/sms', desc: 'Fetch all SMS messages received for an activation', sampleBody: '?id=12345' }
+        ]
     }
 ];

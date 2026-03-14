@@ -141,7 +141,7 @@ export async function PUT(request, { params }) {
             where: { id },
             data: {
                 name,
-                icon,
+                icon: icon || null,
                 description,
                 raise,
                 score,
