@@ -37,8 +37,6 @@ export async function GET(req, { params }) {
                             seen: messageData.seen || true,
                             subject: messageData.subject,
                             intro: messageData.intro,
-                            text: messageData.text || null,
-                            html: messageData.html ? JSON.stringify(messageData.html) : null,
                         },
                         create: {
                             id: messageData.id,
@@ -47,8 +45,6 @@ export async function GET(req, { params }) {
                             fromAddress: messageData.from?.address || null,
                             subject: messageData.subject,
                             intro: messageData.intro,
-                            text: messageData.text || null,
-                            html: messageData.html ? JSON.stringify(messageData.html) : null,
                             seen: messageData.seen || true,
                             createdAt: new Date(messageData.createdAt),
                             accountId: messageData.accountId,

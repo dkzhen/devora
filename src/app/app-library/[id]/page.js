@@ -143,9 +143,12 @@ export default function AppDetailPage() {
             }
 
             const blob = await res.blob();
-            const contentDisposition = res.headers.get('Content-Disposition') || '';
-            const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-            const filename = match ? match[1].replace(/['"]/g, '') : 'download.apk';
+            // Custom Filename: Devora-[AppName]-v[Version].apk
+            // Removes spaces to keep CamelCase/PascalCase (e.g. Multi Cloner -> MultiCloner)
+            const cleanAppName = app.name.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '');
+            const rawVersion = vidVersion.replace(/\s+/g, '').replace(/[^a-zA-Z0-9\.]/g, '');
+            const cleanVersion = rawVersion.toLowerCase().startsWith('v') ? rawVersion : `v${rawVersion}`;
+            const filename = `Devora-${cleanAppName}-${cleanVersion}.apk`;
 
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -666,6 +669,47 @@ export default function AppDetailPage() {
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Delete App Confirmation Modal */}
+            {confirmDeleteApp && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-[#1A082E] border border-red-500/20 rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+                        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        </div>
+                        <h3 className="text-lg font-bold text-white mb-2">Deconstruct App?</h3>
+                        <p className="text-xs text-gray-500 mb-6">This action will permanently remove <span className="text-white font-bold">{app.name}</span> and all its versions from the core registry.</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setConfirmDeleteApp(false)} className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</button>
+                            <button onClick={handleDeleteApp} disabled={deletingApp} className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50">
+                                {deletingApp ? 'Processing...' : 'Delete'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Version Confirmation Modal */}
+            {confirmDeleteVersionId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-[#1A082E] border border-red-500/20 rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+                        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </div>
+                        <h3 className="text-lg font-bold text-white mb-2">Delete Version?</h3>
+                        <p className="text-xs text-gray-500 mb-6">Are you sure you want to remove this specific build from the archive?</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setConfirmDeleteVersionId(null)} className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</button>
+                            <button 
+                                onClick={() => handleDeleteVersion(confirmDeleteVersionId)} 
+                                disabled={deletingVersionId === confirmDeleteVersionId} 
+                                className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50"
+                            >
+                                {deletingVersionId === confirmDeleteVersionId ? 'Processing...' : 'Delete'}
+                            </button>
                         </div>
                     </div>
                 </div>
