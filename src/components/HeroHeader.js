@@ -54,6 +54,36 @@ export function HeroHeader({ breadcrumbs, title, badge, description, colorTheme 
             breadcrumbText: "text-orange-400/60 hover:text-orange-300",
             breadcrumbCurrent: "text-orange-200/80",
             titleGradient: "from-orange-400 via-amber-400 to-yellow-500"
+        },
+        dawn: {
+            bgGlow: "bg-[#FEBD8B]/10",
+            bgBase: "from-[#1A082E] via-[#120621] to-[#0a0312]",
+            accentLine: "via-[#749F8B]/40",
+            leftStrip: "from-[#FEBD8B]/60 via-[#FEBD8B]/15",
+            breadcrumbIcon: "text-[#749F8B]/40",
+            breadcrumbText: "text-[#749F8B]/60 hover:text-[#FEBD8B]",
+            breadcrumbCurrent: "text-[#FDF2D9]/80",
+            titleGradient: "from-[#FEBD8B] via-[#749F8B] to-[#FDF2D9]"
+        },
+        sunset: {
+            bgGlow: "bg-[#F25278]/10",
+            bgBase: "from-[#0a0312] via-[#2D3482] to-[#0a0312]",
+            accentLine: "via-[#F25278]/40",
+            leftStrip: "from-[#F25278]/60 via-[#F25278]/15",
+            breadcrumbIcon: "text-[#F25278]/40",
+            breadcrumbText: "text-[#F25278]/60 hover:text-[#FEA47F]",
+            breadcrumbCurrent: "text-[#FEA47F]/80",
+            titleGradient: "from-[#F25278] via-[#FEA47F] to-[#E2F784]"
+        },
+        nebula: {
+            bgGlow: "bg-[#708993]/10",
+            bgBase: "from-[#0a0e1a] via-[#19183B]/20 to-[#020305]",
+            accentLine: "via-[#A1C2BD]/40",
+            leftStrip: "from-[#708993]/60 via-[#708993]/15",
+            breadcrumbIcon: "text-[#708993]/40",
+            breadcrumbText: "text-[#708993]/60 hover:text-[#A1C2BD]",
+            breadcrumbCurrent: "text-[#E7F2EF]/80",
+            titleGradient: "from-[#708993] via-[#A1C2BD] to-[#E7F2EF]"
         }
     };
 
@@ -144,7 +174,10 @@ export function LoadingState({ message = "Loading...", colorTheme = "red" }) {
     const borders = {
         red: "border-red-500/30",
         blue: "border-blue-500/30",
-        emerald: "border-emerald-500/30"
+        emerald: "border-emerald-500/30",
+        dawn: "border-[#FEBD8B]/30",
+        sunset: "border-[#F25278]/30",
+        nebula: "border-[#A1C2BD]/30"
     };
     const borderClass = borders[colorTheme] || borders.red;
 

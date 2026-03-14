@@ -286,42 +286,42 @@ export default function AppDetailPage() {
         <div className="w-full pb-12">
             {/* Toast */}
             {toast && (
-                <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl shadow-2xl text-white text-sm font-semibold bg-emerald-500/90 border border-emerald-400/30 flex items-center gap-2 backdrop-blur-sm">
+                <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl shadow-2xl text-white text-sm font-semibold bg-[#749F8B]/90 border border-[#749F8B]/30 flex items-center gap-2 backdrop-blur-sm">
                     <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {toast}
                 </div>
             )}
 
             {/* ── HERO HEADER OVERHAUL ── */}
-            <div className="relative overflow-hidden rounded-4xl border border-blue-500/20 shadow-[0_0_40px_rgba(59,130,246,0.1)] mb-6 group transition-all hover:border-blue-500/40" style={{ background: 'linear-gradient(165deg, #050810 0%, #0a0f20 100%)' }}>
+            <div className="relative overflow-hidden rounded-4xl border border-[#FEBD8B]/20 mb-6 group transition-all hover:border-[#FEBD8B]/40" style={{ background: 'linear-gradient(165deg, #0a0312 0%, #1A082E 100%)' }}>
                 <div className="absolute top-0 right-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none" />
-                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-purple-600/10 rounded-full blur-[60px] pointer-events-none" />
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-blue-500/40 to-transparent" />
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#FEBD8B]/10 rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#749F8B]/10 rounded-full blur-[60px] pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-[#FEBD8B]/40 to-transparent" />
 
                 <div className="relative z-10 px-6 py-8 md:px-10 md:py-10">
                     <div className="flex flex-col lg:flex-row gap-8 items-start">
                         <div className="flex-1 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-4xl border-2 border-blue-500/20 bg-[#080b18] p-1 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center justify-center shrink-0 relative overflow-hidden group/icon">
-                                <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-transparent transition-opacity group-hover/icon:opacity-100 opacity-0" />
+                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-4xl border-2 border-[#FEBD8B]/20 bg-[#110a17] p-1 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center justify-center shrink-0 relative overflow-hidden group/icon">
+                                <div className="absolute inset-0 bg-linear-to-br from-[#FEBD8B]/5 to-transparent transition-opacity group-hover/icon:opacity-100 opacity-0" />
                                 {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
                                     <LoadingImage src={`/api/telegram/image/${app.versions[0].imageUrl}`} alt={app.name} className="w-full h-full object-cover rounded-[1.8rem] relative z-10" />
                                 ) : app.iconStatic && app.iconStatic !== '📦' ? (
                                     <LoadingImage src={app.iconStatic} alt={app.name} className="w-full h-full object-cover rounded-[1.8rem] relative z-10" />
                                 ) : (
-                                    <span className="text-4xl text-blue-500/30 font-black relative z-10">?</span>
+                                    <span className="text-4xl text-[#FEBD8B]/30 font-black relative z-10">?</span>
                                 )}
                             </div>
 
                             <div className="flex-1">
                                 <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-3">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">{app.category}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-[#FEBD8B]/10 text-[#FEBD8B] border border-[#FEBD8B]/20">{app.category}</span>
                                     {app.versions?.[0]?.androidVersion && (
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Android {app.versions[0].androidVersion}</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-[#749F8B]/10 text-[#749F8B] border border-[#749F8B]/20">Android {app.versions[0].androidVersion}</span>
                                     )}
                                 </div>
                                 <h1 className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{app.name}</h1>
-                                <p className="text-blue-400/60 font-mono tracking-widest text-xs uppercase font-bold">{app.developer || 'Unknown Labs'}</p>
+                                <p className="text-[#FEBD8B]/60 font-mono tracking-widest text-xs uppercase font-bold">{app.developer || 'Unknown Labs'}</p>
                                 
                                 <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-8">
                                     <div className="flex flex-col">
@@ -346,7 +346,7 @@ export default function AppDetailPage() {
                             {app.versions && app.versions.length > 0 && (
                                 <button
                                     onClick={() => handleDownload(app.versions[0].apkUrl, app.versions[0].version)}
-                                    className="relative w-full overflow-hidden px-8 py-4 rounded-2xl bg-blue-600 text-white font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_25px_rgba(37,99,235,0.3)] hover:shadow-[0_0_35px_rgba(37,99,235,0.5)] transition-all flex items-center justify-center gap-3 active:scale-95"
+                                    className="relative w-full overflow-hidden px-8 py-4 rounded-2xl bg-[#749F8B] text-white font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_25px_rgba(116,159,139,0.2)] hover:shadow-[0_0_35px_rgba(116,159,139,0.4)] transition-all flex items-center justify-center gap-3 active:scale-95"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                                     Initial Protocol
@@ -355,14 +355,14 @@ export default function AppDetailPage() {
                             <div className="grid grid-cols-2 gap-2">
                                 <button
                                     onClick={handleCopyMainLink}
-                                    className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest text-[#FEBD8B]/60 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
                                 >
                                     Share
                                 </button>
                                 {isUltra && (
                                     <button
                                         onClick={() => setShowAddVersionModal(true)}
-                                        className="flex-1 px-4 py-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:bg-emerald-500/10 transition-colors flex items-center justify-center gap-2"
+                                        className="flex-1 px-4 py-3 rounded-xl bg-[#749F8B]/5 border border-[#749F8B]/20 text-[10px] font-black uppercase tracking-widest text-[#749F8B] hover:bg-[#749F8B]/10 transition-colors flex items-center justify-center gap-2"
                                     >
                                         Update
                                     </button>
@@ -387,8 +387,8 @@ export default function AppDetailPage() {
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between px-2">
                         <div className="flex items-center gap-3">
-                            <div className="w-5 h-[2px] bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500/80">Historical Records</h2>
+                            <div className="w-5 h-[2px] bg-[#FEBD8B] shadow-[0_0_8px_rgba(254,189,139,0.5)]" />
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FEBD8B]/80">Historical Records</h2>
                         </div>
                     </div>
 
@@ -400,11 +400,11 @@ export default function AppDetailPage() {
                                 <div
                                     key={idx}
                                     id={vid.version}
-                                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${isHighlighted ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'bg-[#080b18] border-white/5 hover:border-blue-500/20 hover:bg-blue-500/2'}`}
+                                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${isHighlighted ? 'bg-[#FEBD8B]/10 border-[#FEBD8B]/50 shadow-[0_0_30px_rgba(254,189,139,0.1)]' : 'bg-[#110a17] border-white/5 hover:border-[#FEBD8B]/20 hover:bg-[#FEBD8B]/2'}`}
                                 >
                                     <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border font-mono text-xs font-black ${isLatest ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-white/5 border-white/10 text-gray-500'}`}>
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border font-mono text-xs font-black ${isLatest ? 'bg-[#749F8B]/10 border-[#749F8B]/30 text-[#749F8B]' : 'bg-white/5 border-white/10 text-gray-500'}`}>
                                                 {isLatest ? 'NEW' : idx + 1}
                                             </div>
                                             <div>
@@ -415,7 +415,7 @@ export default function AppDetailPage() {
                                                 <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-500 font-medium">
                                                     <span>{new Date(vid.releaseDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                                                     <span className="w-1 h-1 rounded-full bg-white/20" />
-                                                    <span className="font-mono text-blue-400/50 uppercase tracking-widest">{vid.androidVersion || 'SDK ANY'}</span>
+                                                    <span className="font-mono text-[#FEBD8B]/50 uppercase tracking-widest">{vid.androidVersion || 'SDK ANY'}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -430,7 +430,7 @@ export default function AppDetailPage() {
                                             </button>
                                             <button
                                                 onClick={() => handleDownload(vid.apkUrl, vid.version)}
-                                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all"
+                                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#749F8B] text-white text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(116,159,139,0.2)] hover:shadow-[0_0_25px_rgba(116,159,139,0.4)] transition-all"
                                             >
                                                 Download
                                             </button>
@@ -447,15 +447,15 @@ export default function AppDetailPage() {
 
                                     {vid.features && (
                                         <div className="px-5 pb-5 pt-2 border-t border-white/2">
-                                            <div className="bg-[#05070a] rounded-xl p-4 border border-blue-500/10">
-                                                <div className="text-[9px] font-black text-blue-500/60 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse" />
+                                            <div className="bg-[#0a0312] rounded-xl p-4 border border-[#FEBD8B]/10">
+                                                <div className="text-[9px] font-black text-[#FEBD8B]/60 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#FEBD8B] group-hover:animate-pulse" />
                                                     Changelog Details
                                                 </div>
                                                 <ul className="space-y-2">
                                                     {vid.features.split('\n').filter(f => f.trim()).map((feat, i) => (
                                                         <li key={i} className="flex items-start gap-3 text-xs text-gray-400 font-medium">
-                                                            <span className="text-blue-500/40 mt-0.5">»</span>
+                                                            <span className="text-[#FEBD8B]/40 mt-0.5">»</span>
                                                             <span className="leading-relaxed">{feat}</span>
                                                         </li>
                                                     ))}
@@ -470,9 +470,9 @@ export default function AppDetailPage() {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="rounded-2xl border border-blue-500/10 bg-[#080b18] overflow-hidden shadow-xl">
-                        <div className="px-5 py-4 border-b border-blue-500/5 bg-[#0a0d18]">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500/60">Core Parameters</p>
+                    <div className="rounded-2xl border border-[#FEBD8B]/10 bg-[#110a17] overflow-hidden shadow-xl">
+                        <div className="px-5 py-4 border-b border-[#FEBD8B]/5 bg-[#0a0312]">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FEBD8B]/60">Core Parameters</p>
                         </div>
                         <div className="p-5 space-y-4">
                             {[
@@ -487,7 +487,7 @@ export default function AppDetailPage() {
                             ].map((row, i) => (
                                 <div key={i} className="flex flex-col gap-1">
                                     <span className="text-[9px] text-gray-600 uppercase font-black tracking-widest">{row.label}</span>
-                                    <span className="text-xs text-blue-100 font-bold truncate">{row.value}</span>
+                                    <span className="text-xs text-[#FEBD8B]/90 font-bold truncate">{row.value}</span>
                                 </div>
                             ))}
                         </div>
@@ -505,16 +505,16 @@ export default function AppDetailPage() {
                     )}
 
                     <div className="grid grid-cols-1 gap-3">
-                        <div className="p-1 rounded-2xl bg-linear-to-r from-blue-500/20 to-purple-500/20">
+                        <div className="p-1 rounded-2xl bg-linear-to-r from-[#FEBD8B]/20 to-[#749F8B]/20">
                             <button
                                 onClick={() => handleDownload(app.versions?.[0]?.apkUrl, app.versions?.[0]?.version)}
-                                className="w-full bg-[#0a0f18] hover:bg-transparent transition-all rounded-[calc(1rem-4px)] px-6 py-4 flex items-center justify-between group shadow-2xl"
+                                className="w-full bg-[#1A082E] hover:bg-transparent transition-all rounded-[calc(1rem-4px)] px-6 py-4 flex items-center justify-between group shadow-2xl"
                             >
                                 <div className="flex flex-col items-start gap-1">
-                                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Execute Download</span>
+                                    <span className="text-[10px] font-black text-[#FEBD8B] uppercase tracking-widest">Execute Download</span>
                                     <span className="text-xs font-bold text-white font-mono">LATEST_BUILD.APK</span>
                                 </div>
-                                <svg className="w-5 h-5 text-blue-500 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                                <svg className="w-5 h-5 text-[#FEBD8B] group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                             </button>
                         </div>
                     </div>
@@ -525,9 +525,9 @@ export default function AppDetailPage() {
             {downloads.length > 0 && (
                 <div className="fixed bottom-6 right-6 z-50 w-80 max-h-[60vh] overflow-y-auto pointer-events-none flex flex-col font-mono">
                     <div className="pointer-events-auto flex flex-col gap-0 bg-[#06080e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/50 to-transparent" />
+                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#FEBD8B]/50 to-transparent" />
                         <div className="flex items-center justify-between mb-4 px-1">
-                            <span className="text-[11px] font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
+                            <span className="text-[11px] font-black uppercase tracking-widest text-[#FEBD8B] flex items-center gap-2">
                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
@@ -540,18 +540,18 @@ export default function AppDetailPage() {
                             <div className="absolute left-[15px] top-2 bottom-6 w-px bg-white/10" />
                             {downloads.map((d) => (
                                 <div key={d.id} className="relative z-10">
-                                    <div className={`absolute -left-[5px] top-1.5 w-2 h-2 rounded-full border border-[#06080e] shadow-[0_0_0_2px_#06080e] ${d.status === 'loading' ? 'bg-blue-500 animate-pulse' : d.status === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                                    <div className={`absolute -left-[5px] top-1.5 w-2 h-2 rounded-full border border-[#06080e] shadow-[0_0_0_2px_#06080e] ${d.status === 'loading' ? 'bg-[#FEBD8B] animate-pulse' : d.status === 'error' ? 'bg-red-500' : 'bg-[#749F8B]'}`} />
                                     <div className="ml-5">
                                         <div className="text-[10px] text-gray-500 mb-1 ml-1 flex justify-between">
                                             <span>v{d.version}</span>
                                             <span>{d.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                                         </div>
-                                        <div className={`p-3 rounded-xl border relative ${d.status === 'loading' ? 'bg-blue-500/5 border-blue-500/20' : d.status === 'error' ? 'bg-red-500/5 border-red-500/20' : 'bg-emerald-500/5 border-emerald-500/20'}`}>
-                                            <div className={`absolute top-2 -left-1.5 w-3 h-3 rotate-45 border-l border-b bg-[#06080e] ${d.status === 'loading' ? 'border-blue-500/20' : d.status === 'error' ? 'border-red-500/20' : 'border-emerald-500/20'}`} />
+                                        <div className={`p-3 rounded-xl border relative ${d.status === 'loading' ? 'bg-[#FEBD8B]/5 border-[#FEBD8B]/20' : d.status === 'error' ? 'bg-red-500/5 border-red-500/20' : 'bg-[#749F8B]/5 border-[#749F8B]/20'}`}>
+                                            <div className={`absolute top-2 -left-1.5 w-3 h-3 rotate-45 border-l border-b bg-[#06080e] ${d.status === 'loading' ? 'border-[#FEBD8B]/20' : d.status === 'error' ? 'border-red-500/20' : 'border-[#749F8B]/20'}`} />
                                             <div className="flex items-start gap-3 relative z-10">
                                                 {d.status === 'loading' && (
                                                     <div className="shrink-0 mt-0.5">
-                                                        <svg className="animate-spin w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none">
+                                                        <svg className="animate-spin w-4 h-4 text-[#FEBD8B]" viewBox="0 0 24 24" fill="none">
                                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                         </svg>
@@ -568,7 +568,7 @@ export default function AppDetailPage() {
                                                     </div>
                                                 )}
                                                 <div className="flex-1 min-w-0">
-                                                    <div className={`text-xs font-black truncate ${d.status === 'loading' ? 'text-blue-100' : d.status === 'error' ? 'text-red-100' : 'text-emerald-100'}`}>
+                                                    <div className={`text-xs font-black truncate ${d.status === 'loading' ? 'text-[#FEBD8B]/90' : d.status === 'error' ? 'text-red-100' : 'text-[#749F8B]'}`}>
                                                         {d.status === 'loading' ? 'Downloading...' : d.status === 'error' ? 'Download Failed' : 'Download Complete'}
                                                     </div>
                                                     {d.errorMsg && (
@@ -590,7 +590,7 @@ export default function AppDetailPage() {
             {/* ── Add Version Modal ── */}
             {showAddVersionModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="bg-[#0f1420] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
+                    <div className="bg-[#1A082E] border border-[#FEBD8B]/20 rounded-2xl w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
                         <div className="p-6 space-y-5">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -611,7 +611,7 @@ export default function AppDetailPage() {
                                         value={newVersion}
                                         onChange={(e) => setNewVersion(e.target.value)}
                                         placeholder="e.g. v2.0.0"
-                                        className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/40 transition-colors font-mono"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors font-mono"
                                     />
                                 </div>
 
@@ -622,7 +622,7 @@ export default function AppDetailPage() {
                                         value={newAndroidVersion}
                                         onChange={(e) => setNewAndroidVersion(e.target.value)}
                                         placeholder="e.g. 8.0+"
-                                        className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
                                     />
                                 </div>
 
@@ -633,7 +633,7 @@ export default function AppDetailPage() {
                                         value={newFeatures}
                                         onChange={(e) => setNewFeatures(e.target.value)}
                                         placeholder="What's new? (one item per line)"
-                                        className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/40 transition-colors resize-none"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors resize-none"
                                     />
                                 </div>
 
@@ -645,7 +645,7 @@ export default function AppDetailPage() {
                                         value={apkFileId}
                                         onChange={(e) => setApkFileId(e.target.value)}
                                         placeholder="Paste Telegram file ID here"
-                                        className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/40 transition-colors font-mono"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors font-mono"
                                     />
                                     <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
                                         Telegram Document File ID
@@ -656,7 +656,7 @@ export default function AppDetailPage() {
                                     <button type="button" onClick={() => setShowAddVersionModal(false)} disabled={submittingVersion} className="px-4 py-2 border border-white/10 hover:bg-white/5 text-gray-400 text-sm font-medium rounded-xl transition-colors">
                                         Cancel
                                     </button>
-                                    <button type="submit" disabled={submittingVersion || !newVersion || !apkFileId} className="flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={submittingVersion || !newVersion || !apkFileId} className="flex items-center gap-2 px-5 py-2 bg-[#749F8B] hover:bg-[#749F8B]/80 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50">
                                         {submittingVersion ? (
                                             <>
                                                 <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>

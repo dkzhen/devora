@@ -245,23 +245,21 @@ export default function AppLibraryPage() {
             {/* Hero Header Cyberpunk */}
             <HeroHeader
                 breadcrumbs={[
-                    { label: 'Dashboard', href: '/', icon: (
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                    ) },
+                    { label: 'Dashboard', href: '/' },
                     { label: 'App Library' }
                 ]}
                 title="App"
                 badge="Library"
                 description="Discover, download, and share applications. Keep up entirely with all our latest app versions."
-                colorTheme="blue"
+                colorTheme="dawn"
             />
 
             {/* Main Action Bar: Search + Buttons */}
             <div className="flex flex-col md:flex-row gap-4 mb-2 item-center">
-                {/* Search box with Cyberpunk style */}
+                {/* Search box with Dawn style */}
                 <div className="flex-1 relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-blue-500/60 group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-5 w-5 text-[#FEBD8B]/60 group-focus-within:text-[#FEBD8B] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
@@ -270,7 +268,7 @@ export default function AppLibraryPage() {
                         placeholder="Search apps by name, category, or description..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full pl-11 pr-4 py-3 bg-[#070b14] border border-blue-500/20 rounded-xl text-xs text-blue-100 placeholder:text-blue-500/30 focus:border-blue-500/40 focus:ring-2 focus:ring-blue-500/5 focus:outline-none font-mono transition-all shadow-[inset_0_0_10px_rgba(59,130,246,0.05)]"
+                        className="w-full pl-11 pr-4 py-3 bg-[#0a0312] border border-[#FEBD8B]/20 rounded-xl text-xs text-[#FDF2D9] placeholder:text-[#FEBD8B]/30 focus:border-[#FEBD8B]/40 focus:ring-2 focus:ring-[#FEBD8B]/5 focus:outline-none font-mono transition-all shadow-[inset_0_0_10px_rgba(254,189,139,0.05)]"
                     />
                 </div>
 
@@ -288,7 +286,7 @@ export default function AppLibraryPage() {
                                     setShowAddAppModal(true);
                                 }
                             }}
-                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!configComplete ? 'bg-amber-500/5 border-amber-500/30 text-amber-500 hover:bg-amber-500/10 shadow-[0_0_15px_rgba(245,158,11,0.1)]' : 'bg-emerald-500/5 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.1)]'}`}
+                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!configComplete ? 'bg-[#FEBD8B]/5 border-[#FEBD8B]/30 text-[#FEBD8B] hover:bg-[#FEBD8B]/10 shadow-[0_0_15px_rgba(254,189,139,0.1)]' : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'}`}
                             aria-label="Add New App"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
@@ -298,10 +296,10 @@ export default function AppLibraryPage() {
                     <button
                         disabled={!isUltra}
                         onClick={() => setShowConfig(!showConfig)}
-                        className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!isUltra ? 'opacity-20 cursor-not-allowed grayscale' : showConfig ? 'bg-blue-500 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-blue-500/5 border-blue-500/30 text-blue-400 hover:bg-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.1)]'}`}
+                        className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!isUltra ? 'opacity-20 cursor-not-allowed grayscale' : showConfig ? 'bg-[#749F8B] border-[#749F8B]/50 text-white shadow-[0_0_20px_rgba(116,159,139,0.4)]' : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'}`}
                         aria-label="Storage Settings"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         <span className="hidden sm:inline">{showConfig ? 'Active' : 'Configs'}</span>
                     </button>
                 </div>
@@ -317,14 +315,14 @@ export default function AppLibraryPage() {
                     {isUltra && showConfig && (
                         <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-300">
                             {botTokenMissing ? (
-                                <div className="bg-[#0d111c] border border-orange-500/20 rounded-[20px] overflow-hidden shadow-2xl relative max-w-3xl mx-auto">
-                                    <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-orange-500 to-amber-400" />
+                                <div className="bg-[#1A082E] border border-[#FEBD8B]/20 rounded-[20px] overflow-hidden shadow-2xl relative max-w-3xl mx-auto">
+                                    <div className="absolute top-0 inset-x-0 h-0.5 bg-linear-to-r from-[#FEBD8B] to-[#749F8B]" />
                                     <div className="p-8 flex flex-col items-center text-center">
-                                        <div className="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-full flex items-center justify-center mb-6">
-                                            <svg className="w-7 h-7 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                        <div className="w-14 h-14 bg-[#FEBD8B]/10 border border-[#FEBD8B]/20 rounded-full flex items-center justify-center mb-6">
+                                            <svg className="w-7 h-7 text-[#FEBD8B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                         </div>
                                         <div className="space-y-2 mb-8">
-                                            <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 bg-orange-500/5 px-3 py-1 rounded-full border border-orange-500/10 mb-2">Configuration Required</span>
+                                            <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-[#FEBD8B]/80 bg-[#FEBD8B]/5 px-3 py-1 rounded-full border border-[#FEBD8B]/10 mb-2">Configuration Required</span>
                                             <h2 className="text-xl font-bold text-white tracking-tight text-center">Missing Bot Token</h2>
                                             <p className="max-w-md mx-auto text-gray-400 text-sm leading-relaxed text-center">The storage module requires a Telegram Bot Token. Please add this key to your global configuration first:</p>
                                         </div>
@@ -334,7 +332,7 @@ export default function AppLibraryPage() {
                                                 setTokenCopied(true);
                                                 setTimeout(() => setTokenCopied(false), 2000);
                                             }}
-                                            className={`flex items-center gap-2 px-4 py-2 bg-[#161b29] border rounded-xl font-mono text-xs mb-8 transition-colors group ${tokenCopied ? 'border-emerald-500/50 text-emerald-400' : 'border-white/5 text-blue-400 hover:border-blue-500/30'}`}
+                                            className={`flex items-center gap-2 px-4 py-2 bg-[#1A082E] border rounded-xl font-mono text-xs mb-8 transition-colors group ${tokenCopied ? 'border-emerald-500/50 text-emerald-400' : 'border-white/5 text-[#749F8B] hover:border-[#749F8B]/30'}`}
                                         >
                                             <span className={tokenCopied ? 'text-emerald-600' : 'text-gray-600'}>$</span>
                                             <span className="font-bold tracking-wider">BOT_TOKEN_TELEGRAM</span>
@@ -345,18 +343,18 @@ export default function AppLibraryPage() {
                                             )}
                                         </button>
                                         <Link href="/config">
-                                            <button className="px-8 py-3.5 bg-linear-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-lg transition-colors">Go to Global Configurations</button>
+                                            <button className="px-8 py-3.5 bg-linear-to-r from-[#FEBD8B] to-[#749F8B] hover:from-[#FEBD8B]/80 hover:to-[#749F8B]/80 text-[#1A082E] font-black text-xs uppercase tracking-widest rounded-xl shadow-lg transition-colors">Go to Global Configurations</button>
                                         </Link>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="bg-[#090b14] border border-blue-500/20 rounded-2xl overflow-hidden shadow-2xl relative">
-                                    <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-blue-500/50 to-transparent" />
+                                <div className="bg-[#0a0312] border border-[#FEBD8B]/20 rounded-2xl overflow-hidden shadow-2xl relative">
+                                    <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-[#FEBD8B]/50 to-transparent" />
                                     <div className="p-6 md:p-8 space-y-6">
-                                        <div className="flex items-center justify-between border-b border-blue-500/10 pb-4">
+                                        <div className="flex items-center justify-between border-b border-[#FEBD8B]/10 pb-4">
                                             <div>
                                                 <h2 className="text-base font-bold text-white tracking-tight">Storage Parameters</h2>
-                                                <p className="text-[10px] text-blue-500/60 mt-0.5 uppercase font-black tracking-widest">Telegram Cloud Integration</p>
+                                                <p className="text-[10px] text-[#FEBD8B]/60 mt-0.5 uppercase font-black tracking-widest">Telegram Cloud Integration</p>
                                             </div>
                                             <button onClick={() => setShowConfig(false)} className="text-gray-500 hover:text-white transition-colors">
                                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -375,7 +373,7 @@ export default function AppLibraryPage() {
                                                         value={config.TELEGRAM_STORAGE_CHAT_ID}
                                                         onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_CHAT_ID: e.target.value })}
                                                         placeholder="-100xxxxxxxxxx"
-                                                        className="w-full bg-[#05070a] border border-blue-500/10 rounded-xl px-4 py-2.5 font-mono text-xs text-blue-100 placeholder:text-gray-700 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                                        className="w-full bg-[#1A082E] border border-[#FEBD8B]/10 rounded-xl px-4 py-2.5 font-mono text-xs text-[#FDF2D9] placeholder:text-gray-700 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
                                                     />
                                                 </div>
                                             </div>
@@ -387,7 +385,7 @@ export default function AppLibraryPage() {
                                                     <button
                                                         onClick={() => handleTestSync('apk', config.TELEGRAM_STORAGE_TOPIC_APK)}
                                                         disabled={testing === 'apk'}
-                                                        className="text-[9px] font-black text-blue-500 hover:text-blue-400 transition-colors"
+                                                        className="text-[9px] font-black text-[#749F8B] hover:text-[#FEBD8B] transition-colors"
                                                     >
                                                         {testing === 'apk' ? 'Sending...' : 'Test'}
                                                     </button>
@@ -396,7 +394,7 @@ export default function AppLibraryPage() {
                                                     type="number"
                                                     value={config.TELEGRAM_STORAGE_TOPIC_APK}
                                                     onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_TOPIC_APK: e.target.value })}
-                                                    className="w-full bg-[#05070a] border border-blue-500/10 rounded-xl px-4 py-2.5 font-mono text-xs text-blue-100 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                                    className="w-full bg-[#1A082E] border border-[#FEBD8B]/10 rounded-xl px-4 py-2.5 font-mono text-xs text-[#FDF2D9] focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
                                                 />
                                             </div>
 
@@ -407,7 +405,7 @@ export default function AppLibraryPage() {
                                                     <button
                                                         onClick={() => handleTestSync('images', config.TELEGRAM_STORAGE_TOPIC_IMAGES)}
                                                         disabled={testing === 'images'}
-                                                        className="text-[9px] font-black text-blue-500 hover:text-blue-400 transition-colors"
+                                                        className="text-[9px] font-black text-[#749F8B] hover:text-[#FEBD8B] transition-colors"
                                                     >
                                                         {testing === 'images' ? 'Sending...' : 'Test'}
                                                     </button>
@@ -416,7 +414,7 @@ export default function AppLibraryPage() {
                                                     type="number"
                                                     value={config.TELEGRAM_STORAGE_TOPIC_IMAGES}
                                                     onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_TOPIC_IMAGES: e.target.value })}
-                                                    className="w-full bg-[#05070a] border border-blue-500/10 rounded-xl px-4 py-2.5 font-mono text-xs text-blue-100 focus:outline-none focus:border-blue-500/40 transition-colors"
+                                                    className="w-full bg-[#1A082E] border border-[#FEBD8B]/10 rounded-xl px-4 py-2.5 font-mono text-xs text-[#FDF2D9] focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
                                                 />
                                             </div>
                                         </div>
@@ -425,7 +423,7 @@ export default function AppLibraryPage() {
                                             <button
                                                 onClick={handleSaveConfig}
                                                 disabled={saving}
-                                                className="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.2)] transition-all disabled:opacity-50"
+                                                className="w-full md:w-auto px-8 py-3 bg-[#749F8B] hover:bg-[#749F8B]/80 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-[0_0_20px_rgba(116,159,139,0.2)] transition-all disabled:opacity-50"
                                             >
                                                 {saving ? 'Synchronizing...' : 'Save Configuration'}
                                             </button>
@@ -435,15 +433,15 @@ export default function AppLibraryPage() {
                             )}
                         </div>
                     )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 transition-colors">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 transition-colors mt-8">
                         {filteredApps.map((app) => (
                             <div
                                 key={app.id}
                                 onClick={() => router.push(`/app-library/${app.id}`)}
-                                className="relative group overflow-hidden rounded-2xl border border-blue-500/30 bg-linear-to-br from-[#0a0e1a] via-[#0d1b3e] to-[#110a17] shadow-[0_0_30px_0_rgba(59,130,246,0.18)] hover:shadow-blue-500/40 hover:border-blue-500/70 transition-all duration-300 p-5 flex flex-col gap-3 neon-card cursor-pointer"
+                                className="relative group overflow-hidden rounded-2xl border border-[#FEBD8B]/30 bg-linear-to-br from-[#1A082E] via-[#2D1B3E] to-[#110a17] hover:border-[#FEBD8B]/70 transition-all duration-300 p-5 flex flex-col gap-3 neon-card cursor-pointer"
                             >
                                 <div className="flex items-center gap-4 mb-2">
-                                    <div className="w-16 h-16 rounded-xl overflow-hidden border border-blue-500/30 bg-[#0a0e1a] flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-xl overflow-hidden border border-[#FEBD8B]/30 bg-[#1A082E] flex items-center justify-center">
                                         {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
                                             <LoadingImage
                                                 src={`/api/telegram/image/${app.versions[0].imageUrl}`}
@@ -457,34 +455,34 @@ export default function AppLibraryPage() {
                                                 className="w-full h-full object-cover rounded-xl"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-blue-500/40 font-black text-2xl">?</div>
+                                            <div className="w-full h-full flex items-center justify-center text-[#FEBD8B]/40 font-black text-2xl">?</div>
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-base font-bold text-blue-200 group-hover:text-blue-400 transition-colors truncate">{app.name}</span>
-                                            <span className="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono uppercase tracking-widest">{app.category}</span>
+                                            <span className="text-base font-bold text-[#FDF2D9] group-hover:text-[#FEBD8B] transition-colors truncate">{app.name}</span>
+                                            <span className="text-xs px-2 py-0.5 rounded bg-[#FEBD8B]/10 text-[#FEBD8B] border border-[#FEBD8B]/20 font-mono uppercase tracking-widest">{app.category}</span>
                                         </div>
-                                        <div className="text-xs text-blue-400/70 font-mono">v{app.versions && app.versions.length > 0 ? app.versions[0].version : '1.0.0'}{app.androidVersion && (<span className='ml-1'>({app.androidVersion})</span>)}</div>
-                                        <div className="text-xs text-blue-400/50 mt-1 line-clamp-2">{app.description}</div>
+                                        <div className="text-xs text-[#FEBD8B]/70 font-mono">v{app.versions && app.versions.length > 0 ? app.versions[0].version : '1.0.0'}{app.androidVersion && (<span className='ml-1'>({app.androidVersion})</span>)}</div>
+                                        <div className="text-xs text-[#749F8B]/50 mt-1 line-clamp-2">{app.description}</div>
                                     </div>
                                     <button
                                         onClick={e => { e.stopPropagation(); handleCopyLink(e, app.id); }}
-                                        className="shrink-0 p-2 text-blue-400 hover:text-blue-200 hover:bg-blue-500/10 rounded-xl transition-colors"
+                                        className="shrink-0 p-2 text-[#749F8B] hover:text-[#FEBD8B] hover:bg-[#FEBD8B]/10 rounded-xl transition-colors"
                                         title="Copy Link"
                                     >
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                                     </button>
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-sm text-blue-300/80 line-clamp-2 leading-relaxed mb-4 font-mono">{app.description}</p>
+                                    <p className="text-sm text-[#FDF2D9]/80 line-clamp-2 leading-relaxed mb-4 font-mono">{app.description}</p>
                                 </div>
-                                <div className="pt-4 border-t border-blue-500/10 flex items-center justify-between mt-auto">
-                                    <div className="flex items-center gap-2 text-xs text-blue-400/80 font-mono">
+                                <div className="pt-4 border-t border-[#FEBD8B]/10 flex items-center justify-between mt-auto">
+                                    <div className="flex items-center gap-2 text-xs text-[#749F8B]/80 font-mono">
                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
-                                        Latest: <span className="font-semibold text-blue-200">{app.versions && app.versions.length > 0 ? app.versions[0].version : 'v1.0.0'}</span>
+                                        Latest: <span className="font-semibold text-[#FEBD8B]">{app.versions && app.versions.length > 0 ? app.versions[0].version : 'v1.0.0'}</span>
                                     </div>
-                                    <div className="text-xs font-semibold text-indigo-400 flex items-center gap-1 transition-colors">
+                                    <div className="text-xs font-semibold text-[#FEBD8B] flex items-center gap-1 transition-colors">
                                         Details
                                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                                     </div>
@@ -493,9 +491,9 @@ export default function AppLibraryPage() {
                         ))}
                     </div>
                     {filteredApps.length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-20 text-blue-400/70 border border-dashed border-blue-500/20 rounded-3xl bg-[#0a0e1a]/40 mt-8">
-                            <svg className="w-12 h-12 mb-4 opacity-50 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
-                            <h3 className="text-lg font-bold text-blue-200">No Apps Found</h3>
+                        <div className="flex flex-col items-center justify-center py-20 text-[#749F8B]/70 border border-dashed border-[#749F8B]/20 rounded-3xl bg-[#1A082E]/40 mt-8">
+                            <svg className="w-12 h-12 mb-4 opacity-50 text-[#749F8B]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                            <h3 className="text-lg font-bold text-[#FDF2D9]">No Apps Found</h3>
                             <p className="text-sm mt-1">Try modifying your search criteria.</p>
                         </div>
                     )}
@@ -503,11 +501,10 @@ export default function AppLibraryPage() {
             )}
 
 
-            {/* Card dan grid lama dihapus, hanya pakai versi cyberpunk/neon yang baru */}
             {/* Add App Modal */}
             {showAddAppModal && (
                 <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => !submittingApp && setShowAddAppModal(false)}>
-                    <div className="bg-[#0f1420] border border-white/10 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                    <div className="bg-[#1A082E] border border-[#FEBD8B]/20 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         <div className="p-6 md:p-8 space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -529,7 +526,7 @@ export default function AppLibraryPage() {
                                             value={appName}
                                             onChange={(e) => setAppName(e.target.value)}
                                             placeholder="e.g. Devora Scanner"
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/50 transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -539,7 +536,7 @@ export default function AppLibraryPage() {
                                             value={developer}
                                             onChange={(e) => setDeveloper(e.target.value)}
                                             placeholder="e.g. Devora Labs"
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/50 transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -550,7 +547,7 @@ export default function AppLibraryPage() {
                                             value={version}
                                             onChange={(e) => setVersion(e.target.value)}
                                             placeholder="e.g. v1.0.0"
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors font-mono"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/50 transition-colors font-mono"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -560,7 +557,7 @@ export default function AppLibraryPage() {
                                             value={androidVersion}
                                             onChange={(e) => setAndroidVersion(e.target.value)}
                                             placeholder="e.g. 8.0+"
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/50 transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -568,7 +565,7 @@ export default function AppLibraryPage() {
                                         <select
                                             value={category}
                                             onChange={(e) => setCategory(e.target.value)}
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-blue-500/50 transition-colors appearance-none"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-[#FEBD8B]/50 transition-colors appearance-none"
                                         >
                                             <option value="Mod">Mod</option>
                                             <option value="Original">Original</option>
@@ -581,7 +578,7 @@ export default function AppLibraryPage() {
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             placeholder="Briefly describe what the app does..."
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors resize-none"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/50 transition-colors resize-none"
                                         />
                                     </div>
                                 </div>
@@ -595,7 +592,7 @@ export default function AppLibraryPage() {
                                             value={apkFileId}
                                             onChange={(e) => setApkFileId(e.target.value)}
                                             placeholder="Paste Telegram file ID here"
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-colors font-mono"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/50 transition-colors font-mono"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -605,7 +602,7 @@ export default function AppLibraryPage() {
                                             value={imageFileId}
                                             onChange={(e) => setImageFileId(e.target.value)}
                                             placeholder="Paste Telegram photo ID here"
-                                            className="w-full bg-[#0a0d16] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-fuchsia-500/50 transition-colors font-mono"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#749F8B]/50 transition-colors font-mono"
                                         />
                                     </div>
                                 </div>
@@ -622,7 +619,7 @@ export default function AppLibraryPage() {
                                     <button
                                         type="submit"
                                         disabled={submittingApp || !appName || !version || !apkFileId}
-                                        className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="flex items-center gap-2 px-6 py-2.5 bg-[#749F8B] hover:bg-[#749F8B]/80 text-white font-black text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {submittingApp ? 'Saving...' : 'Save App'}
                                     </button>

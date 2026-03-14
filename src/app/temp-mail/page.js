@@ -128,11 +128,16 @@ export default function TempMail() {
             localStorage.setItem('temp_mail_account', JSON.stringify(accountData));
             localStorage.setItem('temp_mail_token', tokenData.token);
 
-            toast.success("New email generated!");
+            toast.success("New email generated!", {
+                style: { background: '#0a0e1a', color: '#E7F2EF', border: '1px solid #A1C2BD' },
+                iconTheme: { primary: '#A1C2BD', secondary: '#0a0e1a' }
+            });
             startPolling(tokenData.token, accountData.id);
         } catch (error) {
             console.error(error);
-            toast.error("Error generating temp mail");
+            toast.error("Error generating temp mail", {
+                style: { background: '#0a0e1a', color: '#A1C2BD', border: '1px solid #708993' }
+            });
         } finally {
             setGenerating(false);
             setLoading(false);
@@ -233,13 +238,13 @@ export default function TempMail() {
                     title="Temp"
                     badge="Mail"
                     description="Loading temporary inbox..."
-                    colorTheme="purple"
+                    colorTheme="nebula"
                     breadcrumbs={[
                         { label: 'Dashboard', href: '/' },
                         { label: 'Temp Mail' }
                     ]}
                 />
-                <LoadingState message="Connecting to secure mail server..." colorTheme="purple" />
+                <LoadingState message="Connecting to secure mail server..." colorTheme="nebula" />
             </div>
         );
     }
@@ -250,7 +255,7 @@ export default function TempMail() {
                 title="Temp"
                 badge="Mail"
                 description="Generate temporary emails instantly to protect your privacy and reduce spam."
-                colorTheme="purple"
+                colorTheme="nebula"
                 breadcrumbs={[
                     { label: 'Dashboard', href: '/' },
                     { label: 'Temp Mail' }
@@ -262,22 +267,22 @@ export default function TempMail() {
                 {/* Left Panel: Inbox and Controls */}
                 <div className="w-full lg:w-1/3 flex flex-col gap-6">
                     {/* Header Card */}
-                    <div className="bg-[#0f172a]/60 backdrop-blur-xl border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.1)] rounded-2xl p-6 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-linear-to-br from-purple-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="bg-[#0a0e1a]/80 backdrop-blur-xl border border-[#A1C2BD]/20 shadow-[0_0_30px_rgba(161,194,189,0.05)] rounded-2xl p-6 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/10 to-[#19183B]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <div>
                                 <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                     Your Temp Mail
                                 </h2>
-                                <p className="text-xs text-purple-300/60 mt-1 font-medium">Session lives in your browser</p>
+                                <p className="text-xs text-[#A1C2BD]/60 mt-1 font-medium">Session lives in your browser</p>
                             </div>
                             {account && (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.2)] uppercase tracking-wider">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse shadow-[0_0_5px_rgba(168,85,247,0.8)]" />
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#A1C2BD]/10 border border-[#A1C2BD]/20 text-[10px] font-bold text-[#A1C2BD] shadow-[0_0_10px_rgba(161,194,189,0.2)] uppercase tracking-wider">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#A1C2BD] animate-pulse shadow-[0_0_5px_rgba(161,194,189,0.8)]" />
                                     Active
                                 </span>
                             )}
@@ -289,7 +294,7 @@ export default function TempMail() {
                                 <button
                                     onClick={generateNewEmail}
                                     disabled={generating}
-                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 border border-purple-500/50 hover:border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] text-white rounded-xl transition-all font-semibold shadow-lg shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-linear-to-r from-[#19183B] to-[#708993] hover:from-[#A1C2BD]/80 hover:to-[#708993]/80 border border-[#A1C2BD]/30 hover:border-[#A1C2BD]/50 shadow-[0_0_20px_rgba(161,194,189,0.2)] hover:shadow-[0_0_30px_rgba(161,194,189,0.4)] text-white rounded-xl transition-all font-semibold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                                 >
                                     {generating ? (
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -303,11 +308,11 @@ export default function TempMail() {
                             </div>
                         ) : (
                             <div className="relative z-10">
-                                <div className="p-4 bg-[#0a0e1a]/80 border border-purple-500/30 rounded-xl mb-4 group/copy hover:border-purple-500/60 shadow-[inset_0_0_20px_rgba(168,85,247,0.05)] transition-colors">
+                                <div className="p-4 bg-[#0a0e1a]/60 border border-[#A1C2BD]/20 rounded-xl mb-4 group/copy hover:border-[#A1C2BD]/40 shadow-[inset_0_0_20px_rgba(161,194,189,0.03)] transition-colors">
                                     <div className="flex items-center justify-between gap-3">
                                         <div className="min-w-0 flex-1">
                                             <div className="text-[10px] uppercase tracking-wider font-bold text-gray-500 mb-1">Email Address</div>
-                                            <div className="text-sm font-mono text-purple-300 truncate font-bold tracking-wide">{account.address}</div>
+                                            <div className="text-sm font-mono text-[#A1C2BD] truncate font-bold tracking-wide">{account.address}</div>
                                         </div>
                                         <button
                                             onClick={handleCopy}
@@ -341,17 +346,17 @@ export default function TempMail() {
                     </div>
 
                     {/* Inbox List */}
-                    <div className="bg-[#0f172a]/40 backdrop-blur-xl border border-white/5 hover:border-purple-500/30 transition-colors rounded-2xl flex-1 flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden">
+                    <div className="bg-[#0a0e1a]/40 backdrop-blur-xl border border-white/5 hover:border-[#A1C2BD]/20 transition-colors rounded-2xl flex-1 flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden">
                         <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/20">
                             <h3 className="font-semibold text-white text-sm">Inbox {messages.length > 0 && <span className="text-gray-500">({messages.length})</span>}</h3>
                             {account && (
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => setAutoSync(!autoSync)}
-                                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${autoSync ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.1)]' : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-gray-300'}`}
+                                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${autoSync ? 'bg-[#A1C2BD]/20 text-[#A1C2BD] border border-[#A1C2BD]/30 shadow-[0_0_10px_rgba(161,194,189,0.1)]' : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-gray-300'}`}
                                         title={autoSync ? "Auto Sync: ON (Every 5s)" : "Auto Sync: OFF"}
                                     >
-                                        <div className={`w-1.5 h-1.5 rounded-full ${autoSync ? 'bg-purple-400 animate-pulse shadow-[0_0_5px_rgba(168,85,247,0.8)]' : 'bg-gray-500'}`} />
+                                        <div className={`w-1.5 h-1.5 rounded-full ${autoSync ? 'bg-[#A1C2BD] animate-pulse shadow-[0_0_5px_rgba(161,194,189,0.8)]' : 'bg-gray-500'}`} />
                                         Auto Sync
                                     </button>
                                     <button
@@ -377,9 +382,9 @@ export default function TempMail() {
                             ) : messages.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center p-6 text-center">
                                     <div className="relative w-12 h-12 flex items-center justify-center mb-4">
-                                        <div className="absolute inset-0 bg-purple-500/30 rounded-full animate-ping" />
-                                        <div className="relative w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.2)] flex items-center justify-center">
-                                            <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h8m4 0a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        <div className="absolute inset-0 bg-[#A1C2BD]/30 rounded-full animate-ping" />
+                                        <div className="relative w-12 h-12 rounded-2xl bg-[#A1C2BD]/10 border border-[#A1C2BD]/20 shadow-[0_0_15px_rgba(161,194,189,0.2)] flex items-center justify-center">
+                                            <svg className="w-6 h-6 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h8m4 0a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                         </div>
                                     </div>
                                     <p className="text-sm text-gray-300 font-medium mb-1">Waiting for emails...</p>
@@ -394,13 +399,13 @@ export default function TempMail() {
                                                 setSelectedMessage(msg);
                                                 fetchMessageDetail(msg.id);
                                             }}
-                                            className={`w-full text-left p-4 transition-all hover:bg-white/5 ${selectedMessage?.id === msg.id ? 'bg-purple-900/40 border-l-2 border-l-purple-500 shadow-[inset_4px_0_0_rgba(168,85,247,0.5)]' : 'border-l-2 border-transparent'}`}
+                                            className={`w-full text-left p-4 transition-all hover:bg-white/5 ${selectedMessage?.id === msg.id ? 'bg-[#19183B]/40 border-l-2 border-l-[#A1C2BD] shadow-[inset_4px_0_0_rgba(161,194,189,0.5)]' : 'border-l-2 border-transparent'}`}
                                         >
                                             <div className="flex items-center justify-between mb-1.5 gap-2">
                                                 <span className="text-sm font-semibold text-gray-200 truncate">{msg.from.name || msg.from.address}</span>
                                                 <span className="text-[10px] text-gray-500 whitespace-nowrap">{formatDate(msg.createdAt)}</span>
                                             </div>
-                                            <div className="text-xs text-purple-300 font-semibold mb-1 truncate">{msg.subject}</div>
+                                            <div className="text-xs text-[#708993] font-semibold mb-1 truncate">{msg.subject}</div>
                                             <div className="text-xs text-gray-500 truncate">{msg.intro}</div>
                                         </button>
                                     ))}
@@ -411,22 +416,23 @@ export default function TempMail() {
                 </div>
 
                 {/* Right Panel: Content View */}
-                <div className="w-full lg:w-2/3 bg-[#0f172a]/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col min-h-[500px]">
+                <div className="w-full lg:w-2/3 bg-[#0a0e1a]/80 backdrop-blur-xl border border-[#A1C2BD]/20 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col min-h-[500px] relative group">
+                    <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/5 via-transparent to-[#19183B]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                     {!selectedMessage ? (
-                        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-gray-500">
-                            <div className="w-16 h-16 rounded-3xl bg-white/5 flex items-center justify-center mb-6">
-                                <svg className="w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5M10 12l2.25 1.5M14 12l-2.25 1.5" /></svg>
+                        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center text-gray-500">
+                            <div className="w-16 h-16 rounded-3xl bg-[#A1C2BD]/5 border border-[#A1C2BD]/10 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(161,194,189,0.02)]">
+                                <svg className="w-8 h-8 text-[#708993]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5M10 12l2.25 1.5M14 12l-2.25 1.5" /></svg>
                             </div>
                             <h3 className="text-lg font-medium text-gray-300 mb-2">No Message Selected</h3>
-                            <p className="text-sm max-w-sm">Select an email from your inbox on the left to read its contents.</p>
+                            <p className="text-sm max-w-sm text-gray-500">Select an email from your inbox on the left to read its contents.</p>
                         </div>
                     ) : (
-                        <div className="flex-1 flex flex-col h-full">
+                        <div className="relative z-10 flex-1 flex flex-col h-full">
                             {/* Message Header */}
-                            <div className="p-6 border-b border-white/5 bg-black/20 shrink-0">
+                            <div className="p-6 border-b border-[#A1C2BD]/10 bg-black/40 shrink-0">
                                 <h2 className="text-xl font-bold text-white mb-4 pr-10">{selectedMessage.subject}</h2>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.2)] flex items-center justify-center text-purple-300 font-bold shrink-0">
+                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#A1C2BD]/20 to-[#19183B]/20 border border-[#A1C2BD]/40 shadow-[0_0_15px_rgba(161,194,189,0.2)] flex items-center justify-center text-[#A1C2BD] font-bold shrink-0">
                                         {(selectedMessage.from.name || selectedMessage.from.address).charAt(0).toUpperCase()}
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -442,10 +448,10 @@ export default function TempMail() {
                             </div>
 
                             {/* Message Body */}
-                            <div className="flex-1 overflow-y-auto bg-[#0a0e1a]/80 p-6 relative rounded-b-2xl shadow-[inset_0_20px_20px_-20px_rgba(0,0,0,0.5)]">
+                            <div className="flex-1 overflow-y-auto bg-[#0a0e1a]/60 p-6 relative rounded-b-2xl shadow-[inset_0_20px_20px_-20px_rgba(0,0,0,0.5)]">
                                 {loadingMessage ? (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-[#0a0f1e]/80 backdrop-blur-sm z-10 rounded-b-2xl">
-                                        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent shadow-[0_0_15px_rgba(168,85,247,0.5)] rounded-full animate-spin" />
+                                    <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e1a]/80 backdrop-blur-sm z-10 rounded-b-2xl">
+                                        <div className="w-8 h-8 border-2 border-[#A1C2BD] border-t-transparent shadow-[0_0_15px_rgba(161,194,189,0.5)] rounded-full animate-spin" />
                                     </div>
                                 ) : messageContent?.error ? (
                                     <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto">

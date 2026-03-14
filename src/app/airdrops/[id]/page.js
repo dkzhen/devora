@@ -312,14 +312,14 @@ export default function AirdropDetailPage() {
                     title="Airdrop"
                     badge="Detail"
                     description="Loading project information..."
-                    colorTheme="blue"
+                    colorTheme="sunset"
                     breadcrumbs={[
                         { label: 'Dashboard', href: '/' },
                         { label: 'Airdrops', href: '/airdrops' },
                         { label: '...' }
                     ]}
                 />
-                <LoadingState message="Decrypting Mission Details..." colorTheme="blue" />
+                <LoadingState message="Decrypting Mission Details..." colorTheme="sunset" />
             </div>
         );
     }
@@ -329,7 +329,7 @@ export default function AirdropDetailPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] p-8">
                 <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0f172a]/50 p-10 text-center backdrop-blur-xl shadow-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-transparent to-indigo-500/5" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#F25278]/5 via-transparent to-[#2D3482]/5" />
 
                     <div className="relative z-10 flex flex-col items-center">
                         {/* Icon Container */}
@@ -347,7 +347,7 @@ export default function AirdropDetailPage() {
 
                         <button
                             onClick={() => router.push('/airdrops')}
-                            className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#0f172a] px-6 py-3.5 w-full text-sm font-bold text-gray-300 transition-all border border-white/10 hover:border-blue-500/40 hover:text-white"
+                            className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#0f172a] px-6 py-3.5 w-full text-sm font-bold text-gray-300 transition-all border border-white/10 hover:border-[#F25278]/40 hover:text-white"
                         >
                             <span className="relative z-10 flex items-center gap-2 transition-transform group-hover:-translate-x-1">
                                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -355,7 +355,7 @@ export default function AirdropDetailPage() {
                                 </svg>
                                 Back to Airdrops
                             </span>
-                            <div className="absolute inset-0 z-0 bg-linear-to-r from-blue-600/10 to-indigo-600/10 opacity-0 transition-opacity group-hover:opacity-100" />
+                            <div className="absolute inset-0 z-0 bg-linear-to-r from-[#F25278]/10 to-[#2D3482]/10 opacity-0 transition-opacity group-hover:opacity-100" />
                         </button>
                     </div>
                 </div>
@@ -370,7 +370,7 @@ export default function AirdropDetailPage() {
                 title={airdrop.name}
                 badge={airdrop.symbol}
                 description={airdrop.projectType || 'Project'}
-                colorTheme="blue"
+                colorTheme="sunset"
                 breadcrumbs={[
                     { label: 'Dashboard', href: '/' },
                     { label: 'Airdrops', href: '/airdrops' },
@@ -378,7 +378,7 @@ export default function AirdropDetailPage() {
                 ]}
                 actionContent={
                     <div className="flex flex-col items-end gap-2">
-                        <div className="w-16 h-16 rounded-xl bg-[#0f172a]/60 border border-blue-500/30 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(59,130,246,0.3)] backdrop-blur-md">
+                        <div className="w-16 h-16 rounded-xl bg-[#0a0312]/60 border border-[#F25278]/30 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(242,82,120,0.3)] backdrop-blur-md">
                             <LoadingImage 
                                 src={airdrop.icon} 
                                 alt={airdrop.name} 
@@ -387,8 +387,8 @@ export default function AirdropDetailPage() {
                             />
                         </div>
                         {airdrop.raise && (
-                            <div className="flex items-center gap-1.5 bg-[#0a0e1a]/80 px-2 py-1 rounded-lg border border-blue-500/20">
-                                <span className="text-blue-400/60 text-[10px] font-bold uppercase tracking-wider">Raised</span>
+                            <div className="flex items-center gap-1.5 bg-[#0a0312]/80 px-2 py-1 rounded-lg border border-[#F25278]/20">
+                                <span className="text-[#F25278]/60 text-[10px] font-bold uppercase tracking-wider">Raised</span>
                                 <span className="text-sm font-black text-white">{airdrop.raise}</span>
                             </div>
                         )}
@@ -397,9 +397,9 @@ export default function AirdropDetailPage() {
             />
 
             {/* Links & Status Chips Section */}
-            <div className="relative z-10 p-5 mt-4 bg-[#0a0e1a]/80 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] rounded-2xl flex flex-col gap-5 group overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none transition-colors" />
-                <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-blue-500 to-transparent" />
+            <div className="relative z-10 p-5 mt-4 bg-[#0a0312]/80 backdrop-blur-xl border border-[#F25278]/20 shadow-[0_0_30px_rgba(242,82,120,0.05)] rounded-2xl flex flex-col gap-5 group overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#2D3482]/10 blur-3xl rounded-full pointer-events-none transition-colors" />
+                <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-[#F25278] to-transparent" />
                 
                 {/* Links */}
                 {(airdrop.links && airdrop.links !== '[]') && (
@@ -417,7 +417,7 @@ export default function AirdropDetailPage() {
                                 const nameMap = { 'web': 'Website', 'x': 'X', 'github': 'GitHub', 'telegram': 'Telegram', 'discord': 'Discord' };
                                 return links.map((link, i) => (
                                     <a href={link.url} target="_blank" rel="noreferrer" key={i}
-                                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0f172a]/40 hover:bg-blue-500/10 text-xs font-semibold transition-all border border-blue-500/20 hover:border-blue-500/40 text-blue-200 hover:text-white shadow-[0_0_10px_rgba(59,130,246,0.05)]">
+                                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0a0312]/40 hover:bg-[#F25278]/10 text-xs font-semibold transition-all border border-[#F25278]/20 hover:border-[#F25278]/40 text-pink-200 hover:text-white shadow-[0_0_10px_rgba(242,82,120,0.05)]">
                                         {iconMap[link.name.toLowerCase()]}
                                         {nameMap[link.name.toLowerCase()] || link.name}
                                     </a>
@@ -428,20 +428,20 @@ export default function AirdropDetailPage() {
                 )}
 
                 {/* Status Chips & Post to Telegram */}
-                <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-blue-500/10">
+                <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-[#F25278]/10">
                     {[
-                        { label: 'Reward Type', value: airdrop.rewardType || 'Airdrop', color: 'blue' },
-                        { label: 'Status', value: airdrop.status || 'Verification Check', color: airdrop.status === 'New' ? 'indigo' : airdrop.status === 'Confirmed' ? 'emerald' : 'blue' },
+                        { label: 'Reward Type', value: airdrop.rewardType || 'Airdrop', color: 'pink' },
+                        { label: 'Status', value: airdrop.status || 'Verification Check', color: airdrop.status === 'New' ? 'indigo' : airdrop.status === 'Confirmed' ? 'emerald' : 'pink' },
                         { label: 'Reward Date', value: airdrop.rewardDate || 'TBA', color: 'slate' },
                     ].map((chip, i) => (
-                        <div key={i} className="flex items-center gap-2 bg-[#0a0e1a] border border-blue-500/20 px-3 py-1.5 rounded-lg text-xs shadow-inner">
-                            <span className="text-blue-400/60 font-medium uppercase tracking-wider text-[10px]">{chip.label}:</span>
-                            <span className="text-blue-100 font-bold">{chip.value}</span>
+                        <div key={i} className="flex items-center gap-2 bg-[#0a0312] border border-[#F25278]/20 px-3 py-1.5 rounded-lg text-xs shadow-inner">
+                            <span className="text-[#F25278]/60 font-medium uppercase tracking-wider text-[10px]">{chip.label}:</span>
+                            <span className="text-pink-100 font-bold">{chip.value}</span>
                         </div>
                     ))}
 
-                    <div className="flex items-center gap-2 bg-[#0a0e1a] border border-blue-500/20 px-3 py-1.5 rounded-lg text-xs shadow-inner">
-                        <span className="text-blue-400/60 font-medium uppercase tracking-wider text-[10px]">Visibility:</span>
+                    <div className="flex items-center gap-2 bg-[#0a0312] border border-[#F25278]/20 px-3 py-1.5 rounded-lg text-xs shadow-inner">
+                        <span className="text-[#F25278]/60 font-medium uppercase tracking-wider text-[10px]">Visibility:</span>
                         <span className={airdrop.isPublic ? "text-green-400 font-bold" : "text-gray-400 font-bold"}>
                             {airdrop.isPublic ? 'PUBLIC' : 'PRIVATE'}
                         </span>
@@ -459,7 +459,7 @@ export default function AirdropDetailPage() {
                             <button
                                 onClick={handleToggleVisibility}
                                 disabled={isTogglingVisibility}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-blue-500/30 bg-[#0f172a] hover:bg-blue-500/10 text-gray-300 hover:text-white disabled:opacity-50"
+                                className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-[#F25278]/30 bg-[#0a0312] hover:bg-[#F25278]/10 text-gray-300 hover:text-white disabled:opacity-50"
                             >
                                 {isTogglingVisibility ? 'Updating...' : (airdrop.isPublic ? 'Unpublish' : 'Publish')}
                             </button>
@@ -472,7 +472,7 @@ export default function AirdropDetailPage() {
                                     <button
                                         onClick={() => handlePublishRequest('PENDING')}
                                         disabled={isPublishRequesting}
-                                        className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-blue-500/30 bg-linear-to-r from-blue-600/20 to-indigo-600/20 hover:from-blue-600/40 hover:to-indigo-600/40 text-blue-300 hover:text-white disabled:opacity-50"
+                                        className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-[#F25278]/30 bg-linear-to-r from-[#F25278]/20 to-[#FEA47F]/20 hover:from-[#F25278]/40 hover:to-[#FEA47F]/40 text-pink-300 hover:text-white disabled:opacity-50"
                                     >
                                         {isPublishRequesting ? 'Requesting...' : 'Request Publish'}
                                     </button>
@@ -510,7 +510,7 @@ export default function AirdropDetailPage() {
                             <button
                                 onClick={handleTelegramPreview}
                                 disabled={telegramLoading}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-blue-500/30 bg-linear-to-r from-blue-600/30 to-indigo-600/30 hover:from-blue-600/50 hover:to-indigo-600/50 text-white shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                                className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-[#F25278]/30 bg-linear-to-r from-[#F25278]/30 to-[#FEA47F]/30 hover:from-[#F25278]/50 hover:to-[#FEA47F]/50 text-white shadow-lg shadow-[#F25278]/20 disabled:opacity-50"
                             >
                                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.45.9-4.08 2.68-.39.26-.74.39-1.05.38-.34-.01-.98-.19-1.46-.35-.59-.19-1.05-.29-1.01-.61.02-.17.29-.35.81-.54 3.19-1.39 5.32-2.32 6.38-2.76 3.03-1.26 3.66-1.48 4.07-1.48.09 0 .28.02.4.1.1.07.13.18.14.28.01.07.01.18 0 .2z" />
@@ -523,22 +523,22 @@ export default function AirdropDetailPage() {
 
                 {/* Description */}
                 {airdrop.description && (
-                    <div className="relative z-10 pt-4 border-t border-blue-500/10">
-                        <h3 className="text-xs font-bold text-blue-400/80 uppercase tracking-widest mb-2">Instructions</h3>
-                        <p className="text-blue-100/70 text-sm leading-relaxed max-w-5xl">{airdrop.description}</p>
+                    <div className="relative z-10 pt-4 border-t border-[#F25278]/10">
+                        <h3 className="text-xs font-bold text-[#F25278]/80 uppercase tracking-widest mb-2">Instructions</h3>
+                        <p className="text-pink-100/70 text-sm leading-relaxed max-w-5xl">{airdrop.description}</p>
                     </div>
                 )}
             </div>
 {/* Login / Upgrade Banners */}
             {!user && (
                 <div className="relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-[#070d1f] to-[#0c1628] border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.05)]" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#070d1f] to-[#0c1628] border border-[#F25278]/20 shadow-[0_0_20px_rgba(242,82,120,0.05)]" />
                     <div className="relative z-10 p-8 text-center flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        <div className="w-12 h-12 rounded-xl bg-[#F25278]/10 border border-[#F25278]/20 flex items-center justify-center mb-4">
+                            <svg className="w-6 h-6 text-[#F25278]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                         </div>
                         <h3 className="text-xl font-black text-white mb-2">Login to Track Your Progress</h3>
-                        <p className="text-gray-500 text-sm max-w-md">You must be logged in to track completion and access task progress.</p>
+                        <p className="text-pink-100/40 text-sm max-w-md">You must be logged in to track completion and access task progress.</p>
                     </div>
                 </div>
             )}
@@ -564,7 +564,7 @@ export default function AirdropDetailPage() {
                         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                             <span
                                 onClick={() => setActiveCategory(null)}
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${!activeCategory ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]' : 'bg-[#0f172a]/50 text-gray-400 hover:text-gray-300 border border-white/5 hover:border-white/10 hover:bg-[#0f172a]/80'}`}
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${!activeCategory ? 'bg-[#F25278]/20 text-pink-300 border border-[#F25278]/30 shadow-[0_0_10px_rgba(242,82,120,0.1)]' : 'bg-[#0a0312]/50 text-gray-400 hover:text-gray-300 border border-white/5 hover:border-white/10 hover:bg-[#0a0312]/80'}`}
                             >
                                 All
                             </span>
@@ -572,7 +572,7 @@ export default function AirdropDetailPage() {
                                 <span
                                     key={cat}
                                     onClick={() => setActiveCategory(cat)}
-                                    className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${activeCategory === cat ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]' : 'bg-[#0f172a]/50 text-gray-400 hover:text-gray-300 border border-white/5 hover:border-white/10 hover:bg-[#0f172a]/80'}`}
+                                    className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${activeCategory === cat ? 'bg-[#F25278]/20 text-pink-300 border border-[#F25278]/30 shadow-[0_0_10px_rgba(242,82,120,0.1)]' : 'bg-[#0a0312]/50 text-gray-400 hover:text-gray-300 border border-white/5 hover:border-white/10 hover:bg-[#0a0312]/80'}`}
                                 >
                                     {cat}
                                 </span>
@@ -590,8 +590,8 @@ export default function AirdropDetailPage() {
                                         key={task.id}
                                         onClick={() => setActiveTask(task)}
                                         className={`p-5 rounded-2xl border cursor-pointer transition-all ${isActive
-                                            ? 'bg-[#0a0e1a]/80 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)] text-white backdrop-blur-md'
-                                            : 'bg-[#0f172a]/40 border-white/5 hover:border-blue-500/20 text-gray-400 hover:text-gray-200 backdrop-blur-sm'
+                                            ? 'bg-[#0a0312]/80 border-[#F25278]/50 shadow-[0_0_15px_rgba(242,82,120,0.15)] text-white backdrop-blur-md'
+                                            : 'bg-[#0a0312]/40 border-white/5 hover:border-[#F25278]/20 text-gray-400 hover:text-gray-200 backdrop-blur-sm'
                                             }`}
                                     >
                                         <div className="flex items-start justify-between mb-3">
@@ -619,7 +619,7 @@ export default function AirdropDetailPage() {
                                             )}
                                         </div>
                                         <div className="mt-4 flex items-center justify-between">
-                                            <span className="px-3 py-1 rounded-md bg-[#0f172a] text-xs font-semibold text-blue-400/80 border border-blue-500/20">{task.category}</span>
+                                            <span className="px-3 py-1 rounded-md bg-[#0a0312] text-xs font-semibold text-[#F25278]/80 border border-[#F25278]/20">{task.category}</span>
                                             {user && user.role === 'ULTRA' && airdrop.isPublic && (
                                                 <button
                                                     onClick={(e) => {
@@ -667,7 +667,7 @@ export default function AirdropDetailPage() {
                         {user && (user.role === 'ULTRA' || airdrop?.userId === user.id) && (
                             <button
                                 onClick={() => setShowAddTask(true)}
-                                className="mt-4 w-full py-3 rounded-xl border-2 border-dashed border-blue-500/30 bg-[#0f172a]/30 text-blue-400/70 font-bold hover:border-blue-500/60 hover:text-blue-300 hover:bg-blue-500/10 shadow-[0_0_10px_rgba(59,130,246,0.05)_inset] transition-colors flex items-center justify-center gap-2"
+                                className="mt-4 w-full py-3 rounded-xl border-2 border-dashed border-[#F25278]/30 bg-[#0a0312]/30 text-pink-400/70 font-bold hover:border-[#F25278]/60 hover:text-pink-300 hover:bg-[#F25278]/10 shadow-[0_0_10px_rgba(242,82,120,0.05)_inset] transition-colors flex items-center justify-center gap-2"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Add New Task
@@ -681,18 +681,18 @@ export default function AirdropDetailPage() {
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 px-2">
                             <div className="flex flex-wrap items-center gap-3">
                                 <span className="font-bold text-white text-sm">Progress</span>
-                                <div className="flex gap-2 text-blue-500">
+                                <div className="flex gap-2 text-[#F25278]">
                                     {tasks.map((t, idx) => {
                                         const isDone = progress.find(p => p.taskId === t.id)?.completed;
                                         return (
                                             <div key={idx} className="flex items-center">
-                                                <div className={`w-3 h-3 rounded-full ${isDone ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-[#0f172a]/80 border border-white/5 shadow-inner'}`}></div>
+                                                <div className={`w-3 h-3 rounded-full ${isDone ? 'bg-[#F25278] shadow-[0_0_8px_rgba(242,82,120,0.6)]' : 'bg-[#0a0312]/80 border border-white/5 shadow-inner'}`}></div>
                                                 {idx < tasks.length - 1 && <div className="w-4 h-px border-t border-dashed border-gray-600 ml-2"></div>}
                                             </div>
                                         );
                                     })}
                                 </div>
-                                <span className="text-xs font-medium text-gray-400 bg-gray-800 px-2 py-0.5 rounded ml-2">
+                                <span className="text-xs font-medium text-pink-300 bg-pink-900/20 px-2 py-0.5 rounded ml-2 border border-pink-500/20">
                                     {progress.filter(p => p.completed && tasks.some(t => t.id === p.taskId)).length}/{tasks.length} Steps Done
                                 </span>
                             </div>
@@ -700,13 +700,13 @@ export default function AirdropDetailPage() {
                                 <div className="flex gap-2 mt-4 sm:mt-0">
                                     {/* Desktop Buttons */}
                                     <div className="hidden sm:flex gap-2">
-                                        <button className="px-4 py-1.5 bg-[#0f172a]/60 border border-white/5 hover:border-blue-500/30 text-gray-400 hover:text-blue-300 text-sm font-bold rounded-lg hover:bg-blue-500/10 transition-colors">New</button>
-                                        <button className="px-4 py-1.5 bg-[#0f172a]/60 border border-white/5 hover:border-blue-500/30 text-gray-400 hover:text-blue-300 text-sm font-bold rounded-lg hover:bg-blue-500/10 transition-colors">To Do</button>
-                                        <button className="px-4 py-1.5 bg-[#0f172a]/40 border border-white/5 text-gray-500 hover:text-gray-300 text-sm font-bold rounded-lg hover:bg-gray-800/60 transition-colors">Completed</button>
+                                        <button className="px-4 py-1.5 bg-[#0a0312]/60 border border-white/5 hover:border-[#F25278]/30 text-gray-400 hover:text-pink-300 text-sm font-bold rounded-lg hover:bg-[#F25278]/10 transition-colors">New</button>
+                                        <button className="px-4 py-1.5 bg-[#0a0312]/60 border border-white/5 hover:border-[#F25278]/30 text-gray-400 hover:text-pink-300 text-sm font-bold rounded-lg hover:bg-[#F25278]/10 transition-colors">To Do</button>
+                                        <button className="px-4 py-1.5 bg-[#0a0312]/40 border border-white/5 text-gray-500 hover:text-gray-300 text-sm font-bold rounded-lg hover:bg-[#0a0312]/60 transition-colors">Completed</button>
                                     </div>
                                     {/* Mobile Dropdown */}
                                     <div className="sm:hidden w-full">
-                                        <select className="w-full px-4 py-1.5 bg-gray-800 text-gray-300 text-sm font-medium rounded-lg transition-colors border border-gray-700 focus:outline-none focus:border-blue-500 appearance-none">
+                                        <select className="w-full px-4 py-1.5 bg-[#0a0312] text-gray-300 text-sm font-medium rounded-lg transition-colors border border-white/10 focus:outline-none focus:border-[#F25278] appearance-none">
                                             <option value="all">All Status</option>
                                             <option value="new">New</option>
                                             <option value="todo">To Do</option>
@@ -718,7 +718,7 @@ export default function AirdropDetailPage() {
                         </div>
 
                         {/* Active Task Detail Box */}
-                        <div className="bg-[#0a0e1a] rounded-3xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] p-8 min-h-[500px] relative overflow-hidden">
+                        <div className="bg-[#0a0312] rounded-3xl border border-[#F25278]/20 shadow-[0_0_30px_rgba(242,82,120,0.05)] p-8 min-h-[500px] relative overflow-hidden">
                             {showAddTask && user && (user.role === 'ULTRA' || airdrop?.userId === user.id) ? (
                                 <div className="max-w-xl mx-auto">
                                     <div className="flex items-center justify-between mb-8">
@@ -730,19 +730,19 @@ export default function AirdropDetailPage() {
                                     <form onSubmit={handleAddTask} className="space-y-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Task Title</label>
-                                            <input required name="title" type="text" className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Connect your social accounts" />
+                                            <input required name="title" type="text" className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Connect your social accounts" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Category / Tab</label>
-                                            <input required name="category" type="text" className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Social, DePIN, Mint NFT" />
+                                            <input required name="category" type="text" className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Social, DePIN, Mint NFT" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
-                                            <textarea required name="description" rows={4} className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="Provide instructions for the task..." />
+                                            <textarea required name="description" rows={4} className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="Provide instructions for the task..." />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Deadline (Optional)</label>
-                                            <input name="deadline" type="date" className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-gray-300 focus:outline-none scheme-dark" />
+                                            <input name="deadline" type="date" className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-gray-300 focus:outline-none scheme-dark" />
                                         </div>
 
                                         <div className="pt-4 border-t border-gray-800">
@@ -751,7 +751,7 @@ export default function AirdropDetailPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setNewSteps([...newSteps, { text: '', link: '', image: '', isPrivate: false }])}
-                                                    className="text-xs bg-gray-800 hover:bg-gray-700 text-blue-400 px-3 py-1.5 rounded-lg transition-colors border border-gray-700"
+                                                    className="text-xs bg-[#0a0312] hover:bg-black/60 text-[#F25278] px-3 py-1.5 rounded-lg transition-colors border border-[#F25278]/20"
                                                 >
                                                     + Add Step
                                                 </button>
@@ -769,7 +769,7 @@ export default function AirdropDetailPage() {
                                                             </button>
                                                         )}
                                                         <div className="flex items-center gap-2 mb-3">
-                                                            <div className="w-6 h-6 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center text-xs font-bold border border-blue-500/30">
+                                                            <div className="w-6 h-6 rounded-full bg-pink-900/50 text-[#F25278] flex items-center justify-center text-xs font-bold border border-[#F25278]/30">
                                                                 {index + 1}
                                                             </div>
                                                             <span className="text-sm font-medium text-gray-300">Step Detail</span>
@@ -782,7 +782,7 @@ export default function AirdropDetailPage() {
                                                                         updated[index].isPrivate = e.target.checked;
                                                                         setNewSteps(updated);
                                                                     }}
-                                                                    className="w-4 h-4 rounded-sm bg-gray-900 border-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-900"
+                                                                    className="w-4 h-4 rounded-sm bg-black border-white/10 text-[#F25278] focus:ring-[#F25278] focus:ring-offset-[#0a0312]"
                                                                 />
                                                                 <span className="text-xs font-medium text-gray-400 group-hover/label:text-gray-300">Private Step (Only me)</span>
                                                             </label>
@@ -795,7 +795,7 @@ export default function AirdropDetailPage() {
                                                                 updated[index].text = e.target.value;
                                                                 setNewSteps(updated);
                                                             }}
-                                                            className="w-full bg-[#0a0e1a] border border-white/10 focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 mb-3"
+                                                            className="w-full bg-[#0a0312] border border-white/10 focus:border-[#F25278] focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none mb-3"
                                                             placeholder="Instruction details..."
                                                         />
                                                         <div className="grid grid-cols-2 gap-3">
@@ -807,7 +807,7 @@ export default function AirdropDetailPage() {
                                                                     updated[index].image = e.target.value;
                                                                     setNewSteps(updated);
                                                                 }}
-                                                                className="w-full bg-[#0a0e1a] border border-white/10 focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                                                                className="w-full bg-[#0a0312] border border-white/10 focus:border-[#F25278] focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none"
                                                                 placeholder="Optional Image URL"
                                                             />
                                                             <input
@@ -818,7 +818,7 @@ export default function AirdropDetailPage() {
                                                                     updated[index].link = e.target.value;
                                                                     setNewSteps(updated);
                                                                 }}
-                                                                className="w-full bg-[#0a0e1a] border border-white/10 focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                                                                className="w-full bg-[#0a0312] border border-white/10 focus:border-[#F25278] focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none"
                                                                 placeholder="Optional Link URL"
                                                             />
                                                         </div>
@@ -827,7 +827,7 @@ export default function AirdropDetailPage() {
                                             </div>
                                         </div>
 
-                                        <button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-lg shadow-blue-500/20">
+                                        <button type="submit" className="w-full py-3 bg-[#F25278] hover:bg-[#F25278]/90 text-white font-bold rounded-lg transition-colors shadow-lg shadow-[#F25278]/20">
                                             Create Task
                                         </button>
                                     </form>
@@ -843,26 +843,26 @@ export default function AirdropDetailPage() {
                                     <form onSubmit={handleEditTask} className="space-y-6">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Task Title</label>
-                                            <input required name="title" type="text" defaultValue={activeTask.title} className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Connect your social accounts" />
+                                            <input required name="title" type="text" defaultValue={activeTask.title} className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Connect your social accounts" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Category / Tab</label>
-                                            <input required name="category" type="text" defaultValue={activeTask.category} className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Social, DePIN, Mint NFT" />
+                                            <input required name="category" type="text" defaultValue={activeTask.category} className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="e.g. Social, DePIN, Mint NFT" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
-                                            <select name="status" defaultValue={activeTask.status} className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none appearance-none">
+                                            <select name="status" defaultValue={activeTask.status} className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none appearance-none">
                                                 <option value="Open">Open</option>
                                                 <option value="Closed">Closed</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
-                                            <textarea required name="description" rows={4} defaultValue={activeTask.description} className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="Provide instructions for the task..." />
+                                            <textarea required name="description" rows={4} defaultValue={activeTask.description} className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-white focus:outline-none" placeholder="Provide instructions for the task..." />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400 mb-2">Deadline (Optional)</label>
-                                            <input name="deadline" type="date" defaultValue={activeTask.deadline ? activeTask.deadline.split('T')[0] : ''} className="w-full bg-[#0f172a]/60 border border-white/10 focus:border-blue-500 focus:bg-[#0a0e1a]/80 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-4 py-3 text-gray-300 focus:outline-none scheme-dark" />
+                                            <input name="deadline" type="date" defaultValue={activeTask.deadline ? activeTask.deadline.split('T')[0] : ''} className="w-full bg-black/40 border border-white/10 focus:border-[#F25278] focus:bg-black/60 focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-4 py-3 text-gray-300 focus:outline-none scheme-dark" />
                                         </div>
 
                                         <div className="pt-4 border-t border-gray-800">
@@ -871,7 +871,7 @@ export default function AirdropDetailPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setNewSteps([...newSteps, { text: '', link: '', image: '', isPrivate: false }])}
-                                                    className="text-xs bg-gray-800 hover:bg-gray-700 text-blue-400 px-3 py-1.5 rounded-lg transition-colors border border-gray-700"
+                                                    className="text-xs bg-[#0a0312] hover:bg-black/60 text-[#F25278] px-3 py-1.5 rounded-lg transition-colors border border-[#F25278]/20"
                                                 >
                                                     + Add Step
                                                 </button>
@@ -889,7 +889,7 @@ export default function AirdropDetailPage() {
                                                             </button>
                                                         )}
                                                         <div className="flex items-center gap-2 mb-3">
-                                                            <div className="w-6 h-6 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center text-xs font-bold border border-blue-500/30">
+                                                            <div className="w-6 h-6 rounded-full bg-pink-900/50 text-pink-400 flex items-center justify-center text-xs font-bold border border-pink-500/30">
                                                                 {index + 1}
                                                             </div>
                                                             <span className="text-sm font-medium text-gray-300">Step Detail</span>
@@ -902,7 +902,7 @@ export default function AirdropDetailPage() {
                                                                         updated[index].isPrivate = e.target.checked;
                                                                         setNewSteps(updated);
                                                                     }}
-                                                                    className="w-4 h-4 rounded-sm bg-gray-900 border-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-900"
+                                                                    className="w-4 h-4 rounded-sm bg-black border-white/10 text-[#F25278] focus:ring-[#F25278] focus:ring-offset-[#0a0312]"
                                                                 />
                                                                 <span className="text-xs font-medium text-gray-400 group-hover/label:text-gray-300">Private Step (Only me)</span>
                                                             </label>
@@ -915,7 +915,7 @@ export default function AirdropDetailPage() {
                                                                 updated[index].text = e.target.value;
                                                                 setNewSteps(updated);
                                                             }}
-                                                            className="w-full bg-[#0a0e1a] border border-white/10 focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 mb-3"
+                                                            className="w-full bg-[#0a0312] border border-white/10 focus:border-[#F25278] focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none mb-3"
                                                             placeholder="Instruction details..."
                                                         />
                                                         <div className="grid grid-cols-2 gap-3">
@@ -927,7 +927,7 @@ export default function AirdropDetailPage() {
                                                                     updated[index].image = e.target.value;
                                                                     setNewSteps(updated);
                                                                 }}
-                                                                className="w-full bg-[#0a0e1a] border border-white/10 focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                                                                className="w-full bg-[#0a0312] border border-white/10 focus:border-[#F25278] focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none"
                                                                 placeholder="Optional Image URL"
                                                             />
                                                             <input
@@ -938,7 +938,7 @@ export default function AirdropDetailPage() {
                                                                     updated[index].link = e.target.value;
                                                                     setNewSteps(updated);
                                                                 }}
-                                                                className="w-full bg-[#0a0e1a] border border-white/10 focus:border-blue-500 focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                                                                className="w-full bg-[#0a0312] border border-white/10 focus:border-[#F25278] focus:shadow-[0_0_15px_rgba(242,82,120,0.1)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none"
                                                                 placeholder="Optional Link URL"
                                                             />
                                                         </div>
@@ -968,8 +968,8 @@ export default function AirdropDetailPage() {
                                                         disabled={activeTask.status === 'Closed'}
                                                     >
                                                         <span className="text-gray-300 font-medium text-sm">Completed</span>
-                                                        <div className={`w-10 h-6 rounded-full p-1 transition-colors ${progress.find(p => p.taskId === activeTask.id)?.completed ? 'bg-blue-600' : 'bg-[#0f172a]/80 border border-white/5 shadow-inner'}`}>
-                                                            <div className={`w-4 h-4 bg-[#0f172a] rounded-full transition-transform ${progress.find(p => p.taskId === activeTask.id)?.completed ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                                                        <div className={`w-10 h-6 rounded-full p-1 transition-colors ${progress.find(p => p.taskId === activeTask.id)?.completed ? 'bg-[#F25278]' : 'bg-[#0a0312]/80 border border-white/5 shadow-inner'}`}>
+                                                            <div className={`w-4 h-4 bg-[#0a0312] rounded-full transition-transform ${progress.find(p => p.taskId === activeTask.id)?.completed ? 'translate-x-4' : 'translate-x-0'}`}></div>
                                                         </div>
                                                     </button>
                                                 )}
@@ -981,7 +981,7 @@ export default function AirdropDetailPage() {
                                                             setNewSteps(activeTask.steps && activeTask.steps.length > 0 ? activeTask.steps : [{ text: '', link: '', image: '', isPrivate: false }]);
                                                             setIsEditingTask(true);
                                                         }}
-                                                        className="px-3 py-1.5 bg-blue-900/40 hover:bg-blue-800 text-blue-400 text-xs font-bold rounded-lg transition-colors border border-blue-900/50 flex items-center gap-1"
+                                                        className="px-3 py-1.5 bg-[#2D3482]/40 hover:bg-[#2D3482] text-pink-300 text-xs font-bold rounded-lg transition-colors border border-[#2D3482]/50 flex items-center gap-1"
                                                     >
                                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                         Edit
@@ -1009,7 +1009,7 @@ export default function AirdropDetailPage() {
                                                 <div key={index} className="relative">
                                                     <div className="flex gap-4">
                                                         <div className="flex flex-col items-center">
-                                                            <div className={`w-8 h-8 rounded-full ${step.isPrivate ? 'bg-red-900/30 text-red-500 border-red-500/30' : 'bg-blue-900/30 text-blue-400 border-blue-500/30'} flex items-center justify-center text-sm font-bold border z-10 shrink-0`}>
+                                                            <div className={`w-8 h-8 rounded-full ${step.isPrivate ? 'bg-red-900/30 text-red-500 border-red-500/30' : 'bg-pink-900/30 text-pink-400 border-[#F25278]/30'} flex items-center justify-center text-sm font-bold border z-10 shrink-0`}>
                                                                 {step.isPrivate ? (
                                                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                                                 ) : (
@@ -1017,7 +1017,7 @@ export default function AirdropDetailPage() {
                                                                 )}
                                                             </div>
                                                             {index < activeTask.steps.length - 1 && (
-                                                                <div className="w-px h-full bg-blue-500/20 mt-2"></div>
+                                                                <div className="w-px h-full bg-[#F25278]/20 mt-2"></div>
                                                             )}
                                                         </div>
                                                         <div className="flex-1 pb-2">
@@ -1029,7 +1029,7 @@ export default function AirdropDetailPage() {
                                                             <p className={`${step.isPrivate ? 'text-gray-400' : 'text-gray-300'} mb-4`}>{step.text}</p>
                                                             {step.image && (
                                                                 <div
-                                                                    className="rounded-xl overflow-hidden border border-blue-500/20 bg-[#0f172a]/40 shadow-[0_0_15px_rgba(59,130,246,0.05)] w-full max-w-4xl mt-4 mb-4 cursor-pointer hover:border-blue-500/50 transition-colors group relative"
+                                                                    className="rounded-xl overflow-hidden border border-[#F25278]/20 bg-[#0f172a]/40 shadow-[0_0_15px_rgba(242,82,120,0.05)] w-full max-w-4xl mt-4 mb-4 cursor-pointer hover:border-[#F25278]/50 transition-colors group relative"
                                                                     onClick={() => setFullscreenImage(step.image)}
                                                                 >
                                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -1043,7 +1043,7 @@ export default function AirdropDetailPage() {
                                                                     href={step.link}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 rounded-lg text-sm font-medium transition-colors border border-blue-500/20 mt-2"
+                                                                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#F25278]/10 hover:bg-[#F25278]/20 text-pink-400 rounded-lg text-sm font-medium transition-colors border border-[#F25278]/20 mt-2"
                                                                 >
                                                                     Open Link
                                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -1100,12 +1100,12 @@ export default function AirdropDetailPage() {
                         className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
                         onClick={(e) => { if (e.target === e.currentTarget) closeTelegramModal(); }}
                     >
-                        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-linear-to-br from-[#0a0f1e] via-[#0d1b3e] to-[#070d1f] shadow-2xl shadow-blue-900/30">
+                        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-linear-to-br from-[#0a0312] via-[#2D3482] to-[#0a0312] shadow-2xl shadow-pink-900/30">
                             {/* Modal Header */}
                             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center">
-                                        <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <div className="w-9 h-9 rounded-xl bg-[#F25278]/15 border border-[#F25278]/30 flex items-center justify-center">
+                                        <svg className="w-5 h-5 text-[#F25278]" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.45.9-4.08 2.68-.39.26-.74.39-1.05.38-.34-.01-.98-.19-1.46-.35-.59-.19-1.05-.29-1.01-.61.02-.17.29-.35.81-.54 3.19-1.39 5.32-2.32 6.38-2.76 3.03-1.26 3.66-1.48 4.07-1.48.09 0 .28.02.4.1.1.07.13.18.14.28.01.07.01.18 0 .2z" />
                                         </svg>
                                     </div>
@@ -1123,7 +1123,7 @@ export default function AirdropDetailPage() {
                                 {/* Loading state */}
                                 {telegramLoading && (
                                     <div className="flex flex-col items-center justify-center py-12 gap-4">
-                                        <div className="w-10 h-10 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                                        <div className="w-10 h-10 border-2 border-[#F25278]/30 border-t-[#F25278] rounded-full animate-spin" />
                                         <div className="text-center">
                                             <p className="text-white font-semibold text-sm">Generating Caption...</p>
                                             <p className="text-gray-500 text-xs mt-1">Groq AI is crafting your post</p>
@@ -1170,7 +1170,7 @@ export default function AirdropDetailPage() {
                                                     value={customBannerUrl}
                                                     onChange={(e) => setCustomBannerUrl(e.target.value)}
                                                     placeholder="Paste image URL or leave empty for no image"
-                                                    className="flex-1 bg-gray-800/60 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+                                                    className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#F25278] transition-colors"
                                                 />
                                             </div>
                                             {customBannerUrl && (
@@ -1189,7 +1189,7 @@ export default function AirdropDetailPage() {
                                         <div>
                                             <div className="flex items-center justify-between mb-2">
                                                 <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">Caption Preview</label>
-                                                <span className="text-xs text-blue-400/60">Groq AI · MarkdownV2</span>
+                                                <span className="text-xs text-[#F25278]/60">Groq AI · MarkdownV2</span>
                                             </div>
                                             {/* Telegram-style preview box */}
                                             <div className="relative rounded-2xl overflow-hidden">
@@ -1199,7 +1199,7 @@ export default function AirdropDetailPage() {
                                                         {telegramPreview.channelInfo?.photoUrl ? (
                                                             <img src={telegramPreview.channelInfo.photoUrl} alt="Channel Avatar" className="w-8 h-8 rounded-full object-cover" />
                                                         ) : (
-                                                            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold">
+                                                            <div className="w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-xs font-bold">
                                                                 {telegramPreview.channelInfo?.title ? telegramPreview.channelInfo.title.substring(0, 2).toUpperCase() : 'CH'}
                                                             </div>
                                                         )}
@@ -1231,7 +1231,7 @@ export default function AirdropDetailPage() {
                                             <button
                                                 onClick={handleTelegramPost}
                                                 disabled={telegramPosting}
-                                                className="flex-1 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                                className="flex-1 py-3 rounded-xl bg-linear-to-r from-[#F25278] to-[#FEA47F] hover:from-[#F25278]/80 hover:to-[#FEA47F]/80 text-white font-bold text-sm transition-all shadow-lg shadow-[#F25278]/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                             >
                                                 {telegramPosting ? (
                                                     <>

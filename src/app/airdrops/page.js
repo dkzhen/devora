@@ -8,7 +8,7 @@ import LoadingImage from '@/components/LoadingImage';
 
 function StatCard({ title, value, icon, color, subtext }) {
     return (
-        <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/8 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
+        <div className="bg-[#0a0312] p-6 rounded-2xl border border-white/8 shadow-sm flex flex-col justify-between h-full relative overflow-hidden group">
             <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity`}>
                 {icon}
             </div>
@@ -17,7 +17,7 @@ function StatCard({ title, value, icon, color, subtext }) {
                 <div className="text-2xl font-bold text-white">{value}</div>
             </div>
             {subtext && <div className="mt-4 text-xs text-gray-400">{subtext}</div>}
-            <div className={`absolute bottom-0 left-0 h-1 w-full bg-${color}-500`}></div>
+            <div className={`absolute bottom-0 left-0 h-1 w-full bg-[#2D3482]`}></div>
         </div>
     );
 }
@@ -27,12 +27,12 @@ function AirdropRow({ airdrop, user, onDelete, onEdit }) {
 
     return (
         <tr
-            className="group hover:bg-[#0a0e1a]/90 transition-all border-b border-blue-500/10 last:border-0 cursor-pointer hover:shadow-[inset_4px_0_0_rgba(59,130,246,0.5)]"
+            className="group hover:bg-[#0a0e1a]/90 transition-all border-b border-[#F25278]/10 last:border-0 cursor-pointer hover:shadow-[inset_4px_0_0_rgba(242,82,120,0.5)]"
             onClick={() => router.push(`/airdrops/${airdrop.id}`)}
         >
             <td className="py-4 px-4 w-1/3">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#0f172a] border border-blue-500/30 flex items-center justify-center text-lg shrink-0 overflow-hidden shadow-[0_0_10px_rgba(59,130,246,0.2)] group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-shadow">
+                    <div className="w-10 h-10 rounded-xl bg-[#0a0312] border border-[#F25278]/30 flex items-center justify-center text-lg shrink-0 overflow-hidden shadow-[0_0_10px_rgba(242,82,120,0.2)] group-hover:shadow-[0_0_15px_rgba(242,82,120,0.4)] transition-shadow">
                         <LoadingImage 
                             src={airdrop.icon} 
                             alt={airdrop.name} 
@@ -131,7 +131,7 @@ function AirdropRow({ airdrop, user, onDelete, onEdit }) {
                                     e.stopPropagation();
                                     onEdit(airdrop);
                                 }}
-                                className="p-2 text-gray-400 hover:text-blue-500 transition-colors"
+                                className="p-2 text-gray-400 hover:text-[#F25278] transition-colors"
                                 title="Edit Project"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -467,10 +467,10 @@ export default function AirdropsPage() {
                     title="Drop"
                     badge="Hunting"
                     description="Track and manage your airdrop activities"
-                    colorTheme="blue"
+                    colorTheme="sunset"
                     breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Airdrops' }]}
                 />
-                <LoadingState message="Scanning blockchain for airdrops..." colorTheme="blue" />
+                <LoadingState message="Scanning blockchain for airdrops..." colorTheme="sunset" />
             </div>
         );
     }
@@ -478,7 +478,7 @@ export default function AirdropsPage() {
     return (
         <div className="space-y-8">
             {toast && (
-                <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium animate-fade-in-up ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium animate-fade-in-up ${toast.type === 'success' ? 'bg-[#F25278]' : 'bg-red-500'}`}>
                     {toast.message}
                 </div>
             )}
@@ -486,12 +486,12 @@ export default function AirdropsPage() {
                 title="Drop"
                 badge="Hunting"
                 description="Track and manage your airdrop activities"
-                colorTheme="blue"
+                colorTheme="sunset"
                 breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Airdrops' }]}
                 actionContent={
                     <button
                         onClick={() => setShowSuggestModal(true)}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-600/80 to-indigo-600/80 hover:from-blue-500/90 hover:to-indigo-500/90 text-white rounded-xl text-sm font-semibold shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all active:scale-95 border border-blue-500/30 backdrop-blur-sm"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-linear-to-r from-[#F25278]/80 to-[#FEA47F]/80 hover:from-[#F25278]/90 hover:to-[#FEA47F]/90 text-white rounded-xl text-sm font-semibold shadow-[0_0_20px_rgba(242,82,120,0.2)] hover:shadow-[0_0_25px_rgba(242,82,120,0.4)] transition-all active:scale-95 border border-[#F25278]/30 backdrop-blur-sm"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         Suggest Project
@@ -502,29 +502,29 @@ export default function AirdropsPage() {
             {/* Mobile Stats chips */}
             <div className="md:hidden grid grid-cols-4 gap-2">
                 {[
-                    { icon: <Activity className="w-5 h-5 text-blue-400" />, label: 'New Activity', value: newActivityCount.toString(), color: 'text-white' },
+                    { icon: <Activity className="w-5 h-5 text-[#F25278]" />, label: 'New Activity', value: newActivityCount.toString(), color: 'text-white' },
                     { icon: <Trophy className="w-5 h-5 text-orange-400" />, label: 'Confirmed', value: confirmedCount.toString(), color: 'text-white' },
-                    { icon: <ListTodo className="w-5 h-5 text-purple-400" />, label: 'To Check', value: toCheckCount.toString(), color: 'text-white' },
-                    { icon: <CircleDollarSign className="w-5 h-5 text-emerald-400" />, label: 'Avg. Raised', value: formattedRaised, color: 'text-emerald-400' },
+                    { icon: <ListTodo className="w-5 h-5 text-[#FEA47F]" />, label: 'To Check', value: toCheckCount.toString(), color: 'text-white' },
+                    { icon: <CircleDollarSign className="w-5 h-5 text-[#E5F185]" />, label: 'Avg. Raised', value: formattedRaised, color: 'text-[#E5F185]' },
                 ].map((stat, i) => (
-                    <div key={i} className="bg-[#0f172a]/40 border border-blue-500/10 rounded-xl p-2 flex flex-col items-center text-center shadow-lg shadow-black/20 backdrop-blur-md">
-                        <span className="flex items-center justify-center p-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-1">{stat.icon}</span>
+                    <div key={i} className="bg-[#0a0312]/40 border border-[#F25278]/10 rounded-xl p-2 flex flex-col items-center text-center shadow-lg shadow-black/20 backdrop-blur-md">
+                        <span className="flex items-center justify-center p-1.5 rounded-full bg-[#F25278]/10 border border-[#F25278]/20 mb-1">{stat.icon}</span>
                         <span className={`text-sm font-black tracking-tight ${stat.color}`}>{stat.value}</span>
-                        <span className="text-[9px] text-blue-400/60 mt-0.5 leading-none font-bold uppercase tracking-wider">{stat.label}</span>
+                        <span className="text-[9px] text-[#F25278]/60 mt-0.5 leading-none font-bold uppercase tracking-wider">{stat.label}</span>
                     </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                <div className="hidden md:flex xl:col-span-1 bg-[#0a0e1a]/80 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] rounded-2xl p-6 relative overflow-hidden text-white flex-col justify-between group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full pointer-events-none group-hover:bg-blue-500/20 transition-colors" />
-                    <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-blue-500 to-transparent" />
-                    <span className="absolute bottom-0 right-0 w-16 h-1 bg-linear-to-l from-indigo-500 to-transparent" />
-                    <h3 className="text-blue-400/80 text-sm font-bold uppercase tracking-wider mb-4 border-b border-blue-500/10 pb-2 relative z-10">Activity Overview</h3>
+                <div className="hidden md:flex xl:col-span-1 bg-[#0a0312]/80 backdrop-blur-xl border border-[#F25278]/20 shadow-[0_0_30px_rgba(242,82,120,0.05)] rounded-2xl p-6 relative overflow-hidden text-white flex-col justify-between group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#F25278]/10 blur-3xl rounded-full pointer-events-none group-hover:bg-[#F25278]/20 transition-colors" />
+                    <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-[#F25278] to-transparent" />
+                    <span className="absolute bottom-0 right-0 w-16 h-1 bg-linear-to-l from-[#FEA47F] to-transparent" />
+                    <h3 className="text-[#F25278]/80 text-sm font-bold uppercase tracking-wider mb-4 border-b border-[#F25278]/10 pb-2 relative z-10">Activity Overview</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
-                                <Activity className="w-3.5 h-3.5 text-blue-400" /> New activity
+                                <Activity className="w-3.5 h-3.5 text-[#F25278]" /> New activity
                             </div>
                             <div className="text-2xl font-bold">{newActivityCount}</div>
                         </div>
@@ -536,94 +536,94 @@ export default function AirdropsPage() {
                         </div>
                         <div>
                             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
-                                <ListTodo className="w-3.5 h-3.5 text-purple-400" /> Rewards to check
+                                <ListTodo className="w-3.5 h-3.5 text-[#FEA47F]" /> Rewards to check
                             </div>
                             <div className="text-2xl font-bold">{toCheckCount}</div>
                         </div>
                         <div>
                             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
-                                <CircleDollarSign className="w-3.5 h-3.5 text-emerald-400" /> Avg. Raised
+                                <CircleDollarSign className="w-3.5 h-3.5 text-[#E5F185]" /> Avg. Raised
                             </div>
-                            <div className="text-2xl font-bold text-emerald-400">{formattedRaised}</div>
+                            <div className="text-2xl font-bold text-[#E5F185]">{formattedRaised}</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Next Reward - MOBILE */}
                 <div className="md:hidden relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a]" />
-                    <div className="absolute -top-6 right-4 w-36 h-36 rounded-full bg-indigo-600/20 blur-2xl pointer-events-none" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#0a0312] via-[#2D3482] to-[#0a0312]" />
+                    <div className="absolute -top-6 right-4 w-36 h-36 rounded-full bg-[#2D3482]/20 blur-2xl pointer-events-none" />
                     <div className="relative z-10 p-4">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="text-xs font-semibold text-indigo-300/70 uppercase tracking-widest">Events</span>
+                            <span className="text-xs font-semibold text-[#FEA47F]/70 uppercase tracking-widest">Events</span>
                             <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-[10px] font-bold">
                                 🔥 Hot
                             </span>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="text-4xl font-black text-white tracking-tight">Now</div>
-                            <div className="flex-1 bg-[#0f172a]/5 border border-white/10 rounded-xl px-3 py-2.5 flex items-center justify-between">
+                            <div className="flex-1 bg-black/20 border border-white/10 rounded-xl px-3 py-2.5 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-pink-500/30">S</div>
+                                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#F25278] to-[#FEA47F] flex items-center justify-center text-xs font-bold text-white shadow-md shadow-[#F25278]/30">S</div>
                                     <span className="font-bold text-sm text-white">Sentient</span>
                                 </div>
-                                <span className="text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition-colors">Claim →</span>
+                                <span className="text-xs font-bold text-[#F25278] bg-[#F25278]/10 border border-[#F25278]/20 px-2 py-1 rounded-lg cursor-pointer hover:bg-[#F25278]/20 transition-colors">Claim →</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 {/* Next Reward - DESKTOP */}
-                <div className="hidden md:flex xl:col-span-1 relative overflow-hidden bg-linear-to-br from-[#0f172a] via-[#1e1b4b] to-[#0f172a] rounded-2xl border border-indigo-900/40 p-6 flex-col justify-between">
-                    <div className="absolute -top-6 right-4 w-36 h-36 rounded-full bg-indigo-600/20 blur-2xl pointer-events-none" />
+                <div className="hidden md:flex xl:col-span-1 relative overflow-hidden bg-linear-to-br from-[#0a0312] via-[#2D3482] to-[#0a0312] rounded-2xl border border-[#2D3482]/40 p-6 flex-col justify-between">
+                    <div className="absolute -top-6 right-4 w-36 h-36 rounded-full bg-[#2D3482]/20 blur-2xl pointer-events-none" />
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-indigo-300/60 text-xs font-semibold uppercase tracking-widest">Events</h3>
+                        <h3 className="text-[#FEA47F]/60 text-xs font-semibold uppercase tracking-widest">Events</h3>
                         <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-[10px] font-bold">
                             🔥 Hot
                         </span>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="text-4xl font-black text-white tracking-tight">Now</div>
-                        <div className="flex-1 bg-[#0f172a]/5 border border-white/10 rounded-xl p-3 flex items-center justify-between">
+                        <div className="flex-1 bg-black/20 border border-white/10 rounded-xl p-3 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <div className="w-9 h-9 rounded-full bg-linear-to-br from-pink-500 to-rose-600 flex items-center justify-center text-sm font-bold text-white shadow-md shadow-pink-500/30">S</div>
+                                <div className="w-9 h-9 rounded-full bg-linear-to-br from-[#F25278] to-[#FEA47F] flex items-center justify-center text-sm font-bold text-white shadow-md shadow-[#F25278]/30">S</div>
                                 <span className="font-bold text-sm text-white">Sentient</span>
                             </div>
-                            <span className="text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition-colors">Claim →</span>
+                            <span className="text-xs font-bold text-[#F25278] bg-[#F25278]/10 border border-[#F25278]/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-[#F25278]/20 transition-colors">Claim →</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Suggested Projects – MOBILE */}
                 <div className="md:hidden relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-gray-900 to-[#0d1a2e]" />
-                    <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-blue-700/10 blur-2xl pointer-events-none" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#0a0312] to-[#2D3482]" />
+                    <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-[#F25278]/10 blur-2xl pointer-events-none" />
                     <div className="relative z-10 p-4">
                         <div className="flex items-center gap-2 mb-3">
                             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Suggested Projects</span>
                             {recommendedProjects.length > 0 && (
-                                <span className="px-1.5 py-0.5 rounded-full bg-blue-600/20 text-blue-400 text-[10px] font-bold border border-blue-600/30">{recommendedProjects.length}</span>
+                                <span className="px-1.5 py-0.5 rounded-full bg-[#F25278]/20 text-[#F25278] text-[10px] font-bold border border-[#F25278]/30">{recommendedProjects.length}</span>
                             )}
                         </div>
                         <div
                             className="flex gap-3 overflow-x-auto pb-2 snap-x"
-                            style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(59,130,246,0.35) rgba(15,23,42,0.4)' }}
+                            style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(242,82,120,0.35) rgba(10,3,18,0.4)' }}
                         >
                             {recommendedProjects.map((project, idx) => (
-                                <div key={idx} className="group bg-[#0f172a]/5 border border-white/10 hover:border-blue-500/40 rounded-xl p-3 transition-all cursor-pointer min-w-[220px] snap-center shrink-0" onClick={() => window.open(project.link, '_blank')}>
+                                <div key={idx} className="group bg-[#0a0312]/50 border border-white/10 hover:border-[#F25278]/40 rounded-xl p-3 transition-all cursor-pointer min-w-[220px] snap-center shrink-0" onClick={() => window.open(project.link, '_blank')}>
                                     <div className="flex items-start justify-between gap-2 mb-1">
                                         <span className="font-bold text-white text-sm truncate">{project.name}</span>
-                                        <span className="shrink-0 text-[9px] text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded-md font-semibold">Suggested</span>
+                                        <span className="shrink-0 text-[9px] text-[#F25278] bg-[#F25278]/10 border border-[#F25278]/20 px-1.5 py-0.5 rounded-md font-semibold">Suggested</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] text-gray-500">by <span className="text-gray-400">{project.sender}</span></span>
-                                        <span className="text-[10px] text-blue-400 flex items-center gap-0.5">
+                                        <span className="text-[10px] text-[#F25278] flex items-center gap-0.5">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                             Link
                                         </span>
                                     </div>
                                     {user?.role === 'ULTRA' && (
                                         <div className="flex gap-2 mt-2 pt-2 border-t border-white/5">
-                                            <button onClick={(e) => { e.stopPropagation(); setSelectedSuggestion(project); setShowAddModal(true); }} className="flex-1 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-[10px] font-bold rounded-lg border border-blue-500/30 transition-colors">Audit</button>
+                                            <button onClick={(e) => { e.stopPropagation(); setSelectedSuggestion(project); setShowAddModal(true); }} className="flex-1 py-1 bg-[#F25278]/20 hover:bg-[#F25278]/30 text-[#F25278] text-[10px] font-bold rounded-lg border border-[#F25278]/30 transition-colors">Audit</button>
                                             <button onClick={(e) => handleDeleteSuggestion(project.id, e)} className="flex-1 py-1 bg-red-900/30 hover:bg-red-800/50 text-red-400 text-[10px] font-bold rounded-lg border border-red-900/40 transition-colors">Delete</button>
                                         </div>
                                     )}
@@ -638,41 +638,41 @@ export default function AirdropsPage() {
                     </div>
                 </div>
                 {/* Suggested Projects – DESKTOP */}
-                <div className="hidden md:block xl:col-span-2 bg-[#0a0e1a]/80 backdrop-blur-xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute bottom-0 right-0 w-40 h-40 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none group-hover:bg-indigo-500/20 transition-colors" />
-                    <span className="absolute top-0 right-0 w-1 h-16 bg-linear-to-b from-blue-500 to-transparent" />
-                    <span className="absolute bottom-0 left-0 w-1 h-16 bg-linear-to-t from-indigo-500 to-transparent" />
+                <div className="hidden md:block xl:col-span-2 bg-[#0a0312]/80 backdrop-blur-xl border border-[#F25278]/20 shadow-[0_0_30px_rgba(242,82,120,0.05)] rounded-2xl p-6 relative overflow-hidden group">
+                    <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#2D3482]/10 blur-3xl rounded-full pointer-events-none group-hover:bg-[#2D3482]/20 transition-colors" />
+                    <span className="absolute top-0 right-0 w-1 h-16 bg-linear-to-b from-[#F25278] to-transparent" />
+                    <span className="absolute bottom-0 left-0 w-1 h-16 bg-linear-to-t from-[#FEA47F] to-transparent" />
                     
-                    <div className="flex justify-between items-center mb-4 relative z-10 border-b border-blue-500/10 pb-2">
-                        <h3 className="text-blue-400/80 text-sm font-bold uppercase tracking-wider">Suggested Projects</h3>
+                    <div className="flex justify-between items-center mb-4 relative z-10 border-b border-[#F25278]/10 pb-2">
+                        <h3 className="text-[#F25278]/80 text-sm font-bold uppercase tracking-wider">Suggested Projects</h3>
                         {recommendedProjects.length > 0 && (
-                            <span className="px-2 py-0.5 rounded-full bg-blue-600/20 text-blue-400 text-xs font-bold border border-blue-600/30">{recommendedProjects.length}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-[#F25278]/20 text-[#F25278] text-xs font-bold border border-[#F25278]/30">{recommendedProjects.length}</span>
                         )}
                     </div>
                     <div
                         className="flex gap-4 overflow-x-auto pb-3 snap-x"
-                        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(59,130,246,0.4) rgba(15,23,42,0.5)' }}
+                        style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(242,82,120,0.4) rgba(10,3,18,0.5)' }}
                     >
                         {recommendedProjects.map((project, idx) => (
-                            <div key={idx} className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-blue-500/50 transition-colors cursor-pointer group flex flex-col justify-between min-w-[260px] max-w-[300px] snap-start shrink-0" onClick={() => window.open(project.link, '_blank')}>
+                            <div key={idx} className="bg-[#0a0312]/50 rounded-xl p-4 border border-white/10 hover:border-[#F25278]/50 transition-colors cursor-pointer group flex flex-col justify-between min-w-[260px] max-w-[300px] snap-start shrink-0" onClick={() => window.open(project.link, '_blank')}>
                                 <div>
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="font-bold text-white text-base truncate">{project.name}</div>
-                                        <span className="text-[10px] text-gray-500 bg-gray-900 px-2 py-1 rounded border border-gray-800 group-hover:bg-blue-900/20 group-hover:text-blue-400 group-hover:border-blue-800/50 transition-colors shrink-0 ml-2">Suggested</span>
+                                        <span className="text-[10px] text-gray-500 bg-black/40 px-2 py-1 rounded border border-white/5 group-hover:bg-[#F25278]/20 group-hover:text-[#F25278] group-hover:border-[#F25278]/50 transition-colors shrink-0 ml-2">Suggested</span>
                                     </div>
                                     <div className="text-[10px] text-gray-500 mb-2">by <span className="text-gray-400">{project.sender}</span></div>
                                 </div>
                                 <div>
                                     <div className="flex items-center justify-between gap-2">
                                         <div className="text-xs text-gray-400 truncate" title={project.description}>{project.description || 'No description'}</div>
-                                        <div className="text-xs font-medium text-blue-400 flex items-center gap-1 shrink-0">
+                                        <div className="text-xs font-medium text-[#F25278] flex items-center gap-1 shrink-0">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                             Link
                                         </div>
                                     </div>
                                     {user?.role === 'ULTRA' && (
-                                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-700/50">
-                                            <button onClick={(e) => { e.stopPropagation(); setSelectedSuggestion(project); setShowAddModal(true); }} className="flex-1 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/30 transition-colors">Audit</button>
+                                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5">
+                                            <button onClick={(e) => { e.stopPropagation(); setSelectedSuggestion(project); setShowAddModal(true); }} className="flex-1 py-1.5 bg-[#F25278]/20 hover:bg-[#F25278]/30 text-[#F25278] text-xs font-bold rounded-lg border border-[#F25278]/30 transition-colors">Audit</button>
                                             <button onClick={(e) => handleDeleteSuggestion(project.id, e)} className="flex-1 py-1.5 bg-red-900/40 hover:bg-red-800/60 text-red-400 text-xs font-bold rounded-lg border border-red-900/50 transition-colors">Delete</button>
                                         </div>
                                     )}
@@ -692,41 +692,41 @@ export default function AirdropsPage() {
             <div className="md:hidden space-y-3">
                 {/* Mobile Filter Bar */}
                 <div className="relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-gray-900 to-[#0c1628]" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#0a0312] to-[#2D3482]" />
                     <div className="relative z-10 p-3 space-y-2">
                         {/* Row 1: Search inputs */}
                         <div className="grid grid-cols-2 gap-2">
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                    <svg className="h-3.5 w-3.5 text-blue-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                    <svg className="h-3.5 w-3.5 text-[#F25278]/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                                 </div>
-                                <input type="text" placeholder="Project Name" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className="w-full pl-7 pr-2 py-2 bg-[#0f172a]/5 border border-white/10 rounded-xl text-xs text-gray-100 placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                                <input type="text" placeholder="Project Name" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className="w-full pl-7 pr-2 py-2 bg-black/20 border border-white/10 rounded-xl text-xs text-gray-100 placeholder-gray-500 focus:ring-1 focus:ring-[#F25278] focus:outline-none" />
                             </div>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                    <svg className="h-3.5 w-3.5 text-blue-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <svg className="h-3.5 w-3.5 text-[#F25278]/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </div>
-                                <input type="text" placeholder="Global Search" value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} className="w-full pl-7 pr-2 py-2 bg-[#0f172a]/5 border border-white/10 rounded-xl text-xs text-gray-100 placeholder-gray-500 focus:ring-1 focus:ring-blue-500 focus:outline-none" />
+                                <input type="text" placeholder="Global Search" value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} className="w-full pl-7 pr-2 py-2 bg-black/20 border border-white/10 rounded-xl text-xs text-gray-100 placeholder-gray-500 focus:ring-1 focus:ring-[#F25278] focus:outline-none" />
                             </div>
                         </div>
                         {/* Row 2: dropdowns + add button */}
                         <div className="grid grid-cols-2 gap-2">
                             <div className="relative">
-                                <select value={taskTypeFilter} onChange={(e) => setTaskTypeFilter(e.target.value)} className="w-full appearance-none bg-[#0f172a]/5 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-gray-300 outline-none focus:ring-1 focus:ring-blue-500">
+                                <select value={taskTypeFilter} onChange={(e) => setTaskTypeFilter(e.target.value)} className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-gray-300 outline-none focus:ring-1 focus:ring-[#F25278]">
                                     <option value="">All Types</option>
                                     {uniqueTaskTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                             </div>
                             <div className="relative">
-                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full appearance-none bg-[#0f172a]/5 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-gray-300 outline-none focus:ring-1 focus:ring-blue-500">
+                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-gray-300 outline-none focus:ring-1 focus:ring-[#F25278]">
                                     <option value="">All Status</option>
                                     {uniqueStatuses.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                             </div>
                             <div className="relative">
-                                <select value={visibilityFilter} onChange={(e) => setVisibilityFilter(e.target.value)} className="w-full appearance-none bg-[#0f172a]/5 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-gray-300 outline-none focus:ring-1 focus:ring-blue-500">
+                                <select value={visibilityFilter} onChange={(e) => setVisibilityFilter(e.target.value)} className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-gray-300 outline-none focus:ring-1 focus:ring-[#F25278]">
                                     <option value="">All Visibility</option>
                                     <option value="public">Public</option>
                                     <option value="private">Private</option>
@@ -735,7 +735,7 @@ export default function AirdropsPage() {
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
                             </div>
                             {user && (
-                                <button onClick={() => setShowAddModal(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-700/30 transition-all active:scale-95 border border-white/10">
+                                <button onClick={() => setShowAddModal(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-linear-to-r from-[#F25278] to-[#FEA47F] hover:from-[#F25278]/90 hover:to-[#FEA47F]/90 text-white rounded-xl text-xs font-bold shadow-lg shadow-[#F25278]/30 transition-all active:scale-95 border border-white/10">
                                     <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                     Add Project
                                 </button>
@@ -841,26 +841,26 @@ export default function AirdropsPage() {
             {/* ===== DESKTOP: Filter Bar + Table ===== */}
             <div className="hidden md:block space-y-4">
                 {/* Futuristic Filter Bar */}
-                <div className="relative overflow-hidden rounded-2xl border border-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.03)] bg-[#0a0e1a]/80 backdrop-blur-xl">
+                <div className="relative overflow-hidden rounded-2xl border border-[#F25278]/20 shadow-[0_0_20px_rgba(242,82,120,0.03)] bg-[#0a0312]/80 backdrop-blur-xl">
                     <div className="relative z-10 px-5 py-3 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-wrap">
                             {/* Project Name */}
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-4 w-4 text-blue-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                    <svg className="h-4 w-4 text-[#F25278]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                                 </div>
-                                <input type="text" placeholder="Project Name" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className="pl-9 pr-4 py-2 bg-[#0f172a]/5 border border-white/10 rounded-xl text-sm text-gray-100 placeholder-gray-600 focus:ring-1 focus:ring-blue-500 focus:outline-none w-44" />
+                                <input type="text" placeholder="Project Name" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className="pl-9 pr-4 py-2 bg-black/20 border border-white/10 rounded-xl text-sm text-gray-100 placeholder-gray-600 focus:ring-1 focus:ring-[#F25278] focus:outline-none w-44" />
                             </div>
                             {/* Global Search */}
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-4 w-4 text-blue-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <svg className="h-4 w-4 text-[#F25278]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </div>
-                                <input type="text" placeholder="Global Search" value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} className="pl-9 pr-4 py-2 bg-[#0f172a]/5 border border-white/10 rounded-xl text-sm text-gray-100 placeholder-gray-600 focus:ring-1 focus:ring-blue-500 focus:outline-none w-44" />
+                                <input type="text" placeholder="Global Search" value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} className="pl-9 pr-4 py-2 bg-black/20 border border-white/10 rounded-xl text-sm text-gray-100 placeholder-gray-600 focus:ring-1 focus:ring-[#F25278] focus:outline-none w-44" />
                             </div>
                             {/* Task Type */}
                             <div className="relative">
-                                <select value={taskTypeFilter} onChange={(e) => setTaskTypeFilter(e.target.value)} className="appearance-none bg-[#0f172a]/5 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <select value={taskTypeFilter} onChange={(e) => setTaskTypeFilter(e.target.value)} className="appearance-none bg-black/20 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-[#F25278] cursor-pointer">
                                     <option value="">Task Type: All</option>
                                     {uniqueTaskTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
                                 </select>
@@ -868,7 +868,7 @@ export default function AirdropsPage() {
                             </div>
                             {/* Status */}
                             <div className="relative">
-                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="appearance-none bg-[#0f172a]/5 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="appearance-none bg-black/20 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-[#F25278] cursor-pointer">
                                     <option value="">Status: All</option>
                                     {uniqueStatuses.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                                 </select>
@@ -876,7 +876,7 @@ export default function AirdropsPage() {
                             </div>
                             {/* Visibility */}
                             <div className="relative">
-                                <select value={visibilityFilter} onChange={(e) => setVisibilityFilter(e.target.value)} className="appearance-none bg-[#0f172a]/5 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <select value={visibilityFilter} onChange={(e) => setVisibilityFilter(e.target.value)} className="appearance-none bg-black/20 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-[#F25278] cursor-pointer">
                                     <option value="">Visibility: All</option>
                                     <option value="public">Public</option>
                                     <option value="private">Private</option>
@@ -889,23 +889,23 @@ export default function AirdropsPage() {
                         </div>
                         {/* Add button */}
                         {user ? (
-                            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-blue-700/25 transition-all active:scale-95 border border-white/10">
+                            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-[#F25278] to-[#FEA47F] hover:from-[#F25278]/90 hover:to-[#FEA47F]/90 text-white rounded-xl text-sm font-semibold shadow-lg shadow-[#F25278]/25 transition-all active:scale-95 border border-white/10">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                 Add Project
                             </button>
                         ) : (
-                            <div className="flex items-center justify-center p-2 bg-[#0f172a]/5 rounded-xl border border-white/10 cursor-not-allowed" title="Requires Login to Add Project">
+                            <div className="flex items-center justify-center p-2 bg-black/20 rounded-xl border border-white/10 cursor-not-allowed" title="Requires Login to Add Project">
                                 <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                             </div>
                         )}
                     </div>
                 </div>
                 {/* Table */}
-                <div className="relative overflow-hidden rounded-2xl border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.05)] bg-[#0a0e1a]/80 backdrop-blur-xl">
+                <div className="relative overflow-hidden rounded-2xl border border-[#F25278]/20 shadow-[0_0_30px_rgba(242,82,120,0.05)] bg-[#0a0312]/80 backdrop-blur-xl">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-linear-to-r from-blue-900/10 to-indigo-900/10 text-xs uppercase text-blue-400/80 font-bold tracking-widest border-b border-blue-500/20">
+                                <tr className="bg-linear-to-r from-[#F25278]/10 to-[#FEA47F]/10 text-xs uppercase text-[#F25278]/80 font-bold tracking-widest border-b border-[#F25278]/20">
                                     <th className="py-4 px-6 w-1/3">Name</th>
                                     <th className="py-4 px-6">Task Type</th>
                                     <th className="py-4 px-6">Status</th>
@@ -940,11 +940,11 @@ export default function AirdropsPage() {
                         </table>
                     </div>
                     {/* Pagination */}
-                    <div className="bg-blue-900/10 px-6 py-3 border-t border-blue-500/20 flex justify-between items-center relative z-10">
-                        <span className="text-xs text-blue-400/60 font-medium">Showing {filteredAirdrops.length} projects</span>
+                    <div className="bg-[#F25278]/10 px-6 py-3 border-t border-[#F25278]/20 flex justify-between items-center relative z-10">
+                        <span className="text-xs text-[#F25278]/60 font-medium">Showing {filteredAirdrops.length} projects</span>
                         <div className="flex gap-2">
-                            <button className="px-4 py-1.5 rounded-xl text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all active:scale-95 shadow-[0_0_10px_rgba(59,130,246,0.1)]">Previous</button>
-                            <button className="px-4 py-1.5 rounded-xl text-xs font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all active:scale-95 shadow-[0_0_10px_rgba(59,130,246,0.1)]">Next</button>
+                            <button className="px-4 py-1.5 rounded-xl text-xs font-semibold text-[#F25278] bg-[#F25278]/10 border border-[#F25278]/20 hover:bg-[#F25278]/20 transition-all active:scale-95 shadow-[0_0_10px_rgba(242,82,120,0.1)]">Previous</button>
+                            <button className="px-4 py-1.5 rounded-xl text-xs font-semibold text-[#F25278] bg-[#F25278]/10 border border-[#F25278]/20 hover:bg-[#F25278]/20 transition-all active:scale-95 shadow-[0_0_10px_rgba(242,82,120,0.1)]">Next</button>
                         </div>
                     </div>
                 </div>
@@ -953,7 +953,7 @@ export default function AirdropsPage() {
             {/* Suggest Project Modal */}
             {showSuggestModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-[#0f172a] rounded-2xl w-full max-w-xl border border-white/10 shadow-2xl p-6 md:p-8">
+                    <div className="bg-[#0a0312] rounded-2xl w-full max-w-xl border border-[#F25278]/20 shadow-2xl p-6 md:p-8">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-white">Suggest a Project</h2>
                             <button onClick={() => setShowSuggestModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -964,21 +964,21 @@ export default function AirdropsPage() {
                         <form onSubmit={handleSuggestProject} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Project Name *</label>
-                                <input required name="name" type="text" className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. ZkSync" />
+                                <input required name="name" type="text" className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="e.g. ZkSync" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Source / Social Link *</label>
-                                <input required name="link" type="url" className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="https://twitter.com/..." />
+                                <input required name="link" type="url" className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="https://twitter.com/..." />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Description / Reason</label>
-                                <textarea name="description" rows={3} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="Why should we add this project?" />
+                                <textarea name="description" rows={3} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="Why should we add this project?" />
                             </div>
                             <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                                 <button type="button" onClick={() => setShowSuggestModal(false)} className="px-5 py-2.5 rounded-xl font-medium text-gray-600 hover:bg-gray-800 transition-colors">
                                     Cancel
                                 </button>
-                                <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-xl font-medium shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 flex items-center gap-2">
+                                <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 bg-[#F25278] hover:bg-[#F25278]/90 active:scale-95 text-white rounded-xl font-medium shadow-lg shadow-[#F25278]/20 transition-all disabled:opacity-50 flex items-center gap-2">
                                     {isSubmitting ? 'Sending...' : 'Submit Suggestion'}
                                 </button>
                             </div>
@@ -991,7 +991,7 @@ export default function AirdropsPage() {
             {/* Add/Edit Project Modal */}
             {showAddModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-[#0f172a] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl p-6 md:p-8 custom-scrollbar">
+                    <div className="bg-[#0a0312] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-[#F25278]/30 shadow-2xl p-6 md:p-8 custom-scrollbar">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-white">
                                 {editingProject ? 'Edit Project' : (selectedSuggestion ? 'Audit Suggested Project' : 'Add New Project')}
@@ -1004,19 +1004,19 @@ export default function AirdropsPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Project Name *</label>
-                                    <input required name="name" type="text" defaultValue={editingProject?.name || selectedSuggestion?.name || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. Optimism" />
+                                    <input required name="name" type="text" defaultValue={editingProject?.name || selectedSuggestion?.name || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="e.g. Optimism" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Icon URL</label>
-                                    <input name="icon" type="url" defaultValue={editingProject?.icon || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="https://example.com/logo.png" />
+                                    <input name="icon" type="url" defaultValue={editingProject?.icon || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="https://example.com/logo.png" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Project Type</label>
-                                    <input name="projectType" type="text" defaultValue={editingProject?.projectType || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. Blockchain Infra" />
+                                    <input name="projectType" type="text" defaultValue={editingProject?.projectType || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="e.g. Blockchain Infra" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
-                                    <select name="status" defaultValue={editingProject?.status || 'New'} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 appearance-none">
+                                    <select name="status" defaultValue={editingProject?.status || 'New'} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278] appearance-none">
                                         <option value="New">New</option>
                                         <option value="Potential">Potential</option>
                                         <option value="Confirmed">Confirmed</option>
@@ -1026,7 +1026,7 @@ export default function AirdropsPage() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Reward Date</label>
-                                    <input name="rewardDate" type="text" defaultValue={editingProject?.rewardDate || "TBA"} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                                    <input name="rewardDate" type="text" defaultValue={editingProject?.rewardDate || "TBA"} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Cost (Number Only)</label>
@@ -1034,28 +1034,28 @@ export default function AirdropsPage() {
                                         <select
                                             value={currencyType}
                                             onChange={(e) => setCurrencyType(e.target.value)}
-                                            className="bg-gray-800 border border-white/10 rounded-l-lg px-3 py-2 text-white focus:outline-none"
+                                            className="bg-black/40 border border-white/10 rounded-l-lg px-3 py-2 text-white focus:outline-none"
                                         >
                                             <option value="$">$</option>
                                             <option value="Rp">Rp</option>
                                         </select>
-                                        <input name="cost" type="number" defaultValue={(editingProject?.cost || '').replace(/[^0-9]/g, '') || ''} placeholder="500" className="w-full bg-[#0f172a] border border-l-0 border-white/10 rounded-r-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                                        <input name="cost" type="number" defaultValue={(editingProject?.cost || '').replace(/[^0-9]/g, '') || ''} placeholder="500" className="w-full bg-black/20 border border-l-0 border-white/10 rounded-r-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" />
                                     </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Time to Complete (Minutes)</label>
-                                    <input name="time" type="number" defaultValue={(editingProject?.time || '').replace(/[^0-9]/g, '') || ''} placeholder="e.g. 10" className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                                    <input name="time" type="number" defaultValue={(editingProject?.time || '').replace(/[^0-9]/g, '') || ''} placeholder="e.g. 10" className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" />
                                 </div>
                                 {user?.role === 'ULTRA' && (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">Visibility</label>
                                         <div className="flex items-center gap-4 py-2">
-                                            <label className="flex items-center gap-2 text-white cursor-pointer select-none hover:text-blue-400">
-                                                <input type="radio" name="isPublic" value="true" defaultChecked={editingProject ? editingProject.isPublic : true} className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700" />
+                                            <label className="flex items-center gap-2 text-white cursor-pointer select-none hover:text-[#F25278]">
+                                                <input type="radio" name="isPublic" value="true" defaultChecked={editingProject ? editingProject.isPublic : true} className="w-4 h-4 text-[#F25278] bg-black border-gray-700 focus:ring-[#F25278]" />
                                                 Public
                                             </label>
                                             <label className="flex items-center gap-2 text-white cursor-pointer select-none hover:text-gray-300">
-                                                <input type="radio" name="isPublic" value="false" defaultChecked={editingProject ? !editingProject.isPublic : false} className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700" />
+                                                <input type="radio" name="isPublic" value="false" defaultChecked={editingProject ? !editingProject.isPublic : false} className="w-4 h-4 text-[#F25278] bg-black border-gray-700 focus:ring-[#F25278]" />
                                                 Private
                                             </label>
                                         </div>
@@ -1064,8 +1064,8 @@ export default function AirdropsPage() {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Raised</label>
                                     <div className="flex">
-                                        <span className="bg-gray-800 border border-white/10 rounded-l-lg px-4 py-2 text-gray-500">$</span>
-                                        <input name="raise" type="text" defaultValue={(editingProject?.raise || '').replace(/^\$/, '') || ''} placeholder="e.g. 11M or 11,000,000" className="w-full bg-[#0f172a] border border-l-0 border-white/10 rounded-r-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                                        <span className="bg-black/40 border border-white/10 rounded-l-lg px-4 py-2 text-gray-500">$</span>
+                                        <input name="raise" type="text" defaultValue={(editingProject?.raise || '').replace(/^\$/, '') || ''} placeholder="e.g. 11M or 11,000,000" className="w-full bg-black/20 border border-l-0 border-white/10 rounded-r-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" />
                                     </div>
                                 </div>
                             </div>
@@ -1075,36 +1075,36 @@ export default function AirdropsPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs text-gray-500 mb-1">Website</label>
-                                        <input name="linkWeb" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'web')?.url || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="https://..." />
+                                        <input name="linkWeb" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'web')?.url || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#F25278]" placeholder="https://..." />
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-500 mb-1">X (Twitter)</label>
-                                        <input name="linkX" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'x')?.url || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="https://twitter.com/..." />
+                                        <input name="linkX" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'x')?.url || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#F25278]" placeholder="https://twitter.com/..." />
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-500 mb-1">GitHub</label>
-                                        <input name="linkGit" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'github')?.url || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="https://github.com/..." />
+                                        <input name="linkGit" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'github')?.url || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#F25278]" placeholder="https://github.com/..." />
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-500 mb-1">Telegram</label>
-                                        <input name="linkTele" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'telegram')?.url || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="https://t.me/..." />
+                                        <input name="linkTele" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'telegram')?.url || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#F25278]" placeholder="https://t.me/..." />
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-500 mb-1">Discord</label>
-                                        <input name="linkDiscord" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'discord')?.url || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="https://discord.gg/..." />
+                                        <input name="linkDiscord" type="url" defaultValue={editingProject?.links?.find(l => l.name === 'discord')?.url || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[#F25278]" placeholder="https://discord.gg/..." />
                                     </div>
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                                <textarea name="description" rows={3} defaultValue={editingProject?.description || selectedSuggestion?.description || ''} className="w-full bg-[#0f172a] border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="Instructions or details about the project..." />
+                                <textarea name="description" rows={3} defaultValue={editingProject?.description || selectedSuggestion?.description || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="Instructions or details about the project..." />
                             </div>
                             <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                                 <button type="button" onClick={() => { setShowAddModal(false); setSelectedSuggestion(null); setEditingProject(null); }} className="px-5 py-2.5 rounded-xl font-medium text-gray-600 hover:bg-gray-800 transition-colors">
                                     Cancel
                                 </button>
-                                <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-xl font-medium shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 flex items-center gap-2">
+                                <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 bg-[#F25278] hover:bg-[#F25278]/90 active:scale-95 text-white rounded-xl font-medium shadow-lg shadow-[#F25278]/20 transition-all disabled:opacity-50 flex items-center gap-2">
                                     {isSubmitting ? (editingProject ? 'Saving...' : (selectedSuggestion ? 'Auditing...' : 'Creating...')) : (editingProject ? 'Save Changes' : (selectedSuggestion ? 'Audit Project' : 'Create Project'))}
                                 </button>
                             </div>
