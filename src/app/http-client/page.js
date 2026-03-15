@@ -692,8 +692,14 @@ export default function HttpClientPage() {
 
             />
 
-            {/* ── Toolbar (controls above the workspace) ── */}
-            <div className="flex flex-wrap items-center gap-3 px-4">
+            {userLoading ? (
+                <div className="py-24">
+                    <LoadingState message="Connecting to neural interface..." colorTheme="cyberpunk" />
+                </div>
+            ) : (
+                <>
+                    {/* ── Toolbar (controls above the workspace) ── */}
+                    <div className="flex flex-wrap items-center gap-3 px-4">
                 {isLoggedIn && (
                     <button
                         onClick={() => setSidebarOpen(o => !o)}
@@ -957,6 +963,8 @@ export default function HttpClientPage() {
                         </div> {/* End Main panel */}
                     </div> {/* End Grid */}
                 </div> {/* End Workspace Container */}
+                </>
+            )}
 
             {showEnvModal && (
                 <EnvModal

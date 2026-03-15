@@ -48,9 +48,6 @@ export async function POST(request) {
     try {
         const user = await getUser();
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        if (user.role === 'MEMBER') {
-            return NextResponse.json({ error: 'PRO or ULTRA plan required' }, { status: 403 });
-        }
 
         const body = await request.json();
         const { taskId, completed } = body;

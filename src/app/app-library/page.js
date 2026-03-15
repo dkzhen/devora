@@ -235,7 +235,7 @@ export default function AppLibraryPage() {
 
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
             {toast && (
                 <div className="fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium bg-linear-to-r from-blue-600 via-fuchsia-600 to-purple-600 animate-pulse border border-blue-400/40">
                     {toast}
@@ -255,7 +255,7 @@ export default function AppLibraryPage() {
             />
 
             {/* Main Action Bar: Search + Buttons */}
-            <div className="flex flex-col md:flex-row gap-4 mb-2 item-center">
+            <div className="flex flex-col md:flex-row gap-4 item-center">
                 {/* Search box with Dawn style */}
                 <div className="flex-1 relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -273,8 +273,8 @@ export default function AppLibraryPage() {
                 </div>
 
                 {/* Tombol Add & Settings */}
-                <div className="flex gap-2 shrink-0">
-                    {isUltra && (
+                {isUltra && (
+                    <div className="flex gap-2 shrink-0">
                         <button
                             onClick={() => {
                                 if (!configComplete) {
@@ -292,17 +292,16 @@ export default function AppLibraryPage() {
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
                             <span className="hidden sm:inline">Add Release</span>
                         </button>
-                    )}
-                    <button
-                        disabled={!isUltra}
-                        onClick={() => setShowConfig(!showConfig)}
-                        className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!isUltra ? 'opacity-20 cursor-not-allowed grayscale' : showConfig ? 'bg-[#749F8B] border-[#749F8B]/50 text-white shadow-[0_0_20px_rgba(116,159,139,0.4)]' : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'}`}
-                        aria-label="Storage Settings"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        <span className="hidden sm:inline">{showConfig ? 'Active' : 'Configs'}</span>
-                    </button>
-                </div>
+                        <button
+                            onClick={() => setShowConfig(!showConfig)}
+                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${showConfig ? 'bg-[#749F8B] border-[#749F8B]/50 text-white shadow-[0_0_20px_rgba(116,159,139,0.4)]' : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'}`}
+                            aria-label="Storage Settings"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span className="hidden sm:inline">{showConfig ? 'Active' : 'Configs'}</span>
+                        </button>
+                    </div>
+                )}
             </div>
 
 
@@ -310,7 +309,7 @@ export default function AppLibraryPage() {
             {loading ? (
                 <LoadingState colorTheme="blue" message="Loading App Library..." />
             ) : (
-                <div className="relative space-y-8">
+                <div className="relative space-y-4 md:space-y-8">
                     {/* Storage Config Section (ULTRA only) - MOVED ABOVE GRID */}
                     {isUltra && showConfig && (
                         <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-300">
@@ -433,7 +432,7 @@ export default function AppLibraryPage() {
                             )}
                         </div>
                     )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 transition-colors mt-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 transition-colors">
                         {filteredApps.map((app) => (
                             <div
                                 key={app.id}

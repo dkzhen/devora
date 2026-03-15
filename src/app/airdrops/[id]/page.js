@@ -147,7 +147,7 @@ export default function AirdropDetailPage() {
                     return [...filtered, updated];
                 });
             } else {
-                alert('Failed to update progress, please upgrade your plan.');
+                alert('Failed to update progress.');
             }
         } catch (error) {
             console.error(error);
@@ -542,18 +542,6 @@ export default function AirdropDetailPage() {
                     </div>
                 </div>
             )}
-            {user && user.role === 'MEMBER' && (
-                <div className="relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-[#070d1f] to-[#1a1040] border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.05)]" />
-                    <div className="relative z-10 p-8 text-center flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
-                        </div>
-                        <h3 className="text-xl font-black text-white mb-2">Upgrade to Track Progress</h3>
-                        <p className="text-gray-500 text-sm max-w-md">Upgrade to PRO or ULTRA to unlock task completion tracking.</p>
-                    </div>
-                </div>
-            )}
 
             {/* ===== TASK TRACKER ===== */}
             <div className="flex flex-col lg:flex-row gap-6">
@@ -596,7 +584,7 @@ export default function AirdropDetailPage() {
                                     >
                                         <div className="flex items-start justify-between mb-3">
                                             <h4 className={`font-bold text-lg leading-tight ${isActive ? 'text-white' : 'text-gray-200'} max-w-[80%]`}>{task.title}</h4>
-                                            {user && (user.role === 'PRO' || user.role === 'ULTRA') && isCompleted && (
+                                            {user && isCompleted && (
                                                 <span className="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)] shrink-0">Completed</span>
                                             )}
                                         </div>
@@ -696,7 +684,7 @@ export default function AirdropDetailPage() {
                                     {progress.filter(p => p.completed && tasks.some(t => t.id === p.taskId)).length}/{tasks.length} Steps Done
                                 </span>
                             </div>
-                            {user && (user.role === 'PRO' || user.role === 'ULTRA') && (
+                            {user && (
                                 <div className="flex gap-2 mt-4 sm:mt-0">
                                     {/* Desktop Buttons */}
                                     <div className="hidden sm:flex gap-2">
@@ -961,7 +949,7 @@ export default function AirdropDetailPage() {
                                                 <span className={`px-3 py-1.5 rounded ${activeTask.status === 'Closed' ? 'bg-red-900/30 text-red-400' : 'bg-green-900/30 text-green-400'} text-xs font-bold border ${activeTask.status === 'Closed' ? 'border-red-900/50' : 'border-green-900/50'}`}>
                                                     {activeTask.status}
                                                 </span>
-                                                {user && (user.role === 'PRO' || user.role === 'ULTRA') && (
+                                                {user && (
                                                     <button
                                                         onClick={() => handleToggleComplete(activeTask.id, progress.find(p => p.taskId === activeTask.id)?.completed)}
                                                         className={`flex items-center gap-2 group ${activeTask.status === 'Closed' ? 'opacity-50 cursor-not-allowed' : ''}`}
