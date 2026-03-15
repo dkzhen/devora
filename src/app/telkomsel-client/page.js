@@ -68,6 +68,100 @@ const MOCK_CONFIG = {
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+const ConfigForm = ({ form, setForm, onSave, onCancel, saving, fields }) => (
+    <div className="max-w-4xl mx-auto w-full">
+        <div className="relative bg-[#070c17] border border-red-500/20 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(239,68,68,0.06),0_0_1px_rgba(239,68,68,0.2)]">
+            {/* Top neon line */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent pointer-events-none" />
+            {/* Corner brackets */}
+            <span className="absolute top-2 left-2 w-4 h-4 border-t border-l border-red-500/50 pointer-events-none" />
+            <span className="absolute top-2 right-2 w-4 h-4 border-t border-r border-red-500/50 pointer-events-none" />
+            <span className="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-red-500/20 pointer-events-none" />
+            <span className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-red-500/20 pointer-events-none" />
+
+            {/* Form Header */}
+            <div className="bg-linear-to-r from-[#100808] via-[#0a0808] to-[#080812] p-5 border-b border-red-500/10">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-red-600/15 border border-red-500/25 rounded shrink-0 shadow-[0_0_12px_rgba(239,68,68,0.18)]">
+                        <Shield className="w-4 h-4 text-red-400" />
+                    </div>
+                    <div>
+                        <h2 className="text-sm font-black text-white tracking-widest uppercase">
+                            Token Configuration
+                        </h2>
+                        <p className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">
+                            Open DevTools → Network at{" "}
+                            <span className="text-red-400/80">my.telkomsel.com</span>, copy
+                            these 6 headers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+                    {fields.map((f) => (
+                        <div key={f.key} className="space-y-1.5">
+                            <div className="flex items-center justify-between gap-2">
+                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-red-500/70" />
+                                    {f.label}
+                                </label>
+                                <span className="text-[9px] text-gray-600 italic truncate max-w-[130px]">
+                                    {f.hint}
+                                </span>
+                            </div>
+                            <textarea
+                                rows={
+                                    ["authorization", "accessAuth", "xDevice"].includes(f.key)
+                                        ? 3
+                                        : 2
+                                }
+                                value={form[f.key]}
+                                onChange={(e) =>
+                                    setForm((prev) => ({ ...prev, [f.key]: e.target.value }))
+                                }
+                                placeholder={f.placeholder}
+                                className="w-full bg-[#040811] border border-[#171f30] focus:border-red-500/30 focus:bg-[#060d1a] rounded px-4 py-2.5 text-[11px] text-gray-300 placeholder-gray-800 outline-none font-mono resize-none leading-relaxed"
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-4 mt-7 pt-5 border-t border-[#171f30]">
+                    <div className="flex-1 text-[10px] text-gray-500 flex items-start gap-2.5 bg-red-500/4 p-3.5 rounded border border-red-500/10">
+                        <Shield className="w-3.5 h-3.5 text-red-500/60 shrink-0 mt-0.5" />
+                        <span className="leading-relaxed">
+                            Token is stored with{" "}
+                            <strong className="text-gray-400">AES-256-CBC</strong> encryption. Only
+                            you can access it.
+                        </span>
+                    </div>
+                    <div className="flex gap-3 shrink-0 items-center">
+                        {onCancel && (
+                            <button
+                                onClick={onCancel}
+                                className="px-5 py-2.5 text-gray-500 hover:text-white rounded border border-[#171f30] hover:border-white/10 text-[10px] font-bold uppercase tracking-widest"
+                            >
+                                Cancel
+                            </button>
+                        )}
+                        <button
+                            onClick={onSave}
+                            disabled={saving}
+                            className="px-7 py-2.5 bg-linear-to-r from-red-600 to-rose-600 disabled:opacity-40 text-white rounded font-black text-[10px] uppercase tracking-[0.18em] flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.25)]"
+                            data-testid="save-config-btn"
+                        >
+                            <Zap className="w-3.5 h-3.5" />
+                            {saving ? "Saving..." : "Save & Connect"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 function TierBadge({ tier }) {
     const map = {
         Gold: "from-yellow-500/20 to-amber-500/20 text-yellow-400 border-yellow-500/30",
@@ -79,7 +173,7 @@ function TierBadge({ tier }) {
     const cls = map[tier] || "bg-white/10 text-gray-300 border-white/20";
     return (
         <span
-            className={`inline-flex items-center px-3 py-1 bg-gradient-to-r rounded-sm border text-[9px] font-black uppercase tracking-[0.2em] ${cls}`}
+            className={`inline-flex items-center px-3 py-1 bg-linear-to-r rounded-sm border text-[9px] font-black uppercase tracking-[0.2em] ${cls}`}
         >
             {tier || "Member"}
         </span>
@@ -308,100 +402,6 @@ export default function TelkomselClientPage() {
         toast.success("Configuration deleted");
     };
 
-    // ─── Config Form ──────────────────────────────────────────────────────────
-    const ConfigForm = ({ onCancel }) => (
-        <div className="max-w-4xl mx-auto w-full">
-            <div className="relative bg-[#070c17] border border-red-500/20 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(239,68,68,0.06),0_0_1px_rgba(239,68,68,0.2)]">
-                {/* Top neon line */}
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/60 to-transparent pointer-events-none" />
-                {/* Corner brackets */}
-                <span className="absolute top-2 left-2 w-4 h-4 border-t border-l border-red-500/50 pointer-events-none" />
-                <span className="absolute top-2 right-2 w-4 h-4 border-t border-r border-red-500/50 pointer-events-none" />
-                <span className="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-red-500/20 pointer-events-none" />
-                <span className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-red-500/20 pointer-events-none" />
-
-                {/* Form Header */}
-                <div className="bg-gradient-to-r from-[#100808] via-[#0a0808] to-[#080812] p-5 border-b border-red-500/10">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-red-600/15 border border-red-500/25 rounded shrink-0 shadow-[0_0_12px_rgba(239,68,68,0.18)]">
-                            <Shield className="w-4 h-4 text-red-400" />
-                        </div>
-                        <div>
-                            <h2 className="text-sm font-black text-white tracking-widest uppercase">
-                                Token Configuration
-                            </h2>
-                            <p className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">
-                                Open DevTools → Network at{" "}
-                                <span className="text-red-400/80">my.telkomsel.com</span>, copy
-                                these 6 headers.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                        {FIELDS.map((f) => (
-                            <div key={f.key} className="space-y-1.5">
-                                <div className="flex items-center justify-between gap-2">
-                                    <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-1.5">
-                                        <span className="w-1 h-1 rounded-full bg-red-500/70" />
-                                        {f.label}
-                                    </label>
-                                    <span className="text-[9px] text-gray-600 italic truncate max-w-[130px]">
-                                        {f.hint}
-                                    </span>
-                                </div>
-                                <textarea
-                                    rows={
-                                        ["authorization", "accessAuth", "xDevice"].includes(f.key)
-                                            ? 3
-                                            : 2
-                                    }
-                                    value={form[f.key]}
-                                    onChange={(e) =>
-                                        setForm((prev) => ({ ...prev, [f.key]: e.target.value }))
-                                    }
-                                    placeholder={f.placeholder}
-                                    className="w-full bg-[#040811] border border-[#171f30] focus:border-red-500/30 focus:bg-[#060d1a] rounded px-4 py-2.5 text-[11px] text-gray-300 placeholder-gray-800 outline-none font-mono resize-none leading-relaxed"
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-4 mt-7 pt-5 border-t border-[#171f30]">
-                        <div className="flex-1 text-[10px] text-gray-500 flex items-start gap-2.5 bg-red-500/[0.04] p-3.5 rounded border border-red-500/10">
-                            <Shield className="w-3.5 h-3.5 text-red-500/60 shrink-0 mt-0.5" />
-                            <span className="leading-relaxed">
-                                Token is stored with{" "}
-                                <strong className="text-gray-400">AES-256-CBC</strong> encryption. Only
-                                you can access it.
-                            </span>
-                        </div>
-                        <div className="flex gap-3 shrink-0 items-center">
-                            {onCancel && (
-                                <button
-                                    onClick={onCancel}
-                                    className="px-5 py-2.5 text-gray-500 hover:text-white rounded border border-[#171f30] hover:border-white/10 text-[10px] font-bold uppercase tracking-widest"
-                                >
-                                    Cancel
-                                </button>
-                            )}
-                            <button
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="px-7 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 disabled:opacity-40 text-white rounded font-black text-[10px] uppercase tracking-[0.18em] flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.25)]"
-                                data-testid="save-config-btn"
-                            >
-                                <Zap className="w-3.5 h-3.5" />
-                                {saving ? "Saving..." : "Save & Connect"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
 
     // ─── RENDER ───────────────────────────────────────────────────────────────
     return (
@@ -441,7 +441,7 @@ export default function TelkomselClientPage() {
                 <HeroHeader
                     colorTheme="red"
                     breadcrumbs={[
-                        { label: "Dashboard", href: "/", icon: <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
+                        { label: "Dashboard", href: "/" },
                         { label: "Telkomsel Client" }
                     ]}
                     title="Telkomsel"
@@ -453,9 +453,24 @@ export default function TelkomselClientPage() {
                 {state === "loading" && <LoadingState message="Loading..." colorTheme="red" />}
 
                 {/* Config Form */}
-                {state === "config" && <ConfigForm />}
+                {state === "config" && (
+                    <ConfigForm
+                        form={form}
+                        setForm={setForm}
+                        onSave={handleSave}
+                        saving={saving}
+                        fields={FIELDS}
+                    />
+                )}
                 {state === "dashboard" && showEdit && (
-                    <ConfigForm onCancel={() => setShowEdit(false)} />
+                    <ConfigForm
+                        form={form}
+                        setForm={setForm}
+                        onSave={handleSave}
+                        onCancel={() => setShowEdit(false)}
+                        saving={saving}
+                        fields={FIELDS}
+                    />
                 )}
 
                 {/* ── DASHBOARD ──────────────────────────────────────────────── */}
@@ -466,9 +481,9 @@ export default function TelkomselClientPage() {
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                                 {/* ── PROFILE CARD ─────────────────────────────────── */}
                                 <div className="lg:col-span-4 xl:col-span-3">
-                                    <div className="relative bg-gradient-to-b from-[#0a0e1a] to-[#07090f] border border-red-500/[0.13] rounded-lg p-5 flex flex-col gap-4 overflow-hidden shadow-[0_0_30px_rgba(239,68,68,0.05),0_0_1px_rgba(239,68,68,0.18)]">
+                                    <div className="relative bg-linear-to-b from-[#0a0e1a] to-[#07090f] border border-red-500/[0.13] rounded-lg p-5 flex flex-col gap-4 overflow-hidden shadow-[0_0_30px_rgba(239,68,68,0.05),0_0_1px_rgba(239,68,68,0.18)]">
                                         {/* Top neon accent */}
-                                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent pointer-events-none" />
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-red-500/50 to-transparent pointer-events-none" />
                                         {/* Corner brackets */}
                                         <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t border-l border-red-500/40 pointer-events-none" />
                                         <span className="absolute top-2 right-2 w-3.5 h-3.5 border-t border-r border-red-500/40 pointer-events-none" />
@@ -480,7 +495,7 @@ export default function TelkomselClientPage() {
                                         {/* Section label row */}
                                         <div className="relative z-10 flex items-center justify-between">
                                             <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.25em] flex items-center gap-2">
-                                                <span className="w-4 h-px bg-gradient-to-r from-red-500/50 to-transparent" />
+                                                <span className="w-4 h-px bg-linear-to-r from-red-500/50 to-transparent" />
                                                 Profile
                                             </span>
                                             <button
@@ -502,7 +517,7 @@ export default function TelkomselClientPage() {
                                                 <div className="flex items-center gap-3.5">
                                                     <div className="relative shrink-0">
                                                         <div className="absolute inset-0 rounded-xl bg-red-500/15 blur-lg pointer-events-none" />
-                                                        <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center text-lg font-black text-white border border-red-500/30 shadow-[0_0_16px_rgba(239,68,68,0.3)]">
+                                                        <div className="relative w-12 h-12 rounded-xl bg-linear-to-br from-red-600 to-rose-700 flex items-center justify-center text-lg font-black text-white border border-red-500/30 shadow-[0_0_16px_rgba(239,68,68,0.3)]">
                                                             {profile.name?.charAt(0)?.toUpperCase() || "?"}
                                                         </div>
                                                     </div>
@@ -618,8 +633,8 @@ export default function TelkomselClientPage() {
                                 <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-6">
                                     <div className="flex flex-col gap-5">
                                         {/* Quota Card */}
-                                        <div className="relative bg-gradient-to-b from-[#0a0e1a] to-[#07090f] border border-cyan-500/[0.1] rounded-lg overflow-hidden flex-1 flex flex-col shadow-[0_0_25px_rgba(6,182,212,0.03),0_0_1px_rgba(6,182,212,0.12)]">
-                                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent pointer-events-none" />
+                                        <div className="relative bg-linear-to-b from-[#0a0e1a] to-[#07090f] border border-cyan-500/[0.1] rounded-lg overflow-hidden flex-1 flex flex-col shadow-[0_0_25px_rgba(6,182,212,0.03),0_0_1px_rgba(6,182,212,0.12)]">
+                                            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-500/30 to-transparent pointer-events-none" />
                                             <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t border-l border-cyan-500/25 pointer-events-none" />
                                             <span className="absolute top-2 right-2 w-3.5 h-3.5 border-t border-r border-cyan-500/25 pointer-events-none" />
                                             <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-cyan-500/[0.025] blur-3xl pointer-events-none" />
@@ -627,7 +642,7 @@ export default function TelkomselClientPage() {
                                             {/* Quota Header */}
                                             <div className="relative z-10 flex items-center justify-between px-5 pt-5 pb-3">
                                                 <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.25em] flex items-center gap-2">
-                                                    <span className="w-4 h-px bg-gradient-to-r from-cyan-500/50 to-transparent" />
+                                                    <span className="w-4 h-px bg-linear-to-r from-cyan-500/50 to-transparent" />
                                                     Quota Details
                                                 </span>
                                                 <button
@@ -661,7 +676,7 @@ export default function TelkomselClientPage() {
                                                                         onClick={() => setActiveQuotaTab(tab.key)}
                                                                         data-testid={`quota-tab-${tab.key.toLowerCase()}`}
                                                                         className={`flex-1 min-w-0 py-2.5 px-1.5 flex flex-col items-center justify-center rounded relative overflow-hidden ${isActive
-                                                                            ? "bg-gradient-to-b from-red-600/85 to-rose-700/85 text-white border border-red-500/30 shadow-[0_0_14px_rgba(239,68,68,0.2)]"
+                                                                            ? "bg-linear-to-b from-red-600/85 to-rose-700/85 text-white border border-red-500/30 shadow-[0_0_14px_rgba(239,68,68,0.2)]"
                                                                             : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]"
                                                                             }`}
                                                                     >
@@ -701,7 +716,7 @@ export default function TelkomselClientPage() {
                                                                                 data-testid={`quota-item-${ii}`}
                                                                                 className="relative bg-[#040811] border border-white/[0.05] rounded-lg p-4 flex items-center justify-between gap-4 hover:border-red-500/15 overflow-hidden"
                                                                             >
-                                                                                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-red-500/50 to-transparent pointer-events-none" />
+                                                                                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-b from-red-500/50 to-transparent pointer-events-none" />
                                                                                 <div className="flex-1 min-w-0 pl-2">
                                                                                     <div className="text-[11px] font-bold text-gray-200 truncate mb-1">
                                                                                         {item.name}
@@ -764,7 +779,7 @@ export default function TelkomselClientPage() {
 
                         {/* ── SECTION 2: Penawaran Paket ─────────────────────── */}
                         <div className="relative w-full bg-[#0a0e1a]/80 backdrop-blur-xl border border-red-500/20 rounded-lg overflow-hidden flex flex-col shadow-[0_0_40px_rgba(239,68,68,0.05)]">
-                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent pointer-events-none" />
+                            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-red-500/40 to-transparent pointer-events-none" />
                             <span className="absolute top-2 left-2 w-4 h-4 border-t border-l border-red-500/40 pointer-events-none" />
                             <span className="absolute top-2 right-2 w-4 h-4 border-t border-r border-red-500/40 pointer-events-none" />
 
@@ -850,7 +865,7 @@ export default function TelkomselClientPage() {
                                                             key={offer.id || idx}
                                                             className="group relative bg-[#040811] border border-white/5 rounded p-4 hover:border-red-500/30 transition-all overflow-hidden flex flex-col w-full min-w-0 shadow-xl"
                                                         >
-                                                            <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                                                            <div className="absolute inset-0 bg-linear-to-br from-red-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                                             <div className="relative z-10 flex justify-between items-start mb-3 text-left">
                                                                 <div className="flex flex-col">
                                                                     <div className="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-0.5">

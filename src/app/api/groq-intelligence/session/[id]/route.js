@@ -25,7 +25,7 @@ export async function GET(request, { params }) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/session/:id');
+        await trackApiHit('/api/groq-intelligence/session/:id');
 
         // Ensure session belongs to user
         const session = await prisma.chatSession.findFirst({
@@ -47,7 +47,7 @@ export async function GET(request, { params }) {
 
         return NextResponse.json({ messages: decryptedMessages });
     } catch (error) {
-        console.error("GET /api/chatbot/session/[id] error:", error);
+        console.error("GET /api/groq-intelligence/session/[id] error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -58,7 +58,7 @@ export async function DELETE(request, { params }) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/session/:id');
+        await trackApiHit('/api/groq-intelligence/session/:id');
 
         // Delete where id matches AND userId matches (security)
         await prisma.chatSession.delete({
@@ -72,7 +72,7 @@ export async function DELETE(request, { params }) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("DELETE /api/chatbot/session/[id] error:", error);
+        console.error("DELETE /api/groq-intelligence/session/[id] error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

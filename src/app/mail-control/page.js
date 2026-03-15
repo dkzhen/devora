@@ -44,7 +44,7 @@ export default async function MessagesPage() {
         <div className="space-y-6">
             {/* ===== HERO HEADER ===== */}
             <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
+                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
                 <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
@@ -59,7 +59,7 @@ export default async function MessagesPage() {
                     </nav>
                     <h1 className="text-2xl md:text-4xl font-black tracking-tight">
                         <span className="text-white">Mail </span>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">Control</span>
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">Control</span>
                     </h1>
                     <p className="text-gray-400 mt-1 text-xs md:text-sm">View latest emails from your connected accounts</p>
                 </div>

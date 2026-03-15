@@ -24,7 +24,7 @@ export async function GET(request) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/credential');
+        await trackApiHit('/api/groq-intelligence/credential');
 
         const cred = await prisma.groqCredential.findUnique({
             where: { userId }
@@ -48,7 +48,7 @@ export async function GET(request) {
             }
         });
     } catch (error) {
-        console.error("GET /api/chatbot/credential error:", error);
+        console.error("GET /api/groq-intelligence/credential error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -58,7 +58,7 @@ export async function POST(request) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/credential');
+        await trackApiHit('/api/groq-intelligence/credential');
 
         const body = await request.json();
         const { apiKey } = body;
@@ -94,7 +94,7 @@ export async function POST(request) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("POST /api/chatbot/credential error:", error);
+        console.error("POST /api/groq-intelligence/credential error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -110,7 +110,7 @@ export async function DELETE(request) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("DELETE /api/chatbot/credential error:", error);
+        console.error("DELETE /api/groq-intelligence/credential error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

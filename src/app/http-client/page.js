@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { apiCategories } from '@/lib/api-endpoints';// ─── helpers ────────────────────────────────────────────────────────────────
+import { apiCategories } from '@/lib/api-endpoints';
+import { HeroHeader, LoadingState } from '@/components/HeroHeader';
+// ─── helpers ────────────────────────────────────────────────────────────────
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 // ─── cURL parser ─────────────────────────────────────────────────────────────
@@ -52,39 +54,39 @@ const parseUrl = (raw) => {
 };
 
 const METHOD_COLORS = {
-    GET: 'text-emerald-400',
-    POST: 'text-blue-400',
+    GET: 'text-[#76D2DB]',
+    POST: 'text-[#F7F6E5]',
     PUT: 'text-amber-400',
     PATCH: 'text-purple-400',
-    DELETE: 'text-red-400',
+    DELETE: 'text-[#DA4848]',
     HEAD: 'text-indigo-400',
     OPTIONS: 'text-pink-400',
 };
 
 const METHOD_BG = {
-    GET: 'bg-emerald-500/15 border-emerald-500/30',
-    POST: 'bg-blue-500/15 border-blue-500/30',
+    GET: 'bg-[#76D2DB]/10 border-[#76D2DB]/30',
+    POST: 'bg-[#F7F6E5]/10 border-[#F7F6E5]/30',
     PUT: 'bg-amber-500/15 border-amber-500/30',
     PATCH: 'bg-purple-500/15 border-purple-500/30',
-    DELETE: 'bg-red-500/15 border-red-500/30',
+    DELETE: 'bg-[#DA4848]/15 border-[#DA4848]/30',
     HEAD: 'bg-indigo-500/15 border-indigo-500/30',
     OPTIONS: 'bg-pink-500/15 border-pink-500/30',
 };
 
 const STATUS_COLOR = (s) => {
-    if (!s) return 'text-gray-400';
-    if (s < 300) return 'text-emerald-400';
-    if (s < 400) return 'text-blue-400';
+    if (!s) return 'text-gray-500';
+    if (s < 300) return 'text-[#76D2DB]';
+    if (s < 400) return 'text-[#F7F6E5]';
     if (s < 500) return 'text-amber-400';
-    return 'text-red-400';
+    return 'text-[#DA4848]';
 };
 
 const STATUS_BG = (s) => {
     if (!s) return 'bg-gray-500/20 border-gray-500/30';
-    if (s < 300) return 'bg-emerald-500/15 border-emerald-500/30';
-    if (s < 400) return 'bg-blue-500/15 border-blue-500/30';
+    if (s < 300) return 'bg-[#76D2DB]/15 border-[#76D2DB]/30';
+    if (s < 400) return 'bg-[#F7F6E5]/15 border-[#F7F6E5]/30';
     if (s < 500) return 'bg-amber-500/15 border-amber-500/30';
-    return 'bg-red-500/15 border-red-500/30';
+    return 'bg-[#DA4848]/15 border-[#DA4848]/30';
 };
 
 const interpolateEnv = (str, vars) => {
@@ -122,23 +124,23 @@ function KVTable({ rows, onChange, placeholder = ['Key', 'Value'] }) {
                         type="checkbox"
                         checked={row.enabled}
                         onChange={e => update(row.id, 'enabled', e.target.checked)}
-                        className="w-3.5 h-3.5 accent-blue-500 shrink-0"
+                        className="w-3.5 h-3.5 accent-[#76D2DB] shrink-0"
                     />
                     <input
                         value={row.key}
                         onChange={e => update(row.id, 'key', e.target.value)}
                         placeholder={placeholder[0]}
-                        className="flex-1 min-w-0 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono"
+                        className="flex-1 min-w-0 bg-[#36064D]/50 backdrop-blur-md border border-[#DA4848]/30 rounded-lg px-2.5 py-1.5 text-xs text-[#F7F6E5] placeholder-gray-600 focus:outline-none focus:border-[#76D2DB]/50 font-mono"
                     />
                     <input
                         value={row.val}
                         onChange={e => update(row.id, 'val', e.target.value)}
                         placeholder={placeholder[1]}
-                        className="flex-1 min-w-0 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono"
+                        className="flex-1 min-w-0 bg-[#36064D]/50 backdrop-blur-md border border-[#DA4848]/30 rounded-lg px-2.5 py-1.5 text-xs text-[#F7F6E5] placeholder-gray-600 focus:outline-none focus:border-[#76D2DB]/50 font-mono"
                     />
                     <button
                         onClick={() => remove(row.id)}
-                        className="p-1 text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="p-1 text-gray-600 hover:text-[#DA4848] opacity-0 group-hover:opacity-100 -opacity"
                     >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -146,11 +148,11 @@ function KVTable({ rows, onChange, placeholder = ['Key', 'Value'] }) {
                     </button>
                 </div>
             ))}
-            <button onClick={add} className="flex items-center gap-1.5 text-[11px] text-gray-500 hover:text-blue-400 transition-colors mt-1 pl-1">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" />
+            <button onClick={add} className="flex items-center gap-1.5 text-[11px] text-[#76D2DB]/60 hover:text-[#76D2DB] mt-1 pl-1 font-black uppercase tracking-widest">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 5v14M5 12h14" />
                 </svg>
-                Add row
+                ADD FIELD
             </button>
         </div>
     );
@@ -172,9 +174,9 @@ function JsonView({ data }) {
                     return (
                         <span key={i} className="block">
                             {indent}
-                            <span className="text-blue-300">{key}</span>
+                            <span className="text-[#76D2DB]">{key}</span>
                             <span className="text-gray-500">{colon}</span>
-                            <span className={isStr ? 'text-emerald-300' : isNum ? 'text-purple-300' : isBool || isNull ? 'text-amber-300' : 'text-gray-200'}>
+                            <span className={isStr ? 'text-[#F7F6E5]' : isNum ? 'text-[#DA4848]' : isBool || isNull ? 'text-amber-300' : 'text-gray-200'}>
                                 {val}
                             </span>
                         </span>
@@ -211,11 +213,11 @@ function EnvModal({ envs, activeEnvId, onClose, onSave, onSetActive }) {
 
     return (
         <div className="fixed inset-0 z-200 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-[#0b1022] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
-                <div className="flex items-center justify-between p-5 border-b border-white/5">
-                    <h3 className="text-base font-bold text-white">Manage Environments</h3>
-                    <button onClick={onClose} className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
+            <div className="relative bg-[#36064D]/60 backdrop-blur-xl border border-[#DA4848]/40 rounded-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+                <div className="flex items-center justify-between p-5 border-b border-[#DA4848]/20">
+                    <h3 className="text-base font-black text-[#F7F6E5] tracking-tight uppercase">Manage Environments</h3>
+                    <button onClick={onClose} className="p-1 text-gray-400 hover:text-[#76D2DB] hover:bg-[#76D2DB]/10 rounded-lg">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
@@ -226,14 +228,14 @@ function EnvModal({ envs, activeEnvId, onClose, onSave, onSetActive }) {
                             <button
                                 key={env.id}
                                 onClick={() => setSelectedEnv(env.id)}
-                                className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-between group ${selectedEnv === env.id ? 'bg-blue-500/15 text-blue-300 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}`}
+                                className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-tight flex items-center justify-between group ${selectedEnv === env.id ? 'bg-[#76D2DB]/15 text-[#76D2DB] border border-[#76D2DB]/20' : 'text-gray-500 hover:bg-[#76D2DB]/5 hover:text-[#F7F6E5]'}`}
                             >
                                 <span className="truncate">{env.name}</span>
-                                {activeEnvId === env.id && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 ml-1" />}
+                                {activeEnvId === env.id && <span className="w-1.5 h-1.5 rounded-full bg-[#76D2DB] shrink-0 ml-1" />}
                             </button>
                         ))}
-                        <button onClick={addEnv} className="w-full flex items-center gap-1.5 text-[11px] text-gray-500 hover:text-blue-400 transition-colors px-3 py-2">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" /></svg>
+                        <button onClick={addEnv} className="w-full flex items-center gap-1.5 text-[11px] font-black uppercase text-gray-600 hover:text-[#76D2DB] px-3 py-2">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 5v14M5 12h14" /></svg>
                             New Env
                         </button>
                     </div>
@@ -245,48 +247,48 @@ function EnvModal({ envs, activeEnvId, onClose, onSave, onSetActive }) {
                                     <input
                                         value={activeLocal.name}
                                         onChange={e => updateEnvName(activeLocal.id, e.target.value)}
-                                        className="flex-1 bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500/40"
+                                        className="flex-1 bg-transparent border border-[#DA4848]/30 focus:border-[#76D2DB]/60 rounded-xl px-3 py-2 text-sm text-[#F7F6E5] focus:outline-none"
                                     />
                                     <button
                                         onClick={() => onSetActive(activeLocal.id === activeEnvId ? null : activeLocal.id)}
-                                        className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors ${activeLocal.id === activeEnvId ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-white/5 text-gray-400 border-white/10 hover:text-emerald-300'}`}
+                                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border ${activeLocal.id === activeEnvId ? 'bg-[#76D2DB]/20 text-[#76D2DB] border-[#76D2DB]/40' : 'bg-[#76D2DB]/5 text-gray-500 border-[#DA4848]/20 hover:text-[#76D2DB] hover:border-[#76D2DB]/30'}`}
                                     >
-                                        {activeLocal.id === activeEnvId ? '✓ Active' : 'Set Active'}
+                                        {activeLocal.id === activeEnvId ? 'Active' : 'Set Active'}
                                     </button>
-                                    <button onClick={() => deleteEnv(activeLocal.id)} className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors">
+                                    <button onClick={() => deleteEnv(activeLocal.id)} className="p-2 text-gray-600 hover:text-[#DA4848] hover:bg-[#DA4848]/10 rounded-xl">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                     </button>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <div className="grid grid-cols-2 gap-1.5 text-[10px] text-gray-600 uppercase tracking-widest px-1 mb-1">
+                                    <div className="grid grid-cols-2 gap-1.5 text-[9px] font-black text-gray-600 uppercase tracking-widest px-1 mb-1">
                                         <span>Variable</span><span>Value</span>
                                     </div>
                                     {activeLocal.vars.map(v => (
                                         <div key={v.id} className="flex items-center gap-1.5 group">
-                                            <input value={v.key} onChange={e => updateVar(activeLocal.id, v.id, 'key', e.target.value)} placeholder="VARIABLE" className="flex-1 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-amber-300/80 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono" />
-                                            <input value={v.val} onChange={e => updateVar(activeLocal.id, v.id, 'val', e.target.value)} placeholder="value" className="flex-1 bg-black/20 border border-white/8 rounded-lg px-2.5 py-1.5 text-xs text-gray-300 placeholder-gray-600 focus:outline-none focus:border-blue-500/40 font-mono" />
-                                            <button onClick={() => removeVar(activeLocal.id, v.id)} className="p-1 text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <input value={v.key} onChange={e => updateVar(activeLocal.id, v.id, 'key', e.target.value)} placeholder="VARIABLE" className="flex-1 bg-transparent border border-[#DA4848]/30 focus:border-[#76D2DB]/60 rounded-lg px-2.5 py-1.5 text-xs text-[#76D2DB] placeholder-gray-700 focus:outline-none font-mono" />
+                                            <input value={v.val} onChange={e => updateVar(activeLocal.id, v.id, 'val', e.target.value)} placeholder="value" className="flex-1 bg-transparent border border-[#DA4848]/30 focus:border-[#76D2DB]/60 rounded-lg px-2.5 py-1.5 text-xs text-[#F7F6E5] placeholder-gray-700 focus:outline-none font-mono" />
+                                            <button onClick={() => removeVar(activeLocal.id, v.id)} className="p-1 text-gray-600 hover:text-[#DA4848] opacity-0 group-hover:opacity-100 -opacity">
                                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
                                         </div>
                                     ))}
-                                    <button onClick={() => addVar(activeLocal.id)} className="flex items-center gap-1.5 text-[11px] text-gray-500 hover:text-blue-400 transition-colors mt-1 pl-1">
-                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" /></svg>
+                                    <button onClick={() => addVar(activeLocal.id)} className="flex items-center gap-1.5 text-[11px] font-black uppercase text-gray-600 hover:text-[#76D2DB] mt-1 pl-1">
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 5v14M5 12h14" /></svg>
                                         Add variable
                                     </button>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center h-full text-gray-600 text-sm">
-                                <svg className="w-10 h-10 mb-2 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                                Select or create an environment
+                            <div className="flex flex-col items-center justify-center h-full text-gray-700 text-sm">
+                                <svg className="w-10 h-10 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                <span className="font-bold tracking-widest uppercase text-[10px]">Select or create an environment</span>
                             </div>
                         )}
                     </div>
                 </div>
-                <div className="p-4 border-t border-white/5 flex gap-3">
-                    <button onClick={onClose} className="flex-1 px-4 py-2 bg-white/5 hover:bg-white/8 text-gray-300 rounded-xl text-sm font-semibold border border-white/10 transition-colors">Cancel</button>
-                    <button onClick={() => { onSave(localEnvs); onClose(); }} className="flex-1 px-4 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-700/25 border border-white/10 transition-all">Save Changes</button>
+                <div className="p-4 border-t border-[#DA4848]/20 flex gap-3">
+                    <button onClick={onClose} className="flex-1 px-4 py-3 bg-[#DA4848]/5 hover:bg-[#DA4848]/10 text-[#DA4848] rounded-xl text-xs font-black uppercase tracking-widest border border-[#DA4848]/20">Cancel</button>
+                    <button onClick={() => { onSave(localEnvs); onClose(); }} className="flex-1 px-4 py-3 bg-linear-to-r from-[#76D2DB] to-[#F7F6E5]/80 hover:from-[#76D2DB]/90 hover:to-[#F7F6E5] text-[#DA4848] rounded-xl text-xs font-black uppercase tracking-widest">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -313,29 +315,29 @@ function ImportModal({ onClose, onImport }) {
 
     return (
         <div className="fixed inset-0 z-200 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-[#0d1625] border border-white/10 rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0a1020]">
-                    <h3 className="text-white font-bold tracking-tight">Import Request</h3>
-                    <button onClick={onClose} className="p-1 text-gray-500 hover:text-gray-300 rounded-lg hover:bg-white/5 transition-colors">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
+            <div className="relative bg-[#36064D]/60 backdrop-blur-xl border border-[#DA4848]/40 rounded-2xl w-full max-w-xl flex flex-col overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b border-[#DA4848]/20 bg-[#09090b]">
+                    <h3 className="text-[#F7F6E5] font-black tracking-widest uppercase text-sm">Import Request</h3>
+                    <button onClick={onClose} className="p-1 text-gray-500 hover:text-[#76D2DB] rounded-lg hover:bg-[#76D2DB]/10">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 <div className="p-4 space-y-4">
-                    <p className="text-xs text-gray-400">Paste a cURL command or a plain URL to quickly create a request.</p>
+                    <p className="text-[10px] uppercase font-black tracking-widest text-gray-600">Paste a cURL command or a plain URL to quickly create a request.</p>
                     <textarea
                         value={raw}
                         onChange={e => { setRaw(e.target.value); setError(''); }}
                         placeholder="curl -X POST https://api.example.com -d '{...}'"
                         rows={6}
-                        className="w-full bg-black/20 border border-white/10 focus:border-blue-500/40 rounded-xl px-3 py-2 text-xs text-gray-200 placeholder-gray-600 font-mono focus:outline-none resize-none transition-colors"
+                        className="w-full bg-transparent border border-[#DA4848]/20 focus:border-[#76D2DB]/40 rounded-xl px-3 py-2 text-xs text-[#F7F6E5] placeholder-gray-700 font-mono focus:outline-none resize-none"
                         spellCheck={false}
                     />
-                    {error && <p className="text-red-400 text-xs">{error}</p>}
+                    {error && <p className="text-[#DA4848] text-[10px] font-black uppercase tracking-widest">{error}</p>}
                 </div>
-                <div className="p-4 border-t border-white/5 bg-[#0a1020] flex justify-end gap-2">
-                    <button onClick={onClose} className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors">Cancel</button>
-                    <button onClick={handleImport} disabled={!raw.trim()} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-700/25 border border-white/10 transition-colors disabled:opacity-50">
+                <div className="p-4 border-t border-[#DA4848]/20 bg-[#09090b] flex justify-end gap-2">
+                    <button onClick={onClose} className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-[#F7F6E5]">Cancel</button>
+                    <button onClick={handleImport} disabled={!raw.trim()} className="px-6 py-2 bg-[#76D2DB] hover:bg-[#76D2DB]/90 text-[#DA4848] rounded-xl text-[10px] font-black uppercase tracking-widest disabled:opacity-30">
                         Import
                     </button>
                 </div>
@@ -453,31 +455,39 @@ export default function HttpClientPage() {
                     headers['Content-Type'] = 'application/json';
                     body = req.body;
                 } else if (req.bodyType === 'form') {
-                    const fd = new FormData();
-                    req.formData.filter(r => r.enabled && r.key).forEach(r => fd.append(r.key, r.val));
-                    body = fd;
+                    const params = new URLSearchParams();
+                    req.formData.filter(r => r.enabled && r.key).forEach(r => params.append(r.key, r.val));
+                    body = params.toString();
+                    headers['Content-Type'] = 'application/x-www-form-urlencoded';
                 }
             }
 
-            const start = performance.now();
-            const res = await fetch(resolvedUrl + qs, { method: req.method, headers, body });
-            const elapsed = Math.round(performance.now() - start);
+            const proxyRes = await fetch('/api/http-client/proxy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url: resolvedUrl + qs,
+                    method: req.method,
+                    headers,
+                    body
+                })
+            });
 
-            const resText = await res.text();
-            const contentType = res.headers.get('content-type') || '';
-            const isJson = contentType.includes('json');
-            const resHeaders = {};
-            res.headers.forEach((val, key) => { resHeaders[key] = val; });
+            const data = await proxyRes.json();
+            if (data.error) throw new Error(data.error);
+
+            const contentType = data.headers['content-type'] || data.headers['Content-Type'] || '';
+            const isJson = contentType.toLowerCase().includes('json');
 
             const responseData = {
-                status: res.status,
-                statusText: res.statusText,
-                time: elapsed,
-                size: new Blob([resText]).size,
-                body: isJson ? prettyJson(resText) : resText,
-                headers: resHeaders,
+                status: data.status,
+                statusText: data.statusText,
+                time: data.time,
+                size: new Blob([data.body]).size,
+                body: isJson ? prettyJson(data.body) : data.body,
+                headers: data.headers,
                 isJson,
-                ok: res.ok,
+                ok: data.ok,
             };
             setResponse(responseData);
             setResponseTab('body');
@@ -487,8 +497,8 @@ export default function HttpClientPage() {
                 id: uid(),
                 method: req.method,
                 url: resolvedUrl + qs,
-                status: res.status,
-                time: elapsed,
+                status: data.status,
+                time: data.time,
                 ts: Date.now(),
             }, ...prev].slice(0, 30));
 
@@ -557,12 +567,12 @@ export default function HttpClientPage() {
     const SidebarContent = () => (
         <div className="flex flex-col h-full text-sm">
             {/* Env switcher */}
-            <div className="p-3 border-b border-white/5">
+            <div className="p-3 border-b border-[#DA4848]/20">
                 <div className="flex items-center gap-2">
                     <select
                         value={activeEnvId || ''}
                         onChange={e => setActiveEnvId(e.target.value || null)}
-                        className="flex-1 bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500/30 appearance-none truncate"
+                        className="flex-1 bg-[#DA4848]/30 border border-[#DA4848]/20 rounded-lg px-2.5 py-1.5 text-xs text-[#F7F6E5] font-bold focus:outline-none focus:border-[#76D2DB]/30 appearance-none truncate"
                     >
                         <option value="">No Environment</option>
                         {environments.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
@@ -570,17 +580,17 @@ export default function HttpClientPage() {
                     <button
                         onClick={() => setShowEnvModal(true)}
                         title="Manage Environments"
-                        className="p-1.5 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors shrink-0"
+                        className="p-1.5 text-gray-600 hover:text-[#76D2DB] hover:bg-[#76D2DB]/10 rounded-lg shrink-0"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" /></svg>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" /></svg>
                     </button>
                 </div>
             </div>
 
             {/* Tabs: Collections / History / Endpoints */}
-            <div className="flex border-b border-white/5">
-                <button onClick={() => setSidebarTab('collections')} className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${sidebarTab === 'collections' ? 'text-blue-300 border-b-2 border-blue-500 bg-blue-500/5' : 'text-gray-600 hover:text-gray-400'}`}>Collections</button>
-                <button onClick={() => setSidebarTab('history')} className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${sidebarTab === 'history' ? 'text-blue-300 border-b-2 border-blue-500 bg-blue-500/5' : 'text-gray-600 hover:text-gray-400'}`}>History</button>
+            <div className="flex border-b border-[#DA4848]/20">
+                <button onClick={() => setSidebarTab('collections')} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-widest ${sidebarTab === 'collections' ? 'text-[#76D2DB] border-b-2 border-[#76D2DB] bg-[#76D2DB]/5' : 'text-gray-600 hover:text-gray-400'}`}>Collections</button>
+                <button onClick={() => setSidebarTab('history')} className={`flex-1 py-1.5 text-[9px] font-black uppercase tracking-widest ${sidebarTab === 'history' ? 'text-[#76D2DB] border-b-2 border-[#76D2DB] bg-[#76D2DB]/5' : 'text-gray-600 hover:text-gray-400'}`}>History</button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
@@ -595,23 +605,23 @@ export default function HttpClientPage() {
                         {collections.map(folder => (
                             <div key={folder.id} className="mb-1">
                                 <div className="flex items-center gap-1 px-1 py-1.5 rounded-lg hover:bg-white/4 group">
-                                    <button onClick={() => setExpandedFolders(prev => ({ ...prev, [folder.id]: !prev[folder.id] }))} className="shrink-0 text-gray-500">
-                                        <svg className={`w-3.5 h-3.5 transition-transform ${expandedFolders[folder.id] ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                    <button onClick={() => setExpandedFolders(prev => ({ ...prev, [folder.id]: !prev[folder.id] }))} className="shrink-0 text-gray-600 hover:text-[#76D2DB]">
+                                        <svg className={`w-3.5 h-3.5 ${expandedFolders[folder.id] ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                                     </button>
-                                    <svg className="w-3.5 h-3.5 text-amber-400/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                    <svg className="w-3.5 h-3.5 text-[#76D2DB]/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
                                     {renamingFolder === folder.id ? (
-                                        <input autoFocus defaultValue={folder.name} onBlur={e => renameFolder(folder.id, e.target.value)} onKeyDown={e => e.key === 'Enter' && renameFolder(folder.id, e.target.value)} className="flex-1 bg-black/30 border border-blue-500/40 rounded px-1.5 py-0.5 text-xs text-white focus:outline-none" />
+                                        <input autoFocus defaultValue={folder.name} onBlur={e => renameFolder(folder.id, e.target.value)} onKeyDown={e => e.key === 'Enter' && renameFolder(folder.id, e.target.value)} className="flex-1 bg-transparent focus:bg-[#36064D]/10 rounded-lg px-2 py-0.5 text-xs text-[#F7F6E5] focus:outline-none" />
                                     ) : (
-                                        <span className="flex-1 text-xs text-gray-300 truncate cursor-pointer" onDoubleClick={() => setRenamingFolder(folder.id)}>{folder.name}</span>
+                                        <span className="flex-1 text-[11px] font-black uppercase tracking-tight text-[#F7F6E5] group-hover:text-[#76D2DB] truncate cursor-pointer" onDoubleClick={() => setRenamingFolder(folder.id)}>{folder.name}</span>
                                     )}
-                                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={() => addRequestToFolder(folder.id)} title="Add Request" className="p-0.5 text-gray-500 hover:text-blue-400 transition-colors">
+                                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 -opacity">
+                                        <button onClick={() => addRequestToFolder(folder.id)} title="Add Request" className="p-0.5 text-gray-500 hover:text-blue-400">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" /></svg>
                                         </button>
-                                        <button onClick={() => setRenamingFolder(folder.id)} title="Rename" className="p-0.5 text-gray-500 hover:text-amber-400 transition-colors">
+                                        <button onClick={() => setRenamingFolder(folder.id)} title="Rename" className="p-0.5 text-gray-500 hover:text-amber-400">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                         </button>
-                                        <button onClick={() => deleteFolder(folder.id)} title="Delete" className="p-0.5 text-gray-500 hover:text-red-400 transition-colors">
+                                        <button onClick={() => deleteFolder(folder.id)} title="Delete" className="p-0.5 text-gray-500 hover:text-red-400">
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         </button>
                                     </div>
@@ -619,18 +629,18 @@ export default function HttpClientPage() {
                                 {expandedFolders[folder.id] && (
                                     <div className="ml-5 space-y-0.5 mt-0.5">
                                         {folder.requests.map(req => (
-                                            <div key={req.id} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer group transition-colors ${activeRequest.id === req.id ? 'bg-blue-500/15 border border-blue-500/20' : 'hover:bg-white/4'}`} onClick={() => openRequest(req)}>
+                                            <div key={req.id} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer group ${activeRequest.id === req.id ? 'bg-blue-500/15 border border-blue-500/20' : 'hover:bg-white/4'}`} onClick={() => openRequest(req)}>
                                                 <span className={`text-[10px] font-bold shrink-0 ${METHOD_COLORS[req.method] || 'text-gray-400'}`}>{req.method.slice(0, 3)}</span>
                                                 {renamingRequest === req.id ? (
                                                     <input autoFocus defaultValue={req.name} onBlur={e => renameRequest(folder.id, req.id, e.target.value)} onKeyDown={e => e.key === 'Enter' && renameRequest(folder.id, req.id, e.target.value)} className="flex-1 bg-black/30 border border-blue-500/40 rounded px-1.5 py-0.5 text-xs text-white focus:outline-none" />
                                                 ) : (
                                                     <span className="flex-1 text-xs text-gray-400 truncate">{req.name}</span>
                                                 )}
-                                                <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button onClick={(e) => { e.stopPropagation(); setRenamingRequest(req.id); }} className="p-0.5 text-gray-600 hover:text-amber-400 transition-colors">
+                                                <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 -opacity">
+                                                    <button onClick={(e) => { e.stopPropagation(); setRenamingRequest(req.id); }} className="p-0.5 text-gray-600 hover:text-amber-400">
                                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                                     </button>
-                                                    <button onClick={(e) => { e.stopPropagation(); deleteRequestFromFolder(folder.id, req.id); }} className="p-0.5 text-gray-600 hover:text-red-400 transition-colors">
+                                                    <button onClick={(e) => { e.stopPropagation(); deleteRequestFromFolder(folder.id, req.id); }} className="p-0.5 text-gray-600 hover:text-red-400">
                                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                                     </button>
                                                 </div>
@@ -640,8 +650,8 @@ export default function HttpClientPage() {
                                 )}
                             </div>
                         ))}
-                        <button onClick={addFolder} className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-white/4 transition-colors text-xs mt-2">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" /></svg>
+                        <button onClick={addFolder} className="w-full flex items-center gap-2 px-2 py-2 rounded-lg text-gray-600 hover:text-[#76D2DB] hover:bg-[#76D2DB]/5 text-[10px] font-black uppercase tracking-widest mt-2">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 5v14M5 12h14" /></svg>
                             New Collection
                         </button>
                     </>
@@ -649,85 +659,96 @@ export default function HttpClientPage() {
 
                 {sidebarTab === 'history' && (
                     <>
-                        {history.length === 0 && <div className="text-center py-8 text-gray-600 text-xs">No history yet</div>}
+                        {history.length === 0 && <div className="text-center py-8 text-gray-700 text-[10px] font-black uppercase tracking-widest opacity-30">No history yet</div>}
                         {history.map(h => (
-                            <button key={h.id} onClick={() => { setActiveRequest(prev => ({ ...prev, method: h.method, url: h.url })); setSidebarTab('history'); }} className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/4 transition-colors text-left group">
-                                <span className={`text-[10px] font-bold shrink-0 ${METHOD_COLORS[h.method] || 'text-gray-400'}`}>{h.method.slice(0, 3)}</span>
-                                <span className="flex-1 text-xs text-gray-400 truncate font-mono">{h.url}</span>
-                                <span className={`text-[10px] font-bold ${STATUS_COLOR(h.status)}`}>{h.status}</span>
+                            <button key={h.id} onClick={() => { setActiveRequest(prev => ({ ...prev, method: h.method, url: h.url })); }} className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-[#76D2DB]/5 text-left group active:scale-[0.98]">
+                                <span className={`text-[9px] font-black shrink-0 w-8 ${METHOD_COLORS[h.method] || 'text-gray-600'}`}>{h.method.slice(0, 3)}</span>
+                                <span className="flex-1 text-[11px] text-gray-500 truncate font-mono group-hover:text-gray-300">{h.url}</span>
+                                <span className={`text-[9px] font-black ${STATUS_COLOR(h.status)}`}>{h.status}</span>
                             </button>
                         ))}
                         {history.length > 0 && (
-                            <button onClick={() => setHistory([])} className="w-full text-center text-[11px] text-gray-600 hover:text-red-400 transition-colors py-2 mt-2">Clear History</button>
+                            <button onClick={() => setHistory([])} className="w-full text-center text-[9px] font-black uppercase tracking-widest text-gray-700 hover:text-[#DA4848] py-3 mt-2 border-t border-[#76D2DB]/5">Clear History</button>
                         )}
                     </>
                 )}
-
-
             </div>
         </div>
     );
 
     // ─── Render ───────────────────────────────────────────────────────────────
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 text-[#F7F6E5] min-h-screen">
             {/* ── Page Header ── */}
-            <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1625] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-10 -left-8 w-56 h-56 rounded-full bg-cyan-500/8 blur-3xl pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+            <HeroHeader
+                colorTheme="cyberpunk"
+                title="HTTP"
+                badge="Client"
+                description="Send requests, inspect responses, manage collections and environments — your high-performance Cyberpunk API workspace."
+                breadcrumbs={[
+                    { label: 'Dashboard', href: '/', },
+                    { label: 'HTTP Client' }
+                ]}
 
-                <div className="relative z-10 p-5 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <nav className="flex text-xs text-blue-300/60 mb-4">
-                            <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                Dashboard
-                            </a>
-                            <svg className="w-3 h-3 mx-2 text-blue-400/30 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                            <span className="text-blue-200 font-semibold">HTTP Client</span>
-                        </nav>
-                        <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                            <span className="text-white">HTTP </span>
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-cyan-400 to-indigo-400">Client</span>
-                        </h1>
-                        <p className="text-gray-400 mt-2 text-sm max-w-xl">Send requests, inspect responses, manage collections and environments — your lightweight in-browser API workspace.</p>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                        <div className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-300">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                            <span className="font-semibold">Ctrl+Enter to Send</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            />
 
             {/* ── Toolbar (controls above the workspace) ── */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 px-4">
                 {isLoggedIn && (
                     <button
                         onClick={() => setSidebarOpen(o => !o)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${sidebarOpen ? 'bg-blue-500/10 text-blue-300 border-blue-500/20' : 'bg-white/5 text-gray-400 border-white/10 hover:text-gray-200 hover:bg-white/8'}`}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border ${sidebarOpen ? 'bg-[#76D2DB]/10 text-[#76D2DB] border-[#76D2DB]/30 ' : 'bg-[#36064D]/40 text-gray-500 border-[#DA4848]/20 hover:text-[#76D2DB] hover:bg-[#76D2DB]/5 hover:border-[#76D2DB]/30'}`}
                     >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                        Collections
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        COLLECTIONS
                     </button>
                 )}
                 <button
                     onClick={() => { setActiveRequest(newRequest()); setResponse(null); }}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-white/5 hover:bg-white/8 border border-white/10 rounded-xl text-xs text-gray-300 font-semibold transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-[#DA4848]/40 border border-[#DA4848]/20 rounded-xl text-[10px] text-gray-500 hover:text-[#76D2DB] font-black uppercase tracking-widest"
                 >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14M5 12h14" /></svg>
-                    New Request
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 5v14M5 12h14" /></svg>
+                    NEW REQUEST
                 </button>
+                <button
+                    onClick={() => setShowImportModal(true)}
+                    className="flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-[#76D2DB]/20 border border-[#76D2DB]/20 rounded-xl text-[10px] text-gray-500 hover:text-[#76D2DB] font-black uppercase tracking-widest"
+                >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                    IMPORT
+                </button>
+                {isLoggedIn && (
+                    <div className="relative" ref={saveMenuRef}>
+                        <button
+                            onClick={() => setShowSaveMenu(p => !p)}
+                            className="flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-[#DA4848]/20 border border-[#DA4848]/20 rounded-xl text-[10px] text-gray-500 hover:text-[#DA4848] font-black uppercase tracking-widest"
+                        >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                            SAVE
+                        </button>
+                        {showSaveMenu && (
+                            <div className="absolute left-0 top-full mt-2 w-52 bg-[#36064D]/95 backdrop-blur-2xl border border-[#DA4848]/20 rounded-2xl z-200 overflow-hidden py-1">
+                                {collections.length === 0 ? (
+                                    <div className="px-3 py-3 text-[10px] font-black uppercase text-gray-700 text-center">No collections yet</div>
+                                ) : (
+                                    collections.map(f => (
+                                        <button key={f.id} onClick={() => saveCurrentToFolder(f.id)} className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold uppercase text-gray-400 hover:bg-[#DA4848]/10 hover:text-[#DA4848] text-left">
+                                            <svg className="w-4 h-4 text-[#F7F6E5]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                                            {f.name}
+                                        </button>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
                 <div className="flex items-center gap-2 ml-auto">
                     {isLoggedIn && (
                         <>
                             <select
                                 value={activeEnvId || ''}
                                 onChange={e => setActiveEnvId(e.target.value || null)}
-                                className="bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-blue-500/30 appearance-none max-w-40"
+                                className="bg-[#DA4848]/40 border border-[#76D2DB]/20 rounded-xl px-3 py-2 text-[10px] font-black uppercase text-[#F7F6E5] focus:outline-none focus:border-[#76D2DB]/50 appearance-none max-w-40"
                             >
                                 <option value="">No Environment</option>
                                 {environments.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
@@ -735,7 +756,7 @@ export default function HttpClientPage() {
                             <button
                                 onClick={() => setShowEnvModal(true)}
                                 title="Manage Environments"
-                                className="p-2 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-colors border border-white/10"
+                                className="p-2 text-gray-600 hover:text-[#76D2DB] hover:bg-[#76D2DB]/10 rounded-xl border border-[#76D2DB]/20"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><circle cx="12" cy="12" r="3" /></svg>
                             </button>
@@ -745,238 +766,197 @@ export default function HttpClientPage() {
             </div>
 
             {/* ── HTTP Client workspace ── */}
-            <div className={(isLoggedIn && sidebarOpen) ? "grid md:grid-cols-[260px_1fr] gap-4 items-start" : "flex flex-col gap-4 items-start w-full"}>
+            <div className="max-w-[1700px] mx-auto w-full px-4 md:px-8 pb-12 mt-6">
+                <div className={(isLoggedIn && sidebarOpen) ? "grid md:grid-cols-[300px_1fr] gap-8 items-start" : "flex flex-col gap-8 items-start w-full"}>
 
-                {/* Sidebar — on mobile it's hidden/shown via state as overlay */}
-                {/* Desktop: always shows as left column; Mobile: overlay drawer */}
-                {isLoggedIn && sidebarOpen && (
-                    <>
-                        {/* Mobile backdrop */}
-                        <div
-                            className="fixed inset-0 bg-black/50 z-30 md:hidden"
-                            onClick={() => setSidebarOpen(false)}
-                        />
-                        {/* Sidebar panel */}
-                        <div className="fixed inset-y-0 left-0 w-64 z-40 md:static md:z-auto md:w-auto md:inset-auto bg-[#0a1020] border border-white/8 rounded-2xl overflow-hidden flex flex-col">
+                    {/* Sidebar */}
+                    {isLoggedIn && sidebarOpen && (
+                        <div className="hidden md:flex flex-col bg-[#36064D]/60 backdrop-blur-md border border-[#DA4848]/30 rounded-3xl overflow-hidden h-fit ring-1 ring-white/5">
                             <SidebarContent />
                         </div>
-                    </>
-                )}
+                    )}
 
-                {/* Main panel */}
-                <div className="min-w-0 flex flex-col gap-3 w-full">
-                    {/* Request bar */}
-                    <div className="bg-[#0a1020] border border-white/8 rounded-2xl p-3 md:p-4 flex items-center gap-2">
-                        {/* Method selector */}
-                        <select
-                            value={activeRequest.method}
-                            onChange={e => updateReq({ method: e.target.value })}
-                            className={`shrink-0 bg-black/30 border rounded-xl px-2.5 py-2 text-xs font-black focus:outline-none appearance-none cursor-pointer ${METHOD_BG[activeRequest.method] || 'border-white/10'} ${METHOD_COLORS[activeRequest.method] || 'text-gray-300'}`}
-                        >
-                            {['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'].map(m => (
-                                <option key={m} value={m}>{m}</option>
-                            ))}
-                        </select>
+                    {/* Mobile Sidebar Overlay */}
+                    {isLoggedIn && sidebarOpen && (
+                        <div className="md:hidden fixed inset-0 z-50">
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+                            <div className="absolute inset-y-0 left-0 w-72 bg-[#36064D]/90 backdrop-blur-2xl border-r border-[#DA4848]/30 flex flex-col">
+                                <SidebarContent />
+                            </div>
+                        </div>
+                    )}
 
-                        {/* URL */}
-                        <input
-                            value={activeRequest.url}
-                            onChange={e => updateReq({ url: e.target.value })}
-                            onKeyDown={e => e.key === 'Enter' && handleSend()}
-                            placeholder="https://api.example.com/endpoint"
-                            className="flex-1 bg-black/20 border border-white/10 hover:border-white/15 focus:border-blue-500/40 rounded-xl px-4 py-2 text-sm text-gray-100 placeholder-gray-600 focus:outline-none font-mono transition-colors min-w-0"
-                        />
-
-                        {/* Save + Send */}
-                        <div className="flex items-center gap-2 shrink-0">
-                            {/* Import */}
-                            <button
-                                onClick={() => setShowImportModal(true)}
-                                title="Import (cURL, URL...)"
-                                className="p-2 text-gray-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-xl transition-colors border border-white/8"
+                    {/* Main panel */}
+                    <div className="min-w-0 flex flex-col gap-6 w-full">
+                        {/* Request bar */}
+                        <div className="bg-[#36064D]/30 backdrop-blur-md border border-[#DA4848]/40 rounded-2xl p-3 md:p-4 flex items-center gap-2 ring-1 ring-white/5">
+                            <select
+                                value={activeRequest.method}
+                                onChange={e => updateReq({ method: e.target.value })}
+                                className={`px-3 md:px-4 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest border cursor-pointer focus:outline-none ${METHOD_BG[activeRequest.method]}`}
                             >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                            </button>
-
-                            {/* Save — requires login */}
-                            {isLoggedIn ? (
-                                <div className="relative" ref={saveMenuRef}>
-                                    <button
-                                        onClick={() => setShowSaveMenu(p => !p)}
-                                        title="Save to Collection"
-                                        className="p-2 text-gray-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-xl transition-colors border border-white/8"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-                                    </button>
-                                    {showSaveMenu && (
-                                        <div className="absolute right-0 top-full mt-1 w-52 bg-[#0c1224] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                                            {collections.length === 0 ? (
-                                                <div className="px-3 py-3 text-xs text-gray-500 text-center">No collections yet. Create one in the sidebar.</div>
-                                            ) : (
-                                                collections.map(f => (
-                                                    <button key={f.id} onClick={() => saveCurrentToFolder(f.id)} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-white/6 hover:text-white transition-colors">
-                                                        <svg className="w-3.5 h-3.5 text-amber-400/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-                                                        {f.name}
-                                                    </button>
-                                                ))
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <a href="/login" className="relative group p-2 text-gray-600 rounded-xl border border-white/8 hover:bg-amber-500/5 hover:border-amber-500/20 hover:text-amber-400 transition-colors">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-black/80 text-amber-300 text-[10px] px-2 py-1 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-amber-500/20 pointer-events-none">Login to save</span>
-                                </a>
-                            )}
-
+                                {Object.keys(METHOD_BG).map(m => (
+                                    <option key={m} value={m} className="bg-[#09090b] text-[#F7F6E5] uppercase font-black">{m}</option>
+                                ))}
+                            </select>
+                            <div className="flex-1 relative group">
+                                <input
+                                    value={activeRequest.url}
+                                    onChange={e => updateReq({ url: e.target.value })}
+                                    onKeyDown={e => e.key === 'Enter' && (e.ctrlKey || e.metaKey) && handleSend()}
+                                    placeholder="https://api.example.com/endpoint"
+                                    className="w-full bg-transparent border border-[#DA4848]/20 focus:border-[#76D2DB]/50 rounded-xl px-4 py-2 md:py-3 text-[11px] md:text-sm text-[#F7F6E5] placeholder-gray-700 font-mono focus:outline-none"
+                                />
+                            </div>
                             <button
                                 onClick={handleSend}
                                 disabled={isSending || !activeRequest.url}
-                                className="flex items-center gap-2 px-5 py-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+                                className={`flex items-center gap-2 px-6 md:px-10 py-2 md:py-3 bg-linear-to-r from-[#76D2DB] to-[#76D2DB]/80 hover:from-[#76D2DB] hover:to-[#F7F6E5] text-black rounded-xl text-[10px] md:text-xs font-black uppercase tracking-[0.2em] hover: disabled:opacity-30 disabled:shadow-none group overflow-hidden relative`}
                             >
-                                {isSending ? (
-                                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                                ) : (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                                )}
-                                <span className="hidden sm:inline">{isSending ? 'Sending...' : 'Send'}</span>
+                                <span className="relative z-10 flex items-center gap-2">
+                                    {isSending ? (
+                                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    ) : (
+                                        <svg className="w-4 h-4 group-" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                    )}
+                                    <span className="hidden md:inline">{isSending ? 'Sending...' : 'Send'}</span>
+                                </span>
+                                <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full" />
                             </button>
                         </div>
-                    </div>
 
-
-                    {/* Request tabs */}
-                    <div className="bg-[#0a1020] border border-white/8 rounded-2xl overflow-hidden">
-                        <div className="border-b border-white/5 px-3 md:px-4 flex items-center gap-0.5 overflow-x-auto">
-                            {['params', 'headers', 'body'].map(tab => {
-                                const counts = {
-                                    params: activeRequest.params.filter(p => p.enabled && p.key).length,
-                                    headers: activeRequest.headers.filter(h => h.enabled && h.key).length,
-                                    body: activeRequest.bodyType !== 'none' ? 1 : 0,
-                                };
-                                return (
-                                    <button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold capitalize transition-colors border-b-2 whitespace-nowrap ${activeTab === tab ? 'text-blue-300 border-blue-500' : 'text-gray-500 border-transparent hover:text-gray-300'}`}
-                                    >
-                                        {tab}
-                                        {counts[tab] > 0 && (
-                                            <span className="bg-blue-500/20 text-blue-300 text-[9px] font-black px-1.5 py-0.5 rounded-full">
-                                                {counts[tab]}
-                                            </span>
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {/* Tab body */}
-                        <div className="p-3 md:p-4">
-                            {activeTab === 'params' && (
-                                <KVTable rows={activeRequest.params} onChange={rows => updateReq({ params: rows })} placeholder={['Parameter', 'Value']} />
-                            )}
-                            {activeTab === 'headers' && (
-                                <KVTable rows={activeRequest.headers} onChange={rows => updateReq({ headers: rows })} placeholder={['Header', 'Value']} />
-                            )}
-                            {activeTab === 'body' && (
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        {['none', 'json', 'form'].map(t => (
-                                            <label key={t} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors border ${activeRequest.bodyType === t ? 'bg-blue-500/15 text-blue-300 border-blue-500/30' : 'text-gray-500 border-white/8 hover:text-gray-300'}`}>
-                                                <input type="radio" name="bodyType" value={t} checked={activeRequest.bodyType === t} onChange={() => updateReq({ bodyType: t })} className="sr-only" />
-                                                {t === 'none' ? 'None' : t === 'json' ? 'JSON' : 'Form Data'}
-                                            </label>
-                                        ))}
-                                    </div>
-                                    {activeRequest.bodyType === 'json' && (
-                                        <textarea
-                                            value={activeRequest.body}
-                                            onChange={e => updateReq({ body: e.target.value })}
-                                            placeholder={'{\n  "key": "value"\n}'}
-                                            rows={5}
-                                            className="w-full bg-black/20 border border-white/8 focus:border-blue-500/30 rounded-xl px-3 py-2.5 text-xs text-gray-200 placeholder-gray-600 font-mono focus:outline-none resize-none"
-                                            spellCheck={false}
-                                        />
-                                    )}
-                                    {activeRequest.bodyType === 'form' && (
-                                        <KVTable rows={activeRequest.formData} onChange={rows => updateReq({ formData: rows })} placeholder={['Field', 'Value']} />
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Response card */}
-                    <div className="bg-[#0a1020] border border-white/8 rounded-2xl overflow-hidden mt-4 min-h-64">
-                        {!response && !isSending && (
-                            <div className="flex flex-col items-center justify-center py-16 text-gray-700 select-none">
-                                <svg className="w-12 h-12 mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                                <p className="text-sm">Hit <kbd className="px-2 py-0.5 rounded bg-white/8 text-[11px] font-mono text-gray-500 border border-white/10">Send</kbd> to get a response</p>
-                                <p className="text-xs mt-1 text-gray-700">Ctrl+Enter</p>
+                        {/* Request tabs */}
+                        <div className="bg-[#36064D]/25 backdrop-blur-md border border-[#DA4848]/30 rounded-2xl overflow-hidden ring-1 ring-white/5">
+                            <div className="border-b border-[#DA4848]/20 px-4 flex items-center gap-0.5 overflow-x-auto bg-[#36064D]/5 backdrop-blur-sm">
+                                {['params', 'headers', 'body'].map(tab => {
+                                    const counts = {
+                                        params: activeRequest.params.filter(p => p.enabled && p.key).length,
+                                        headers: activeRequest.headers.filter(h => h.enabled && h.key).length,
+                                        body: activeRequest.bodyType !== 'none' ? 1 : 0,
+                                    };
+                                    return (
+                                        <button
+                                            key={tab}
+                                            onClick={() => setActiveTab(tab)}
+                                            className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 whitespace-nowrap ${activeTab === tab ? 'text-[#76D2DB] border-[#76D2DB] bg-[#76D2DB]/5' : 'text-gray-600 border-transparent hover:text-gray-400'}`}
+                                        >
+                                            {tab}
+                                            {counts[tab] > 0 && (
+                                                <span className="bg-[#76D2DB]/20 text-[#76D2DB] text-[9px] font-black px-1.5 py-0.5 rounded">
+                                                    {counts[tab]}
+                                                </span>
+                                            )}
+                                        </button>
+                                    );
+                                })}
                             </div>
-                        )}
-                        {isSending && (
-                            <div className="flex flex-col items-center justify-center py-16 gap-3">
-                                <div className="w-6 h-6 rounded-full border-2 border-blue-500/30 border-t-blue-400 animate-spin" />
-                                <p className="text-xs text-gray-600">Sending request…</p>
-                            </div>
-                        )}
-                        {response && !isSending && (
-                            <>
-                                {/* Response meta bar */}
-                                <div className="border-b border-white/8 px-4 py-2.5 flex items-center gap-3">
-                                    {response.error ? (
-                                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500/15 text-red-400 border border-red-500/30">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            Error: {response.error}
-                                        </span>
-                                    ) : (
-                                        <>
-                                            <span className={`px-2.5 py-1 rounded-lg text-xs font-black border ${STATUS_BG(response.status)} ${STATUS_COLOR(response.status)}`}>
-                                                {response.status} {response.statusText}
-                                            </span>
-                                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                {response.time}ms
-                                            </span>
-                                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                                {response.size < 1024 ? `${response.size} B` : `${(response.size / 1024).toFixed(1)} KB`}
-                                            </span>
-                                        </>
-                                    )}
-                                    <div className="ml-auto flex gap-0.5">
-                                        {['body', 'headers'].map(t => (
-                                            <button key={t} onClick={() => setResponseTab(t)} className={`px-3 py-1 text-[11px] font-bold uppercase tracking-wide rounded-lg transition-colors ${responseTab === t ? 'bg-blue-500/15 text-blue-300 border border-blue-500/20' : 'text-gray-600 hover:text-gray-300'}`}>{t}</button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Response body */}
-                                <div className="p-4 md:p-5 overflow-auto max-h-[32rem]">
-                                    {responseTab === 'body' && !response.error && (
-                                        response.isJson ? <JsonView data={response.body} /> : (
-                                            <pre className="text-xs font-mono text-gray-300 whitespace-pre-wrap break-all leading-relaxed">{response.body}</pre>
-                                        )
-                                    )}
-                                    {responseTab === 'headers' && !response.error && (
-                                        <div className="space-y-1.5">
-                                            {Object.entries(response.headers).map(([k, v]) => (
-                                                <div key={k} className="flex gap-3 text-xs font-mono">
-                                                    <span className="text-blue-300/70 shrink-0 w-40 truncate">{k}</span>
-                                                    <span className="text-gray-400">{v}</span>
-                                                </div>
+                            <div className="p-5 md:p-8">
+                                {activeTab === 'params' && <KVTable rows={activeRequest.params} onChange={rows => updateReq({ params: rows })} placeholder={['PARAMETER', 'VALUE']} />}
+                                {activeTab === 'headers' && <KVTable rows={activeRequest.headers} onChange={rows => updateReq({ headers: rows })} placeholder={['HEADER', 'VALUE']} />}
+                                {activeTab === 'body' && (
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            {['none', 'json', 'form'].map(t => (
+                                                <label key={t} className={`flex items-center gap-3 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer border ${activeRequest.bodyType === t ? 'bg-[#76D2DB]/10 text-[#76D2DB] border-[#76D2DB]/40 ' : 'text-gray-600 border-[#DA4848]/20 hover:text-gray-400'}`}>
+                                                    <input type="radio" value={t} checked={activeRequest.bodyType === t} onChange={() => updateReq({ bodyType: t })} className="sr-only" />
+                                                    {t === 'none' ? 'None' : t === 'json' ? 'JSON' : 'Form Data'}
+                                                </label>
                                             ))}
                                         </div>
-                                    )}
+                                        {activeRequest.bodyType === 'json' && (
+                                            <textarea
+                                                value={activeRequest.body}
+                                                onChange={e => updateReq({ body: e.target.value })}
+                                                placeholder={'{\n  "key": "value"\n}'}
+                                                rows={12}
+                                                className="w-full bg-transparent border border-[#DA4848]/30 focus:border-[#76D2DB]/60 rounded-xl px-4 py-4 text-xs text-[#F7F6E5] placeholder-gray-800 font-mono focus:outline-none resize-none"
+                                                spellCheck={false}
+                                            />
+                                        )}
+                                        {activeRequest.bodyType === 'form' && <KVTable rows={activeRequest.formData} onChange={rows => updateReq({ formData: rows })} placeholder={['FIELD', 'VALUE']} />}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Response card */}
+                        <div className="bg-[#36064D]/30 backdrop-blur-md border border-[#DA4848]/30 rounded-3xl overflow-hidden min-h-[450px] ring-1 ring-white/5">
+                            {!response && !isSending && (
+                                <div className="flex flex-col items-center justify-center py-24 text-gray-700">
+                                    <svg className="w-24 h-24 mb-6 opacity-5 text-[#76D2DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-30">Uplink Stable • Ready for Engage</p>
+                                    <div className="mt-8 flex items-center gap-3 px-5 py-2.5 bg-[#76D2DB]/5 border border-[#DA4848]/20 rounded-2xl">
+                                        <span className="text-[9px] font-black text-gray-700 tracking-widest">PRESS CTRL+ENTER TO ENGAGE</span>
+                                    </div>
                                 </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-            </div>
+                            )}
+                            {isSending && (
+                                <div className="flex flex-col items-center justify-center py-24">
+                                    <LoadingState message="Intercepting Data Stream..." colorTheme="cyberpunk" />
+                                </div>
+                            )}
+                            {response && !isSending && (
+                                <div className="">
+                                    <div className="border-b border-[#DA4848]/20 px-6 py-5 flex items-center gap-4 bg-white/5">
+                                        {response.error ? (
+                                            <span className="flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] bg-[#DA4848]/20 text-[#DA4848] border border-[#DA4848]/40">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                {response.error}
+                                            </span>
+                                        ) : (
+                                            <>
+                                                <span className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border ${STATUS_BG(response.status)} ${STATUS_COLOR(response.status)}`}>
+                                                    {response.status} {response.statusText}
+                                                </span>
+                                                <div className="h-5 w-[1px] bg-[#76D2DB]/10 mx-2" />
+                                                <div className="flex items-center gap-6">
+                                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#76D2DB]/50">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                        {response.time}ms
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#76D2DB]/50">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2" /></svg>
+                                                        {response.size < 1024 ? `${response.size} B` : `${(response.size / 1024).toFixed(1)} KB`}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                        <div className="ml-auto flex gap-2 p-1.5 bg-black/20 rounded-2xl border border-white/5">
+                                            {['body', 'headers'].map(t => (
+                                                <button 
+                                                    key={t} 
+                                                    onClick={() => setResponseTab(t)} 
+                                                    className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-[0.2em] rounded-xl ${responseTab === t ? 'bg-[#76D2DB]/20 text-[#76D2DB] border border-[#76D2DB]/40 ' : 'text-gray-600 hover:text-gray-400'}`}
+                                                >
+                                                    {t}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6 md:p-10 overflow-auto max-h-[45rem] bg-transparent custom-scrollbar">
+                                        {responseTab === 'body' && !response.error && (
+                                            response.isJson ? <JsonView data={response.body} /> : (
+                                                <pre className="text-sm font-mono text-gray-400 whitespace-pre-wrap break-all leading-relaxed bg-black/20 p-6 rounded-2xl border border-white/5">{response.body}</pre>
+                                            )
+                                        )}
+                                        {responseTab === 'headers' && !response.error && (
+                                            <div className="space-y-4">
+                                                {Object.entries(response.headers).map(([k, v]) => (
+                                                    <div key={k} className="flex gap-8 text-[11px] font-mono border-b border-white/5 pb-4 last:border-0 group">
+                                                        <span className="text-[#76D2DB]/60 shrink-0 w-64 font-black uppercase tracking-tight group-hover:text-[#76D2DB]">{k}</span>
+                                                        <span className="text-gray-500 break-all select-all">{v}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            </div> {/* End Response Card */}
+                        </div> {/* End Main panel */}
+                    </div> {/* End Grid */}
+                </div> {/* End Workspace Container */}
 
             {showEnvModal && (
                 <EnvModal

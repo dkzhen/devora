@@ -84,6 +84,16 @@ export function HeroHeader({ breadcrumbs, title, badge, description, colorTheme 
             breadcrumbText: "text-[#708993]/60 hover:text-[#A1C2BD]",
             breadcrumbCurrent: "text-[#E7F2EF]/80",
             titleGradient: "from-[#708993] via-[#A1C2BD] to-[#E7F2EF]"
+        },
+        cyberpunk: {
+            bgGlow: "bg-[#76D2DB]/20",
+            bgBase: "from-[#36064D] via-[#DA4848]/20 to-transparent",
+            accentLine: "via-[#DA4848]/60",
+            leftStrip: "from-[#76D2DB] via-[#DA4848]/40",
+            breadcrumbIcon: "text-[#76D2DB]/40",
+            breadcrumbText: "text-[#76D2DB]/60 hover:text-[#F7F6E5]",
+            breadcrumbCurrent: "text-[#F7F6E5]/80",
+            titleGradient: "from-[#76D2DB] via-[#F7F6E5] to-[#DA4848]"
         }
     };
 
@@ -177,7 +187,8 @@ export function LoadingState({ message = "Loading...", colorTheme = "red" }) {
         emerald: "border-emerald-500/30",
         dawn: "border-[#FEBD8B]/30",
         sunset: "border-[#F25278]/30",
-        nebula: "border-[#A1C2BD]/30"
+        nebula: "border-[#A1C2BD]/30",
+        cyberpunk: "border-[#76D2DB]/60 shadow-[0_0_10px_#76D2DB]"
     };
     const borderClass = borders[colorTheme] || borders.red;
 

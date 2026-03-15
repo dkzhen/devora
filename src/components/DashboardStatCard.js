@@ -53,13 +53,13 @@ const THEME = {
     }
 };
 
-export default function DashboardStatCard({ title, value, color, iconType, subtitle }) {
+export default function DashboardStatCard({ title, value, color, iconType, subtitle, imageIcon }) {
     const theme = THEME[color] || THEME.blue;
     
     return (
         <div className={`group relative overflow-hidden rounded-lg border bg-linear-to-b ${theme.bg} ${theme.border} p-5 transition-all duration-300 hover:scale-[1.02] ${theme.glow}`}>
             {/* Top neon accent */}
-            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity`} />
+            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-all duration-500`} />
             
             {/* Corner brackets */}
             <span className={`absolute top-2 left-2 w-3.5 h-3.5 border-t border-l ${theme.bracketStrong} pointer-events-none`} />
@@ -73,8 +73,14 @@ export default function DashboardStatCard({ title, value, color, iconType, subti
             <div className="relative z-10 flex flex-col h-full">
                 <div className="flex items-center justify-between mb-3">
                     <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${theme.text}`}>{title}</span>
-                    <div className={`p-1.5 rounded-md border ${theme.iconBg}`}>
-                        {THEME[iconType]?.icon || theme.icon}
+                    <div className={`p-1.5 rounded-md border ${theme.iconBg} flex items-center justify-center transition-all duration-300 group-hover:border-white/20 group-hover:bg-white/5`}>
+                        {imageIcon ? (
+                            <img src={imageIcon} alt={title} className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
+                        ) : (
+                            <div className="group-hover:scale-110 transition-transform duration-300">
+                                {THEME[iconType]?.icon || theme.icon}
+                            </div>
+                        )}
                     </div>
                 </div>
                 

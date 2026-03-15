@@ -65,7 +65,7 @@ export default async function SettingsPage() {
     return (
         <div className="space-y-6">
             {/* Hero Header */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d1b3e] via-[#0a1628] to-[#080d1a] border border-white/8 p-6 md:p-8">
+            <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-[#0d1b3e] via-[#0a1628] to-[#080d1a] border border-white/8 p-6 md:p-8">
                 <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-blue-600/8 blur-3xl pointer-events-none" />
                 <div className="absolute inset-0 opacity-[0.03] rounded-2xl" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
@@ -79,7 +79,7 @@ export default async function SettingsPage() {
                     </nav>
                     <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">
                         Account{' '}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Settings</span>
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">Settings</span>
                     </h1>
                     <p className="text-gray-500 text-sm">Manage your profile, credentials and preferences.</p>
                 </div>

@@ -119,7 +119,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
             {/* Hero Banner */}
             <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
+                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
                 <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
@@ -136,7 +136,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                         <div>
                             <h1 className="text-3xl md:text-4xl font-black tracking-tight">
                                 <span className="text-white">Upgrade to </span>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">PRO</span>
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">PRO</span>
                             </h1>
                             <p className="text-gray-400 mt-2 text-sm">Configure your Google OAuth credentials to unlock the full power of Devora.</p>
                         </div>
@@ -153,7 +153,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
                 {/* Left: Form */}
                 <div className="lg:col-span-2">
-                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-gray-900 to-[#0c1628]">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-gray-900 to-[#0c1628]">
                         {/* Card header */}
                         <div className="px-6 py-4 border-b border-white/8 flex items-center gap-3">
                             <span className="w-8 h-8 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
@@ -251,7 +251,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                         onClick={() => handleCopy(callbackUrlDev, 'dev')}
                                         className="group relative bg-[#0a0f1e] border border-blue-500/20 hover:border-blue-500/40 rounded-xl p-3.5 cursor-pointer transition-all active:scale-[0.99]"
                                     >
-                                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent rounded-t-xl" />
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/40 to-transparent rounded-t-xl" />
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Development (localhost)</span>
                                             <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'dev' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-blue-400'}`}>
@@ -265,7 +265,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                         onClick={() => handleCopy(callbackUrlProd, 'prod')}
                                         className="group relative bg-[#0a0f1e] border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl p-3.5 cursor-pointer transition-all active:scale-[0.99]"
                                     >
-                                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent rounded-t-xl" />
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-500/40 to-transparent rounded-t-xl" />
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Production</span>
                                             <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'prod' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-indigo-400'}`}>
@@ -317,7 +317,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     type="submit"
                                     disabled={loading || !isValidated}
                                     title={!isValidated ? 'Verify credentials first' : ''}
-                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all active:scale-[0.98] border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
+                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all active:scale-[0.98] border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
                                 >
                                     {loading ? (
                                         <>
@@ -342,10 +342,10 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                 {/* Right: PRO Features Panel */}
                 <div className="lg:col-span-1 space-y-4">
                     {/* Features card */}
-                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-gray-900 to-[#0c1628]">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-gray-900 to-[#0c1628]">
                         <div className="absolute -top-10 right-0 w-32 h-32 rounded-full bg-blue-600/10 blur-2xl pointer-events-none" />
                         <div className="px-5 py-4 border-b border-white/8 flex items-center gap-2">
-                            <span className="w-7 h-7 flex items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                            <span className="w-7 h-7 flex items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 text-white">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             </span>
                             <h3 className="text-sm font-bold text-white">PRO Features</h3>
@@ -383,7 +383,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
                     {/* Info card */}
                     <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-[#0a0f1e] p-5">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-500/30 to-transparent" />
                         <div className="flex items-start gap-3">
                             <span className="shrink-0 w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mt-0.5">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>

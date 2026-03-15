@@ -11,7 +11,7 @@ export default function TokenUsageCard({ data = [] }) {
         <div className="relative overflow-hidden rounded-lg bg-linear-to-b from-[#0a0e1a] to-[#07090f] border border-blue-500/20 p-6 flex flex-col h-full group shadow-[0_0_15px_rgba(59,130,246,0.05)]">
             {/* Top neon accent */}
             <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/50 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
-            
+
             {/* Corner brackets */}
             <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t border-l border-blue-500/40 pointer-events-none" />
             <span className="absolute top-2 right-2 w-3.5 h-3.5 border-t border-r border-blue-500/40 pointer-events-none" />
@@ -25,14 +25,14 @@ export default function TokenUsageCard({ data = [] }) {
             <div className="relative z-10 flex items-center justify-between mb-6 border-b border-blue-500/10 pb-4">
                 <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400">
-                        <Cpu className="w-4 h-4" />
+                        <img src="/icons/dashbooard/robot.png" alt="Groq" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Chatbot Token Usage</h3>
+                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Groq Token Usage</h3>
                         <p className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest mt-0.5">Resource allocation</p>
                     </div>
                 </div>
-                <Link href="/chatbot" className="p-1.5 rounded-md border border-blue-500/20 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 transition-all shadow-[0_0_10px_rgba(59,130,246,0.1)]">
+                <Link href="/groq-intelligence" className="p-1.5 rounded-md border border-blue-500/20 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 transition-all shadow-[0_0_10px_rgba(59,130,246,0.1)]">
                     <ExternalLink className="w-4 h-4" />
                 </Link>
             </div>

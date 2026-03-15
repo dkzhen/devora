@@ -1,36 +1,14 @@
 import { NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
 import prisma from '@/lib/db';
 import { decrypt } from '@/lib/encryption';
 import { trackApiHit } from '@/lib/monitoring';
 
-async function getAuthenticatedUser() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
-
-    if (!token) return null;
-
-    try {
-        const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
-        const { payload } = await jwtVerify(token, secretKey);
-        const userId = payload.sub || payload.id;
-        return await prisma.user.findUnique({ where: { id: userId } });
-    } catch (e) {
-        return null;
-    }
-}
 
 export async function GET(request, { params }) {
     try {
         const resolvedParams = params instanceof Promise ? await params : params;
         const { fileId } = resolvedParams;
         await trackApiHit(request, `/api/telegram/download/:fileId`);
-        // Authenticate user
-        const user = await getAuthenticatedUser();
-        if (!user) {
-            return new NextResponse('Unauthorized', { status: 401 });
-        }
 
 
         if (!fileId) {

@@ -31,16 +31,15 @@ export default function GmailActivityCard({ data = [] }) {
             <div className="relative z-10 flex items-center justify-between mb-6 border-b border-emerald-500/10 pb-4">
                 <div className="flex items-center gap-3">
                     <div className="p-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                        <Mail className="w-4 h-4" />
+                        <img src="/icons/dashbooard/gmail.png" alt="Gmail" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
                         <h3 className="text-sm font-black text-white tracking-widest uppercase">Gmail Activity</h3>
                         <p className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-0.5">Messages vs Threads</p>
                     </div>
                 </div>
-                <Link href="/gmail-center" className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-[0.1em] transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]">
-                    View Details
-                    <ExternalLink className="w-3.5 h-3.5" />
+                <Link href="/gmail-center" className="p-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]" title="View Details">
+                    <ExternalLink className="w-4 h-4" />
                 </Link>
             </div>
 

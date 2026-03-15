@@ -123,7 +123,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-white/10"
+                            className="w-full py-3.5 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-white/10"
                         >
                             {loading ? (
                                 <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -170,7 +170,7 @@ export default function LoginPage() {
             {/* Right panel — dark space visual */}
             <div className="hidden lg:flex w-1/2 relative overflow-hidden items-center justify-center">
                 {/* Dark gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#0d1b3e] via-[#0a0f1e] to-[#080d1a]" />
+                <div className="absolute inset-0 bg-linear-to-br from-[#0d1b3e] via-[#0a0f1e] to-[#080d1a]" />
 
                 {/* Glowing orbs */}
                 <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
@@ -181,7 +181,7 @@ export default function LoginPage() {
                 <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
                 {/* Separator line */}
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/20 to-transparent" />
+                <div className="absolute left-0 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-blue-500/20 to-transparent" />
 
                 {/* Content */}
                 <div className="relative z-10 px-12 w-full max-w-sm">
@@ -189,7 +189,7 @@ export default function LoginPage() {
                     <div className="mb-8 text-center">
                         <h2 className="text-2xl font-black text-white tracking-tight mb-2">
                             Track Every<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Opportunity</span>
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">Opportunity</span>
                         </h2>
                         <p className="text-gray-600 text-xs">Airdrop hunting, email monitoring & API analytics in one place</p>
                     </div>
@@ -205,7 +205,7 @@ export default function LoginPage() {
                                 <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-0.5">Airdrop Tasks</div>
                                 <div className="text-2xl font-black text-white leading-none">{stats.airdrops}</div>
                                 <div className="mt-2 h-1 rounded-full bg-white/5">
-                                    <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-400" />
+                                    <div className="h-full w-4/5 rounded-full bg-linear-to-r from-blue-500 to-indigo-400" />
                                 </div>
                             </div>
                             <div className="text-right shrink-0">

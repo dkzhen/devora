@@ -25,7 +25,7 @@ export const metadata = {
         "productivity tools",
         "workflow automation",
         "api client",
-        "chatbot tools",
+        "groq-intelligence tools",
         "developer tools",
         "digital workspace",
         "all in one platform",

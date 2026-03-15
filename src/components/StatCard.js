@@ -12,7 +12,7 @@ export default function StatCard({ title, value, icon, color }) {
     const c = colors[color] || colors.blue;
 
     return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-6 hover:border-white/15 transition-all duration-300 group">
+        <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b] p-6 hover:border-white/15 transition-all duration-300 group">
             {/* Glow orb */}
             <div className={`absolute -top-6 -right-6 w-28 h-28 rounded-full ${c.orb} blur-2xl pointer-events-none transition-all group-hover:scale-125`} />
             <div className="relative z-10 flex items-start justify-between">

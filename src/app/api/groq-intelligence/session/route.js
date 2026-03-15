@@ -23,7 +23,7 @@ export async function GET(request) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/session');
+        await trackApiHit('/api/groq-intelligence/session');
 
         const sessions = await prisma.chatSession.findMany({
             where: { userId },
@@ -33,7 +33,7 @@ export async function GET(request) {
 
         return NextResponse.json({ sessions });
     } catch (error) {
-        console.error("GET /api/chatbot/session error:", error);
+        console.error("GET /api/groq-intelligence/session error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -43,7 +43,7 @@ export async function POST(request) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/session');
+        await trackApiHit('/api/groq-intelligence/session');
 
         const session = await prisma.chatSession.create({
             data: {
@@ -54,7 +54,7 @@ export async function POST(request) {
 
         return NextResponse.json({ session });
     } catch (error) {
-        console.error("POST /api/chatbot/session error:", error);
+        console.error("POST /api/groq-intelligence/session error:", error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

@@ -24,7 +24,7 @@ export async function POST(request) {
         const userId = await getUserId();
         if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        await trackApiHit('/api/chatbot/chat');
+        await trackApiHit('/api/groq-intelligence/chat');
 
         const body = await request.json();
         const { messages, model = "llama-3.3-70b-versatile", sessionId, maxTokens, responseLength = 'short' } = body;
@@ -139,7 +139,7 @@ export async function POST(request) {
         return NextResponse.json(data);
 
     } catch (error) {
-        console.error("POST /api/chatbot/chat error:", error);
+        console.error("POST /api/groq-intelligence/chat error:", error);
         return NextResponse.json({ error: 'Internal server error processing chat' }, { status: 500 });
     }
 }

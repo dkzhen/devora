@@ -8,7 +8,7 @@ const FEATURE_ICONS = {
     'gmail-center': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Gmail" />,
     'mail-control': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Mail" />,
     'drive-center': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Drive" />,
-    'chatbot': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Chatbot" />,
+    'groq-intelligence': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Groq Intelligence" />,
     'app-library': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="App Library" />,
     'http-client': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="HTTP Client" />,
 };
@@ -18,7 +18,7 @@ const FEATURE_COLORS = {
     'gmail-center': { icon: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
     'mail-control': { icon: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
     'drive-center': { icon: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-    'chatbot': { icon: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20' },
+    'groq-intelligence': { icon: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20' },
 };
 
 function ToggleSwitch({ enabled, onChange, loading }) {
@@ -26,7 +26,7 @@ function ToggleSwitch({ enabled, onChange, loading }) {
         <button
             onClick={onChange}
             disabled={loading}
-            className={`relative inline-flex h-7 w-14 items-center rounded-full transition-all duration-300 focus:outline-none ${enabled ? 'bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg shadow-amber-500/25' : 'bg-white/10'} ${loading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
+            className={`relative inline-flex h-7 w-14 items-center rounded-full transition-all duration-300 focus:outline-none ${enabled ? 'bg-linear-to-r from-amber-500 to-orange-500 shadow-lg shadow-amber-500/25' : 'bg-white/10'} ${loading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
         >
             <span
                 className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform duration-300 ${enabled ? 'translate-x-8' : 'translate-x-1'}`}
@@ -263,7 +263,7 @@ export default function MaintenanceControlPage() {
 
             {/* Mobile Header */}
             <div className="md:hidden relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#1a0d2e] to-gray-900" />
+                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#1a0d2e] to-gray-900" />
                 <div className="absolute -top-8 -left-8 w-52 h-52 rounded-full bg-amber-600/15 blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-12 right-0 w-44 h-44 rounded-full bg-orange-500/15 blur-3xl pointer-events-none" />
                 <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
@@ -277,7 +277,7 @@ export default function MaintenanceControlPage() {
                         <span className="font-semibold text-amber-200">Maintenance</span>
                     </nav>
                     <h1 className="text-2xl font-black text-white tracking-tight">
-                        System <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Control</span>
+                        System <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">Control</span>
                     </h1>
                     <p className="text-gray-400 text-xs mt-1.5">Manage feature availability</p>
                     {activeCount > 0 && (
@@ -292,7 +292,7 @@ export default function MaintenanceControlPage() {
             {/* Desktop Header */}
             <div className="hidden md:block">
                 <div className="relative overflow-hidden rounded-2xl mb-2">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#1a0d2e] to-gray-900" />
+                    <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#1a0d2e] to-gray-900" />
                     <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-amber-600/10 blur-3xl pointer-events-none" />
                     <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
                     <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
@@ -383,7 +383,7 @@ export default function MaintenanceControlPage() {
                                 >
                                     {/* Glow when active */}
                                     {config.enabled && (
-                                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-500/50 to-transparent" />
                                     )}
 
                                     <div className="p-5">
@@ -511,7 +511,7 @@ export default function MaintenanceControlPage() {
 
             {/* Add Feature Modal */}
             {isAddingFeature && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsAddingFeature(false)} />
                     <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up">
                         <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -540,7 +540,7 @@ export default function MaintenanceControlPage() {
                                             setNewFeatureId(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
                                         }
                                     }}
-                                    placeholder="e.g. Chatbot Alpha"
+                                    placeholder="e.g. Groq Intelligence Alpha"
                                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all"
                                     autoFocus
                                     required
@@ -556,7 +556,7 @@ export default function MaintenanceControlPage() {
                                     type="text"
                                     value={newFeatureId}
                                     onChange={(e) => setNewFeatureId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                    placeholder="e.g. chatbot-alpha"
+                                    placeholder="e.g. groq-intelligence-alpha"
                                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all font-mono"
                                     required
                                 />
@@ -582,7 +582,7 @@ export default function MaintenanceControlPage() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !newFeatureId || !newFeatureLabel}
-                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-semibold text-white shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-semibold text-white shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -601,7 +601,7 @@ export default function MaintenanceControlPage() {
 
             {/* Edit Feature Modal */}
             {editingFeatureConfig && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isEditSubmitting && setEditingFeatureConfig(null)} />
                     <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up">
                         <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -624,7 +624,7 @@ export default function MaintenanceControlPage() {
                                     type="text"
                                     value={editFeatureLabel}
                                     onChange={(e) => setEditFeatureLabel(e.target.value)}
-                                    placeholder="e.g. Chatbot Alpha"
+                                    placeholder="e.g. Groq Intelligence Alpha"
                                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all"
                                     autoFocus
                                     required
@@ -639,7 +639,7 @@ export default function MaintenanceControlPage() {
                                     type="text"
                                     value={editFeatureId}
                                     onChange={(e) => setEditFeatureId(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                    placeholder="e.g. chatbot-alpha"
+                                    placeholder="e.g. groq-intelligence-alpha"
                                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all font-mono"
                                     required
                                 />
@@ -657,7 +657,7 @@ export default function MaintenanceControlPage() {
                                 <button
                                     type="submit"
                                     disabled={isEditSubmitting || !editFeatureId || !editFeatureLabel}
-                                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-semibold text-white shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-semibold text-white shadow-lg shadow-blue-700/25 border border-white/10 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {isEditSubmitting ? (
                                         <>

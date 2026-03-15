@@ -88,17 +88,17 @@ export const apiCategories = [
         ]
     },
     {
-        category: 'AI Chatbot',
+        category: 'Groq Intelligence',
         icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>,
         desc: 'Endpoints for Groq-powered AI conversational chat',
         endpoints: [
-            { method: 'GET', path: '/api/chatbot/credential', desc: 'Get active Groq credentials for user' },
-            { method: 'POST', path: '/api/chatbot/credential', desc: 'Save or update Groq API key', sampleBody: '{\n  "apiKey": "gsk_..."\n}' },
-            { method: 'GET', path: '/api/chatbot/session', desc: 'Retrieve user chat session history lists' },
-            { method: 'POST', path: '/api/chatbot/session', desc: 'Create a new independent chat session' },
-            { method: 'GET', path: '/api/chatbot/session/:id', desc: 'Load specific chat messages for a session' },
-            { method: 'DELETE', path: '/api/chatbot/session/:id', desc: 'Delete a conversation session completely' },
-            { method: 'POST', path: '/api/chatbot/chat', desc: 'Send a prompt to Groq API via Server', sampleBody: '{\n  "messages": [\n    { "role": "user", "content": "Hello!" }\n  ],\n  "model": "llama-3.3-70b-versatile",\n  "sessionId": "..."\n}' }
+            { method: 'GET', path: '/api/groq-intelligence/credential', desc: 'Get active Groq credentials for user' },
+            { method: 'POST', path: '/api/groq-intelligence/credential', desc: 'Save or update Groq API key', sampleBody: '{\n  "apiKey": "gsk_..."\n}' },
+            { method: 'GET', path: '/api/groq-intelligence/session', desc: 'Retrieve user chat session history lists' },
+            { method: 'POST', path: '/api/groq-intelligence/session', desc: 'Create a new independent chat session' },
+            { method: 'GET', path: '/api/groq-intelligence/session/:id', desc: 'Load specific chat messages for a session' },
+            { method: 'DELETE', path: '/api/groq-intelligence/session/:id', desc: 'Delete a conversation session completely' },
+            { method: 'POST', path: '/api/groq-intelligence/chat', desc: 'Send a prompt to Groq API via Server', sampleBody: '{\n  "messages": [\n    { "role": "user", "content": "Hello!" }\n  ],\n  "model": "llama-3.3-70b-versatile",\n  "sessionId": "..."\n}' }
         ]
     },
     {

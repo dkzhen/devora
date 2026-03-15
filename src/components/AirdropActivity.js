@@ -22,7 +22,9 @@ export default function AirdropActivity({ data = [], total = 0 }) {
             {/* Header */}
             <div className="relative z-10 flex items-center justify-between mb-6 border-b border-blue-500/10 pb-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                    <div className="p-1.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                        <img src="/icons/dashbooard/airdrop.png" alt="Airdrop" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
+                    </div>
                     <div>
                         <h3 className="text-sm font-black text-white tracking-widest uppercase">Top Airdrop Projects</h3>
                         <p className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest mt-0.5">Participation by task volume</p>

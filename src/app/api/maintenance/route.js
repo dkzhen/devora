@@ -10,7 +10,7 @@ const DEFAULT_FEATURES = [
     { feature: 'gmail-center', label: 'Gmail Center', message: 'Gmail Center is temporarily unavailable while we make improvements.' },
     { feature: 'mail-control', label: 'Mail Control', message: 'Mail Control is undergoing scheduled maintenance.' },
     { feature: 'drive-center', label: 'Drive Center', message: 'Drive Center is currently undergoing maintenance.' },
-    { feature: 'chatbot', label: 'AI Chatbot', message: 'The AI Chatbot is currently receiving upgrades. Please check back later.' },
+    { feature: 'groq-intelligence', label: 'Groq Intelligence', message: 'Groq Intelligence is currently receiving upgrades. Please check back later.' },
 ];
 
 async function getUser(request) {

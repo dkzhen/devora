@@ -45,7 +45,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
 
     if (loading) {
         return (
-            <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-8">
+            <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b] p-8">
                 <div className="space-y-3 animate-pulse">
                     {[1, 2, 3].map(i => (
                         <div key={i} className="h-14 bg-white/5 rounded-xl" />
@@ -57,7 +57,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
 
     if (!accounts || accounts.length === 0) {
         return (
-            <div className="relative overflow-hidden rounded-2xl border border-dashed border-white/10 bg-gradient-to-br from-[#0f172a] to-[#1e293b] p-16 text-center">
+            <div className="relative overflow-hidden rounded-2xl border border-dashed border-white/10 bg-linear-to-br from-[#0f172a] to-[#1e293b] p-16 text-center">
                 <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-blue-600/5 blur-3xl pointer-events-none" />
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
@@ -69,7 +69,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                     <p className="text-gray-500 text-sm mb-6 max-w-sm">Connect your first Gmail account to start tracking your email activity.</p>
                     <a
                         href="/auth/google"
-                        className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-xl shadow-blue-700/30 transition-all active:scale-95 border border-white/10"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-xl shadow-blue-700/30 transition-all active:scale-95 border border-white/10"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                         Connect Account
@@ -80,7 +80,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
     }
 
     return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-[#0f172a] to-[#1e293b]">
+        <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b]">
             {/* Header */}
             <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
                 <h2 className="text-sm font-bold text-white">Connected Accounts</h2>
@@ -105,7 +105,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                 {/* Account */}
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-600/20 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-black shrink-0">
+                                        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-blue-500/20 to-indigo-600/20 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-black shrink-0">
                                             {account.email.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
@@ -181,7 +181,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                     <div key={account.email} className="p-4 space-y-4">
                         <div className="flex justify-between items-start">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-600/20 border border-blue-500/20 text-blue-400 flex items-center justify-center text-sm font-black shrink-0">
+                                <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500/20 to-indigo-600/20 border border-blue-500/20 text-blue-400 flex items-center justify-center text-sm font-black shrink-0">
                                     {account.email.charAt(0).toUpperCase()}
                                 </div>
                                 <div>

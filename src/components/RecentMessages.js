@@ -14,7 +14,7 @@ function Avatar({ name, size = 'sm' }) {
     const colorClass = AVATAR_COLORS[name.length % AVATAR_COLORS.length];
     const sizeClass = size === 'lg' ? 'w-12 h-12 text-lg' : 'w-8 h-8 text-xs';
     return (
-        <div className={`${sizeClass} rounded-xl bg-gradient-to-br ${colorClass} flex items-center justify-center font-black text-white shrink-0`}>
+        <div className={`${sizeClass} rounded-xl bg-linear-to-br ${colorClass} flex items-center justify-center font-black text-white shrink-0`}>
             {name.charAt(0).toUpperCase()}
         </div>
     );
@@ -71,7 +71,7 @@ export default function RecentMessages({ accounts }) {
 
     if (!accounts || accounts.length === 0) {
         return (
-            <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-[#0f172a] to-[#1e293b] flex flex-col items-center justify-center py-20 px-6 text-center">
+            <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b] flex flex-col items-center justify-center py-20 px-6 text-center">
                 {/* Background orbs */}
                 <div className="absolute top-1/4 left-1/4 w-48 h-48 rounded-full bg-blue-600/5 blur-3xl pointer-events-none" />
                 <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-indigo-600/5 blur-3xl pointer-events-none" />
@@ -96,7 +96,7 @@ export default function RecentMessages({ accounts }) {
 
                 <a
                     href="/gmail-center"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-700/25 transition-all hover:scale-[1.03] active:scale-[0.98] border border-white/10"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-700/25 transition-all hover:scale-[1.03] active:scale-[0.98] border border-white/10"
                 >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" />
@@ -111,7 +111,7 @@ export default function RecentMessages({ accounts }) {
     const selectedAccount = accounts.find(a => a.email === selectedEmail);
 
     return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-[#0f172a] to-[#1e293b] flex flex-col h-auto md:h-[680px]">
+        <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b] flex flex-col h-auto md:h-[680px]">
 
             {/* ── Toolbar ── */}
             <div className="px-4 py-3 border-b border-white/5 flex flex-col sm:flex-row justify-between items-center gap-3">
