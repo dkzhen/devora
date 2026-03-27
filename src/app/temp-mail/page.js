@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { HeroHeader, LoadingState } from '@/components/HeroHeader';
+import { toast } from 'react-hot-toast';
 
 export default function TempMail() {
     const [account, setAccount] = useState(null);
@@ -15,10 +16,17 @@ export default function TempMail() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [autoSync, setAutoSync] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
+    const [history, setHistory] = useState([]);
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [user, setUser] = useState(null);
 
     const intervalRef = useRef(null);
 
     useEffect(() => {
+        // Init user
+        const storedUser = localStorage.getItem('user_info');
+        if (storedUser) setUser(JSON.parse(storedUser));
+
         // Init session from localStorage
         const storedToken = localStorage.getItem('temp_mail_token');
         const storedAccount = localStorage.getItem('temp_mail_account');
@@ -32,6 +40,8 @@ export default function TempMail() {
         } else {
             setLoading(false);
         }
+
+        if (storedUser) fetchHistory();
 
         return () => stopPolling();
     }, []);
@@ -56,6 +66,79 @@ export default function TempMail() {
         if (intervalRef.current) clearInterval(intervalRef.current);
     };
 
+    const fetchHistory = async () => {
+        try {
+            const res = await fetch('/api/temp-mail/accounts/history');
+            if (res.ok) {
+                const data = await res.json();
+                setHistory(data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch history", error);
+        }
+    };
+
+    const switchAccount = async (oldAccount) => {
+        setLoading(true);
+        stopPolling();
+        setMessages([]);
+        setSelectedMessage(null);
+        setMessageContent(null);
+
+        try {
+            // Get fresh token for this account
+            const tokenRes = await fetch('/api/temp-mail/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: oldAccount.address, password: oldAccount.password })
+            });
+
+            if (!tokenRes.ok) throw new Error("Failed to get token for existing account");
+            const tokenData = await tokenRes.json();
+
+            setAccount(oldAccount);
+            setToken(tokenData.token);
+
+            localStorage.setItem('temp_mail_account', JSON.stringify(oldAccount));
+            localStorage.setItem('temp_mail_token', tokenData.token);
+
+            fetchMessages(tokenData.token, oldAccount.id).finally(() => setLoading(false));
+            startPolling(tokenData.token, oldAccount.id);
+            setShowHistoryModal(false);
+            
+            toast.success("Switched to email: " + oldAccount.address);
+        } catch (error) {
+            console.error(error);
+            setLoading(false);
+            toast.error("Failed to switch account");
+        }
+    };
+
+    const destroyAccount = async (targetId) => {
+        if (!confirm("Are you sure you want to permanently delete this email address? This action cannot be undone.")) return;
+        try {
+            const res = await fetch(`/api/temp-mail/accounts?id=${targetId}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                toast.success("Email address destroyed");
+                fetchHistory();
+                if (account?.id === targetId) {
+                    setAccount(null);
+                    setToken(null);
+                    setMessages([]);
+                    localStorage.removeItem('temp_mail_account');
+                    localStorage.removeItem('temp_mail_token');
+                }
+            } else {
+                toast.error("Failed to destroy email address");
+            }
+        } catch (error) {
+            console.error("Destroy error", error);
+            toast.error("An error occurred while destroying");
+        }
+    };
+
     const generateNewEmail = async () => {
         setGenerating(true);
         stopPolling();
@@ -64,8 +147,8 @@ export default function TempMail() {
         setMessageContent(null);
 
         try {
-            // 0. Clean up old account if exists
-            if (account && token) {
+            // 0. Clean up old account if exists (only if NOT logged in, to preserve history for users)
+            if (account && token && !user) {
                 try {
                     await fetch(`/api/temp-mail/accounts?id=${account.id}`, {
                         method: 'DELETE',
@@ -128,16 +211,13 @@ export default function TempMail() {
             localStorage.setItem('temp_mail_account', JSON.stringify(accountData));
             localStorage.setItem('temp_mail_token', tokenData.token);
 
-            toast.success("New email generated!", {
-                style: { background: '#0a0e1a', color: '#E7F2EF', border: '1px solid #A1C2BD' },
-                iconTheme: { primary: '#A1C2BD', secondary: '#0a0e1a' }
-            });
+            await fetchHistory();
+
+            toast.success("New email generated!");
             startPolling(tokenData.token, accountData.id);
         } catch (error) {
             console.error(error);
-            toast.error("Error generating temp mail", {
-                style: { background: '#0a0e1a', color: '#A1C2BD', border: '1px solid #708993' }
-            });
+            toast.error("Error generating temp mail");
         } finally {
             setGenerating(false);
             setLoading(false);
@@ -300,11 +380,20 @@ export default function TempMail() {
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                     ) : (
                                         <>
-                                            <svg className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                            Generate New Email
+                                            <svg className="w-4 h-4 group-hover/btn:rotate-180 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                                            Generate New
                                         </>
                                     )}
                                 </button>
+                                {user && (
+                                    <button
+                                        onClick={() => setShowHistoryModal(true)}
+                                        className="w-full mt-2 flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95"
+                                    >
+                                        <svg className="w-4 h-4 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        History
+                                    </button>
+                                )}
                             </div>
                         ) : (
                             <div className="relative z-10">
@@ -327,20 +416,31 @@ export default function TempMail() {
                                         </button>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={generateNewEmail}
-                                    disabled={generating}
-                                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-white/5 hover:border-red-500/20 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95 disabled:opacity-50"
-                                >
-                                    {generating ? (
-                                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                                    ) : (
-                                        <>
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                            Delete & Generate New
-                                        </>
+                                <div className="grid grid-cols-1 gap-2">
+                                    <button
+                                        onClick={generateNewEmail}
+                                        disabled={generating}
+                                        className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-white/5 hover:border-red-500/20 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95 disabled:opacity-50"
+                                    >
+                                        {generating ? (
+                                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                        ) : (
+                                            <>
+                                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                                                Generate New
+                                            </>
+                                        )}
+                                    </button>
+                                    {user && (
+                                        <button
+                                            onClick={() => setShowHistoryModal(true)}
+                                            className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95"
+                                        >
+                                            <svg className="w-4 h-4 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            History Email
+                                        </button>
                                     )}
-                                </button>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -490,6 +590,62 @@ export default function TempMail() {
                 </div>
 
             </div>
+
+            {/* History Modal */}
+            {showHistoryModal && (
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-[#0a0e1a] border border-[#A1C2BD]/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-scale-up">
+                        <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
+                            <h3 className="font-bold text-white flex items-center gap-2">
+                                <svg className="w-5 h-5 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Email History
+                            </h3>
+                            <button onClick={() => setShowHistoryModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-colors">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <div className="max-h-[400px] overflow-y-auto p-4 flex flex-col gap-3">
+                            {history.filter(item => item.id !== account?.id).length === 0 ? (
+                                <div className="py-10 text-center">
+                                    <p className="text-gray-500 text-sm italic">No history found</p>
+                                </div>
+                            ) : (
+                                history
+                                    .filter(item => item.id !== account?.id)
+                                    .map((item) => (
+                                        <div key={item.id} className="p-4 rounded-xl border transition-all flex items-center justify-between gap-4 group bg-white/5 border-transparent hover:border-white/10">
+                                            <div className="min-w-0 flex-1">
+                                                <div className="text-sm font-bold text-gray-200 truncate">{item.address}</div>
+                                                <div className="text-[10px] text-gray-500 mt-0.5">Created: {new Date(item.createdAt).toLocaleDateString()}</div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <button 
+                                                    onClick={() => switchAccount(item)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#A1C2BD]/10 hover:bg-[#A1C2BD]/20 text-[#A1C2BD] text-xs font-bold rounded-lg border border-[#A1C2BD]/20 transition-all active:scale-95 group/sw"
+                                                    title="Switch to this account"
+                                                >
+                                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                                                    <span className="hidden sm:inline">Switch</span>
+                                                </button>
+                                                <button 
+                                                    onClick={() => destroyAccount(item.id)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold rounded-lg border border-red-500/20 transition-all active:scale-95"
+                                                    title="Permanently Delete account"
+                                                >
+                                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                    <span className="hidden sm:inline">Destroy</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                            )}
+                        </div>
+                        <div className="p-4 bg-black/20 border-t border-white/5 flex justify-end">
+                            <button onClick={() => setShowHistoryModal(false)} className="px-4 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Close</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

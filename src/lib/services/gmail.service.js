@@ -199,3 +199,65 @@ export async function getLatestMessages(refreshToken, clientId, clientSecret) {
         throw new Error('Failed to fetch messages');
     }
 }
+
+/**
+ * Send an email
+ * @param {string} refreshToken
+ * @param {string} clientId
+ * @param {string} clientSecret
+ * @param {string} to
+ * @param {string} subject
+ * @param {string} text
+ * @returns {Promise<Object>} Result of the send operation
+ */
+export async function sendEmail(refreshToken, clientId, clientSecret, to, subject, text) {
+    if (!clientId || !clientSecret) {
+        throw new Error("Missing Google Client credentials");
+    }
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            clientId,
+            clientSecret
+        );
+
+        oauth2Client.setCredentials({
+            refresh_token: refreshToken
+        });
+
+        const gmail = google.gmail({
+            version: "v1",
+            auth: oauth2Client
+        });
+
+        // Ensure we construct the raw email correctly
+        const messageParts = [
+            `To: ${to}`,
+            `Subject: ${subject}`,
+            'Content-Type: text/plain; charset="UTF-8"',
+            'MIME-Version: 1.0',
+            '',
+            text
+        ];
+        
+        const message = messageParts.join('\r\n');
+        
+        // Base64url encode the message
+        const encodedMessage = Buffer.from(message)
+            .toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '');
+
+        const res = await gmail.users.messages.send({
+            userId: 'me',
+            requestBody: {
+                raw: encodedMessage
+            }
+        });
+
+        return { success: true, messageId: res.data.id };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { success: false, error: error.message };
+    }
+}

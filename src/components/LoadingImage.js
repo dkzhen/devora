@@ -16,7 +16,8 @@ export default function LoadingImage({
     const [error, setError] = useState(false);
     
     const isLoaded = loadedSrc === src && !error;
-    const displaySrc = error || !src ? fallback : src;
+    const isFallbackString = typeof fallback === 'string';
+    const displaySrc = error && isFallbackString ? fallback : src;
 
     return (
         <div className={`relative ${containerClassName}`}>
@@ -25,15 +26,22 @@ export default function LoadingImage({
                     <div className={spinnerClassName} />
                 </div>
             )}
-            <img 
-                src={displaySrc} 
-                alt={alt} 
-                className={`${className} transition-opacity duration-300 ${isLoaded || error || !src ? 'opacity-100' : 'opacity-0'}`}
-                onLoad={() => setLoadedSrc(src)}
-                onError={() => {
-                    if (!error) setError(true);
-                }}
-            />
+            
+            {(error && !isFallbackString) ? (
+                <div className={`${className} flex items-center justify-center overflow-hidden transition-opacity duration-300 opacity-100`}>
+                    {fallback}
+                </div>
+            ) : (
+                <img 
+                    src={displaySrc} 
+                    alt={alt} 
+                    className={`${className} transition-opacity duration-300 ${isLoaded || error || !src ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={() => setLoadedSrc(src)}
+                    onError={() => {
+                        if (!error) setError(true);
+                    }}
+                />
+            )}
             {children}
         </div>
     );

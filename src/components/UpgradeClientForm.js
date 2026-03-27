@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { HeroHeader } from './HeroHeader';
 
 export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
     const router = useRouter();
@@ -97,7 +98,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
         if (errors[field]) setErrors(prev => ({ ...prev, [field]: null }));
     };
 
-    const inputBase = 'w-full px-4 py-3 rounded-xl bg-[#0a0f1e] border focus:outline-none focus:ring-2 transition-all text-white text-sm placeholder-gray-600';
+    const inputBase = 'w-full px-4 py-3 rounded-none bg-[#0B0F1A] border focus:outline-none transition-all text-white text-sm font-mono placeholder-gray-600';
 
     return (
         <div className="space-y-6">
@@ -118,53 +119,40 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
             )}
 
             {/* Hero Banner */}
-            <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-                <div className="relative z-10 p-6 md:p-8">
-                    <nav className="flex text-xs text-blue-300/60 mb-4">
-                        <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </a>
-                        <svg className="w-3 h-3 mx-2 text-blue-400/30 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="text-blue-200 font-semibold">Upgrade</span>
-                    </nav>
-                    <div className="flex items-end justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                                <span className="text-white">Upgrade to </span>
-                                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">PRO</span>
-                            </h1>
-                            <p className="text-gray-400 mt-2 text-sm">Configure your Google OAuth credentials to unlock the full power of Devora.</p>
-                        </div>
-                        <span className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            PRO
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <HeroHeader
+                colorTheme="upgrade"
+                breadcrumbs={[
+                    { label: 'DASHBOARD', href: '/' },
+                    { label: 'UPGRADE' }
+                ]}
+                title="Upgrade to"
+                badge="PRO"
+                description="Configure your Google OAuth credentials to unlock the full power of Devora."
+                actionContent={
+                    <span className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-none bg-[#e59a54]/10 border border-[#e59a54]/20 text-[#e59a54] text-[10px] font-mono uppercase tracking-widest font-bold">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        PRO
+                    </span>
+                }
+            />
 
             {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
                 {/* Left: Form */}
                 <div className="lg:col-span-2">
-                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-gray-900 to-[#0c1628]">
+                    <div className="relative overflow-hidden rounded-none border border-white/20 bg-[#0B0F1A]">
                         {/* Card header */}
-                        <div className="px-6 py-4 border-b border-white/8 flex items-center gap-3">
-                            <span className="w-8 h-8 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                        <div className="px-6 py-4 border-b border-white/20 flex items-center gap-3">
+                            <span className="w-8 h-8 flex items-center justify-center rounded-none bg-[#e59a54]/10 border border-[#e59a54]/20 text-[#e59a54]">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             </span>
                             <div>
-                                <h2 className="text-sm font-bold text-white">Configuration Details</h2>
-                                <p className="text-xs text-gray-500">Enter your Google Cloud Project credentials</p>
+                                <h2 className="text-[10px] font-mono uppercase tracking-widest font-black text-white">Configuration Details</h2>
+                                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 mt-1">Enter your Google Cloud Project credentials</p>
                             </div>
                             {isValidated && (
-                                <span className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold">
+                                <span className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono uppercase tracking-widest font-bold">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                                     Verified
                                 </span>
@@ -174,7 +162,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                         <form onSubmit={handleSubmit} className="p-6 space-y-5">
                             {/* Client ID */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
                                     Google Client ID <span className="text-red-400">*</span>
                                 </label>
                                 <input
@@ -182,9 +170,9 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     required
                                     value={formData.clientId}
                                     onChange={(e) => updateFormData('clientId', e.target.value)}
-                                    className={`${inputBase} ${errors.clientId ? 'border-red-500/50 focus:ring-red-500/30'
-                                            : isValidated ? 'border-emerald-500/40 focus:ring-emerald-500/20'
-                                                : 'border-white/10 focus:ring-blue-500/30'
+                                    className={`${inputBase} ${errors.clientId ? 'border-red-500 focus:border-red-400'
+                                            : isValidated ? 'border-emerald-500/40 focus:border-emerald-500/80'
+                                                : 'border-white/20 focus:border-[#e59a54]'
                                         }`}
                                     placeholder="123456789-abc...apps.googleusercontent.com"
                                 />
@@ -198,7 +186,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
                             {/* Client Secret */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
                                     Google Client Secret <span className="text-red-400">*</span>
                                 </label>
                                 <div className="relative">
@@ -207,9 +195,9 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                         required
                                         value={formData.clientSecret}
                                         onChange={(e) => updateFormData('clientSecret', e.target.value)}
-                                        className={`${inputBase} pr-11 ${errors.clientSecret ? 'border-red-500/50 focus:ring-red-500/30'
-                                                : isValidated ? 'border-emerald-500/40 focus:ring-emerald-500/20'
-                                                    : 'border-white/10 focus:ring-blue-500/30'
+                                        className={`${inputBase} pr-11 ${errors.clientSecret ? 'border-red-500 focus:border-red-400'
+                                                : isValidated ? 'border-emerald-500/40 focus:border-emerald-500/80'
+                                                    : 'border-white/20 focus:border-[#e59a54]'
                                             }`}
                                         placeholder="GOCSPX-..."
                                     />
@@ -242,19 +230,18 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
                             {/* Redirect URIs */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
                                     Authorized Redirect URIs
                                 </label>
                                 <div className="space-y-2">
                                     {/* Dev */}
                                     <div
                                         onClick={() => handleCopy(callbackUrlDev, 'dev')}
-                                        className="group relative bg-[#0a0f1e] border border-blue-500/20 hover:border-blue-500/40 rounded-xl p-3.5 cursor-pointer transition-all active:scale-[0.99]"
+                                        className="group relative bg-[#0B0F1A] border border-white/20 hover:border-[#e59a54] rounded-none p-3.5 cursor-pointer transition-colors"
                                     >
-                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/40 to-transparent rounded-t-xl" />
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Development (localhost)</span>
-                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'dev' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-blue-400'}`}>
+                                            <span className="text-[10px] font-bold text-[#e59a54] uppercase tracking-widest">Development (localhost)</span>
+                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'dev' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-[#e59a54]'}`}>
                                                 {copiedKey === 'dev' ? '✓ Copied' : 'Click to copy'}
                                             </span>
                                         </div>
@@ -263,12 +250,11 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     {/* Prod */}
                                     <div
                                         onClick={() => handleCopy(callbackUrlProd, 'prod')}
-                                        className="group relative bg-[#0a0f1e] border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl p-3.5 cursor-pointer transition-all active:scale-[0.99]"
+                                        className="group relative bg-[#0B0F1A] border border-white/20 hover:border-[#e59a54] rounded-none p-3.5 cursor-pointer transition-colors"
                                     >
-                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-500/40 to-transparent rounded-t-xl" />
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Production</span>
-                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'prod' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-indigo-400'}`}>
+                                            <span className="text-[10px] font-bold text-[#e59a54] uppercase tracking-widest">Production</span>
+                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'prod' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-[#e59a54]'}`}>
                                                 {copiedKey === 'prod' ? '✓ Copied' : 'Click to copy'}
                                             </span>
                                         </div>
@@ -287,9 +273,9 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     type="button"
                                     onClick={handleVerify}
                                     disabled={loading || verifying}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-[0.98] border ${isValidated
-                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 cursor-default'
-                                            : 'bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 disabled:opacity-50'
+                                    className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-none font-bold text-[10px] font-mono uppercase tracking-widest transition-colors border ${isValidated
+                                            ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 cursor-default'
+                                            : 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-[#e59a54] disabled:opacity-50'
                                         }`}
                                 >
                                     {verifying ? (
@@ -317,7 +303,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     type="submit"
                                     disabled={loading || !isValidated}
                                     title={!isValidated ? 'Verify credentials first' : ''}
-                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-700/30 transition-all active:scale-[0.98] border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
+                                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-none border-2 border-[#e59a54] bg-[#e59a54]/10 hover:bg-[#e59a54] hover:text-[#0B0F1A] text-[#e59a54] font-bold text-[10px] font-mono uppercase tracking-widest transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     {loading ? (
                                         <>
@@ -342,13 +328,12 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                 {/* Right: PRO Features Panel */}
                 <div className="lg:col-span-1 space-y-4">
                     {/* Features card */}
-                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-br from-gray-900 to-[#0c1628]">
-                        <div className="absolute -top-10 right-0 w-32 h-32 rounded-full bg-blue-600/10 blur-2xl pointer-events-none" />
-                        <div className="px-5 py-4 border-b border-white/8 flex items-center gap-2">
-                            <span className="w-7 h-7 flex items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 text-white">
+                    <div className="relative overflow-hidden rounded-none border border-white/20 bg-[#0B0F1A]">
+                        <div className="px-5 py-4 border-b border-white/20 flex items-center gap-2">
+                            <span className="w-7 h-7 flex items-center justify-center rounded-none bg-[#e59a54]/10 border border-[#e59a54]/20 text-[#e59a54]">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             </span>
-                            <h3 className="text-sm font-bold text-white">PRO Features</h3>
+                            <h3 className="text-[10px] font-mono uppercase tracking-widest font-black text-white">PRO Features</h3>
                         </div>
                         <ul className="p-5 space-y-4">
                             {[
@@ -369,12 +354,12 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                 },
                             ].map((f, i) => (
                                 <li key={i} className="flex items-start gap-3">
-                                    <span className="shrink-0 mt-0.5 w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                                    <span className="shrink-0 mt-0.5 w-7 h-7 rounded-none bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
                                         {f.icon}
                                     </span>
                                     <div>
-                                        <div className="text-sm font-semibold text-white">{f.title}</div>
-                                        <div className="text-xs text-gray-500 mt-0.5 leading-relaxed">{f.desc}</div>
+                                        <div className="text-[10px] font-mono uppercase tracking-widest font-bold text-white">{f.title}</div>
+                                        <div className="text-[10px] font-mono uppercase tracking-widest text-gray-500 mt-1 leading-relaxed">{f.desc}</div>
                                     </div>
                                 </li>
                             ))}
@@ -382,15 +367,14 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                     </div>
 
                     {/* Info card */}
-                    <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-[#0a0f1e] p-5">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-indigo-500/30 to-transparent" />
+                    <div className="relative overflow-hidden rounded-none border border-white/20 bg-[#0B0F1A] p-5">
                         <div className="flex items-start gap-3">
-                            <span className="shrink-0 w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mt-0.5">
+                            <span className="shrink-0 w-7 h-7 rounded-none bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mt-0.5">
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                             </span>
                             <div>
-                                <div className="text-xs font-bold text-amber-400 mb-1">Your data stays yours</div>
-                                <p className="text-xs text-gray-500 leading-relaxed">
+                                <div className="text-[10px] font-mono uppercase tracking-widest font-bold text-amber-400 mb-1">Your data stays yours</div>
+                                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 leading-relaxed mt-2">
                                     By using your own Google credentials, you have full ownership and privacy over your OAuth tokens. Devora never stores your email content.
                                 </p>
                             </div>

@@ -66,7 +66,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
     };
 
     return (
-        <section className="relative overflow-hidden rounded-2xl bg-[#0f172a] border border-white/8 p-6">
+        <section className="relative overflow-hidden rounded-none bg-[#0B0F1A] border-2 border-white/20 p-6">
             {toast && (
                 <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium animate-fade-in-up ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
                     {toast.message}
@@ -76,13 +76,13 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
             <div className="flex justify-between items-start mb-6">
                 <div className="flex items-start gap-5">
                     {/* Avatar */}
-                    <div className={`w-14 h-14 rounded-2xl bg-linear-to-br ${roleGradient} flex items-center justify-center text-white font-black text-lg shadow-lg shrink-0`}>
+                    <div className={`w-14 h-14 rounded-none bg-linear-to-br ${roleGradient} flex items-center justify-center text-white font-black text-lg shrink-0 border border-white/20`}>
                         {initials}
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap">
-                            <h2 className="text-xl font-black text-white">{user.name}</h2>
-                            <span className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-lg border ${roleBadge}`}>
+                            <h2 className="text-xl font-black text-white font-mono uppercase tracking-widest">{user.name}</h2>
+                            <span className={`inline-flex items-center text-[10px] uppercase font-bold px-2 py-1 rounded-none border ${roleBadge}`}>
                                 {user.role}
                             </span>
                         </div>
@@ -91,7 +91,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                     </div>
                 </div>
                 {!isEditing && (
-                    <button onClick={() => setIsEditing(true)} className="text-sm font-medium text-blue-500 hover:text-blue-400">
+                    <button onClick={() => setIsEditing(true)} className="text-[10px] font-bold font-mono tracking-widest uppercase text-blue-500 hover:text-blue-400 border border-blue-500/30 px-3 py-1.5 hover:bg-blue-500/10 transition-colors">
                         Edit Profile
                     </button>
                 )}
@@ -101,16 +101,16 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                 <form onSubmit={handleSubmit} className="space-y-4 pt-4 border-t border-white/10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-300 mb-2">
+                            <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
                                 Full Name
                             </label>
                             <input
                                 type="text"
                                 required
-                                className={`w-full px-4 py-2.5 rounded-xl bg-white/5 border outline-none transition-all ${errors.name
-                                    ? 'border-red-500 focus:ring-red-500 text-red-100'
-                                    : 'border-white/10 focus:ring-2 focus:ring-blue-500 text-white'
-                                    }`}
+                                className={`w-full px-4 py-2.5 rounded-none bg-[#0B0F1A] border outline-none transition-all ${errors.name
+                                    ? 'border-red-500 focus:border-red-400 text-red-100'
+                                    : 'border-white/20 focus:border-blue-500 text-white'
+                                    } font-mono text-sm`}
                                 placeholder="Enter Full Name"
                                 value={formData.name}
                                 onChange={(e) => updateFormData('name', e.target.value)}
@@ -121,16 +121,16 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                         </div>
 
                         <div>
-                            <label className="block text-sm font-semibold text-gray-300 mb-2">
+                            <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
                                 Email Address
                             </label>
                             <input
                                 type="email"
                                 required
-                                className={`w-full px-4 py-2.5 rounded-xl bg-white/5 border outline-none transition-all ${errors.email
-                                    ? 'border-red-500 focus:ring-red-500 text-red-100'
-                                    : 'border-white/10 focus:ring-2 focus:ring-blue-500 text-white'
-                                    }`}
+                                className={`w-full px-4 py-2.5 rounded-none bg-[#0B0F1A] border outline-none transition-all ${errors.email
+                                    ? 'border-red-500 focus:border-red-400 text-red-100'
+                                    : 'border-white/20 focus:border-blue-500 text-white'
+                                    } font-mono text-sm`}
                                 placeholder="Enter Email Address"
                                 value={formData.email}
                                 onChange={(e) => updateFormData('email', e.target.value)}
@@ -149,14 +149,14 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                                 setFormData({ name: user.name || '', email: user.email || '' });
                                 setErrors({});
                             }}
-                            className="px-6 py-2.5 font-bold rounded-xl shadow-lg transform transition-all active:scale-95 disabled:opacity-50 text-gray-300 hover:bg-white/5"
+                            className="px-6 py-2.5 font-bold text-[10px] uppercase tracking-widest rounded-none border border-white/20 text-gray-300 hover:bg-white/5 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transform transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                            className="px-6 py-2.5 border-2 border-[#000c40] bg-[#f0f2f0] text-[#000c40] hover:bg-transparent hover:text-[#f0f2f0] hover:border-[#f0f2f0] font-bold text-[10px] uppercase tracking-widest rounded-none transition-all disabled:opacity-50 flex items-center gap-2"
                         >
                             {isLoading ? (
                                 <>
@@ -179,7 +179,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                         { label: 'Email Address', value: user.email, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
                         { label: 'Member Since', value: memberSince, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
                     ].map((item) => (
-                        <div key={item.label} className="p-4 rounded-xl bg-white/3 border border-white/5">
+                        <div key={item.label} className="p-4 rounded-none bg-[#0B0F1A] border border-white/10 hover:border-white/30 transition-colors">
                             <div className="flex items-center gap-2 text-gray-600 mb-2">
                                 {item.icon}
                                 <span className="text-[10px] uppercase tracking-widest font-bold">{item.label}</span>

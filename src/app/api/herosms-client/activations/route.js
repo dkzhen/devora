@@ -18,17 +18,19 @@ export async function GET(request) {
 
         const data = await res.json();
         // Response: { status: 'success', activeActivations: [ {id, serviceCode, phoneNumber, activationCost, ...} ] }
-        if (data.status === 'success' && Array.isArray(data.data)) {
+        const rawList = data.activeActivations || data.data || (Array.isArray(data) ? data : []);
+        
+        if (Array.isArray(rawList)) {
             // Map Hero SMS fields to our normalized format
-            const mapped = data.data.map(a => ({
-                id: String(a.activationId),
-                phoneNumber: a.phoneNumber,
-                phone: a.phoneNumber,
-                activationCost: Number(a.cost || a.activationCost),
-                activationStatus: a.activationStatus,
-                activationTime: a.activationTime,
+            const mapped = rawList.map(a => ({
+                id: String(a.activationId || a.id),
+                phoneNumber: a.phoneNumber || a.number || a.phone,
+                phone: a.phoneNumber || a.number || a.phone,
+                activationCost: Number(a.cost || a.activationCost || 0),
+                activationStatus: String(a.activationStatus || a.status || '1'),
+                activationTime: a.activationTime || a.date,
                 activationEndTime: a.estDate || a.activationEndTime,
-                serviceCode: a.serviceCode
+                serviceCode: a.serviceCode || a.service
             }));
             return Response.json({ activations: mapped });
         } else {

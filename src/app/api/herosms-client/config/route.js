@@ -48,7 +48,7 @@ export async function GET(request) {
             site: 'hero-sms.pro'
         });
     } catch (error) {
-        console.error('Get Smart OTP Config Error:', error);
+        console.error('Get HeroSMS Client Config Error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -68,7 +68,7 @@ export async function DELETE(request) {
 
         return NextResponse.json({ success: true, message: 'API key destroyed successfully' });
     } catch (error) {
-        console.error('Destroy Smart OTP Config Error:', error);
+        console.error('Destroy HeroSMS Client Config Error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -95,7 +95,7 @@ export async function POST(request) {
 
         return NextResponse.json({ success: true, message: 'API key saved successfully' });
     } catch (error) {
-        console.error('Save Smart OTP Config Error:', error);
+        console.error('Save HeroSMS Client Config Error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

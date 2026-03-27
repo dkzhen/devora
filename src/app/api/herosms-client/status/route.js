@@ -1,7 +1,7 @@
 import { getHeroApiKey } from '@/lib/hero-sms-utils';
 import { trackApiHit } from '@/lib/monitoring';
 
-// PUT /api/smart-otp/status
+// PUT /api/herosms-client/status
 // body: { id, status }
 // status codes: 1=markReady, 3=complete (finishActivation), 6=requestResend
 // Proxies to Hero SMS setStatus
@@ -31,12 +31,12 @@ export async function PUT(request) {
         const text = await res.text();
         return Response.json({ result: text });
     } catch (err) {
-        console.error('Smart OTP setStatus error:', err);
+        console.error('HeroSMS Client setStatus error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
 
-// GET /api/smart-otp/status?id=...
+// GET /api/herosms-client/status?id=...
 // Proxies to Hero SMS getStatus
 export async function GET(request) {
     trackApiHit(request);
@@ -56,7 +56,7 @@ export async function GET(request) {
         // Returns "STATUS_WAIT_CODE", "STATUS_OK:code", "STATUS_CANCEL", etc.
         return Response.json({ status: text });
     } catch (err) {
-        console.error('Smart OTP getStatus error:', err);
+        console.error('HeroSMS Client getStatus error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

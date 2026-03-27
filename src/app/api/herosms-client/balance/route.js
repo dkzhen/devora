@@ -1,7 +1,7 @@
 import { getHeroApiKey } from '@/lib/hero-sms-utils';
 import { trackApiHit } from '@/lib/monitoring';
 
-// GET /api/smart-otp/balance
+// GET /api/herosms-client/balance
 // Proxies to Hero SMS getBalance
 export async function GET(request) {
     trackApiHit(request);
@@ -28,7 +28,7 @@ export async function GET(request) {
             return Response.json({ error: text }, { status: 400 });
         }
     } catch (err) {
-        console.error('Smart OTP balance error:', err);
+        console.error('HeroSMS Client balance error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

@@ -151,6 +151,7 @@ export default function UsersPage() {
     const ROLE_COLORS = {
         ULTRA: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
         PRO: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+        INSIDER: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/10',
         MEMBER: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
     };
 
@@ -303,6 +304,7 @@ export default function UsersPage() {
                                 <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Role</label>
                                 <select name="role" required className="w-full bg-[#0f172a]/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none">
                                     <option value="MEMBER">MEMBER</option>
+                                    <option value="INSIDER">INSIDER</option>
                                     <option value="PRO">PRO</option>
                                     <option value="ULTRA">ULTRA</option>
                                 </select>
@@ -339,6 +341,7 @@ export default function UsersPage() {
                                 <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1.5">Role</label>
                                 <select name="role" defaultValue={selectedUser.role} required className="w-full bg-[#0f172a]/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none">
                                     <option value="MEMBER">MEMBER</option>
+                                    <option value="INSIDER">INSIDER</option>
                                     <option value="PRO">PRO</option>
                                     <option value="ULTRA">ULTRA</option>
                                 </select>

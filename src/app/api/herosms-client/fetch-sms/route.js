@@ -4,13 +4,13 @@ import { trackApiHit } from '@/lib/monitoring';
 const BASE = 'https://hero-sms.com/stubs/handler_api.php';
 
 /**
- * GET /api/smart-otp/sms?id=xxx&size=10&page=1
+ * GET /api/herosms-client/sms?id=xxx&size=10&page=1
  * Proxies Hero SMS getAllSms - returns all SMS messages for an activation
  * Response: { data: [{ id, phoneFrom, code, text, service, date, type }], meta: { total, service } }
  */
 export async function GET(request) {
     trackApiHit(request);
-    console.log('GET /api/smart-otp/sms called');
+    console.log('GET /api/herosms-client/sms called');
     const apiKey = await getHeroApiKey(request);
     if (!apiKey) return Response.json({ error: 'API key required' }, { status: 401 });
 
@@ -30,7 +30,7 @@ export async function GET(request) {
         const data = await res.json();
         return Response.json(data);
     } catch (err) {
-        console.error('Smart OTP getAllSms error:', err);
+        console.error('HeroSMS Client getAllSms error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

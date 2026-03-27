@@ -94,6 +94,86 @@ export function HeroHeader({ breadcrumbs, title, badge, description, colorTheme 
             breadcrumbText: "text-[#76D2DB]/60 hover:text-[#F7F6E5]",
             breadcrumbCurrent: "text-[#F7F6E5]/80",
             titleGradient: "from-[#76D2DB] via-[#F7F6E5] to-[#DA4848]"
+        },
+        herosms: {
+            bgGlow: "bg-[#4C8CE4]/10",
+            bgBase: "from-[#0B0F1A] via-[#406093]/15 to-transparent",
+            accentLine: "via-[#91D06C]/40",
+            leftStrip: "from-[#4C8CE4] via-[#91D06C]/40",
+            breadcrumbIcon: "text-[#4C8CE4]/40",
+            breadcrumbText: "text-[#4C8CE4]/60 hover:text-[#FFF799]",
+            breadcrumbCurrent: "text-[#FFF799]/80",
+            titleGradient: "from-[#4C8CE4] via-[#91D06C] to-[#FFF799]"
+        },
+        drive: {
+            bgGlow: "bg-[#108dc7]/15",
+            bgBase: "from-[#0B0F1A] via-[#108dc7]/10 to-[#0B0F1A]",
+            accentLine: "via-[#ef8e38]/60",
+            leftStrip: "from-[#108dc7] via-[#ef8e38]/40",
+            breadcrumbIcon: "text-[#108dc7]/40",
+            breadcrumbText: "text-[#108dc7]/60 hover:text-[#ef8e38]",
+            breadcrumbCurrent: "text-[#ef8e38]/80",
+            titleGradient: "from-[#108dc7] via-[#ef8e38] to-[#108dc7]"
+        },
+        mail_control: {
+            bgGlow: "bg-[#e0165c]/15",
+            bgBase: "from-[#0B0F1A] via-[#e0165c]/10 to-[#0B0F1A]",
+            accentLine: "via-[#00f0ff]/60",
+            leftStrip: "from-[#e0165c] via-[#00f0ff]/40",
+            breadcrumbIcon: "text-[#e0165c]/40",
+            breadcrumbText: "text-[#e0165c]/60 hover:text-[#00f0ff]",
+            breadcrumbCurrent: "text-[#00f0ff]/80",
+            titleGradient: "from-[#e0165c] via-[#00f0ff] to-[#e0165c]"
+        },
+        synthwave: {
+            bgGlow: "bg-[#F53896]/15",
+            bgBase: "from-[#4A00E0] via-[#F53896]/20 to-transparent",
+            accentLine: "via-[#00E5FF]/50",
+            leftStrip: "from-[#4A00E0] via-[#00E5FF]/40",
+            breadcrumbIcon: "text-[#00E5FF]/50",
+            breadcrumbText: "text-[#00E5FF]/70 hover:text-[#F7F6E5]",
+            breadcrumbCurrent: "text-[#F7F6E5]/90",
+            titleGradient: "from-[#00E5FF] via-[#F53896] to-[#F7F6E5]"
+        },
+        neon_mail: {
+            bgGlow: "bg-[#EA4335]/20",
+            bgBase: "from-[#2A0A08] via-[#4A0D0A]/20 to-transparent",
+            accentLine: "via-[#FBBC05]/60",
+            leftStrip: "from-[#EA4335] via-[#4285F4]/40",
+            breadcrumbIcon: "text-[#EA4335]/40",
+            breadcrumbText: "text-[#EA4335]/60 hover:text-[#4285F4]",
+            breadcrumbCurrent: "text-[#34A853]/80",
+            titleGradient: "from-[#EA4335] via-[#4285F4] to-[#FBBC05]"
+        },
+        unicorn: {
+            bgGlow: "bg-[#f0acf7]/20",
+            bgBase: "from-[#1a1122] via-[#2a1735]/40 to-transparent",
+            accentLine: "via-[#acf7f0]/60",
+            leftStrip: "from-[#f0acf7] via-[#acf7f0]/40",
+            breadcrumbIcon: "text-[#acf7f0]/40",
+            breadcrumbText: "text-[#acf7f0]/60 hover:text-[#f7f0ac]",
+            breadcrumbCurrent: "text-[#f7f0ac]/80",
+            titleGradient: "from-[#f7f0ac] via-[#acf7f0] to-[#f0acf7]"
+        },
+        settings: {
+            bgGlow: "bg-[#000c40]/20",
+            bgBase: "from-[#0B0F1A] via-[#000c40]/30 to-transparent",
+            accentLine: "via-[#f0f2f0]/30",
+            leftStrip: "from-[#000c40] via-[#f0f2f0]/40",
+            breadcrumbIcon: "text-[#f0f2f0]/40",
+            breadcrumbText: "text-[#f0f2f0]/60 hover:text-white",
+            breadcrumbCurrent: "text-[#f0f2f0]",
+            titleGradient: "from-[#f0f2f0] via-gray-300 to-[#4A64A0]"
+        },
+        upgrade: {
+            bgGlow: "bg-[#e59a54]/20",
+            bgBase: "from-[#0B0F1A] via-[#e59a54]/20 to-transparent",
+            accentLine: "via-[#e59a54]/60",
+            leftStrip: "from-[#e59a54] via-[#e59a54]/40",
+            breadcrumbIcon: "text-[#e59a54]/40",
+            breadcrumbText: "text-[#e59a54]/60 hover:text-white",
+            breadcrumbCurrent: "text-[#e59a54]",
+            titleGradient: "from-[#e59a54] via-amber-200 to-[#e59a54]"
         }
     };
 
@@ -188,7 +268,15 @@ export function LoadingState({ message = "Loading...", colorTheme = "red" }) {
         dawn: "border-[#FEBD8B]/30",
         sunset: "border-[#F25278]/30",
         nebula: "border-[#A1C2BD]/30",
-        cyberpunk: "border-[#76D2DB]/60 shadow-[0_0_10px_#76D2DB]"
+        cyberpunk: "border-[#76D2DB]/60 shadow-[0_0_10px_#76D2DB]",
+        herosms: "border-[#4C8CE4]/60 shadow-[0_0_10px_#4C8CE4]",
+        drive: "border-[#108dc7]/60 shadow-[0_0_10px_#108dc7]",
+        mail_control: "border-[#e0165c]/60 shadow-[0_0_10px_#e0165c]",
+        synthwave: "border-[#00E5FF]/60 shadow-[0_0_10px_#00E5FF]",
+        neon_mail: "border-[#EA4335]/60 shadow-[0_0_10px_#EA4335]",
+        unicorn: "border-[#acf7f0]/60 shadow-[0_0_10px_#acf7f0]",
+        settings: "border-[#f0f2f0]/60 shadow-[0_0_10px_#f0f2f0]",
+        upgrade: "border-[#e59a54]/60 shadow-[0_0_10px_#e59a54]"
     };
     const borderClass = borders[colorTheme] || borders.red;
 

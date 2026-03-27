@@ -2,7 +2,7 @@ import { getHeroApiKey } from '@/lib/hero-sms-utils';
 import { trackApiHit } from '@/lib/monitoring';
 
 /**
- * GET /api/smart-otp/history
+ * GET /api/herosms-client/history
  * Proxies to Hero SMS getHistory action
  * 
  * Query params:
@@ -45,17 +45,28 @@ export async function GET(request) {
         try {
             let data = JSON.parse(text);
             if (Array.isArray(data)) {
+                // Map Hero SMS fields to our normalized format
+                data = data.map(h => ({
+                    id: String(h.id || h.activationId),
+                    serviceCode: h.service || h.serviceCode,
+                    phoneNumber: h.number || h.phoneNumber || h.phone,
+                    phone: h.number || h.phoneNumber || h.phone,
+                    activationCost: Number(h.cost || h.activationCost || 0),
+                    activationStatus: h.status || h.activationStatus,
+                    smsCode: h.sms_code || h.smsCode,
+                    smsText: h.sms_text || h.smsText,
+                    activationTime: h.date || h.activationTime
+                }));
 
                 data.sort((a, b) => {
-                    const isRecA = a.date === '0000-00-00 00:00:00' || !a.date;
-                    const isRecB = b.date === '0000-00-00 00:00:00' || !b.date;
+                    const isRecA = a.activationTime === '0000-00-00 00:00:00' || !a.activationTime;
+                    const isRecB = b.activationTime === '0000-00-00 00:00:00' || !b.activationTime;
 
                     if (isRecA && isRecB) return Number(b.id) - Number(a.id);
                     if (isRecA) return -1;
                     if (isRecB) return 1;
 
-                    // Direct string comparison works for YYYY-MM-DD HH:MM:SS format
-                    if (a.date !== b.date) return b.date.localeCompare(a.date);
+                    if (a.activationTime !== b.activationTime) return b.activationTime.localeCompare(a.activationTime);
                     return Number(b.id) - Number(a.id);
                 });
             }
@@ -65,7 +76,7 @@ export async function GET(request) {
             return Response.json({ error: 'Invalid response format', raw: text.substring(0, 100) }, { status: 500 });
         }
     } catch (err) {
-        console.error('Smart OTP history error:', err);
+        console.error('HeroSMS Client history error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

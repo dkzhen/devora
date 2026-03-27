@@ -1,7 +1,7 @@
 import { getHeroApiKey } from '@/lib/hero-sms-utils';
 import { trackApiHit } from '@/lib/monitoring';
 
-// GET /api/smart-otp/countries
+// GET /api/herosms-client/countries
 // Proxies to Hero SMS getCountries (SMS-Activate compatible API)
 export async function GET(request) {
     trackApiHit(request);
@@ -85,7 +85,7 @@ export async function GET(request) {
             .sort((a, b) => a.name.localeCompare(b.name));
         return Response.json({ countries });
     } catch (err) {
-        console.error('Smart OTP countries error:', err);
+        console.error('HeroSMS Client countries error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

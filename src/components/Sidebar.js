@@ -10,12 +10,14 @@ import LoadingImage from './LoadingImage';
 const ROLE_COLORS = {
     ULTRA: 'from-purple-500 to-pink-500',
     PRO: 'from-blue-500 to-indigo-500',
+    INSIDER: 'from-emerald-500 to-teal-500',
     MEMBER: 'from-gray-500 to-gray-600',
 };
 
 const ROLE_BADGE = {
     ULTRA: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
     PRO: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    INSIDER: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     MEMBER: 'text-gray-400 bg-gray-500/10 border-gray-500/20',
 };
 
@@ -90,25 +92,7 @@ export default function Sidebar() {
                     href: '/airdrops',
                     icon: <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21v-6m0 0l-3 3m3-3l3 3" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M5.5 11C5.5 7.41 8.41 4.5 12 4.5S18.5 7.41 18.5 11" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 11a9 9 0 0118 0" /><line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="5.5" y2="11" /><line strokeLinecap="round" strokeWidth={1.5} x1="12" y1="15" x2="18.5" y2="11" /></svg>
                 },
-                {
-                    name: 'Smart OTP',
-                    href: '/smart-otp',
-                    icon: (
-                        <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
-                            <g id="SVGRepo_iconCarrier">
-                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M14.86,15.82v4.77A1.92,1.92,0,0,1,13,22.5H3.41A1.92,1.92,0,0,1,1.5,20.59V3.41A1.92,1.92,0,0,1,3.41,1.5H13a1.92,1.92,0,0,1,1.91,1.91V6.27" strokeLinecap="round" strokeLinejoin="round"></path>
-                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M10.09,2.45H6.27a1,1,0,0,1-.95-1h5.73A1,1,0,0,1,10.09,2.45Z" strokeLinecap="round" strokeLinejoin="round"></path>
-                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="7.23" y1="19.64" x2="9.14" y2="19.64" strokeLinecap="round" strokeLinejoin="round"></line>
-                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M9.14,11.05V13L7.23,15.82h10.5a4.78,4.78,0,0,0,4.77-4.77h0a4.78,4.78,0,0,0-4.77-4.78H13.91A4.77,4.77,0,0,0,9.14,11.05Z" strokeLinecap="round" strokeLinejoin="round"></path>
-                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="12" y1="11.05" x2="13.91" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
-                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="14.86" y1="11.05" x2="16.77" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
-                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="17.73" y1="11.05" x2="19.64" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
-                            </g>
-                        </svg>
-                    )
-                },
+
                 {
                     name: 'Temp Mail',
                     href: '/temp-mail',
@@ -129,6 +113,25 @@ export default function Sidebar() {
                     name: 'App Library',
                     href: '/app-library',
                     icon: <svg className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14"><path fill="currentColor" fillRule="evenodd" d="M.352 1.305c0-.025.001-.05.003-.073l5.63 5.629l-5.63 5.63a.917.917 0 0 1-.003-.073zM1.61 13.357c.1-.019.2-.053.298-.102l6.943-3.527l-1.806-1.806zm6.496-6.496l2.152 2.152l2.586-1.314c.719-.365.719-1.31 0-1.675L10.257 4.71zm.745-2.866L1.908.468A1.122 1.122 0 0 0 1.61.366L7.045 5.8z" clipRule="evenodd" /></svg>
+                },
+                {
+                    name: 'HeroSMS Client',
+                    href: '/herosms-client',
+                    icon: (
+                        <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M14.86,15.82v4.77A1.92,1.92,0,0,1,13,22.5H3.41A1.92,1.92,0,0,1,1.5,20.59V3.41A1.92,1.92,0,0,1,3.41,1.5H13a1.92,1.92,0,0,1,1.91,1.91V6.27" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M10.09,2.45H6.27a1,1,0,0,1-.95-1h5.73A1,1,0,0,1,10.09,2.45Z" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="7.23" y1="19.64" x2="9.14" y2="19.64" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <path className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" d="M9.14,11.05V13L7.23,15.82h10.5a4.78,4.78,0,0,0,4.77-4.77h0a4.78,4.78,0,0,0-4.77-4.78H13.91A4.77,4.77,0,0,0,9.14,11.05Z" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="12" y1="11.05" x2="13.91" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="14.86" y1="11.05" x2="16.77" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <line className="fill-none stroke-current" strokeMiterlimit="10" strokeWidth="1.91" x1="17.73" y1="11.05" x2="19.64" y2="11.05" strokeLinecap="round" strokeLinejoin="round"></line>
+                            </g>
+                        </svg>
+                    )
                 },
                 {
                     name: 'Telkomsel Client',

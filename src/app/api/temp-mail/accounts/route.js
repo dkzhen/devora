@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server';
 import { trackApiHit } from '@/lib/monitoring';
+import { NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 import prisma from '@/lib/db';
+import { cookies } from 'next/headers';
 
 const API_BASE = 'https://api.mail.tm';
 
@@ -27,11 +29,26 @@ export async function POST(req) {
 
         if (res.ok && data.id) {
             try {
+                // Determine userId from auth_token cookie
+                let userId = null;
+                const cookieStore = await cookies();
+                const token = cookieStore.get('auth_token')?.value;
+                if (token) {
+                    try {
+                        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+                        const { payload } = await jwtVerify(token, secret);
+                        userId = payload.sub;
+                    } catch (e) {
+                        console.error("JWT verification failed in Temp Mail accounts API", e);
+                    }
+                }
+
                 await prisma.tempMailAccount.create({
                     data: {
                         id: data.id,
                         address: data.address,
-                        password: password
+                        password: password,
+                        userId: userId
                     }
                 });
 
@@ -56,12 +73,41 @@ export async function POST(req) {
 export async function DELETE(req) {
     trackApiHit(req);
     try {
-        const authHeader = req.headers.get('authorization');
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
+        let authHeader = req.headers.get('authorization');
 
-        if (!authHeader || !id) {
-            return NextResponse.json({ error: 'Unauthorized or missing ID' }, { status: 400 });
+        if (!id) {
+            return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+        }
+
+        // 1. Try to authorize via user session if no mail.tm token provided
+        if (!authHeader) {
+            const cookieStore = await cookies();
+            const sessionToken = cookieStore.get('auth_token')?.value;
+            if (sessionToken) {
+                try {
+                    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+                    const { payload } = await jwtVerify(sessionToken, secret);
+                    const userId = payload.sub;
+
+                    // Verify ownership
+                    const account = await prisma.tempMailAccount.findUnique({
+                        where: { id: id, userId: userId },
+                        select: { token: true }
+                    });
+
+                    if (account) {
+                        authHeader = `Bearer ${account.token}`;
+                    }
+                } catch (e) {
+                    console.error("User auth failed in DELETE account", e);
+                }
+            }
+        }
+
+        if (!authHeader) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         // 1. Delete from Mail.tm (optional but good citizen)

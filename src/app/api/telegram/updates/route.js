@@ -85,7 +85,7 @@ export async function GET(request) {
                                     data: newUpdates.map(u => ({
                                         id: BigInt(u.update_id),
                                         userId: user.id,
-                                        data: u
+                                        data: JSON.stringify(u)
                                     })),
                                     skipDuplicates: true
                                 });
@@ -117,11 +117,19 @@ async function returnDbUpdates(userId) {
         take: 100
     });
 
-    const result = allUpdates.map(u => ({
-        ...u.data,
-        id: u.id.toString(),
-        savedAt: u.createdAt
-    }));
+    const result = allUpdates.map(u => {
+        let parsedData = {};
+        try {
+            parsedData = JSON.parse(u.data);
+        } catch (e) {
+            console.error('[Telegram DB] Failed to parse update data:', u.id.toString());
+        }
+        return {
+            ...parsedData,
+            id: u.id.toString(),
+            savedAt: u.createdAt
+        };
+    });
 
     return NextResponse.json({ ok: true, result });
 }

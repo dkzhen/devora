@@ -40,4 +40,3 @@ next-env.d.ts
 # Custom rules dari proyek ini
 /config
 /prisma/seed.js
-/prisma/migrations

@@ -127,9 +127,9 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                         {toast.message}
                     </div>
                 )}
-                <div className="bg-[#0f172a] p-4 rounded-xl border border-white/10">
+                <div className="bg-[#0B0F1A] p-4 rounded-none border border-white/20">
                     <div className="flex justify-between items-center mb-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">
                             Google Client ID
                         </label>
                         <button onClick={() => setIsEditing(true)} className="text-xs text-blue-600 font-semibold hover:underline">Edit</button>
@@ -148,8 +148,8 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                     </div>
                 </div>
 
-                <div className="bg-[#0f172a] p-4 rounded-xl border border-white/10">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                <div className="bg-[#0B0F1A] p-4 rounded-none border border-white/20">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">
                         Google Client Secret
                     </label>
                     <div className="flex items-center gap-3">
@@ -173,14 +173,14 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
     }
 
     return (
-        <div className="bg-[#0f172a] rounded-2xl p-6 md:p-8 shadow-sm border border-white/8">
+        <div className="bg-[#0B0F1A] rounded-none p-6 md:p-8 border border-white/20">
             {toast && (
                 <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium animate-fade-in-up ${toast.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
                     {toast.message}
                 </div>
             )}
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <h2 className="text-xl font-mono uppercase tracking-widest font-black text-white flex items-center gap-2">
                     <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     API Configuration
                 </h2>
@@ -191,17 +191,17 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
                         Google Client ID
                     </label>
                     <input
                         type="text"
                         required
-                        className={`w-full px-4 py-3 rounded-xl bg-[#0f172a] border outline-none transition-all ${errors.clientId
-                            ? 'border-red-500 focus:ring-red-500 text-red-900'
+                        className={`w-full px-4 py-3 rounded-none bg-[#0B0F1A] border outline-none font-mono text-sm transition-all flex items-center ${errors.clientId
+                            ? 'border-red-500 focus:border-red-400 text-red-100'
                             : isValidated
-                                ? 'border-emerald-500 focus:ring-emerald-500'
-                                : 'border-white/10 focus:ring-2 focus:ring-blue-500'
+                                ? 'border-emerald-500/50 focus:border-emerald-500 text-emerald-100'
+                                : 'border-white/20 focus:border-blue-500 text-white'
                             }`}
                         placeholder="Enter Client ID"
                         value={formData.clientId}
@@ -213,17 +213,17 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                 </div>
 
                 <div>
-                    <label className="block text-sm font-semibold text-gray-300 mb-2">
+                    <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
                         Google Client Secret
                     </label>
                     <input
                         type="password"
                         required
-                        className={`w-full px-4 py-3 rounded-xl bg-[#0f172a] border outline-none transition-all ${errors.clientSecret
-                            ? 'border-red-500 focus:ring-red-500 text-red-900'
+                        className={`w-full px-4 py-3 rounded-none bg-[#0B0F1A] border outline-none font-mono text-sm transition-all flex items-center ${errors.clientSecret
+                            ? 'border-red-500 focus:border-red-400 text-red-100'
                             : isValidated
-                                ? 'border-emerald-500 focus:ring-emerald-500'
-                                : 'border-white/10 focus:ring-2 focus:ring-blue-500'
+                                ? 'border-emerald-500/50 focus:border-emerald-500 text-emerald-100'
+                                : 'border-white/20 focus:border-blue-500 text-white'
                             }`}
                         placeholder="Enter Client Secret"
                         value={formData.clientSecret}
@@ -247,20 +247,20 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                     <div className="space-y-3">
                         <div
                             onClick={() => handleCopy(callbackUrlDev)}
-                            className="group relative bg-gray-800 p-3 rounded-lg border border-white/10 cursor-pointer hover:bg-white/5 transition-colors"
+                            className="group relative bg-[#0B0F1A] p-3 rounded-none border border-white/10 cursor-pointer hover:border-white/30 transition-colors"
                         >
-                            <div className="text-xs text-gray-400 mb-1">Development (Localhost)</div>
-                            <code className="text-sm font-mono text-gray-100 break-all">
+                            <div className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Development (Localhost)</div>
+                            <code className="text-sm font-mono text-gray-300 break-all">
                                 {callbackUrlDev}
                             </code>
                         </div>
 
                         <div
                             onClick={() => handleCopy(callbackUrlProd)}
-                            className="group relative bg-gray-800 p-3 rounded-lg border border-white/10 cursor-pointer hover:bg-white/5 transition-colors"
+                            className="group relative bg-[#0B0F1A] p-3 rounded-none border border-white/10 cursor-pointer hover:border-white/30 transition-colors"
                         >
-                            <div className="text-xs text-gray-400 mb-1">Production (Live)</div>
-                            <code className="text-sm font-mono text-gray-100 break-all">
+                            <div className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Production (Live)</div>
+                            <code className="text-sm font-mono text-gray-300 break-all">
                                 {callbackUrlProd}
                             </code>
                         </div>
@@ -272,9 +272,9 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                         type="button"
                         onClick={handleVerify}
                         disabled={isLoading || verifying}
-                        className={`px-6 py-2.5 font-bold rounded-xl shadow-lg transform transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2 ${isValidated
-                            ? 'bg-emerald-500 text-white cursor-default'
-                            : 'bg-[#0f172a] border border-white/10 text-gray-300 hover:bg-[#0f172a]'
+                        className={`px-6 py-2.5 font-bold text-[10px] uppercase tracking-widest rounded-none border transition-all disabled:opacity-50 flex items-center gap-2 ${isValidated
+                            ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 cursor-default'
+                            : 'bg-[#0B0F1A] border-white/20 text-gray-300 hover:bg-white/5'
                             }`}
                     >
                         {verifying ? (
@@ -297,7 +297,7 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                     <button
                         type="submit"
                         disabled={isLoading || !isValidated}
-                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transform transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2.5 border-2 border-[#000c40] bg-[#f0f2f0] text-[#000c40] hover:bg-transparent hover:text-[#f0f2f0] hover:border-[#f0f2f0] font-bold text-[10px] uppercase tracking-widest rounded-none transition-all disabled:opacity-50 flex items-center gap-2"
                         title={!isValidated ? 'Please verify credentials first' : ''}
                     >
                         {isLoading ? (

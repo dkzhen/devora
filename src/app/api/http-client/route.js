@@ -32,11 +32,16 @@ export async function GET(request) {
             select: { httpClientData: true },
         });
 
-        if (!dbUser) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        let data = {};
+        if (dbUser.httpClientData) {
+            try {
+                data = JSON.parse(dbUser.httpClientData);
+            } catch (e) {
+                console.error('Error parsing httpClientData:', e);
+            }
         }
 
-        return NextResponse.json({ data: dbUser.httpClientData || {} });
+        return NextResponse.json({ data });
     } catch (error) {
         console.error('Error fetching http client data:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -56,12 +61,12 @@ export async function PUT(request) {
         const updatedUser = await prisma.user.update({
             where: { id: user.id },
             data: {
-                httpClientData: {
+                httpClientData: JSON.stringify({
                     collections: collections || [],
                     history: history || [],
                     environments: environments || [],
                     activeEnvId: activeEnvId || null,
-                }
+                })
             },
             select: { httpClientData: true },
         });

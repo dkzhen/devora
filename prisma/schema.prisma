@@ -8,19 +8,22 @@ datasource db {
 }
 
 model Account {
-  email         String    @id
-  name          String
-  refreshToken  String    @map("refresh_token")
-  status        String    @default("active")
-  totalMessages Int       @default(0) @map("total_messages")
-  totalThreads  Int       @default(0) @map("total_threads")
-  lastCheck     DateTime  @default(now()) @map("last_check")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  messages      Message[]
-  driveFiles    DriveFile[]
-
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email               String      @id
+  name                String
+  refreshToken        String      @map("refresh_token")
+  status              String      @default("active")
+  totalMessages       Int         @default(0) @map("total_messages")
+  totalThreads        Int         @default(0) @map("total_threads")
+  lastCheck           DateTime    @default(now()) @map("last_check")
+  createdAt           DateTime    @default(now()) @map("created_at")
+  userId              String      @map("user_id")
+  autoActivityEnabled Boolean     @default(false) @map("auto_activity_enabled")
+  autoActivityTarget  String?     @map("auto_activity_target")
+  lastAutoActivityAt  DateTime?   @map("last_auto_activity_at")
+  nextAutoActivityAt  DateTime?   @map("next_auto_activity_at")
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driveFiles          DriveFile[]
+  messages            Message[]
 
   @@index([userId])
   @@map("accounts")
@@ -48,128 +51,117 @@ model DriveFile {
   iconLink     String?
   webViewLink  String?
   modifiedTime DateTime
+  accountId    String   @map("account_id")
+  createdAt    DateTime @default(now()) @map("created_at")
   folderId     String   @default("root") @map("folder_id")
-
-  accountId String   @map("account_id")
-  account   Account  @relation(fields: [accountId], references: [email], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
+  account      Account  @relation(fields: [accountId], references: [email], onDelete: Cascade)
 
   @@id([id, folderId])
   @@index([accountId, folderId])
+  @@index([accountId])
   @@map("drive_files")
 }
 
 model User {
-  id                 String            @id @default(uuid())
-  email              String            @unique
-  password           String
-  name               String?
-  role               Role              @default(MEMBER)
-  googleClientId     String?           @map("google_client_id") @db.Text
-  googleClientSecret String?           @map("google_client_secret") @db.Text
-  createdAt          DateTime          @default(now()) @map("created_at")
-  updatedAt          DateTime          @updatedAt @map("updated_at")
-  accounts           Account[]
-  airdrops           Airdrop[]
+  id                  String            @id @default(uuid())
+  email               String            @unique
+  password            String
+  name                String?
+  role                Role              @default(MEMBER)
+  googleClientId      String?           @map("google_client_id") @db.Text
+  googleClientSecret  String?           @map("google_client_secret") @db.Text
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+  httpClientData      String?           @map("http_client_data") @db.LongText
+  heroSmsApiKey       String?           @map("hero_sms_api_key") @db.Text
+  accounts            Account[]
   createdAirdropTasks AirdropTask[]
-  airdropTasks       UserAirdropTask[]
-  groqCredential     GroqCredential?
-  chatSessions       ChatSession[]
-  telegramUpdates    TelegramUpdate[]
-  quickVaultItems    QuickVaultItem[]
-  httpClientData     Json?             @map("http_client_data")
-  heroSmsApiKey      String?           @map("hero_sms_api_key") @db.Text
-  telSession        TelSession?
+  airdrops            Airdrop[]
+  chatSessions        ChatSession[]
+  groqCredential      GroqCredential?
+  quickVaultItems     QuickVaultItem[]
+  telSession          TelSession?
+  telegramUpdates     TelegramUpdate[]
+  tempMailAccounts    TempMailAccount[]
+  airdropTasks        UserAirdropTask[]
 
   @@map("users")
 }
 
 model TelegramUpdate {
-  id        BigInt   @id // Telegram update_id
+  id        BigInt   @id
   userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  data      Json     // Full JSON payload
+  data      String   @db.LongText
   createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("telegram_updates")
 }
 
-enum Role {
-  MEMBER
-  PRO
-  ULTRA
-}
-
 model Airdrop {
-  id              String    @id @default(uuid())
+  id              String        @id @default(uuid())
   name            String
-  symbol          String?
   icon            String?
-  status          String // e.g., "Confirmed", "Potential"
+  status          String
   statusDate      DateTime?
-  score           Int? // Moni Score
-  taskType        String? // e.g., "Testnet, Social"
-  cost            String? // e.g., "$0"
-  time            String? // e.g., "16 min"
-  raise           String? // e.g., "$11.00M"
-  stage           String? // e.g., "Alpha"
-  projectType     String? // e.g., "Blockchain Infra"
-  description     String?   @db.Text
-  links           Json? // e.g., [{ name: "Website", url: "..." }]
-  fundsAndBackers Json? // e.g., [{ name: "Pantera Capital", icon: "..." }]
-  rewardDate      String? // e.g., "TBA"
-  rewardType      String? // e.g., "Airdrop"
+  score           Int?
+  taskType        String?
+  cost            String?
+  time            String?
+  raise           String?
+  stage           String?
+  description     String?       @db.Text
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  fundsAndBackers String?       @db.LongText
+  links           String?       @db.LongText
+  rewardDate      String?
+  rewardType      String?
+  symbol          String?
+  projectType     String?
+  isPublic        Boolean       @default(false) @map("is_public")
+  userId          String?       @map("user_id")
+  publishStatus   String        @default("NONE") @map("publish_status")
+  tasks           AirdropTask[]
+  user            User?         @relation(fields: [userId], references: [id])
 
-  userId          String?   @map("user_id")
-  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
-  isPublic        Boolean   @default(false) @map("is_public")
-  publishStatus   String    @default("NONE") @map("publish_status")
-
-  createdAt DateTime      @default(now()) @map("created_at")
-  updatedAt DateTime      @updatedAt @map("updated_at")
-  tasks     AirdropTask[]
-
+  @@index([userId], map: "airdrops_user_id_fkey")
   @@map("airdrops")
 }
 
 model AirdropTask {
-  id          String    @id @default(uuid())
-  title       String
-  description String?   @db.Text
-  category    String // e.g., "Social", "Mint NFT", "DePIN"
-  deadline    DateTime?
-  status      String    @default("Open") // "Open", "Closed"
-  steps       Json?
-
-  airdropId String  @map("airdrop_id")
-  airdrop   Airdrop @relation(fields: [airdropId], references: [id], onDelete: Cascade)
-
-  userId    String? @map("user_id")
-  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-
+  id           String            @id @default(uuid())
+  title        String
+  description  String?           @db.Text
+  category     String
+  deadline     DateTime?
+  status       String            @default("Open")
+  airdropId    String            @map("airdrop_id")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  steps        String?           @db.LongText
+  userId       String?           @map("user_id")
+  airdrop      Airdrop           @relation(fields: [airdropId], references: [id], onDelete: Cascade)
+  user         User?             @relation(fields: [userId], references: [id])
   userProgress UserAirdropTask[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
+  @@index([airdropId], map: "airdrop_tasks_airdrop_id_fkey")
+  @@index([userId], map: "airdrop_tasks_user_id_fkey")
   @@map("airdrop_tasks")
 }
 
 model UserAirdropTask {
-  id     String @id @default(uuid())
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String      @id @default(uuid())
+  userId      String      @map("user_id")
+  taskId      String      @map("task_id")
+  completed   Boolean     @default(false)
+  completedAt DateTime?   @map("completed_at")
+  task        AirdropTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  taskId String      @map("task_id")
-  task   AirdropTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  completed   Boolean   @default(false)
-  completedAt DateTime? @map("completed_at")
-
-// Ensure a user can only have one progress record per task
   @@unique([userId, taskId])
+  @@index([taskId], map: "user_airdrop_tasks_task_id_fkey")
   @@map("user_airdrop_tasks")
 }
 
@@ -221,15 +213,13 @@ model GlobalConfig {
 model GroqCredential {
   id               String   @id @default(uuid())
   userId           String   @unique @map("user_id")
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  apiKey           String   @db.Text @map("api_key") // Stored encrypted
+  apiKey           String   @map("api_key") @db.Text
   promptTokens     Int      @default(0) @map("prompt_tokens")
   completionTokens Int      @default(0) @map("completion_tokens")
   totalTokens      Int      @default(0) @map("total_tokens")
-
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("groq_credentials")
 }
@@ -238,39 +228,38 @@ model ChatSession {
   id        String        @id @default(uuid())
   title     String        @default("New Chat")
   userId    String        @map("user_id")
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages  ChatMessage[]
-
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
+  messages  ChatMessage[]
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId], map: "chat_sessions_user_id_fkey")
   @@map("chat_sessions")
 }
 
 model ChatMessage {
   id        String      @id @default(uuid())
   sessionId String      @map("session_id")
-  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  
-  role      String      // 'user' or 'assistant'
+  role      String
   content   String      @db.Text
-  
   createdAt DateTime    @default(now()) @map("created_at")
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
+  @@index([sessionId], map: "chat_messages_session_id_fkey")
   @@map("chat_messages")
 }
 
 model App {
   id            String       @id @default(uuid())
   name          String
-  developer     String?      // Developer or company name
   category      String
   description   String       @db.Text
-  iconStatic    String?      @map("icon_static") // Direct link or empty string if using Telegram
-  downloadCount Int          @default(0) @map("download_count")
-  viewCount     Int          @default(0) @map("view_count")
+  iconStatic    String?      @map("icon_static")
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
+  developer     String?
+  downloadCount Int          @default(0) @map("download_count")
+  viewCount     Int          @default(0) @map("view_count")
   versions      AppVersion[]
 
   @@map("apps")
@@ -279,40 +268,42 @@ model App {
 model AppVersion {
   id             String   @id @default(uuid())
   appId          String   @map("app_id")
-  app            App      @relation(fields: [appId], references: [id], onDelete: Cascade)
   version        String
-  androidVersion String?  @map("android_version") // e.g. "5.0+"
-  features       String?  @db.Text // Can be stored as serialized JSON or multiline string
-  apkUrl         String   @map("apk_url") // Telegram file URL or direct link
-  imageUrl       String?  @map("image_url") // Telegram file URL or direct link
+  features       String?  @db.Text
+  apkUrl         String   @map("apk_url")
+  imageUrl       String?  @map("image_url")
   releaseDate    DateTime @default(now()) @map("release_date")
   createdAt      DateTime @default(now()) @map("created_at")
+  androidVersion String?  @map("android_version")
+  app            App      @relation(fields: [appId], references: [id], onDelete: Cascade)
 
+  @@index([appId], map: "app_versions_app_id_fkey")
   @@map("app_versions")
 }
 
 model TempMailAccount {
-  id        String   @id
-  address   String   @unique
+  id        String            @id
+  address   String            @unique
   password  String
-  token     String?  @db.Text
-  createdAt DateTime @default(now()) @map("created_at")
-
+  token     String?           @db.Text
+  createdAt DateTime          @default(now()) @map("created_at")
+  userId    String?           @map("user_id")
+  user      User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages  TempMailMessage[]
 
+  @@index([userId])
   @@map("temp_mail_accounts")
 }
 
 model TempMailMessage {
-  id          String   @id
-  msgid       String?  @db.Text
+  id          String          @id
+  msgid       String?         @db.Text
   fromName    String?
   fromAddress String?
-  subject     String?  @db.Text
-  intro       String?  @db.Text
-  seen        Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
-
+  subject     String?         @db.Text
+  intro       String?         @db.Text
+  seen        Boolean         @default(false)
+  createdAt   DateTime        @default(now()) @map("created_at")
   accountId   String          @map("account_id")
   account     TempMailAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
@@ -323,12 +314,12 @@ model TempMailMessage {
 model QuickVaultItem {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category  String   // e.g. "social", "crypto", "exchange"
+  category  String
   label     String
-  value     String   @db.Text // Encrypted value
+  value     String   @db.Text
   createdAt DateTime @default(now()) @map("created_at")
-  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@map("quick_vault_items")
 }
@@ -345,15 +336,22 @@ model TempMailStats {
 model TelSession {
   id            String   @id @default(uuid())
   userId        String   @unique @map("user_id")
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  xDevice       String   @db.Text @map("x_device")
+  accessAuth    String   @map("access_auth") @db.Text
   authorization String   @db.Text
-  accessAuth    String   @db.Text @map("access_auth")
-  webMsisdn     String   @map("web_msisdn")
+  xDevice       String   @map("x_device") @db.Text
   hash          String   @db.Text
-  transactionId String   @map("transaction_id")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  transactionId String   @map("transaction_id")
+  webMsisdn     String   @map("web_msisdn")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("tel_sessions")
+}
+
+enum Role {
+  MEMBER
+  INSIDER
+  PRO
+  ULTRA
 }

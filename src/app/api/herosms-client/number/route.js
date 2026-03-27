@@ -43,7 +43,7 @@ export async function POST(request) {
             return Response.json({ error: data.error || data.message || JSON.stringify(data) }, { status: 400 });
         }
     } catch (err) {
-        console.error('Smart OTP buyNumber error:', err);
+        console.error('HeroSMS Client buyNumber error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -72,7 +72,7 @@ export async function GET(request) {
             return Response.json({ status: text });
         }
     } catch (err) {
-        console.error('Smart OTP getStatus error:', err);
+        console.error('HeroSMS Client getStatus error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -95,7 +95,7 @@ export async function DELETE(request) {
         const text = await res.text();
         return Response.json({ result: text });
     } catch (err) {
-        console.error('Smart OTP cancel error:', err);
+        console.error('HeroSMS Client cancel error:', err);
         return Response.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

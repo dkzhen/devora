@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import AccountList from "@/components/AccountList";
 import StatCard from "@/components/StatCard";
+import { HeroHeader, LoadingState } from "@/components/HeroHeader";
 
 function EmailListContent() {
     const [accounts, setAccounts] = useState([]);
@@ -108,17 +109,6 @@ function EmailListContent() {
         issues: accounts.filter(a => a.status === 'invalid').length
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-                    <p className="text-xs text-gray-500 animate-pulse">Loading gmail center…</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-6 relative">
             {/* Notification Toast */}
@@ -142,75 +132,81 @@ function EmailListContent() {
                 </div>
             )}
 
-            {/* ===== HERO HEADER ===== */}
-            <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-                <div className="relative z-10 p-5 md:p-8 flex flex-row items-start justify-between gap-3">
-                    <div>
-                        <nav className="flex text-xs text-blue-300/60 mb-3 items-center gap-2">
-                            <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                Dashboard
-                            </a>
-                            <svg className="w-3 h-3 text-blue-400/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                            <span className="text-blue-200 font-semibold">Gmail Center</span>
-                        </nav>
-                        <h1 className="text-2xl md:text-4xl font-black tracking-tight">
-                            <span className="text-white">Gmail </span>
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">Center</span>
-                        </h1>
-                        <p className="text-gray-400 mt-1 text-xs md:text-sm">Manage your connected Gmail accounts</p>
-                    </div>
-                    <a
-                        href="/auth/google"
-                        className="shrink-0 flex items-center gap-2 px-3 py-2 md:px-5 md:py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-xl shadow-blue-700/30 transition-all active:scale-95 border border-white/10"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                        <span className="md:hidden">Connect</span>
-                        <span className="hidden md:inline">Connect Account</span>
-                    </a>
-                </div>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <StatCard
-                    title="Total Accounts"
-                    value={loading ? "..." : formatNumber(stats.totalAccounts)}
-                    color="blue"
-                    icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>}
-                />
-                <StatCard
-                    title="Active Sessions"
-                    value={loading ? "..." : formatNumber(stats.activeSessions)}
-                    color="green"
-                    icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-                />
-                <StatCard
-                    title="Total Messages"
-                    value={loading ? "..." : formatNumber(stats.totalMessages)}
-                    color="purple"
-                    icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>}
-                />
-                <StatCard
-                    title="Total Threads"
-                    value={loading ? "..." : formatNumber(stats.totalThreads)}
-                    color="indigo"
-                    icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>}
-                />
-            </div>
-
-            {/* Account List */}
-            <AccountList
-                accounts={accounts}
-                loading={loading}
-                onRefresh={loadAccounts}
-                setAccounts={setAccounts}
-                setNotification={setNotification}
+            {/* ── Page Header ── */}
+            <HeroHeader
+                colorTheme="unicorn"
+                title="Gmail"
+                badge="Center"
+                description="Manage your connected Gmail accounts securely in a high-performance workspace."
+                breadcrumbs={[
+                    { label: 'Dashboard', href: '/' },
+                    { label: 'Gmail Center' }
+                ]}
             />
+
+            {loading ? (
+                <div className="py-24">
+                    <LoadingState message="Connecting to Gmail servers..." colorTheme="unicorn" />
+                </div>
+            ) : (
+                <>
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <StatCard
+                            title="Total Accounts"
+                            value={formatNumber(stats.totalAccounts)}
+                            color="unicorn_cyan"
+                            flat={true}
+                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>}
+                        />
+                        <StatCard
+                            title="Active Sessions"
+                            value={formatNumber(stats.activeSessions)}
+                            color="unicorn_yellow"
+                            flat={true}
+                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                        />
+                        <StatCard
+                            title="Total Messages"
+                            value={formatNumber(stats.totalMessages)}
+                            color="unicorn_pink"
+                            flat={true}
+                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>}
+                        />
+                        <StatCard
+                            title="Total Threads"
+                            value={formatNumber(stats.totalThreads)}
+                            color="unicorn_cyan"
+                            flat={true}
+                            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>}
+                        />
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-4 mt-2 mb-4">
+                        <h2 className=" text-md md:text-lg font-black tracking-widest text-[#f0acf7] uppercase flex items-center gap-2">
+                            <svg className="w-5 h-5 text-[#acf7f0]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            Connected Accounts
+                        </h2>
+                        <a
+                            href="/auth/google"
+                            className="shrink-0 flex items-center gap-2 px-4 py-2 bg-black/40 hover:bg-[#acf7f0]/10 text-[#acf7f0] rounded-none text-xs font-black uppercase tracking-widest transition-all active:scale-95 border-2 border-[#acf7f0]/50 hover:border-[#f0acf7]"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+                            <span>Add Account</span>
+                        </a>
+                    </div>
+
+                    {/* Account List */}
+                    <AccountList
+                        accounts={accounts}
+                        loading={loading}
+                        onRefresh={loadAccounts}
+                        setAccounts={setAccounts}
+                        setNotification={setNotification}
+                        flat={true}
+                    />
+                </>
+            )}
         </div>
     );
 }
