@@ -18,17 +18,22 @@ export async function GET(req, { params }) {
             select: { id: true, address: true, createdAt: true, password: true, token: true }
         });
 
-        if (!account) {
-            await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}`, 'GET', 404);
-            return NextResponse.json({ error: 'Account not found or unauthorized' }, { status: 404 });
-        }
+            return new Response(JSON.stringify({ error: 'Account not found or unauthorized' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+            });
 
-        await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}`, 'GET', 200);
-        return NextResponse.json(account);
+        return new Response(JSON.stringify(account), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
     } catch (error) {
         console.error('v1 Account Detail Error:', error);
         await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}`, 'GET', 500);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
     }
 }
 
@@ -45,9 +50,10 @@ export async function DELETE(req, { params }) {
             select: { token: true }
         });
 
-        if (!account) {
-            return NextResponse.json({ error: 'Account not found or unauthorized' }, { status: 404 });
-        }
+            return new Response(JSON.stringify({ error: 'Account not found or unauthorized' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+            });
 
         // 1. Delete from Mail.tm
         try {
@@ -63,11 +69,16 @@ export async function DELETE(req, { params }) {
         // 2. Delete from DB
         await prisma.tempMailAccount.delete({ where: { id: id } });
 
-        await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}`, 'DELETE', 200);
-        return NextResponse.json({ success: true });
+        return new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
     } catch (error) {
         console.error('v1 Account Delete Error:', error);
         await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}`, 'DELETE', 500);
-        return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 });
+        return new Response(JSON.stringify({ error: 'Failed to delete account' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
     }
 }

@@ -7,7 +7,12 @@ const API_BASE = 'https://api.mail.tm';
 
 export async function GET(req, { params }) {
     const auth = await verifyApiKey(req);
-    if (!auth.success) return NextResponse.json({ error: auth.error }, { status: 401 });
+    if (!auth.success) {
+        return new Response(JSON.stringify({ error: auth.error }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
+    }
 
     const { id } = await params;
     trackApiHit(req);
@@ -19,10 +24,10 @@ export async function GET(req, { params }) {
             select: { token: true }
         });
 
-        if (!account || !account.token) {
-            await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages`, 'GET', 404);
-            return NextResponse.json({ error: 'Account not found or unauthorized' }, { status: 404 });
-        }
+            return new Response(JSON.stringify({ error: 'Account not found or unauthorized' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+            });
 
         const res = await fetch(`${API_BASE}/messages?page=1`, {
             headers: {
@@ -78,16 +83,25 @@ export async function GET(req, { params }) {
             await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages`, 'GET', 200);
             return new Response(JSON.stringify(messages), {
                 status: 200,
-                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+                headers: { 
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Content-Encoding': 'identity'
+                }
             });
         }
 
         await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages`, 'GET', res.status);
-        return NextResponse.json({ error: 'Failed to fetch messages' }, { status: res.status });
+        return new Response(JSON.stringify({ error: 'Failed to fetch messages' }), {
+            status: res.status,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
 
     } catch (error) {
         console.error('v1 Nested Messages List Error:', error);
         await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages`, 'GET', 500);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
+        });
     }
 }

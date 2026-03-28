@@ -93,21 +93,30 @@ export async function POST(req) {
                 }
             }), {
                 status: 201,
-                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+                headers: { 
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Content-Encoding': 'identity'
+                }
             });
         }
 
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', res.status);
         return new Response(JSON.stringify(data), {
             status: res.status,
-            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            headers: { 
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Encoding': 'identity'
+            }
         });
     } catch (error) {
         console.error('v1 Accounts API Error:', error);
         await recordApiKeyUsage(apiKeyId, '/api/v1/temp-mail/accounts', 'POST', 500);
         return new Response(JSON.stringify({ error: 'Failed to create account' }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            headers: { 
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Encoding': 'identity'
+            }
         });
     }
 }
@@ -115,7 +124,13 @@ export async function POST(req) {
 export async function GET(req) {
     const auth = await verifyApiKey(req);
     if (!auth.success) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return new Response(JSON.stringify({ error: auth.error }), {
+            status: 401,
+            headers: { 
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Encoding': 'identity'
+            }
+        });
     }
 
     trackApiHit(req);
@@ -134,14 +149,20 @@ export async function GET(req) {
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'GET', 200);
         return new Response(JSON.stringify({ accounts }), {
             status: 200,
-            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            headers: { 
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Encoding': 'identity'
+            }
         });
     } catch (error) {
         console.error('v1 Accounts List Error:', error);
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'GET', 500);
         return new Response(JSON.stringify({ error: 'Failed to list accounts' }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            headers: { 
+                'Content-Type': 'application/json; charset=utf-8',
+                'Content-Encoding': 'identity'
+            }
         });
     }
 }
