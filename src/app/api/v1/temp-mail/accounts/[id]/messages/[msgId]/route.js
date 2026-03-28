@@ -24,10 +24,12 @@ export async function GET(req, { params }) {
             select: { token: true }
         });
 
+        if (!account || !account.token) {
             return new Response(JSON.stringify({ error: 'Account not found or unauthorized' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
             });
+        }
 
         const res = await fetch(`${API_BASE}/messages/${msgId}`, {
             headers: {

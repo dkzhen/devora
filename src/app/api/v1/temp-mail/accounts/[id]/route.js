@@ -18,10 +18,12 @@ export async function GET(req, { params }) {
             select: { id: true, address: true, createdAt: true, password: true, token: true }
         });
 
+        if (!account) {
             return new Response(JSON.stringify({ error: 'Account not found or unauthorized' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
             });
+        }
 
         return new Response(JSON.stringify(account), {
             status: 200,
@@ -50,10 +52,12 @@ export async function DELETE(req, { params }) {
             select: { token: true }
         });
 
+        if (!account) {
             return new Response(JSON.stringify({ error: 'Account not found or unauthorized' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json; charset=utf-8', 'Content-Encoding': 'identity' }
             });
+        }
 
         // 1. Delete from Mail.tm
         try {
