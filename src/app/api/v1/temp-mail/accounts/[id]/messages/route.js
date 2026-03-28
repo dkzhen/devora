@@ -27,7 +27,8 @@ export async function GET(req, { params }) {
         const res = await fetch(`${API_BASE}/messages?page=1`, {
             headers: {
                 'Authorization': `Bearer ${account.token}`,
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Accept-Encoding': 'identity'
             }
         });
 
@@ -75,7 +76,10 @@ export async function GET(req, { params }) {
             }
 
             await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages`, 'GET', 200);
-            return NextResponse.json(messages);
+            return new Response(JSON.stringify(messages), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            });
         }
 
         await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages`, 'GET', res.status);

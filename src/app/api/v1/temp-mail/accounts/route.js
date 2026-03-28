@@ -40,7 +40,8 @@ export async function POST(req) {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept-Encoding': 'identity'
             },
             body: JSON.stringify({ address, password })
         });
@@ -52,7 +53,8 @@ export async function POST(req) {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept-Encoding': 'identity'
                 },
                 body: JSON.stringify({ address, password })
             });
@@ -80,7 +82,7 @@ export async function POST(req) {
             } catch (statsErr) { console.error("v1 Stats update err:", statsErr); }
 
             await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', 201);
-            return NextResponse.json({
+            return new Response(JSON.stringify({
                 success: true,
                 account: {
                     id: account.id,
@@ -89,15 +91,24 @@ export async function POST(req) {
                     createdAt: account.createdAt,
                     token: account.token
                 }
-            }, { status: 201 });
+            }), {
+                status: 201,
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            });
         }
 
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', res.status);
-        return NextResponse.json(data, { status: res.status });
+        return new Response(JSON.stringify(data), {
+            status: res.status,
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
     } catch (error) {
         console.error('v1 Accounts API Error:', error);
         await recordApiKeyUsage(apiKeyId, '/api/v1/temp-mail/accounts', 'POST', 500);
-        return NextResponse.json({ error: 'Failed to create account' }, { status: 500 });
+        return new Response(JSON.stringify({ error: 'Failed to create account' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
     }
 }
 
@@ -121,10 +132,16 @@ export async function GET(req) {
         });
 
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'GET', 200);
-        return NextResponse.json({ accounts }, { status: 200 });
+        return new Response(JSON.stringify({ accounts }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
     } catch (error) {
         console.error('v1 Accounts List Error:', error);
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'GET', 500);
-        return NextResponse.json({ error: 'Failed to list accounts' }, { status: 500 });
+        return new Response(JSON.stringify({ error: 'Failed to list accounts' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
     }
 }

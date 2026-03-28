@@ -1,6 +1,7 @@
 ---
 title: API Key Management
 description: How to create, manage, and use Devora API Keys.
+icon: Key
 ---
 
 # API Key Management
@@ -18,12 +19,12 @@ Include your key in every request.
 <Tabs items={['cURL', 'JavaScript']}>
   <Tab value="cURL">
     ```bash
-    curl -H "Authorization: Bearer devora_..." https://api.devora.org/v1/...
+    curl -H "Authorization: Bearer devora_..." https://api.yourdomain.com/v1/...
     ```
   </Tab>
   <Tab value="JavaScript">
     ```js
-    const res = await fetch('https://api.devora.org/v1/...', {
+    const res = await fetch('https://api.yourdomain.com/v1/...', {
       headers: { 'Authorization': 'Bearer devora_...' }
     });
     ```

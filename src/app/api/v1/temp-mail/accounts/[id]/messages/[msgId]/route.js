@@ -27,7 +27,8 @@ export async function GET(req, { params }) {
         const res = await fetch(`${API_BASE}/messages/${msgId}`, {
             headers: {
                 'Authorization': `Bearer ${account.token}`,
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Accept-Encoding': 'identity'
             }
         });
 
@@ -58,7 +59,10 @@ export async function GET(req, { params }) {
             } catch (dbErr) { console.error("v1 Nested Message detail sync err:", dbErr); }
 
             await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages/${msgId}`, 'GET', 200);
-            return NextResponse.json(messageData);
+            return new Response(JSON.stringify(messageData), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            });
         }
 
         await recordApiKeyUsage(auth.apiKeyId, `/api/v1/temp-mail/accounts/${id}/messages/${msgId}`, 'GET', res.status);

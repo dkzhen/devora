@@ -33,33 +33,48 @@ export async function POST(request) {
         const fetchOptions = {
             method: method || 'GET',
             headers: headers || {},
+            signal: AbortSignal.timeout(15000), // 15s timeout
         };
 
         if (body && method !== 'GET' && method !== 'HEAD') {
-            fetchOptions.body = body;
+            fetchOptions.body = typeof body === 'object' ? JSON.stringify(body) : body;
         }
 
         const start = performance.now();
-        const res = await fetch(url, fetchOptions);
-        const elapsed = Math.round(performance.now() - start);
+        try {
+            const res = await fetch(url, fetchOptions);
+            const elapsed = Math.round(performance.now() - start);
 
-        const resText = await res.text();
-        const resHeaders = {};
-        res.headers.forEach((val, key) => {
-            resHeaders[key] = val;
-        });
+            const resText = await res.text();
+            const resHeaders = {};
+            res.headers.forEach((val, key) => {
+                resHeaders[key] = val;
+            });
 
-        return NextResponse.json({
-            status: res.status,
-            statusText: res.statusText,
-            headers: resHeaders,
-            body: resText,
-            time: elapsed,
-            ok: res.ok
-        });
+            return NextResponse.json({
+                status: res.status,
+                statusText: res.statusText,
+                headers: resHeaders,
+                body: resText,
+                time: elapsed,
+                ok: res.ok
+            });
+        } catch (fetchErr) {
+            const elapsed = Math.round(performance.now() - start);
+            let errMsg = fetchErr.message;
+            if (fetchErr.name === 'TimeoutError') errMsg = 'Request timed out (15s)';
+            else if (fetchErr.code === 'ENOTFOUND') errMsg = `Host not found: ${new URL(url).hostname}`;
+
+            return NextResponse.json({
+                error: errMsg,
+                status: 500,
+                time: elapsed,
+                ok: false
+            }, { status: 500 });
+        }
 
     } catch (error) {
-        console.error('Proxy Error:', error);
-        return NextResponse.json({ error: error.message || 'Failed to execute request through proxy' }, { status: 500 });
+        console.error('Proxy Controller error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
