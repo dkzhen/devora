@@ -1,0 +1,51 @@
+---
+title: API Key Management
+description: How to create, manage, and use Devora API Keys.
+---
+
+# API Key Management
+
+API Keys allow you to access Devora services programmatically without a browser session.
+
+<Steps>
+
+### Create a Key
+Go to **Tools → API Key** in your dashboard. Click **Create Key**, enter a name, and confirm. Your key will be displayed once — **copy it immediately**.
+
+### Use in Headers
+Include your key in every request. 
+
+<Tabs items={['cURL', 'JavaScript']}>
+  <Tab value="cURL">
+    ```bash
+    curl -H "Authorization: Bearer devora_..." https://api.devora.org/v1/...
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    const res = await fetch('https://api.devora.org/v1/...', {
+      headers: { 'Authorization': 'Bearer devora_...' }
+    });
+    ```
+  </Tab>
+</Tabs>
+
+### Revoke (Optional)
+If a key is compromised, delete it from the dashboard. This immediately invalidates the key.
+
+</Steps>
+
+## Deleting a Key
+
+Go to **Tools → API Key**, click the delete icon next to the key you want to revoke, and confirm.
+
+> Deleting a key immediately invalidates it. All requests using that key will return `401 Unauthorized`.
+
+## Usage History
+
+At the bottom of the API Key page, you'll find a **Usage History** table showing:
+- Timestamp of each request
+- The API Key used
+- HTTP Method
+- Endpoint hit
+- Response status code

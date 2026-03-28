@@ -1,0 +1,119 @@
+---
+title: Temp Mail AP
+description: Full reference for the Devora Temp Mail API v1 endpoints.
+---
+
+# Temp Mail API
+
+The Temp Mail API allows you to create and manage temporary email accounts programmatically using your API Key.
+
+## Authentication
+
+All endpoints require an API Key in the `Authorization` header:
+
+```http
+Authorization: Bearer devora_your_key_here
+```
+
+---
+
+## Endpoints
+
+### Create Account
+
+`POST /api/v1/temp-mail/accounts`
+
+Creates a new temporary email account. If `address` or `password` are omitted, they are **auto-generated** for you.
+
+**Request Body (optional):**
+```json
+{
+  "address": "myemail@example.com",
+  "password": "mypassword"
+}
+```
+
+**Response `201`:**
+```json
+{
+  "success": true,
+  "account": {
+    "id": "...",
+    "address": "devora_ab12cd34@example.com",
+    "password": "auto_generated_pw",
+    "token": "eyJhbGciOi...",
+    "createdAt": "2026-03-28T12:00:00.000Z"
+  }
+}
+```
+
+---
+
+### List Accounts
+
+`GET /api/v1/temp-mail/accounts`
+
+Returns all temporary email accounts tied to your API Key's user account.
+
+**Response `200`:**
+```json
+{
+  "accounts": [
+    { "id": "...", "address": "...", "createdAt": "..." }
+  ]
+}
+```
+
+---
+
+### Get Account Detail
+
+`GET /api/v1/temp-mail/accounts/{id}`
+
+Returns the full detail of a specific account including the token.
+
+---
+
+### Delete Account
+
+`DELETE /api/v1/temp-mail/accounts/{id}`
+
+Deletes the account from both the Devora database and the upstream mail provider.
+
+---
+
+### List Messages (Inbox)
+
+`GET /api/v1/temp-mail/accounts/{id}/messages`
+
+Returns the inbox for the specified account.
+
+**Response `200`:**
+```json
+[
+  {
+    "id": "...",
+    "from": { "name": "Sender", "address": "sender@domain.com" },
+    "subject": "Hello!",
+    "intro": "Preview of the email...",
+    "seen": false,
+    "createdAt": "..."
+  }
+]
+```
+
+---
+
+### Get Message Detail
+
+`GET /api/v1/temp-mail/accounts/{accountId}/messages/{msgId}`
+
+Returns the full content (HTML/text) of a specific message.
+
+---
+
+### Image Proxy
+
+`GET /api/v1/temp-mail/image?url={imageUrl}&accountId={accountId}`
+
+Proxies images embedded in emails so they load securely through Devora.

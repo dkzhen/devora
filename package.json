@@ -44,7 +44,11 @@
   "author": "dkzhen",
   "license": "MIT",
   "dependencies": {
+    "@types/mdx": "^2.0.13",
     "bcryptjs": "^3.0.3",
+    "fumadocs-core": "^16.7.7",
+    "fumadocs-mdx": "^14.2.11",
+    "fumadocs-ui": "^16.7.7",
     "googleapis": "^171.4.0",
     "jose": "^6.1.3",
     "lucide-react": "^0.574.0",

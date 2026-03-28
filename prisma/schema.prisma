@@ -79,11 +79,13 @@ model User {
   airdrops            Airdrop[]
   chatSessions        ChatSession[]
   groqCredential      GroqCredential?
+  llmConsole          LlmConsole?
   quickVaultItems     QuickVaultItem[]
   telSession          TelSession?
   telegramUpdates     TelegramUpdate[]
   tempMailAccounts    TempMailAccount[]
   airdropTasks        UserAirdropTask[]
+  apiKeys             ApiKey[]
 
   @@map("users")
 }
@@ -354,4 +356,44 @@ enum Role {
   INSIDER
   PRO
   ULTRA
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String
+  key       String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usages    ApiKeyUsage[]
+
+  @@index([userId])
+  @@map("api_keys")
+}
+
+model ApiKeyUsage {
+  id        String   @id @default(uuid())
+  apiKeyId  String   @map("api_key_id")
+  endpoint  String
+  method    String
+  status    Int
+  createdAt DateTime @default(now()) @map("created_at")
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId])
+  @@map("api_key_usages")
+}
+
+model LlmConsole {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  baseUrl   String   @map("base_url") @db.Text
+  model     String   @db.VarChar(255)
+  apiKey    String   @map("api_key") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("llm_consoles")
 }

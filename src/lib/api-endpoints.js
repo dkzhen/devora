@@ -176,5 +176,43 @@ export const apiCategories = [
             { method: 'GET', path: '/api/herosms-client/history', desc: 'Retrieve historical orders and activations records' },
             { method: 'GET', path: '/api/herosms-client/sms', desc: 'Fetch all SMS messages received for an activation', sampleBody: '?id=12345' }
         ]
+    },
+    {
+        category: 'LLM Console',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>,
+        desc: 'Endpoints for testing OpenAI-compatible LLM provider configurations',
+        endpoints: [
+            { method: 'GET', path: '/api/llm-console/config', desc: 'Get currently saved LLM configuration (masked)' },
+            { method: 'POST', path: '/api/llm-console/test', desc: 'Proxy a low-token test chat completion request to target provider', sampleBody: '{\n  "baseUrl": "https://api.openai.com/v1",\n  "apiKey": "sk-...",\n  "model": "gpt-4o-mini"\n}' }
+        ]
+    },
+    {
+        category: 'API Keys',
+        icon: <svg className="w-[1em] h-[1em] text-blue-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>,
+        desc: 'Manage developer API keys for accessing public v1 endpoints',
+        endpoints: [
+            { method: 'GET', path: '/api/api-keys', desc: 'List all generated API keys for current user' },
+            { method: 'POST', path: '/api/api-keys', desc: 'Generate a new system-wide API key', sampleBody: '{\n  "name": "Production App"\n}' },
+            { method: 'PATCH', path: '/api/api-keys/:id', desc: 'Update API key name', sampleBody: '{\n  "name": "New Name"\n}' },
+            { method: 'DELETE', path: '/api/api-keys/:id', desc: 'Revoke and delete an API key permanently' },
+            { method: 'GET', path: '/api/api-keys/usage', desc: 'Get recent 50 API usage logs for all keys' }
+        ]
+    },
+    {
+        category: 'Temp Mail V1',
+        icon: <svg className="w-[1em] h-[1em] text-emerald-400 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" /></svg>,
+        desc: 'Public V1 endpoints for automation using API Key (Internal & External)',
+        endpoints: [
+            { method: 'GET', path: '/api/v1/temp-mail/domains', desc: 'List available domains' },
+            { method: 'GET', path: '/api/v1/temp-mail/accounts', desc: 'List user accounts' },
+            { method: 'POST', path: '/api/v1/temp-mail/accounts', desc: 'Create new account', sampleBody: '{\n  "address": "custom@domain.com",\n  "password": "pwd"\n}' },
+            { method: 'GET', path: '/api/v1/temp-mail/accounts/:id', desc: 'Get account details (address, pwd, token)' },
+            { method: 'DELETE', path: '/api/v1/temp-mail/accounts/:id', desc: 'Delete account' },
+            { method: 'GET', path: '/api/v1/temp-mail/accounts/:id/messages', desc: 'List messages in inbox' },
+            { method: 'GET', path: '/api/v1/temp-mail/accounts/:id/messages/:msgId', desc: 'Get message full content' },
+            { method: 'POST', path: '/api/v1/temp-mail/token', desc: 'Retrieve Mail.tm token for an address', sampleBody: '{\n  "address": "...",\n  "password": "..."\n}' },
+            { method: 'GET', path: '/api/v1/temp-mail/image', desc: 'Proxy image URL', sampleBody: '?url=...&accountId=...' }
+        ]
     }
 ];
+

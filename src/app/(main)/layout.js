@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 const passeroFont = localFont({
-    src: "../../public/fonts/PasseroOne-Regular.ttf",
+    src: "../../../public/fonts/PasseroOne-Regular.ttf",
     variable: "--font-passero",
 });
 

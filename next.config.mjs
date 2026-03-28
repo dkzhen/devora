@@ -1,3 +1,5 @@
+import { createMDX } from 'fumadocs-mdx/next';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
@@ -5,16 +7,17 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: '**', // Allow SEMUA hostname dari https
+                hostname: '**',
             },
             {
                 protocol: 'http',
-                hostname: '**', // Allow SEMUA hostname dari http
+                hostname: '**',
             },
         ],
     },
-    serverExternalPackages: ['jose', 'bcrypt'], // Added for Prisma/crypto stability if needed later
-
+    serverExternalPackages: ['jose', 'bcrypt'],
 };
 
-export default nextConfig;
+const withMDX = createMDX();
+
+export default withMDX(nextConfig);

@@ -174,6 +174,16 @@ export function HeroHeader({ breadcrumbs, title, badge, description, colorTheme 
             breadcrumbText: "text-[#e59a54]/60 hover:text-white",
             breadcrumbCurrent: "text-[#e59a54]",
             titleGradient: "from-[#e59a54] via-amber-200 to-[#e59a54]"
+        },
+        devora: {
+            bgGlow: "bg-[#f36222]/15",
+            bgBase: "from-[#120a05] via-[#0a1408]/80 to-[#02080f]",
+            accentLine: "via-[#5cb644]/60",
+            leftStrip: "from-[#f36222] via-[#5cb644]/50",
+            breadcrumbIcon: "text-[#f36222]/40",
+            breadcrumbText: "text-[#f36222]/60 hover:text-[#5cb644]",
+            breadcrumbCurrent: "text-[#5cb644]/90",
+            titleGradient: "from-[#f36222] via-[#5cb644] to-[#007fc3]"
         }
     };
 
@@ -276,7 +286,8 @@ export function LoadingState({ message = "Loading...", colorTheme = "red" }) {
         neon_mail: "border-[#EA4335]/60 shadow-[0_0_10px_#EA4335]",
         unicorn: "border-[#acf7f0]/60 shadow-[0_0_10px_#acf7f0]",
         settings: "border-[#f0f2f0]/60 shadow-[0_0_10px_#f0f2f0]",
-        upgrade: "border-[#e59a54]/60 shadow-[0_0_10px_#e59a54]"
+        upgrade: "border-[#e59a54]/60 shadow-[0_0_10px_#e59a54]",
+        devora: "border-[#5cb644]/60 shadow-[0_0_10px_#5cb644]"
     };
     const borderClass = borders[colorTheme] || borders.red;
 
