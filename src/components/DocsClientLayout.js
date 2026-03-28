@@ -2,7 +2,6 @@
 
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import * as Icons from 'lucide-react';
 
 export default function DocsClientLayout({ children, tree }) {
     return (
@@ -19,14 +18,6 @@ export default function DocsClientLayout({ children, tree }) {
                         </span>
                     ),
                     githubUrl: 'https://github.com/dkzhen',
-                }}
-                sidebar={{
-                    renderIcon: (icon) => {
-                        if (!icon) return null;
-                        const Icon = Icons[icon];
-                        if (!Icon) return null;
-                        return <Icon className="w-4 h-4" />;
-                    }
                 }}
             >
                 {children}

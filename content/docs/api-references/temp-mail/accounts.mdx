@@ -1,0 +1,68 @@
+---
+title: Accounts
+description: Manage temporary email accounts.
+---
+
+
+Manage your temporary email accounts with these endpoints.
+
+### ➕ Create Account
+
+`POST /api/v1/temp-mail/accounts`
+
+Creates a new temporary email account. If `address` or `password` are omitted, they are **auto-generated** for you.
+
+**Request Body (optional):**
+```json
+{
+  "address": "myemail@example.com",
+  "password": "mypassword"
+}
+```
+
+**Response `201`:**
+```json
+{
+  "success": true,
+  "account": {
+    "id": "...",
+    "address": "devora_ab12cd34@example.com",
+    "password": "mypassword",
+    "token": "eyJhbGciOi...",
+    "createdAt": "2026-03-28T12:00:00.000Z"
+  }
+}
+```
+
+---
+
+### 📋 List Accounts
+
+`GET /api/v1/temp-mail/accounts`
+
+Returns all temporary email accounts tied to your API Key's user account.
+
+**Response `200`:**
+```json
+{
+  "accounts": [
+    { "id": "...", "address": "...", "createdAt": "..." }
+  ]
+}
+```
+
+---
+
+### 🔍 Get Account Detail
+
+`GET /api/v1/temp-mail/accounts/{id}`
+
+Returns the full detail of a specific account including the token for inbox access.
+
+---
+
+### 🗑️ Delete Account
+
+`DELETE /api/v1/temp-mail/accounts/{id}`
+
+Deletes the account from both the Devora database and the upstream mail provider.

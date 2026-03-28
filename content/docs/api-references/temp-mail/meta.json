@@ -1,0 +1,8 @@
+{
+  "title": "Temp Mail APIs",
+  "icon": "Mail",
+  "pages": [
+    "accounts",
+    "messages"
+  ]
+}

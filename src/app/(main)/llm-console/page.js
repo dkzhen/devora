@@ -109,6 +109,44 @@ function ApiKeyCopyBtn() {
 }
 
 
+// ── Provider Shortcuts ───────────────────────────────────────────────────────
+const PROVIDERS = [
+    {
+        id: 'openai',
+        name: 'OpenAI',
+        baseUrl: 'https://api.openai.com/v1',
+        model: 'gpt-4o',
+        icon: (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.28 7.507c-.093-2.114-1.611-3.877-3.665-4.282A8.192 8.192 0 0012 2a8.192 8.192 0 00-6.615 1.225C3.33 3.63 1.812 5.393 1.72 7.507A8.192 8.192 0 002.944 14.12c.322 2.046 1.83 3.692 3.82 4.103a8.192 8.192 0 005.236 1.777 8.192 8.192 0 005.236-1.777c1.99-.411 3.498-2.057 3.82-4.103a8.192 8.192 0 001.224-6.613zm-10.28 11.5c-1.396 0-2.733-.352-3.903-.974l1.458-2.527a4.915 4.915 0 011.695.663c.243-.11.464-.249.663-.414l2.527 1.458a6.946 6.946 0 01-2.44 1.794zm-5.613-3.045a6.943 6.943 0 01-1.794-2.44L7.13 12.064c.11.243.249.464.414.663l-1.458 2.527zm-1.847-5.962a6.953 6.953 0 01.974-3.903l2.527 1.458a4.915 4.915 0 01-.663 1.695c.11.243.249.464.414.663L5.514 11.5a6.946 6.946 0 01-.974-1.5zm6.613-5.613c1.396 0 2.733.352 3.903.974l-1.458 2.527a4.915 4.915 0 01-1.695-.663c-.243.11-.464.249-.663.414L10.743 4.18a6.946 6.946 0 012.44-1.794zm5.613 3.045a6.943 6.943 0 011.794 2.44L16.87 11.936c-.11-.243-.249-.464-.414-.663l1.458-2.527zm1.847 5.962a6.953 6.953 0 01-.974 3.903l-2.527-1.458a4.915 4.915 0 01.663-1.695c-.11-.243-.249-.464-.414-.663L18.486 12.5a6.946 6.946 0 01.974 1.5z" />
+            </svg>
+        )
+    },
+    {
+        id: 'blink',
+        name: 'Blink',
+        baseUrl: 'https://core.blink.new/api/v1/ai',
+        model: 'anthropic/claude-sonnet-4.6',
+        icon: (
+            <img src="https://blink.new/blink/blink-logo-icon--dark.svg" className="w-4 h-4" alt="Blink" />
+        )
+    },
+
+    {
+        id: 'openrouter',
+        name: 'OpenRouter',
+        baseUrl: 'https://openrouter.ai/api/v1',
+        model: 'google/gemini-2.0-flash-001',
+        icon: (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
+            </svg>
+        )
+    },
+
+];
+
+
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function LlmConsolePage() {
     // Auth state
@@ -230,6 +268,12 @@ export default function LlmConsolePage() {
         setResult(null);
         setEditing(false);
         toast.success('Configuration removed');
+    };
+
+    const selectProvider = (p) => {
+        setBaseUrl(p.baseUrl);
+        setModel(p.model);
+        toast.success(`Loaded ${p.name} defaults`);
     };
 
     // ── Test endpoint ──────────────────────────────────────────────────────────
@@ -444,6 +488,28 @@ export default function LlmConsolePage() {
                             ) : (
                                 /* Edit / setup form */
                                 <div className="space-y-4">
+                                    {/* Quick Connect */}
+                                    <div>
+                                        <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-2.5">
+                                            Quick Connect
+                                        </label>
+                                        <div className="grid grid-cols-5 gap-2">
+                                            {PROVIDERS.map(p => (
+                                                <button
+                                                    key={p.id}
+                                                    onClick={() => selectProvider(p)}
+                                                    title={p.name}
+                                                    className="group flex flex-col items-center gap-1.5 p-2 rounded-lg border border-[#76D2DB]/10 bg-[#76D2DB]/3 hover:bg-[#76D2DB]/10 hover:border-[#76D2DB]/40 transition-all"
+                                                >
+                                                    <div className="w-8 h-8 rounded-md border border-[#76D2DB]/20 bg-black/40 flex items-center justify-center text-[#76D2DB]/60 group-hover:text-[#76D2DB] group-hover:border-[#76D2DB]/40 transition-all">
+                                                        {p.icon}
+                                                    </div>
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-500 group-hover:text-[#76D2DB]/80">{p.name}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     {/* Base URL */}
                                     <div>
                                         <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-1.5">

@@ -1,0 +1,44 @@
+---
+title: Messages
+description: Manage inbox and message content.
+---
+
+# Inbox & Messages
+
+Interact with the messages received by your temporary accounts.
+
+### 📥 List Messages (Inbox)
+
+`GET /api/v1/temp-mail/accounts/{id}/messages`
+
+Returns the inbox for the specified account.
+
+**Response `200`:**
+```json
+[
+  {
+    "id": "...",
+    "from": { "name": "Sender", "address": "sender@domain.com" },
+    "subject": "Hello!",
+    "intro": "Preview of the email...",
+    "seen": false,
+    "createdAt": "..."
+  }
+]
+```
+
+---
+
+### 📄 Get Message Detail
+
+`GET /api/v1/temp-mail/accounts/{accountId}/messages/{msgId}`
+
+Returns the full content (HTML/text) of a specific message.
+
+---
+
+### 🖼️ Image Proxy
+
+`GET /api/v1/temp-mail/image?url={imageUrl}&accountId={accountId}`
+
+Proxies images embedded in emails so they load securely through Devora.

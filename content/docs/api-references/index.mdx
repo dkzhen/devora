@@ -1,0 +1,35 @@
+---
+title: API References
+description: General information for Devora APIs, including base URL and authentication.
+icon: BookOpen
+---
+
+Welcome to the Devora API documentation. All Devora APIs are RESTful and follow the same authentication pattern.
+
+## BASE URL
+
+The production API is accessible at:
+
+```http
+https://devora.dkzhen.org
+```
+
+> [!NOTE]
+> All endpoints are versioned. Currently, we are using **v1**.
+
+---
+
+## Authentication
+
+All endpoints require an API Key in the `Authorization` header as a **Bearer Token**.
+
+You can manage your API Keys in the [API Key Management](./api-keys) section.
+
+### Example Header
+
+```http
+Authorization: Bearer devora_your_key_here
+```
+
+---
+
