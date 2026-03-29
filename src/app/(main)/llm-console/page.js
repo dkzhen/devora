@@ -6,16 +6,50 @@ import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 
 // ── Local-storage helpers ──────────────────────────────────────────────────────
 const LS_KEY = 'llm_console_config';
+const LS_SALT = 'devora_llm_v1';
+
+function lsEncrypt(str) {
+    if (!str) return str;
+    try {
+        const xor = (s) => s.split('').map((char, i) =>
+            String.fromCharCode(char.charCodeAt(0) ^ LS_SALT.charCodeAt(i % LS_SALT.length))
+        ).join('');
+        return btoa(encodeURIComponent(xor(str)));
+    } catch { return str; }
+}
+
+function lsDecrypt(str) {
+    if (!str) return str;
+    try {
+        const decoded = decodeURIComponent(atob(str));
+        const dexor = (s) => s.split('').map((char, i) =>
+            String.fromCharCode(char.charCodeAt(0) ^ LS_SALT.charCodeAt(i % LS_SALT.length))
+        ).join('');
+        return dexor(decoded);
+    } catch { return str; }
+}
 
 function lsLoad() {
     try {
         const raw = localStorage.getItem(LS_KEY);
-        return raw ? JSON.parse(raw) : null;
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        // Decrypt key if present
+        if (data && data.apiKey) {
+            data.apiKey = lsDecrypt(data.apiKey);
+        }
+        return data;
     } catch { return null; }
 }
 
 function lsSave(data) {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch { }
+    try {
+        const toSave = { ...data };
+        if (toSave.apiKey) {
+            toSave.apiKey = lsEncrypt(toSave.apiKey);
+        }
+        localStorage.setItem(LS_KEY, JSON.stringify(toSave));
+    } catch { }
 }
 
 function lsClear() {
