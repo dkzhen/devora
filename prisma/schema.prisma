@@ -77,6 +77,7 @@ model User {
   accounts            Account[]
   createdAirdropTasks AirdropTask[]
   airdrops            Airdrop[]
+  apiKeys             ApiKey[]
   chatSessions        ChatSession[]
   groqCredential      GroqCredential?
   llmConsole          LlmConsole?
@@ -85,7 +86,6 @@ model User {
   telegramUpdates     TelegramUpdate[]
   tempMailAccounts    TempMailAccount[]
   airdropTasks        UserAirdropTask[]
-  apiKeys             ApiKey[]
 
   @@map("users")
 }
@@ -351,22 +351,15 @@ model TelSession {
   @@map("tel_sessions")
 }
 
-enum Role {
-  MEMBER
-  INSIDER
-  PRO
-  ULTRA
-}
-
 model ApiKey {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
+  id        String        @id @default(uuid())
+  userId    String        @map("user_id")
   name      String
-  key       String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String        @unique
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
   usages    ApiKeyUsage[]
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("api_keys")
@@ -396,4 +389,31 @@ model LlmConsole {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("llm_consoles")
+}
+
+model AiModel {
+  id            String          @id
+  status        String          @default("active")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  isRestricted  Boolean         @default(false) @map("is_restricted")
+  allowedEmails AiModelAccess[]
+
+  @@map("ai_models")
+}
+
+model AiModelAccess {
+  id      Int     @id @default(autoincrement())
+  modelId String  @map("model_id")
+  email   String
+  model   AiModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@unique([modelId, email])
+  @@map("ai_model_access")
+}
+
+enum Role {
+  MEMBER
+  INSIDER
+  PRO
+  ULTRA
 }

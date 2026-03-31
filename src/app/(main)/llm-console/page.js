@@ -275,8 +275,10 @@ export default function LlmConsolePage() {
             }
             await loadConfig(!!user);
             setEditing(false);
-            setApiKey('');
-            setShowKey(false);
+            if (user) {
+                setApiKey('');
+                setShowKey(false);
+            }
         } catch (err) {
             toast.error(err.message || 'Save failed');
         } finally {
@@ -370,22 +372,6 @@ export default function LlmConsolePage() {
                 title="LLM"
                 badge="Console"
                 description="Test any OpenAI-compatible API endpoint. Supports custom base URL, model selection, and optional API key storage."
-                actionContent={
-                    <div className="flex items-center gap-2">
-                        {/* Auth badge */}
-                        {user ? (
-                            <span className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest border border-[#76D2DB]/30 text-[#76D2DB] rounded bg-[#76D2DB]/5">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                DB Storage
-                            </span>
-                        ) : (
-                            <span className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest border border-gray-600/40 text-gray-400 rounded bg-gray-800/30">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                Local Storage
-                            </span>
-                        )}
-                    </div>
-                }
             />
 
             {/* ── Gradient Banner ─────────────────────────────────────────── */}

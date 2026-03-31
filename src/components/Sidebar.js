@@ -110,6 +110,15 @@ export default function Sidebar() {
                         </svg>
                     )
                 },
+                {
+                    name: 'AI Providers',
+                    href: '/ai-providers',
+                    icon: (
+                        <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    )
+                },
 
                 {
                     name: 'HTTP Client',
@@ -307,7 +316,7 @@ export default function Sidebar() {
                                     <div className="space-y-0.5">
                                         {results.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/llm-console' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client' && item.href !== '/temp-mail') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/llm-console' && item.href !== '/ai-providers' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client' && item.href !== '/temp-mail' && item.href !== '/docs') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
                                             const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
                                             if (isLocked) return (
                                                 <div key={item.href} className="flex items-center justify-between px-3 py-2.5 rounded text-[11px] font-mono font-medium text-gray-600 cursor-not-allowed border border-transparent bg-transparent">
@@ -345,7 +354,7 @@ export default function Sidebar() {
                                     <div className="space-y-0.5">
                                         {cat.items.map(item => {
                                             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-                                            const isLocked = (!user && item.href !== '/' && item.href !== '/llm-console' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client' && item.href !== '/temp-mail') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
+                                            const isLocked = (!user && item.href !== '/' && item.href !== '/llm-console' && item.href !== '/ai-providers' && item.href !== '/airdrops' && item.href !== '/app-library' && item.href !== '/http-client' && item.href !== '/temp-mail' && item.href !== '/docs') || ((item.href === '/endpoints' || item.href === '/users' || item.href === '/maintenance-control' || item.href === '/config' || item.href === '/telegram-console') && user?.role !== 'ULTRA');
                                             const isMaintenance = maintenanceConfigs.find(c => c.feature === item.href.replace('/', ''))?.enabled;
 
                                             if (isLocked) return (

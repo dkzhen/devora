@@ -184,6 +184,16 @@ export function HeroHeader({ breadcrumbs, title, badge, description, colorTheme 
             breadcrumbText: "text-[#f36222]/60 hover:text-[#5cb644]",
             breadcrumbCurrent: "text-[#5cb644]/90",
             titleGradient: "from-[#f36222] via-[#5cb644] to-[#007fc3]"
+        },
+        whinehouse: {
+            bgGlow: "bg-[#794747]/20",
+            bgBase: "from-[#111111] via-[#4e2020]/40 to-transparent",
+            accentLine: "via-[#b9a0a0]/60",
+            leftStrip: "from-[#f7f7f7] via-[#b9a0a0]/40",
+            breadcrumbIcon: "text-[#b9a0a0]/40",
+            breadcrumbText: "text-[#b9a0a0]/60 hover:text-[#f7f7f7]",
+            breadcrumbCurrent: "text-[#f7f7f7]/80",
+            titleGradient: "from-[#f7f7f7] via-[#b9a0a0] to-[#794747]"
         }
     };
 
