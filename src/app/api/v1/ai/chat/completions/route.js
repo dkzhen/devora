@@ -73,6 +73,22 @@ export async function POST(req) {
             }, { status: 403 });
         }
 
+        // 3c. Check for Email-prefixed ID (Private Models) (ULTRA bypass enabled)
+        if (modelId.includes('/') && auth.user.role !== 'ULTRA') {
+            const prefix = modelId.split('/')[0];
+            const isEmail = prefix.includes('@');
+            if (isEmail && auth.user.email !== prefix) {
+                await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403);
+                return NextResponse.json({ 
+                    error: { 
+                        message: `Access to model '${modelId}' is limited to its owner.`, 
+                        type: 'access_denied', 
+                        code: 403 
+                    } 
+                }, { status: 403 });
+            }
+        }
+
         // 4. Proxy Request to Upstream VPS
         const upstreamRes = await fetch('http://157.173.124.46:8317/v1/chat/completions', {
             method: 'POST',

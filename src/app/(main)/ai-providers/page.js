@@ -104,7 +104,7 @@ export default function AiProvidersPage() {
     const handleStatusChange = async (modelId, newStatus) => {
         // Optimistic update
         const previousModels = [...models];
-        setModels(prev => prev.map(m => 
+        setModels(prev => prev.map(m =>
             m.id === modelId ? { ...m, status: newStatus } : m
         ));
 
@@ -150,9 +150,25 @@ export default function AiProvidersPage() {
             m.owned_by.toLowerCase().includes(search.toLowerCase());
         if (!matchesSearch) return false;
 
-        // 2. Privacy filter
+        // 2. Email Prefix (Private Models) filter
+        if (m.id.includes('/')) {
+            const prefix = m.id.split('/')[0];
+            const isEmail = prefix.includes('@');
+            if (isEmail && user?.email !== prefix && user?.role !== 'ULTRA') {
+                return false;
+            }
+        }
+
+        // 3. Privacy filter
         if (user?.role === 'ULTRA') return true; // Ultra see everything
         return m.status !== 'hidden'; // Public doesn't see hidden
+    }).sort((a, b) => {
+        const statusOrder = { 'active': 0, 'suspend': 1, 'hidden': 2 };
+        const aOrder = statusOrder[a.status] ?? 0;
+        const bOrder = statusOrder[b.status] ?? 0;
+
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        return a.id.localeCompare(b.id); // Alpha sort for same status
     });
 
     // Group models by owned_by
@@ -261,9 +277,24 @@ export default function AiProvidersPage() {
                 </div>
                 <div className="flex-1">
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#b9a0a0]">Developer Notice</p>
-                    <p className="text-[10px] text-gray-500 mt-1.5 leading-relaxed">
-                        Authentication is required to use this core endpoint. You can generate and manage your own unique API keys through the <a href="/api-key" className="text-[#b9a0a0] hover:text-[#f7f7f7] underline underline-offset-4 decoration-[#b9a0a0]/30 transition-colors font-bold">API Key Management</a> module.
-                    </p>
+                    <div className="text-[10px] text-gray-500 mt-2.5 space-y-1 font-mono">
+                        <div className="flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-[#b9a0a0]/30" />
+                            <span><span className="text-emerald-400/80 font-bold">ACTIVE</span> &mdash; Publicly available for all users.</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-[#b9a0a0]/30" />
+                            <span><span className="text-amber-500/80 font-bold">SUSPENDED</span> &mdash; Service temporarily paused for maintenance.</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-[#b9a0a0]/30" />
+                            <span><span className="text-blue-400/80 font-bold">RESTRICTED</span> &mdash; Exclusive access via email whitelist.</span>
+                        </div>
+
+                        <div className="mt-2 text-[#b9a0a0]/60 italic">
+                            * Authorization via <a href="/api-key" className="text-[#b9a0a0] hover:text-[#f7f7f7] underline underline-offset-4 decoration-[#b9a0a0]/30 transition-colors font-bold">API Key</a> is required.
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -367,9 +398,9 @@ export default function AiProvidersPage() {
                                                 )}
                                             </div>
                                         </div>
- 
+
                                         {user?.role === 'ULTRA' && model.isRestricted && (
-                                            <WhitelistManager 
+                                            <WhitelistManager
                                                 modelId={model.id}
                                                 emails={model.allowedEmails || []}
                                                 onUpdate={handleWhitelistUpdate}
