@@ -45,8 +45,8 @@ export async function POST(req) {
         const isRestricted = modelConfig?.isRestricted || false;
         const allowedEmails = modelConfig?.allowedEmails.map(a => a.email) || [];
 
-        // 3a. Check for Global Suspension/Hidden
-        if (status === 'suspend' || status === 'hidden') {
+        // 3a. Check for Global Suspension/Hidden (ULTRA bypass enabled)
+        if ((status === 'suspend' || status === 'hidden') && auth.user.role !== 'ULTRA') {
             const errorMessage = status === 'suspend' 
                 ? `Model '${modelId}' is currently suspended.` 
                 : `Model '${modelId}' not found or unavailable.`;
@@ -61,8 +61,8 @@ export async function POST(req) {
             }, { status: 403 });
         }
 
-        // 3b. Check for Email-based Restriction (Whitelist)
-        if (isRestricted && !allowedEmails.includes(auth.user.email)) {
+        // 3b. Check for Email-based Restriction (Whitelist) (ULTRA bypass enabled)
+        if (isRestricted && !allowedEmails.includes(auth.user.email) && auth.user.role !== 'ULTRA') {
             await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403);
             return NextResponse.json({ 
                 error: { 
