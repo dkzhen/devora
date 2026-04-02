@@ -347,8 +347,8 @@ export default function TempMail() {
                 {/* Left Panel: Inbox and Controls */}
                 <div className="w-full lg:w-1/3 flex flex-col gap-6">
                     {/* Header Card */}
-                    <div className="bg-[#0a0e1a]/80 backdrop-blur-xl border border-[#A1C2BD]/20 shadow-[0_0_30px_rgba(161,194,189,0.05)] rounded-2xl p-6 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/10 to-[#19183B]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl p-6 relative overflow-hidden group shadow-lg">
+                        <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/10 to-[#19183B]/10 opacity-30 pointer-events-none" />
 
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <div>
@@ -361,8 +361,8 @@ export default function TempMail() {
                                 <p className="text-xs text-[#A1C2BD]/60 mt-1 font-medium">Session lives in your browser</p>
                             </div>
                             {account && (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#A1C2BD]/10 border border-[#A1C2BD]/20 text-[10px] font-bold text-[#A1C2BD] shadow-[0_0_10px_rgba(161,194,189,0.2)] uppercase tracking-wider">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#A1C2BD] animate-pulse shadow-[0_0_5px_rgba(161,194,189,0.8)]" />
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#A1C2BD]/10 border border-[#A1C2BD]/20 text-[10px] font-bold text-[#A1C2BD] uppercase tracking-wider">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#A1C2BD]" />
                                     Active
                                 </span>
                             )}
@@ -374,7 +374,7 @@ export default function TempMail() {
                                 <button
                                     onClick={generateNewEmail}
                                     disabled={generating}
-                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-linear-to-r from-[#19183B] to-[#708993] hover:from-[#A1C2BD]/80 hover:to-[#708993]/80 border border-[#A1C2BD]/30 hover:border-[#A1C2BD]/50 shadow-[0_0_20px_rgba(161,194,189,0.2)] hover:shadow-[0_0_30px_rgba(161,194,189,0.4)] text-white rounded-xl transition-all font-semibold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-linear-to-r from-[#19183B] to-[#708993] hover:from-[#A1C2BD]/80 hover:to-[#708993]/80 border border-[#A1C2BD]/30 hover:border-[#A1C2BD]/50 text-white rounded-xl transition-all font-semibold active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                                 >
                                     {generating ? (
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -397,7 +397,7 @@ export default function TempMail() {
                             </div>
                         ) : (
                             <div className="relative z-10">
-                                <div className="p-4 bg-[#0a0e1a]/60 border border-[#A1C2BD]/20 rounded-xl mb-4 group/copy hover:border-[#A1C2BD]/40 shadow-[inset_0_0_20px_rgba(161,194,189,0.03)] transition-colors">
+                                <div className="p-4 bg-[#0a0e1a]/60 border border-[#A1C2BD]/20 rounded-xl mb-4 group/copy hover:border-[#A1C2BD]/40 transition-colors">
                                     <div className="flex items-center justify-between gap-3">
                                         <div className="min-w-0 flex-1">
                                             <div className="text-[10px] uppercase tracking-wider font-bold text-gray-500 mb-1">Email Address</div>
@@ -446,7 +446,7 @@ export default function TempMail() {
                     </div>
 
                     {/* Inbox List */}
-                    <div className="bg-[#0a0e1a]/40 backdrop-blur-xl border border-white/5 hover:border-[#A1C2BD]/20 transition-colors rounded-2xl flex-1 flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden">
+                    <div className="bg-[#0a0e1a]/95 border border-white/5 hover:border-[#A1C2BD]/20 transition-colors rounded-2xl flex-1 flex flex-col shadow-lg overflow-hidden">
                         <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/20">
                             <h3 className="font-semibold text-white text-sm">Inbox {messages.length > 0 && <span className="text-gray-500">({messages.length})</span>}</h3>
                             {account && (
@@ -482,8 +482,7 @@ export default function TempMail() {
                             ) : messages.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center p-6 text-center">
                                     <div className="relative w-12 h-12 flex items-center justify-center mb-4">
-                                        <div className="absolute inset-0 bg-[#A1C2BD]/30 rounded-full animate-ping" />
-                                        <div className="relative w-12 h-12 rounded-2xl bg-[#A1C2BD]/10 border border-[#A1C2BD]/20 shadow-[0_0_15px_rgba(161,194,189,0.2)] flex items-center justify-center">
+                                        <div className="relative w-12 h-12 rounded-2xl bg-[#A1C2BD]/10 border border-[#A1C2BD]/20 flex items-center justify-center">
                                             <svg className="w-6 h-6 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h8m4 0a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                         </div>
                                     </div>
@@ -516,8 +515,8 @@ export default function TempMail() {
                 </div>
 
                 {/* Right Panel: Content View */}
-                <div className="w-full lg:w-2/3 bg-[#0a0e1a]/80 backdrop-blur-xl border border-[#A1C2BD]/20 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col min-h-[500px] relative group">
-                    <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/5 via-transparent to-[#19183B]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="w-full lg:w-2/3 bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl shadow-xl overflow-hidden flex flex-col min-h-[500px] relative group">
+                    <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/10 via-transparent to-[#19183B]/10 opacity-20 pointer-events-none" />
                     {!selectedMessage ? (
                         <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center text-gray-500">
                             <div className="w-16 h-16 rounded-3xl bg-[#A1C2BD]/5 border border-[#A1C2BD]/10 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(161,194,189,0.02)]">
@@ -532,7 +531,7 @@ export default function TempMail() {
                             <div className="p-6 border-b border-[#A1C2BD]/10 bg-black/40 shrink-0">
                                 <h2 className="text-xl font-bold text-white mb-4 pr-10">{selectedMessage.subject}</h2>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#A1C2BD]/20 to-[#19183B]/20 border border-[#A1C2BD]/40 shadow-[0_0_15px_rgba(161,194,189,0.2)] flex items-center justify-center text-[#A1C2BD] font-bold shrink-0">
+                                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#A1C2BD]/20 to-[#19183B]/20 border border-[#A1C2BD]/40 flex items-center justify-center text-[#A1C2BD] font-bold shrink-0">
                                         {(selectedMessage.from.name || selectedMessage.from.address).charAt(0).toUpperCase()}
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -548,10 +547,10 @@ export default function TempMail() {
                             </div>
 
                             {/* Message Body */}
-                            <div className="flex-1 overflow-y-auto bg-[#0a0e1a]/60 p-6 relative rounded-b-2xl shadow-[inset_0_20px_20px_-20px_rgba(0,0,0,0.5)]">
+                            <div className="flex-1 overflow-y-auto bg-[#0a0e1a]/60 p-6 relative rounded-b-2xl">
                                 {loadingMessage ? (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e1a]/80 backdrop-blur-sm z-10 rounded-b-2xl">
-                                        <div className="w-8 h-8 border-2 border-[#A1C2BD] border-t-transparent shadow-[0_0_15px_rgba(161,194,189,0.5)] rounded-full animate-spin" />
+                                    <div className="absolute inset-0 flex items-center justify-center bg-[#0a0e1a]/95 z-10 rounded-b-2xl">
+                                        <div className="w-8 h-8 border-2 border-[#A1C2BD]/60 border-t-[#A1C2BD] rounded-full animate-spin" />
                                     </div>
                                 ) : messageContent?.error ? (
                                     <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto">
@@ -593,8 +592,8 @@ export default function TempMail() {
 
             {/* History Modal */}
             {showHistoryModal && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-[#0a0e1a] border border-[#A1C2BD]/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] animate-scale-up">
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80">
+                    <div className="bg-[#0a0e1a] border border-[#A1C2BD]/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
                         <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/40">
                             <h3 className="font-bold text-white flex items-center gap-2">
                                 <svg className="w-5 h-5 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

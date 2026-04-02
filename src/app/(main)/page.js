@@ -6,6 +6,7 @@ import AirdropActivity from '@/components/AirdropActivity';
 import TokenUsageCard from '@/components/TokenUsageCard';
 import GmailActivityCard from '@/components/GmailActivityCard';
 import DriveInsightsCard from '@/components/DriveInsightsCard';
+import AiUsageMonitoring from '@/components/AiUsageMonitoring';
 import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 
 export default function Dashboard() {
@@ -73,7 +74,7 @@ export default function Dashboard() {
                             imageIcon="/icons/dashbooard/google.png"
                         />
                         <DashboardStatCard
-                            title="Request Flow"
+                            title="Total Request Flow"
                             value={formatNumber(totalRequestFlow)}
                             color="green"
                             imageIcon="/icons/dashbooard/api.png"
@@ -93,6 +94,18 @@ export default function Dashboard() {
                         <TokenUsageCard data={stats?.tokenUsage || []} />
                         <GmailActivityCard data={stats?.gmailActivity || []} />
                         <DriveInsightsCard data={stats?.driveInsights} />
+                    </div>
+
+                    {/* Row 3 — AI Cluster Runtime ( relocated to bottom ) */}
+                    <div className="pt-8 border-t border-white/5">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                            <h2 className="text-[10px] font-black uppercase text-[#D9C5C5] tracking-[0.4em]">AI Cluster Runtime</h2>
+                            <div className="h-px flex-1 bg-white/5 ml-4" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <AiUsageMonitoring />
+                        </div>
                     </div>
                 </>
             )}

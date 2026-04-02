@@ -2,6 +2,7 @@
   "title": "API References",
   "icon": "ApiRef",
   "pages": [
+    "ai-models",
     "temp-mail"
   ]
 }

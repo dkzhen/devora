@@ -142,7 +142,6 @@ function ApiKeyCopyBtn() {
     );
 }
 
-
 // ── Provider Shortcuts ───────────────────────────────────────────────────────
 const PROVIDERS = [
     {
@@ -165,7 +164,6 @@ const PROVIDERS = [
             <img src="https://blink.new/blink/blink-logo-icon--dark.svg" className="w-4 h-4" alt="Blink" />
         )
     },
-
     {
         id: 'openrouter',
         name: 'OpenRouter',
@@ -177,11 +175,8 @@ const PROVIDERS = [
             </svg>
         )
     },
-
 ];
 
-
-// ── Main Component ─────────────────────────────────────────────────────────────
 export default function LlmConsolePage() {
     // Auth state
     const [user, setUser] = useState(null);
@@ -190,7 +185,7 @@ export default function LlmConsolePage() {
     // Config state
     const [configLoaded, setConfigLoaded] = useState(false);
     const [isConfigured, setIsConfigured] = useState(false);
-    const [editing, setEditing] = useState(false); // editing panel open
+    const [editing, setEditing] = useState(false);
 
     const [baseUrl, setBaseUrl] = useState('');
     const [model, setModel] = useState('');
@@ -198,6 +193,7 @@ export default function LlmConsolePage() {
     const [apiKeyMasked, setApiKeyMasked] = useState('');
     const [showKey, setShowKey] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [saveStatus, setSaveStatus] = useState('idle'); // idle | saving | saved
 
     // Test state
     const [testing, setTesting] = useState(false);
@@ -254,36 +250,77 @@ export default function LlmConsolePage() {
 
     // ── Save config ────────────────────────────────────────────────────────────
     const handleSave = async () => {
-        if (!baseUrl.trim() || !model.trim() || !apiKey.trim()) {
-            toast.error('All fields are required');
+        // Basic validation
+        if (!baseUrl.trim() || !model.trim()) {
+            toast.error('Base URL and Model are required');
             return;
         }
+        if (!isConfigured && !apiKey.trim()) {
+            toast.error('API Key is required for first-time setup');
+            return;
+        }
+
         setSaving(true);
+        setSaveStatus('saving');
+        
         try {
             if (user) {
+                const payload = {
+                    baseUrl: baseUrl.trim(),
+                    model: model.trim()
+                };
+                if (apiKey.trim()) payload.apiKey = apiKey.trim();
+
                 const res = await fetch('/api/llm-console/config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ baseUrl: baseUrl.trim(), model: model.trim(), apiKey: apiKey.trim() }),
+                    body: JSON.stringify(payload),
                 });
                 const data = await res.json();
                 if (!data.success) throw new Error(data.error || 'Failed to save');
-                toast.success('Config saved to database');
             } else {
-                lsSave({ baseUrl: baseUrl.trim(), model: model.trim(), apiKey: apiKey.trim() });
-                toast.success('Config saved locally');
+                const current = lsLoad() || {};
+                lsSave({ 
+                    baseUrl: baseUrl.trim(), 
+                    model: model.trim(), 
+                    apiKey: apiKey.trim() || current.apiKey 
+                });
             }
+
+            // Sync back the global state
             await loadConfig(!!user);
-            setEditing(false);
-            if (user) {
-                setApiKey('');
-                setShowKey(false);
-            }
+            
+            // Show success state
+            setSaveStatus('saved');
+            toast.success('Configuration synchronized');
+
+            // Close after delay
+            setTimeout(() => {
+                setEditing(false);
+                setSaveStatus('idle');
+                setSaving(false);
+                if (user) {
+                    setApiKey('');
+                    setShowKey(false);
+                }
+            }, 800);
+
         } catch (err) {
             toast.error(err.message || 'Save failed');
-        } finally {
             setSaving(false);
+            setSaveStatus('idle');
         }
+    };
+
+    const handleStartEdit = () => {
+        // Sync state from current saved config before opening form
+        if (isConfigured) {
+            // Data should already be in state from loadConfig, 
+            // but we ensure apiKey is cleared for the placeholder logic
+            setApiKey('');
+            setShowKey(false);
+        }
+        setEditing(true);
     };
 
     // ── Delete / reset config ──────────────────────────────────────────────────
@@ -359,13 +396,8 @@ export default function LlmConsolePage() {
         );
     }
 
-    const ACCENT = '#76D2DB';
-    const ACCENT2 = '#DA4848';
-    const BG = '#0B0F1A';
-
     return (
         <div className="flex flex-col gap-6 pb-12">
-            {/* ── Hero Header ─────────────────────────────────────────────── */}
             <HeroHeader
                 colorTheme="cyberpunk"
                 breadcrumbs={[{ label: 'DASHBOARD', href: '/' }, { label: 'LLM CONSOLE' }]}
@@ -374,7 +406,7 @@ export default function LlmConsolePage() {
                 description="Test any OpenAI-compatible API endpoint. Supports custom base URL, model selection, and optional API key storage."
             />
 
-            {/* ── Gradient Banner ─────────────────────────────────────────── */}
+            {/* Gradient Banner */}
             <div className="relative overflow-hidden rounded-xl border border-white/5 h-20 md:h-24">
                 <div className="absolute inset-0" style={{
                     background: 'linear-gradient(135deg, #36064D 0%, #76D2DB33 30%, #DA484833 70%, #36064D 100%)',
@@ -383,7 +415,6 @@ export default function LlmConsolePage() {
                     backgroundImage: 'linear-gradient(rgba(118,210,219,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(118,210,219,0.08) 1px, transparent 1px)',
                     backgroundSize: '20px 20px',
                 }} />
-                {/* floating shapes */}
                 <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full blur-[60px]" style={{ background: '#76D2DB22' }} />
                 <div className="absolute -bottom-8 -right-8 w-40 h-40 rounded-full blur-[60px]" style={{ background: '#DA484822' }} />
                 <div className="relative z-10 h-full flex items-center px-6 md:px-8 gap-4">
@@ -398,7 +429,6 @@ export default function LlmConsolePage() {
                         <p className="text-white font-black text-sm tracking-wide">OpenAI-Compatible Endpoint Tester</p>
                         <p className="text-[#76D2DB]/60 text-[10px] font-mono mt-0.5">Sends a minimal 5-token probe · Low cost · Fast feedback</p>
                     </div>
-                    {/* color strip */}
                     <div className="ml-auto flex gap-1.5 items-center opacity-70">
                         {['#76D2DB', '#F7F6E5', '#DA4848'].map(c => (
                             <span key={c} className="w-2 h-2 rounded-full" style={{ background: c }} />
@@ -407,15 +437,12 @@ export default function LlmConsolePage() {
                 </div>
             </div>
 
-            {/* ── Main Grid ───────────────────────────────────────────────── */}
+            {/* Main Grid */}
             <div className="grid lg:grid-cols-[400px_1fr] gap-6">
 
-                {/* ── LEFT — Config Panel ──────────────────────────────────── */}
+                {/* Left Column: Configuration */}
                 <div className="space-y-4">
-
-                    {/* Config card */}
-                    <div className="relative rounded-xl border border-[#76D2DB]/20 bg-[#0B0F1A] overflow-hidden" style={{ boxShadow: '0 0 30px rgba(118,210,219,0.04)' }}>
-                        {/* left accent strip */}
+                    <div className="relative rounded-xl border border-[#76D2DB]/20 bg-[#0B0F1A] overflow-hidden shadow-lg">
                         <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#76D2DB]/80 via-[#DA4848]/40 to-transparent" />
 
                         <div className="px-5 py-4 border-b border-[#76D2DB]/10 flex items-center justify-between">
@@ -428,7 +455,7 @@ export default function LlmConsolePage() {
                             {isConfigured && !editing && (
                                 <div className="flex items-center gap-2">
                                     <button
-                                        onClick={() => { setEditing(true); setApiKey(''); setShowKey(false); }}
+                                        onClick={handleStartEdit}
                                         className="flex items-center gap-1 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest border border-[#76D2DB]/30 text-[#76D2DB]/70 hover:text-[#76D2DB] hover:border-[#76D2DB]/60 rounded transition-all"
                                     >
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -445,313 +472,211 @@ export default function LlmConsolePage() {
                             )}
                         </div>
 
-                        <div className="px-5 py-4 space-y-4">
-                            {/* Show saved config (read-only) */}
+                        <div className="px-5 py-4 space-y-6">
                             {isConfigured && !editing ? (
-                                <div className="space-y-3">
-                                    {/* Base URL */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/60 uppercase tracking-[0.2em] block mb-1.5">Base URL</label>
-                                        <div className="flex items-center gap-2">
-                                            <code className="flex-1 text-[11px] font-mono text-gray-300 bg-[#76D2DB]/5 border border-[#76D2DB]/15 rounded px-3 py-2 truncate">{baseUrl}</code>
-                                            <CopyBtn value={baseUrl} />
-                                        </div>
-                                    </div>
-
-                                    {/* Model */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/60 uppercase tracking-[0.2em] block mb-1.5">Model</label>
-                                        <div className="flex items-center gap-2">
-                                            <code className="flex-1 text-[11px] font-mono text-gray-300 bg-[#76D2DB]/5 border border-[#76D2DB]/15 rounded px-3 py-2">{model}</code>
-                                            <CopyBtn value={model} />
-                                        </div>
-                                    </div>
-
-                                    {/* API Key (masked) */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/60 uppercase tracking-[0.2em] block mb-1.5">API Key</label>
-                                        <div className="flex items-center gap-2">
-                                            <code className="flex-1 text-[11px] font-mono text-gray-300 bg-[#76D2DB]/5 border border-[#76D2DB]/15 rounded px-3 py-2">
-                                                {user
-                                                    ? apiKeyMasked
-                                                    : showKey ? apiKey : apiKeyMasked
-                                                }
-                                            </code>
-                                            <div className="flex gap-1.5">
-                                                {/* show/hide for guests only */}
-                                                {!user && (
-                                                    <button
-                                                        onClick={() => setShowKey(v => !v)}
-                                                        className="flex items-center gap-1 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest border border-[#76D2DB]/25 text-[#76D2DB]/60 hover:text-[#76D2DB] hover:border-[#76D2DB]/50 rounded transition-all"
-                                                    >
-                                                        {showKey ? (
-                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                                                        ) : (
-                                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                                        )}
-                                                    </button>
-                                                )}
-                                                {/* copy: guests use plain key, logged-in fetch raw from server */}
-                                                {user ? (
-                                                    <ApiKeyCopyBtn />
-                                                ) : (
-                                                    <CopyBtn value={apiKey} label="Copy" />
-                                                )}
+                                <div className="space-y-6">
+                                    <div className="p-4 rounded-lg border border-[#76D2DB]/10 bg-black/20">
+                                        <h4 className="text-[9px] font-black text-[#76D2DB] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                            Endpoint Settings
+                                        </h4>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] block mb-1">Base URL</label>
+                                                <div className="flex items-center gap-2">
+                                                    <code className="flex-1 text-[10px] font-mono text-[#76D2DB] bg-[#76D2DB]/5 border border-[#76D2DB]/10 rounded px-2.5 py-1.5 truncate">{baseUrl}</code>
+                                                    <CopyBtn value={baseUrl} />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] block mb-1">Model</label>
+                                                <div className="flex items-center gap-2">
+                                                    <code className="flex-1 text-[10px] font-mono text-[#76D2DB] bg-[#76D2DB]/5 border border-[#76D2DB]/10 rounded px-2.5 py-1.5">{model}</code>
+                                                    <CopyBtn value={model} />
+                                                </div>
                                             </div>
                                         </div>
-                                        {user && (
-                                            <p className="text-[9px] text-[#DA4848]/60 font-mono mt-1">🔐 Key encrypted in database — display always masked</p>
-                                        )}
                                     </div>
 
+                                    <div className="p-4 rounded-lg border border-[#DA4848]/10 bg-black/20">
+                                        <h4 className="text-[9px] font-black text-[#DA4848] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                            API Credentials
+                                        </h4>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <code className="flex-1 text-[10px] font-mono text-[#DA4848]/80 bg-[#DA4848]/5 border border-[#DA4848]/10 rounded px-2.5 py-1.5">
+                                                    {user ? apiKeyMasked : (showKey ? apiKey : apiKeyMasked)}
+                                                </code>
+                                                <div className="flex gap-1">
+                                                    {!user && (
+                                                        <button onClick={() => setShowKey(v => !v)} className="p-1.5 text-gray-600 hover:text-[#76D2DB]">
+                                                            {showKey ? <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242" /></svg> : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
+                                                        </button>
+                                                    )}
+                                                    {user ? <ApiKeyCopyBtn /> : <CopyBtn value={apiKey} />}
+                                                </div>
+                                            </div>
+                                            {user && <p className="text-[8px] text-[#DA4848]/50 font-mono mt-2 italic">Encrypted & masked in database</p>}
+                                        </div>
+                                    </div>
                                 </div>
                             ) : (
-                                /* Edit / setup form */
-                                <div className="space-y-4">
-                                    {/* Quick Connect */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-2.5">
-                                            Quick Connect
-                                        </label>
-                                        <div className="grid grid-cols-5 gap-2">
+                                <div className="space-y-6">
+                                    {/* Provider Dropdown (as selection list) */}
+                                    <div className="p-4 rounded-lg bg-[#76D2DB]/3 border border-[#76D2DB]/10">
+                                        <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-3">Quick Sync Provider</label>
+                                        <div className="flex flex-wrap gap-2">
                                             {PROVIDERS.map(p => (
                                                 <button
                                                     key={p.id}
                                                     onClick={() => selectProvider(p)}
-                                                    title={p.name}
-                                                    className="group flex flex-col items-center gap-1.5 p-2 rounded-lg border border-[#76D2DB]/10 bg-[#76D2DB]/3 hover:bg-[#76D2DB]/10 hover:border-[#76D2DB]/40 transition-all"
+                                                    className="flex items-center gap-2 px-3 py-2 rounded border border-white/5 bg-black/40 hover:border-[#76D2DB]/40 hover:bg-[#76D2DB]/5 transition-all group/p"
                                                 >
-                                                    <div className="w-8 h-8 rounded-md border border-[#76D2DB]/20 bg-black/40 flex items-center justify-center text-[#76D2DB]/60 group-hover:text-[#76D2DB] group-hover:border-[#76D2DB]/40 transition-all">
-                                                        {p.icon}
-                                                    </div>
-                                                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-500 group-hover:text-[#76D2DB]/80">{p.name}</span>
+                                                    <div className="shrink-0 text-[#76D2DB]/60 group-hover/p:text-[#76D2DB]">{p.icon}</div>
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover/p:text-gray-300">{p.name}</span>
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
 
-                                    {/* Base URL */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-1.5">
-                                            Base URL
-                                        </label>
-                                        <input
-                                            id="llm-base-url"
-                                            type="url"
-                                            value={baseUrl}
-                                            onChange={e => setBaseUrl(e.target.value)}
-                                            placeholder="https://api.openai.com"
-                                            className="w-full bg-black/40 border border-[#76D2DB]/20 rounded px-3 py-2.5 text-xs text-white placeholder-gray-600 font-mono focus:outline-none focus:border-[#76D2DB]/60 focus:shadow-[0_0_12px_rgba(118,210,219,0.1)] transition-all"
-                                        />
-                                        <p className="text-[9px] text-gray-600 mt-1 font-mono">/chat/completions will be appended automatically</p>
+                                    {/* Card 1: Configuration */}
+                                    <div className="p-4 rounded-lg border border-[#76D2DB]/20 bg-black/20">
+                                        <h4 className="text-[9px] font-black text-[#76D2DB] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" /></svg>
+                                            Endpoint Data
+                                        </h4>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] block mb-1.5">Base URL</label>
+                                                <input
+                                                    type="url"
+                                                    value={baseUrl}
+                                                    onChange={e => setBaseUrl(e.target.value)}
+                                                    placeholder="https://api.openai.com"
+                                                    className="w-full bg-black/40 border border-white/10 rounded px-3 py-2.5 text-xs text-white placeholder-gray-700 font-mono focus:border-[#76D2DB]/60 transition-all outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] block mb-1.5">Model ID</label>
+                                                <input
+                                                    type="text"
+                                                    value={model}
+                                                    onChange={e => setModel(e.target.value)}
+                                                    placeholder="gpt-4o, etc."
+                                                    className="w-full bg-black/40 border border-white/10 rounded px-3 py-2.5 text-xs text-white placeholder-gray-700 font-mono focus:border-[#76D2DB]/60 transition-all outline-none"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Model */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-1.5">
-                                            Model
-                                        </label>
-                                        <input
-                                            id="llm-model"
-                                            type="text"
-                                            value={model}
-                                            onChange={e => setModel(e.target.value)}
-                                            placeholder="gpt-4o, llama-3.1-70b, etc."
-                                            className="w-full bg-black/40 border border-[#76D2DB]/20 rounded px-3 py-2.5 text-xs text-white placeholder-gray-600 font-mono focus:outline-none focus:border-[#76D2DB]/60 focus:shadow-[0_0_12px_rgba(118,210,219,0.1)] transition-all"
-                                        />
-                                    </div>
-
-                                    {/* API Key */}
-                                    <div>
-                                        <label className="text-[9px] font-black text-[#76D2DB]/70 uppercase tracking-[0.2em] block mb-1.5">
-                                            API Key
-                                        </label>
+                                    {/* Card 2: Security */}
+                                    <div className="p-4 rounded-lg border border-[#DA4848]/20 bg-black/20">
+                                        <h4 className="text-[9px] font-black text-[#DA4848] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                            API Access
+                                        </h4>
                                         <div className="relative">
                                             <input
-                                                id="llm-api-key"
                                                 type={showKey ? 'text' : 'password'}
                                                 value={apiKey}
                                                 onChange={e => setApiKey(e.target.value)}
-                                                placeholder="sk-••••••••••••••••"
-                                                className="w-full bg-black/40 border border-[#76D2DB]/20 rounded px-3 py-2.5 pr-10 text-xs text-white placeholder-gray-600 font-mono focus:outline-none focus:border-[#76D2DB]/60 focus:shadow-[0_0_12px_rgba(118,210,219,0.1)] transition-all"
+                                                placeholder={isConfigured ? '(unchanged)' : 'sk-••••••••'}
+                                                className="w-full bg-black/40 border border-white/10 rounded px-3 py-2.5 pr-10 text-xs text-white placeholder-gray-700 font-mono focus:border-[#DA4848]/60 transition-all outline-none"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowKey(v => !v)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#76D2DB] transition-colors"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-[#76D2DB] transition-colors"
                                             >
-                                                {showKey ? (
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                                                ) : (
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                                )}
+                                                {showKey ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
                                             </button>
                                         </div>
-                                        <p className="text-[9px] text-gray-600 mt-1 font-mono">
-                                            {user ? '🔐 Will be encrypted in database' : '📦 Will be saved in localStorage'}
-                                        </p>
+                                        <p className="text-[8px] text-gray-600 mt-2 italic font-mono">Leave blank to keep current key</p>
                                     </div>
 
-                                    {/* Buttons */}
-                                    <div className="flex gap-2 pt-1">
+                                    <div className="flex gap-2 pt-2">
                                         <button
                                             onClick={handleSave}
                                             disabled={saving}
                                             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded text-[10px] font-black uppercase tracking-widest bg-[#76D2DB]/10 border border-[#76D2DB]/40 text-[#76D2DB] hover:bg-[#76D2DB]/20 hover:border-[#76D2DB]/70 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(118,210,219,0.1)]"
                                         >
-                                            {saving ? (
+                                            {saveStatus === 'saving' ? (
                                                 <span className="w-3 h-3 rounded-full border border-[#76D2DB]/40 border-t-[#76D2DB] animate-spin" />
+                                            ) : saveStatus === 'saved' ? (
+                                                <span className="flex items-center gap-2">✓ SAVED!</span>
                                             ) : (
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                                <>
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                                    Save Configuration
+                                                </>
                                             )}
-                                            {saving ? 'Saving...' : 'Save Config'}
                                         </button>
-                                        {editing && (
-                                            <button
-                                                onClick={() => { setEditing(false); setApiKey(''); setShowKey(false); }}
-                                                className="px-4 py-2.5 rounded text-[10px] font-black uppercase tracking-widest border border-gray-700 text-gray-500 hover:text-gray-300 hover:border-gray-600 transition-all"
-                                            >
-                                                Cancel
-                                            </button>
-                                        )}
+                                        <button
+                                            onClick={() => { setEditing(false); setApiKey(''); setShowKey(false); }}
+                                            className="px-4 py-2.5 rounded text-[10px] font-black uppercase tracking-widest border border-gray-700 text-gray-500 hover:text-gray-300 transition-all"
+                                        >
+                                            Cancel
+                                        </button>
                                     </div>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* Sign-in nudge for guests */}
                     {!user && (
-                        <div className="relative rounded-xl border border-[#DA4848]/20 bg-[#DA4848]/5 px-4 py-3 flex items-start gap-3">
-                            <svg className="w-4 h-4 text-[#DA4848] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            <div>
-                                <p className="text-[10px] font-black text-[#DA4848] uppercase tracking-widest">Guest mode – Local storage only</p>
-                                <p className="text-[9px] text-gray-500 mt-0.5">
-                                    <a href="/login" className="text-[#76D2DB] hover:underline">Sign in</a> to encrypt &amp; sync your config in the database.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Request preview */}
-                    {isConfigured && !editing && (
-                        <div className="rounded-xl border border-[#76D2DB]/10 bg-[#0B0F1A] overflow-hidden">
-                            <div className="px-5 py-3 border-b border-[#76D2DB]/10 flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-sm bg-[#DA4848] shadow-[0_0_6px_#DA4848]" />
-                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">Request Preview</span>
-                            </div>
-                            <pre className="px-5 py-4 text-[10px] font-mono text-gray-400 overflow-x-auto leading-relaxed whitespace-pre-wrap break-all">
-                                {`POST ${baseUrl.replace(/\/+$/, '')}/chat/completions
-Authorization: Bearer ${apiKeyMasked || '••••••••'}
-
-{
-  "model": "${model || '<model>'}",
-  "messages": [{"role": "user", "content": "Hello"}],
-  "temperature": 0,
-  "max_tokens": 5
-}`}
-                            </pre>
+                        <div className="rounded-xl border border-[#DA4848]/20 bg-[#DA4848]/5 px-4 py-3 flex items-start gap-3">
+                            <svg className="w-4 h-4 text-[#DA4848] shrink-0 fill-current" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            <p className="text-[9px] text-gray-500">Guest mode – Local storage only. <a href="/login" className="text-[#76D2DB] hover:underline">Sign in</a> to sync.</p>
                         </div>
                     )}
                 </div>
 
-                {/* ── RIGHT — Test & Result Panel ──────────────────────────── */}
+                {/* Right Column: Test Results */}
                 <div className="space-y-4">
-                    {/* Test button */}
-                    <div className="relative rounded-xl border border-[#76D2DB]/20 bg-[#0B0F1A] overflow-hidden" style={{ boxShadow: '0 0 30px rgba(118,210,219,0.04)' }}>
-                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#DA4848]/80 via-[#76D2DB]/40 to-transparent" />
-
-                        <div className="px-5 py-4 border-b border-[#76D2DB]/10 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-sm bg-[#DA4848] shadow-[0_0_8px_#DA4848]" />
-                            <span className="text-[10px] font-black text-[#DA4848] uppercase tracking-[0.2em]">Endpoint Test</span>
-                        </div>
-
-                        <div className="px-5 py-6 flex flex-col items-center gap-5">
-                            {!isConfigured ? (
-                                <div className="text-center py-4">
-                                    <div className="w-16 h-16 mx-auto mb-4 rounded-xl border-2 border-dashed border-[#76D2DB]/20 flex items-center justify-center bg-[#76D2DB]/3">
-                                        <svg className="w-7 h-7 text-[#76D2DB]/30" viewBox="0 0 48 48" fill="currentColor">
-                                            <path d="M45.6,18.7,41,14.9V7.5a1,1,0,0,0-.6-.9L30.5,2.1h-.4l-.6.2L24,5.9,18.5,2.2,17.9,2h-.4L7.6,6.6a1,1,0,0,0-.6.9v7.4L2.4,18.7a.8.8,0,0,0-.4.8v9H2a.8.8,0,0,0,.4.8L7,33.1v7.4a1,1,0,0,0,.6.9l9.9,4.5h.4l.6-.2L24,42.1l5.5,3.7.6.2h.4l9.9-4.5a1,1,0,0,0,.6-.9V33.1l4.6-3.8a.8.8,0,0,0,.4-.7V19.4h0A.8.8,0,0,0,45.6,18.7Z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-[11px] font-bold text-gray-500">Configure your API credentials first</p>
+                    <div className="relative rounded-xl border border-[#76D2DB]/20 bg-[#0B0F1A] overflow-hidden shadow-lg p-6 flex flex-col items-center gap-6">
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#DA4848]/60" />
+                        {!isConfigured ? (
+                            <div className="text-center py-6 opacity-40">
+                                <div className="w-12 h-12 mx-auto mb-3 rounded-xl border-2 border-dashed border-[#76D2DB]/20 flex items-center justify-center text-[#76D2DB]/50">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                 </div>
-                            ) : (
-                                <>
-                                    <p className="text-xs text-gray-500 text-center max-w-xs">
-                                        Sends <code className="text-[#76D2DB] bg-[#76D2DB]/10 px-1 rounded">Hello</code> with{' '}
-                                        <code className="text-[#76D2DB] bg-[#76D2DB]/10 px-1 rounded">max_tokens: 5</code> to verify connectivity.
-                                    </p>
-                                    <button
-                                        onClick={handleTest}
-                                        disabled={testing || !isConfigured}
-                                        className="relative w-full max-w-xs flex items-center justify-center gap-3 px-6 py-3.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
-                                        style={{
-                                            background: testing ? 'rgba(118,210,219,0.05)' : 'linear-gradient(135deg, rgba(118,210,219,0.15), rgba(218,72,72,0.1))',
-                                            border: '2px solid',
-                                            borderColor: testing ? '#76D2DB66' : '#76D2DB99',
-                                            color: '#76D2DB',
-                                            boxShadow: testing ? 'none' : '0 0 20px rgba(118,210,219,0.15)',
-                                        }}
-                                    >
-                                        {testing ? (
-                                            <>
-                                                <span className="w-4 h-4 rounded border border-[#76D2DB]/40 border-t-[#76D2DB] animate-spin" />
-                                                Testing endpoint...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                                Fire Test Request
-                                            </>
-                                        )}
-                                    </button>
-                                </>
-                            )}
-                        </div>
+                                <p className="text-[10px] uppercase font-black tracking-widest">Awaiting Setup</p>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="text-xs text-gray-500 text-center max-w-xs">Fire a test request to verify your endpoint and API credentials.</p>
+                                <button
+                                    onClick={handleTest}
+                                    disabled={testing}
+                                    className="w-full max-w-xs flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] transition-all bg-linear-to-br from-[#76D2DB]/15 to-[#DA4848]/10 border border-[#76D2DB]/40 text-[#76D2DB] hover:border-[#76D2DB] hover:bg-[#76D2DB]/20 disabled:opacity-50"
+                                >
+                                    {testing ? <span className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" /> : 'Fire Test Request'}
+                                </button>
+                            </>
+                        )}
                     </div>
 
-                    {/* Results */}
                     {result && (
-                        <div className="relative rounded-xl border overflow-hidden" style={{
-                            borderColor: result.success ? '#76D2DB33' : '#DA484833',
-                            background: '#0B0F1A',
-                            boxShadow: result.success ? '0 0 30px rgba(118,210,219,0.06)' : '0 0 30px rgba(218,72,72,0.06)',
-                        }}>
-                            <div className="absolute left-0 top-0 bottom-0 w-0.5" style={{
-                                background: result.success
-                                    ? 'linear-gradient(to bottom, #76D2DB, transparent)'
-                                    : 'linear-gradient(to bottom, #DA4848, transparent)',
-                            }} />
-
-                            <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: result.success ? '#76D2DB15' : '#DA484815' }}>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: result.success ? '#76D2DB' : '#DA4848' }}>
-                                        {result.success ? '✓ Success' : '✗ Error'}
-                                    </span>
-                                    {result.statusCode > 0 && <StatusPill code={result.statusCode} />}
-                                </div>
-                                {result.model && (
-                                    <span className="text-[9px] font-mono text-gray-600 bg-gray-800/50 px-2 py-1 rounded">{result.model}</span>
-                                )}
+                        <div className="relative rounded-xl border border-white/5 bg-[#0B0F1A] overflow-hidden shadow-2xl">
+                            <div className="absolute left-0 top-0 bottom-0 w-0.5" style={{ background: result.success ? '#76D2DB' : '#DA4848' }} />
+                            <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-black/20">
+                                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: result.success ? '#76D2DB' : '#DA4848' }}>
+                                    {result.success ? '✓ Diagnostic Success' : '✗ Diagnostic Error'}
+                                </span>
+                                {result.statusCode > 0 && <StatusPill code={result.statusCode} />}
                             </div>
 
-                            <div className="px-5 py-4 space-y-4">
+                            <div className="px-5 py-5 space-y-5">
                                 {result.success ? (
                                     <>
-                                        {result.content !== null && result.content !== undefined && (
-                                            <div>
-                                                <label className="text-[9px] font-black text-[#76D2DB]/60 uppercase tracking-[0.2em] block mb-2">Response Content</label>
-                                                <div className="relative">
-                                                    <div className="bg-[#76D2DB]/5 border border-[#76D2DB]/15 rounded px-4 py-3 font-mono text-sm text-white min-h-[48px] break-all">
-                                                        {result.content || <span className="text-gray-600">(empty string)</span>}
-                                                    </div>
-                                                    <div className="absolute top-2 right-2">
-                                                        <CopyBtn value={result.content || ''} />
-                                                    </div>
-                                                </div>
+                                        <div>
+                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] block mb-2">Stream Content</label>
+                                            <div className="relative">
+                                                <div className="bg-[#76D2DB]/5 border border-[#76D2DB]/10 rounded-lg px-4 py-3.5 font-mono text-sm text-white break-all">{result.content || <span className="opacity-30">EMPTY_BODY</span>}</div>
+                                                <div className="absolute top-2 right-2"><CopyBtn value={result.content || ''} /></div>
                                             </div>
-                                        )}
+                                        </div>
                                         {result.usage && (
                                             <div className="grid grid-cols-3 gap-3">
                                                 {[
@@ -759,9 +684,9 @@ Authorization: Bearer ${apiKeyMasked || '••••••••'}
                                                     { label: 'Completion', val: result.usage.completion_tokens },
                                                     { label: 'Total', val: result.usage.total_tokens },
                                                 ].map(({ label, val }) => (
-                                                    <div key={label} className="rounded bg-[#76D2DB]/5 border border-[#76D2DB]/10 px-3 py-2 text-center">
-                                                        <div className="text-[9px] text-gray-600 uppercase tracking-widest mb-0.5">{label}</div>
-                                                        <div className="text-sm font-black font-mono text-[#76D2DB]">{val ?? '—'}</div>
+                                                    <div key={label} className="rounded bg-white/5 border border-white/5 p-3 text-center">
+                                                        <div className="text-[9px] text-gray-600 uppercase tracking-widest mb-1">{label}</div>
+                                                        <div className="text-sm font-black font-mono text-[#76D2DB]">{val ?? '0'}</div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -769,49 +694,13 @@ Authorization: Bearer ${apiKeyMasked || '••••••••'}
                                     </>
                                 ) : (
                                     <div>
-                                        <label className="text-[9px] font-black text-[#DA4848]/70 uppercase tracking-[0.2em] block mb-2">Error Message</label>
-                                        <div className="bg-[#DA4848]/5 border border-[#DA4848]/20 rounded px-4 py-3 font-mono text-xs text-[#DA4848]/90 break-all">
-                                            {result.error || 'Unknown error'}
-                                        </div>
-                                        {result.raw && (
-                                            <details className="mt-3">
-                                                <summary className="text-[9px] text-gray-600 cursor-pointer hover:text-gray-400 font-mono uppercase tracking-widest select-none">
-                                                    Raw Response
-                                                </summary>
-                                                <pre className="mt-2 text-[9px] font-mono text-gray-600 bg-black/30 rounded p-3 overflow-x-auto whitespace-pre-wrap break-all">
-                                                    {JSON.stringify(result.raw, null, 2)}
-                                                </pre>
-                                            </details>
-                                        )}
+                                        <label className="text-[9px] font-black text-[#DA4848]/70 uppercase tracking-[0.2em] block mb-2">Error Trace</label>
+                                        <div className="bg-[#DA4848]/5 border border-[#DA4848]/20 rounded-lg px-4 py-3.5 font-mono text-xs text-[#DA4848] break-all">{result.error || 'UNHANDLED_EXCEPTION'}</div>
                                     </div>
                                 )}
                             </div>
                         </div>
                     )}
-
-                    {/* Info cards */}
-                    <div className="grid grid-cols-2 gap-3">
-                        {[
-                            {
-                                title: 'Low-Token Probe',
-                                desc: 'Uses max_tokens: 5 to minimize cost while validating connectivity.',
-                                color: '#76D2DB',
-                                icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            },
-                            {
-                                title: 'OpenAI-Compatible',
-                                desc: 'Works with any API implementing the /chat/completions spec.',
-                                color: '#DA4848',
-                                icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                            },
-                        ].map(c => (
-                            <div key={c.title} className="rounded-xl border p-4" style={{ borderColor: `${c.color}20`, background: `${c.color}05` }}>
-                                <div className="mb-2" style={{ color: `${c.color}99` }}>{c.icon}</div>
-                                <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: c.color }}>{c.title}</p>
-                                <p className="text-[9px] text-gray-600 leading-relaxed">{c.desc}</p>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,85 @@
+---
+title: AI Models (LLM)
+description: OpenAI-compatible reverse proxy for multiple AI models.
+icon: Bot
+---
+
+Devora provides an OpenAI-compatible reverse proxy that allows you to access multiple AI models from different providers (OpenAI, Gemini, Groq, etc.) through a single unified endpoint.
+
+## Base Configuration
+
+To use Devora AI models with any OpenAI-compatible client, use the following configuration:
+
+- **Base URL**: `https://devora.dkzhen.org/api/v1/ai`
+- **Endpoint**: `/chat/completions`
+
+> [!TIP]
+> When using the OpenAI SDK, set the `base_url` to `https://devora.dkzhen.org/api/v1/ai`. The SDK will automatically append `/chat/completions` to your requests.
+
+---
+
+## Authentication
+
+All requests require an API Key in the `Authorization` header:
+
+```http
+Authorization: Bearer devora_your_api_key
+```
+
+---
+
+## Model Identifiers
+
+You can use any model ID listed in the [AI Providers Dashboard](/ai-providers). 
+
+### Private Models
+Models with an email prefix (e.g., `user@example.com/gpt-4o`) are **private**. They are only accessible by:
+- The owner of that email address.
+- Users with the **ULTRA** role.
+
+### Model Statuses
+Models can be in different states which affect their availability:
+
+| Status | Behavior | Visibility |
+| :--- | :--- | :--- |
+| **ACTIVE** | Full access to all authorized users. | Public |
+| **SUSPENDED** | Returns `403 Forbidden`. Temporarily disabled. | Public |
+| **RESTRICTED** | Only accessible by whitelisted emails. | Public |
+| **HIDDEN** | Returns `403 Forbidden`. Only visible to Admins. | Internal |
+
+---
+
+## Example Usage
+
+### Python (OpenAI SDK)
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="devora_your_key",
+    base_url="https://devora.dkzhen.org/api/v1/ai"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}],
+    stream=True
+)
+
+for chunk in response:
+    print(chunk.choices[0].delta.content or "", end="")
+```
+
+### cURL
+
+```bash
+curl https://devora.dkzhen.org/api/v1/ai/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer devora_your_api_key" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "stream": false
+  }'
+```

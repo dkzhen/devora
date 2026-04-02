@@ -58,16 +58,29 @@ export async function POST(request) {
 
     try {
         const { baseUrl, model, apiKey } = await request.json();
-        if (!baseUrl || !model || !apiKey) {
-            return NextResponse.json({ error: 'baseUrl, model, and apiKey are required' }, { status: 400 });
+        
+        // Validation: For first-time creation, we need everything. 
+        // For updates, we just need what changed.
+        const existing = await prisma.llmConsole.findUnique({ where: { userId } });
+        
+        if (!existing && (!baseUrl || !model || !apiKey)) {
+            return NextResponse.json({ error: 'baseUrl, model, and apiKey are required for first setup' }, { status: 400 });
         }
 
-        const encryptedKey = encrypt(apiKey);
+        const updateData = {};
+        if (baseUrl) updateData.baseUrl = baseUrl;
+        if (model) updateData.model = model;
+        if (apiKey) updateData.apiKey = encrypt(apiKey);
 
         await prisma.llmConsole.upsert({
             where: { userId },
-            update: { baseUrl, model, apiKey: encryptedKey },
-            create: { userId, baseUrl, model, apiKey: encryptedKey },
+            update: updateData,
+            create: { 
+                userId, 
+                baseUrl: baseUrl || '', 
+                model: model || '', 
+                apiKey: apiKey ? encrypt(apiKey) : '' 
+            },
         });
 
         return NextResponse.json({ success: true });
