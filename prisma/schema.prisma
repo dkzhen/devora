@@ -86,8 +86,26 @@ model User {
   telegramUpdates     TelegramUpdate[]
   tempMailAccounts    TempMailAccount[]
   airdropTasks        UserAirdropTask[]
+  naraWallets         NaraWallet[]
 
   @@map("users")
+}
+
+model NaraWallet {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  address      String?
+  encryptedPk  String   @map("encrypted_pk") @db.Text
+  alias        String?
+  lastBalance  String?  @map("last_balance")
+  lastUnit     String?  @map("last_unit")
+  explorerUrl  String?  @map("explorer_url") @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("nara_wallets")
 }
 
 model TelegramUpdate {

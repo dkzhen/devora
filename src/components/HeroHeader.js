@@ -194,6 +194,26 @@ export function HeroHeader({ breadcrumbs, title, badge, description, colorTheme 
             breadcrumbText: "text-[#b9a0a0]/60 hover:text-[#f7f7f7]",
             breadcrumbCurrent: "text-[#f7f7f7]/80",
             titleGradient: "from-[#f7f7f7] via-[#b9a0a0] to-[#794747]"
+        },
+        web3_projects: {
+            bgGlow: "bg-[#ffd89b]/10",
+            bgBase: "from-[#0a0f1e] via-[#19547b]/10 to-[#050b1a]",
+            accentLine: "via-[#ffd89b]/40",
+            leftStrip: "from-[#ffd89b]/60 via-[#19547b]/40",
+            breadcrumbIcon: "text-[#ffd89b]/40",
+            breadcrumbText: "text-[#ffd89b]/60 hover:text-[#19547b]",
+            breadcrumbCurrent: "text-[#19547b]/80",
+            titleGradient: "from-[#ffd89b] via-[#19547b] to-[#ffd89b]"
+        },
+        nara: {
+            bgGlow: "bg-green-500/10",
+            bgBase: "from-[#051105] via-[#020502] to-[#000000]",
+            accentLine: "via-green-500/40",
+            leftStrip: "from-green-500/60 via-green-400/15",
+            breadcrumbIcon: "text-green-500/40",
+            breadcrumbText: "text-green-400/60 hover:text-green-300",
+            breadcrumbCurrent: "text-green-200/80",
+            titleGradient: "from-green-400 via-emerald-400 to-lime-500"
         }
     };
 
@@ -297,7 +317,9 @@ export function LoadingState({ message = "Loading...", colorTheme = "red" }) {
         unicorn: "border-[#acf7f0]/60 shadow-[0_0_10px_#acf7f0]",
         settings: "border-[#f0f2f0]/60 shadow-[0_0_10px_#f0f2f0]",
         upgrade: "border-[#e59a54]/60 shadow-[0_0_10px_#e59a54]",
-        devora: "border-[#5cb644]/60 shadow-[0_0_10px_#5cb644]"
+        devora: "border-[#5cb644]/60 shadow-[0_0_10px_#5cb644]",
+        web3_projects: "border-[#ffd89b]/60 shadow-[0_0_10px_#ffd89b]",
+        nara: "border-green-500/60 shadow-[0_0_10px_#22c55e]"
     };
     const borderClass = borders[colorTheme] || borders.red;
 
