@@ -15,6 +15,7 @@ export default function NaraAgentPage() {
     const [pkInput, setPkInput] = useState('');
     const [aliasInput, setAliasInput] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [refreshingAll, setRefreshingAll] = useState(false);
     
     const [generating, setGenerating] = useState(false);
     const [generatedWallet, setGeneratedWallet] = useState(null);
@@ -92,15 +93,29 @@ export default function NaraAgentPage() {
         }
     };
 
-    const refreshBalance = async (walletId) => {
+    const refreshBalance = async (walletId, silent = false) => {
         try {
             const res = await fetch(`/api/web3-projects/nara/wallets/${walletId}/refresh`, { method: 'POST' });
             const data = await res.json();
             if (data.success) {
-                setWallets(wallets.map(w => w.id === walletId ? data.wallet : w));
-                showToast('Balance updated!');
+                setWallets(prev => prev.map(w => w.id === walletId ? data.wallet : w));
+                if (!silent) showToast('Balance updated!');
             }
-        } catch (e) { showToast('Sync failed'); }
+        } catch (e) { if (!silent) showToast('Sync failed'); }
+    };
+
+    const handleRefreshAll = async () => {
+        if (wallets.length === 0) return;
+        setRefreshingAll(true);
+        showToast('Initiating mass sync protocol...');
+        for (let i = 0; i < wallets.length; i++) {
+            await refreshBalance(wallets[i].id, true);
+            if (i < wallets.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5s delay
+            }
+        }
+        showToast('Mass sync complete!');
+        setRefreshingAll(false);
     };
 
     const copyPk = async (walletId) => {
@@ -227,6 +242,16 @@ export default function NaraAgentPage() {
                                     <div className="text-xs font-mono text-green-500/40 bg-black px-4 py-1.5 rounded-full border border-green-500/20 text-center">
                                         {wallets.length} WALLET{wallets.length !== 1 ? 'S' : ''} DETECTED
                                     </div>
+                                    {wallets.length > 0 && (
+                                        <button 
+                                            onClick={handleRefreshAll}
+                                            disabled={refreshingAll}
+                                            className="px-4 py-1.5 bg-black border border-green-500/30 hover:bg-green-500/10 text-green-500 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center gap-1.5 disabled:opacity-50"
+                                        >
+                                            <svg className={`w-3 h-3 ${refreshingAll ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                            {refreshingAll ? 'SYNCING...' : 'SYNC ALL'}
+                                        </button>
+                                    )}
                                     <button 
                                         onClick={() => setShowAddModal(true)}
                                         className="px-4 py-1.5 bg-green-500 hover:bg-green-400 text-black rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] flex items-center gap-1.5"

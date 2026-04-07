@@ -3,7 +3,8 @@ import prisma from '@/lib/db';
 
 export async function GET() {
     try {
-        const res = await fetch('http://157.173.124.46:8317/v1/models', {
+        const aiProxyBase = process.env.AI_PROXY_URL || 'http://localhost:8317';
+        const res = await fetch(`${aiProxyBase}/v1/models`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0',
                 'Accept': 'application/json, text/plain, */*',

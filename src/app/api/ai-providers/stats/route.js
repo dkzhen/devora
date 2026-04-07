@@ -5,7 +5,8 @@ export async function GET(req) {
     // API is now public for cluster transparency
 
     try {
-        const response = await fetch('http://157.173.124.46:8317/v0/management/usage', {
+        const aiProxyBase = process.env.AI_PROXY_URL || 'http://localhost:8317';
+        const response = await fetch(`${aiProxyBase}/v0/management/usage`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer Bandulan113',

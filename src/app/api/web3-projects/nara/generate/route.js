@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const NARA_API_BASE = 'http://157.173.124.46:5888';
+const NARA_API_BASE = process.env.NARA_API_URL || 'http://localhost:5888';
 const NARA_BEARER = process.env.NARA_BEARER || 'ws_zhen_9527';
 
 export async function POST(request) {

@@ -90,7 +90,8 @@ export async function POST(req) {
         }
 
         // 4. Proxy Request to Upstream VPS
-        const upstreamRes = await fetch('http://157.173.124.46:8317/v1/chat/completions', {
+        const aiProxyBase = process.env.AI_PROXY_URL || 'http://localhost:8317';
+        const upstreamRes = await fetch(`${aiProxyBase}/v1/chat/completions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
