@@ -7,7 +7,7 @@ const NARA_BEARER = process.env.NARA_BEARER || 'ws_zhen_9527';
 
 export async function POST(request, { params }) {
     try {
-        const { id } = params;
+        const { id } = await params;
         
         const wallet = await prisma.naraWallet.findUnique({
             where: { id }
