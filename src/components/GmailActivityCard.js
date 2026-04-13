@@ -12,33 +12,66 @@ const formatNumber = (num) => {
     }).format(num);
 };
 
-export default function GmailActivityCard({ data = [] }) {
+const THEME = {
+    emerald: {
+        bg: 'from-[#071310] to-[#050a08]',
+        border: 'border-emerald-500/20',
+        glow: 'shadow-[0_0_15px_rgba(16,185,129,0.05)]',
+        accentLine: 'via-emerald-500/50',
+        bracketStrong: 'border-emerald-500/40',
+        bracketWeak: 'border-emerald-500/15',
+        headerIcon: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+        headerBorder: 'border-emerald-500/10',
+        subtext: 'text-emerald-400/60',
+        linkBtn: 'border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]',
+        footerBorder: 'border-emerald-500/10',
+        footerLive: 'text-emerald-500'
+    },
+    purple: {
+        bg: 'from-[#110a17] to-[#0a060e]',
+        border: 'border-purple-500/20',
+        glow: 'shadow-[0_0_15px_rgba(168,85,247,0.05)]',
+        accentLine: 'via-purple-500/50',
+        bracketStrong: 'border-purple-500/40',
+        bracketWeak: 'border-purple-500/15',
+        headerIcon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+        headerBorder: 'border-purple-500/10',
+        subtext: 'text-purple-400/60',
+        linkBtn: 'border-purple-500/20 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.1)]',
+        footerBorder: 'border-purple-500/10',
+        footerLive: 'text-purple-500'
+    }
+};
+
+export default function GmailActivityCard({ data = [], color = 'emerald' }) {
+    const theme = THEME[color] || THEME.emerald;
+
     return (
-        <div className="relative overflow-hidden rounded-lg bg-linear-to-b from-[#071310] to-[#050a08] border border-emerald-500/20 p-6 flex flex-col h-full group shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+        <div className={`relative overflow-hidden rounded-lg bg-linear-to-b ${theme.bg} border ${theme.border} p-6 flex flex-col h-full group ${theme.glow}`}>
             {/* Top neon accent */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-emerald-500/50 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
+            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity`} />
             
             {/* Corner brackets */}
-            <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t border-l border-emerald-500/40 pointer-events-none" />
-            <span className="absolute top-2 right-2 w-3.5 h-3.5 border-t border-r border-emerald-500/40 pointer-events-none" />
-            <span className="absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l border-emerald-500/15 pointer-events-none" />
-            <span className="absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r border-emerald-500/15 pointer-events-none" />
+            <span className={`absolute top-2 left-2 w-3.5 h-3.5 border-t border-l ${theme.bracketStrong} pointer-events-none`} />
+            <span className={`absolute top-2 right-2 w-3.5 h-3.5 border-t border-r ${theme.bracketStrong} pointer-events-none`} />
+            <span className={`absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l ${theme.bracketWeak} pointer-events-none`} />
+            <span className={`absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r ${theme.bracketWeak} pointer-events-none`} />
 
             {/* Gloss effect */}
             <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
             {/* Header */}
-            <div className="relative z-10 flex items-center justify-between mb-6 border-b border-emerald-500/10 pb-4">
+            <div className={`relative z-10 flex items-center justify-between mb-6 border-b ${theme.headerBorder} pb-4`}>
                 <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                    <div className={`p-1.5 rounded-md ${theme.headerIcon}`}>
                         <img src="/icons/dashbooard/gmail.png" alt="Gmail" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Gmail Activity</h3>
-                        <p className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-0.5">Messages vs Threads</p>
+                        <h3 className="text-xs font-black text-white tracking-widest uppercase">Gmail Activity</h3>
+                        <p className={`text-[10px] font-bold ${theme.subtext} uppercase tracking-widest mt-0.5`}>Messages vs Threads</p>
                     </div>
                 </div>
-                <Link href="/gmail-center" className="p-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]" title="View Details">
+                <Link href="/gmail-center" className={`p-1.5 rounded-md border ${theme.linkBtn}`} title="View Details">
                     <ExternalLink className="w-4 h-4" />
                 </Link>
             </div>
@@ -88,7 +121,7 @@ export default function GmailActivityCard({ data = [] }) {
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                    <div className="flex flex-col items-center justify-center h-full text-slate-500">
                         <Mail className="w-10 h-10 mb-3 opacity-20" />
                         <p className="text-sm">No Gmail activity available</p>
                     </div>
@@ -96,9 +129,9 @@ export default function GmailActivityCard({ data = [] }) {
             </div>
 
             {/* Footer */}
-            <div className="relative z-10 mt-4 pt-4 border-t border-emerald-500/10 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-emerald-400/60 opacity-80">
+            <div className={`relative z-10 mt-4 pt-4 border-t ${theme.footerBorder} flex items-center justify-between text-[10px] uppercase font-bold tracking-widest ${theme.subtext} opacity-80`}>
                 <span>Account Stats</span>
-                <span className="text-emerald-500">Real-time</span>
+                <span className={theme.footerLive}>Real-time</span>
             </div>
         </div>
     );

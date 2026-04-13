@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+
 
 export async function GET(req) {
     // API is now public for cluster transparency
@@ -18,7 +18,7 @@ export async function GET(req) {
         });
 
         if (!response.ok) {
-            throw new Error(`VPS API error: ${response.status} ${response.statusText}`);
+            throw new Error(`Stats Fetch Error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();

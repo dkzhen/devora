@@ -63,7 +63,7 @@ function MaintenanceContent() {
                             {featureLabel}
                         </span>
                     </h1>
-                    <p className="text-sm font-semibold text-gray-400 mb-6 uppercase tracking-widest">
+                    <p className="text-sm font-semibold text-slate-400 mb-6 uppercase tracking-widest">
                         Temporarily Unavailable
                     </p>
 
@@ -71,7 +71,7 @@ function MaintenanceContent() {
                     <div className="h-px bg-linear-to-r from-transparent via-white/10 to-transparent mb-6" />
 
                     {/* Message */}
-                    <p className="text-gray-400 text-sm leading-relaxed mb-8">
+                    <p className="text-slate-400 text-sm leading-relaxed mb-8">
                         {decodeURIComponent(message)}
                     </p>
 
@@ -84,7 +84,7 @@ function MaintenanceContent() {
                         ].map((item, i) => (
                             <div key={i} className="bg-white/3 border border-white/8 rounded-xl sm:rounded-2xl p-2 sm:p-3 text-center overflow-hidden">
                                 <div className="flex justify-center mb-1">{item.icon}</div>
-                                <div className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider sm:tracking-widest truncate">{item.label}</div>
+                                <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider sm:tracking-widest truncate">{item.label}</div>
                                 <div className="text-[10px] sm:text-xs font-semibold text-white mt-0.5 truncate">{item.sub}</div>
                             </div>
                         ))}
@@ -103,8 +103,8 @@ function MaintenanceContent() {
                 </div>
 
                 {/* Footer note */}
-                <p className="text-center text-gray-600 text-xs mt-6">
-                    This feature was disabled by an administrator · <span className="text-gray-500">Devora</span>
+                <p className="text-center text-slate-600 text-xs mt-6">
+                    This feature was disabled by an administrator · <span className="text-slate-500">Devora</span>
                 </p>
             </div>
         </div>

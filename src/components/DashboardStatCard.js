@@ -5,62 +5,74 @@ import { Users, Zap, MessageSquare, AlertCircle } from 'lucide-react';
 const THEME = {
     blue: {
         bg: 'from-[#0a0e1a] to-[#07090f]',
-        border: 'border-blue-500/20',
-        glow: 'shadow-[0_0_15px_rgba(59,130,246,0.05)]',
-        accentLine: 'via-blue-500/50',
-        bracketStrong: 'border-blue-500/40',
-        bracketWeak: 'border-blue-500/15',
-        iconBg: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-        text: 'text-blue-400',
-        pulseBg: 'bg-blue-500',
+        border: 'border-blue-500/15',
+        glow: 'shadow-[0_0_20px_rgba(59,130,246,0.04)]',
+        accentLine: 'via-blue-500/40',
+        bracketStrong: 'border-blue-500/30',
+        bracketWeak: 'border-blue-500/10',
+        iconBg: 'bg-blue-500/5 border-blue-500/15 text-blue-300',
+        text: 'text-blue-300',
+        pulseBg: 'bg-blue-400',
         icon: <Users className="w-4 h-4" />
+    },
+    indigo: {
+        bg: 'from-[#080a14] to-[#05070f]',
+        border: 'border-indigo-500/15',
+        glow: 'shadow-[0_0_20px_rgba(99,102,241,0.04)]',
+        accentLine: 'via-indigo-400/40',
+        bracketStrong: 'border-indigo-500/30',
+        bracketWeak: 'border-indigo-500/10',
+        iconBg: 'bg-indigo-500/5 border-indigo-500/15 text-indigo-300',
+        text: 'text-indigo-300',
+        pulseBg: 'bg-indigo-400',
+        icon: <Zap className="w-4 h-4" />
     },
     green: {
         bg: 'from-[#071310] to-[#050a08]',
-        border: 'border-emerald-500/20',
-        glow: 'shadow-[0_0_15px_rgba(16,185,129,0.05)]',
-        accentLine: 'via-emerald-500/50',
-        bracketStrong: 'border-emerald-500/40',
-        bracketWeak: 'border-emerald-500/15',
-        iconBg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
-        text: 'text-emerald-400',
-        pulseBg: 'bg-emerald-500',
+        border: 'border-emerald-500/15',
+        glow: 'shadow-[0_0_20px_rgba(16,185,129,0.04)]',
+        accentLine: 'via-emerald-500/40',
+        bracketStrong: 'border-emerald-500/30',
+        bracketWeak: 'border-emerald-500/10',
+        iconBg: 'bg-emerald-500/5 border-emerald-500/15 text-emerald-300',
+        text: 'text-emerald-300',
+        pulseBg: 'bg-emerald-400',
         icon: <Zap className="w-4 h-4" />
     },
     purple: {
-        bg: 'from-[#110a17] to-[#0a060e]',
-        border: 'border-purple-500/20',
-        glow: 'shadow-[0_0_15px_rgba(168,85,247,0.05)]',
-        accentLine: 'via-purple-500/50',
-        bracketStrong: 'border-purple-500/40',
-        bracketWeak: 'border-purple-500/15',
-        iconBg: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
-        text: 'text-purple-400',
-        pulseBg: 'bg-purple-500',
+        bg: 'from-[#080a14] to-[#05070f]',
+        border: 'border-purple-500/15',
+        glow: 'shadow-[0_0_20px_rgba(168,85,247,0.04)]',
+        accentLine: 'via-purple-400/40',
+        bracketStrong: 'border-purple-500/30',
+        bracketWeak: 'border-purple-500/10',
+        iconBg: 'bg-purple-500/5 border-purple-500/15 text-purple-300',
+        text: 'text-purple-300',
+        pulseBg: 'bg-purple-400',
         icon: <MessageSquare className="w-4 h-4" />
     },
     orange: {
         bg: 'from-[#170e0a] to-[#0e0806]',
-        border: 'border-orange-500/20',
-        glow: 'shadow-[0_0_15px_rgba(249,115,22,0.05)]',
-        accentLine: 'via-orange-500/50',
-        bracketStrong: 'border-orange-500/40',
-        bracketWeak: 'border-orange-500/15',
-        iconBg: 'bg-orange-500/10 border-orange-500/20 text-orange-400',
-        text: 'text-orange-400',
-        pulseBg: 'bg-orange-500',
+        border: 'border-orange-500/15',
+        glow: 'shadow-[0_0_20px_rgba(249,115,22,0.04)]',
+        accentLine: 'via-orange-500/40',
+        bracketStrong: 'border-orange-500/30',
+        bracketWeak: 'border-orange-500/10',
+        iconBg: 'bg-orange-500/5 border-orange-500/15 text-orange-300',
+        text: 'text-orange-300',
+        pulseBg: 'bg-orange-400',
         icon: <AlertCircle className="w-4 h-4" />
     }
 };
 
 export default function DashboardStatCard({ title, value, color, iconType, subtitle, imageIcon }) {
     const theme = THEME[color] || THEME.blue;
-    
+
     return (
         <div className={`group relative overflow-hidden rounded-lg border bg-linear-to-b ${theme.bg} ${theme.border} p-5 transition-all duration-300 hover:scale-[1.02] ${theme.glow}`}>
             {/* Top neon accent */}
             <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-all duration-500`} />
-            
+
             {/* Corner brackets */}
             <span className={`absolute top-2 left-2 w-3.5 h-3.5 border-t border-l ${theme.bracketStrong} pointer-events-none`} />
             <span className={`absolute top-2 right-2 w-3.5 h-3.5 border-t border-r ${theme.bracketStrong} pointer-events-none`} />
@@ -83,7 +95,7 @@ export default function DashboardStatCard({ title, value, color, iconType, subti
                         )}
                     </div>
                 </div>
-                
+
                 <div className="flex-1 flex items-end">
                     <div className="w-full">
                         <div className="text-3xl font-black tracking-tight text-white mb-2 leading-none">
@@ -91,7 +103,7 @@ export default function DashboardStatCard({ title, value, color, iconType, subti
                         </div>
                         <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                             <div className={`w-1.5 h-1.5 rounded-full ${theme.pulseBg} shadow-[0_0_8px_currentColor] animate-pulse ${theme.text}`} />
-                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{subtitle || 'Live metrics'}</span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{subtitle || 'Live metrics'}</span>
                         </div>
                     </div>
                 </div>

@@ -120,7 +120,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
             {/* Hero Banner */}
             <HeroHeader
-                colorTheme="upgrade"
+                
                 breadcrumbs={[
                     { label: 'DASHBOARD', href: '/' },
                     { label: 'UPGRADE' }
@@ -149,7 +149,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                             </span>
                             <div>
                                 <h2 className="text-[10px] font-mono uppercase tracking-widest font-black text-white">Configuration Details</h2>
-                                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 mt-1">Enter your Google Cloud Project credentials</p>
+                                <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500 mt-1">Enter your Google Cloud Project credentials</p>
                             </div>
                             {isValidated && (
                                 <span className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-none bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono uppercase tracking-widest font-bold">
@@ -162,7 +162,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                         <form onSubmit={handleSubmit} className="p-6 space-y-5">
                             {/* Client ID */}
                             <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                                     Google Client ID <span className="text-red-400">*</span>
                                 </label>
                                 <input
@@ -186,7 +186,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
                             {/* Client Secret */}
                             <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                                     Google Client Secret <span className="text-red-400">*</span>
                                 </label>
                                 <div className="relative">
@@ -204,7 +204,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     <button
                                         type="button"
                                         onClick={() => setShowSecret(!showSecret)}
-                                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-300 transition-colors"
+                                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-slate-300 transition-colors"
                                     >
                                         {showSecret
                                             ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -230,7 +230,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
 
                             {/* Redirect URIs */}
                             <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                                     Authorized Redirect URIs
                                 </label>
                                 <div className="space-y-2">
@@ -241,11 +241,11 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     >
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-[10px] font-bold text-[#e59a54] uppercase tracking-widest">Development (localhost)</span>
-                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'dev' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-[#e59a54]'}`}>
+                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'dev' ? 'text-emerald-400' : 'text-slate-600 group-hover:text-[#e59a54]'}`}>
                                                 {copiedKey === 'dev' ? '✓ Copied' : 'Click to copy'}
                                             </span>
                                         </div>
-                                        <code className="font-mono text-xs text-gray-400 group-hover:text-gray-200 transition-colors break-all">{callbackUrlDev}</code>
+                                        <code className="font-mono text-xs text-slate-400 group-hover:text-slate-200 transition-colors break-all">{callbackUrlDev}</code>
                                     </div>
                                     {/* Prod */}
                                     <div
@@ -254,11 +254,11 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     >
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-[10px] font-bold text-[#e59a54] uppercase tracking-widest">Production</span>
-                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'prod' ? 'text-emerald-400' : 'text-gray-600 group-hover:text-[#e59a54]'}`}>
+                                            <span className={`text-[10px] font-semibold transition-all ${copiedKey === 'prod' ? 'text-emerald-400' : 'text-slate-600 group-hover:text-[#e59a54]'}`}>
                                                 {copiedKey === 'prod' ? '✓ Copied' : 'Click to copy'}
                                             </span>
                                         </div>
-                                        <code className="font-mono text-xs text-gray-400 group-hover:text-gray-200 transition-colors break-all">{callbackUrlProd}</code>
+                                        <code className="font-mono text-xs text-slate-400 group-hover:text-slate-200 transition-colors break-all">{callbackUrlProd}</code>
                                     </div>
                                 </div>
                                 <p className="mt-2.5 text-[11px] text-amber-500/70 flex items-start gap-1.5">
@@ -359,7 +359,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                                     </span>
                                     <div>
                                         <div className="text-[10px] font-mono uppercase tracking-widest font-bold text-white">{f.title}</div>
-                                        <div className="text-[10px] font-mono uppercase tracking-widest text-gray-500 mt-1 leading-relaxed">{f.desc}</div>
+                                        <div className="text-[10px] font-mono uppercase tracking-widest text-slate-500 mt-1 leading-relaxed">{f.desc}</div>
                                     </div>
                                 </li>
                             ))}
@@ -374,7 +374,7 @@ export default function UpgradeClientForm({ callbackUrlDev, callbackUrlProd }) {
                             </span>
                             <div>
                                 <div className="text-[10px] font-mono uppercase tracking-widest font-bold text-amber-400 mb-1">Your data stays yours</div>
-                                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 leading-relaxed mt-2">
+                                <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500 leading-relaxed mt-2">
                                     By using your own Google credentials, you have full ownership and privacy over your OAuth tokens. Devora never stores your email content.
                                 </p>
                             </div>

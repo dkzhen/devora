@@ -32,7 +32,7 @@ const getUserId = async () => {
  */
 async function generateCaption(airdrop, tasks, userId) {
     // Telegram strips <a> tags with localhost URLs, so we force the prod URL for the post
-    const publicBaseUrl = process.env.BASE_URL_PROD || 'https://devora.dkzhen.org';
+    const publicBaseUrl = process.env.BASE_URL_PROD || 'https://devora.my.id';
     const detailUrl = `${publicBaseUrl}/airdrops/${airdrop.id}`;
 
     let linksStr = '';

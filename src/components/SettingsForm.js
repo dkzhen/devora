@@ -129,18 +129,18 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                 )}
                 <div className="bg-[#0B0F1A] p-4 rounded-none border border-white/20">
                     <div className="flex justify-between items-center mb-2">
-                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">
                             Google Client ID
                         </label>
                         <button onClick={() => setIsEditing(true)} className="text-xs text-blue-600 font-semibold hover:underline">Edit</button>
                     </div>
                     <div className="flex items-center justify-between gap-3">
-                        <code className="block font-mono text-sm text-gray-100 break-all">
+                        <code className="block font-mono text-sm text-slate-100 break-all">
                             {formData.clientId}
                         </code>
                         <button
                             onClick={() => handleCopy(formData.clientId)}
-                            className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors shrink-0"
+                            className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors shrink-0"
                             title="Copy Client ID"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
@@ -149,18 +149,18 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                 </div>
 
                 <div className="bg-[#0B0F1A] p-4 rounded-none border border-white/20">
-                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">
                         Google Client Secret
                     </label>
                     <div className="flex items-center gap-3">
-                        <code className="flex-1 font-mono text-sm text-gray-100">
+                        <code className="flex-1 font-mono text-sm text-slate-100">
                             {maskedSecret}
                         </code>
                         <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-xs text-gray-400 italic">Hidden</span>
+                            <span className="text-xs text-slate-400 italic">Hidden</span>
                             <button
                                 onClick={() => handleCopy(formData.clientSecret)}
-                                className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                                 title="Copy Client Secret"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
@@ -185,13 +185,13 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                     API Configuration
                 </h2>
                 {!isEmpty && (
-                    <button onClick={() => setIsEditing(false)} className="text-sm font-medium text-gray-500 hover:text-gray-300">Cancel</button>
+                    <button onClick={() => setIsEditing(false)} className="text-sm font-medium text-slate-500 hover:text-slate-300">Cancel</button>
                 )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
+                    <label className="block text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
                         Google Client ID
                     </label>
                     <input
@@ -213,7 +213,7 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                 </div>
 
                 <div>
-                    <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
+                    <label className="block text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
                         Google Client Secret
                     </label>
                     <input
@@ -241,7 +241,7 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                 )}
 
                 <div className="pt-2">
-                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
                         Authorized Redirect URI
                     </label>
                     <div className="space-y-3">
@@ -249,8 +249,8 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                             onClick={() => handleCopy(callbackUrlDev)}
                             className="group relative bg-[#0B0F1A] p-3 rounded-none border border-white/10 cursor-pointer hover:border-white/30 transition-colors"
                         >
-                            <div className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Development (Localhost)</div>
-                            <code className="text-sm font-mono text-gray-300 break-all">
+                            <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-1">Development (Localhost)</div>
+                            <code className="text-sm font-mono text-slate-300 break-all">
                                 {callbackUrlDev}
                             </code>
                         </div>
@@ -259,8 +259,8 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                             onClick={() => handleCopy(callbackUrlProd)}
                             className="group relative bg-[#0B0F1A] p-3 rounded-none border border-white/10 cursor-pointer hover:border-white/30 transition-colors"
                         >
-                            <div className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-1">Production (Live)</div>
-                            <code className="text-sm font-mono text-gray-300 break-all">
+                            <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-1">Production (Live)</div>
+                            <code className="text-sm font-mono text-slate-300 break-all">
                                 {callbackUrlProd}
                             </code>
                         </div>
@@ -274,7 +274,7 @@ export default function SettingsForm({ initialData, callbackUrlDev, callbackUrlP
                         disabled={isLoading || verifying}
                         className={`px-6 py-2.5 font-bold text-[10px] uppercase tracking-widest rounded-none border transition-all disabled:opacity-50 flex items-center gap-2 ${isValidated
                             ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 cursor-default'
-                            : 'bg-[#0B0F1A] border-white/20 text-gray-300 hover:bg-white/5'
+                            : 'bg-[#0B0F1A] border-white/20 text-slate-300 hover:bg-white/5'
                             }`}
                     >
                         {verifying ? (

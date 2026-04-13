@@ -266,7 +266,7 @@ export default function AppDetailPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh] text-gray-500 text-sm">
+            <div className="flex items-center justify-center min-h-[60vh] text-slate-500 text-sm">
                 Loading...
             </div>
         );
@@ -275,9 +275,9 @@ export default function AppDetailPage() {
     if (!app) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-                <svg className="w-12 h-12 text-gray-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <svg className="w-12 h-12 text-slate-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <h1 className="text-xl font-bold text-white mb-2">App Not Found</h1>
-                <p className="text-gray-500 text-sm mb-5">The application you are looking for does not exist or has been removed.</p>
+                <p className="text-slate-500 text-sm mb-5">The application you are looking for does not exist or has been removed.</p>
                 <button onClick={() => router.push('/app-library')} className="px-5 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-sm font-semibold transition-colors">
                     Return to Library
                 </button>
@@ -328,17 +328,17 @@ export default function AppDetailPage() {
                                 
                                 <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-8">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-black mb-1">Downloads</span>
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Downloads</span>
                                         <span className="text-lg font-bold text-white font-mono">{(app.downloadCount ?? 0).toLocaleString()}</span>
                                     </div>
                                     <div className="w-px h-8 bg-white/5 self-end mb-1" />
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-black mb-1">Page Views</span>
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Page Views</span>
                                         <span className="text-lg font-bold text-white font-mono">{(app.viewCount ?? 0).toLocaleString()}</span>
                                     </div>
                                     <div className="w-px h-8 bg-white/5 self-end mb-1" />
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-black mb-1">Releases</span>
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Releases</span>
                                         <span className="text-lg font-bold text-white font-mono">{app.versions?.length ?? 0}</span>
                                     </div>
                                 </div>
@@ -407,7 +407,7 @@ export default function AppDetailPage() {
                                 >
                                     <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border font-mono text-xs font-black ${isLatest ? 'bg-[#749F8B]/10 border-[#749F8B]/30 text-[#749F8B]' : 'bg-white/5 border-white/10 text-gray-500'}`}>
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border font-mono text-xs font-black ${isLatest ? 'bg-[#749F8B]/10 border-[#749F8B]/30 text-[#749F8B]' : 'bg-white/5 border-white/10 text-slate-500'}`}>
                                                 {isLatest ? 'NEW' : idx + 1}
                                             </div>
                                             <div>
@@ -415,7 +415,7 @@ export default function AppDetailPage() {
                                                     <span className="text-sm font-bold text-white font-mono tracking-tight">{vid.version}</span>
                                                     {isLatest && <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded">Stable</span>}
                                                 </div>
-                                                <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-500 font-medium">
+                                                <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-500 font-medium">
                                                     <span>{new Date(vid.releaseDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                                                     <span className="w-1 h-1 rounded-full bg-white/20" />
                                                     <span className="font-mono text-[#FEBD8B]/50 uppercase tracking-widest">{vid.androidVersion || 'SDK ANY'}</span>
@@ -426,7 +426,7 @@ export default function AppDetailPage() {
                                         <div className="flex items-center gap-2 self-end sm:self-center">
                                             <button
                                                 onClick={() => handleCopyVersionLink(vid.version)}
-                                                className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-blue-400 hover:border-blue-500/30 transition-all"
+                                                className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-blue-400 hover:border-blue-500/30 transition-all"
                                                 title="Copy Link"
                                             >
                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
@@ -457,7 +457,7 @@ export default function AppDetailPage() {
                                                 </div>
                                                 <ul className="space-y-2">
                                                     {vid.features.split('\n').filter(f => f.trim()).map((feat, i) => (
-                                                        <li key={i} className="flex items-start gap-3 text-xs text-gray-400 font-medium">
+                                                        <li key={i} className="flex items-start gap-3 text-xs text-slate-400 font-medium">
                                                             <span className="text-[#FEBD8B]/40 mt-0.5">»</span>
                                                             <span className="leading-relaxed">{feat}</span>
                                                         </li>
@@ -489,7 +489,7 @@ export default function AppDetailPage() {
                                 ] : []),
                             ].map((row, i) => (
                                 <div key={i} className="flex flex-col gap-1">
-                                    <span className="text-[9px] text-gray-600 uppercase font-black tracking-widest">{row.label}</span>
+                                    <span className="text-[9px] text-slate-600 uppercase font-black tracking-widest">{row.label}</span>
                                     <span className="text-xs text-[#FEBD8B]/90 font-bold truncate">{row.value}</span>
                                 </div>
                             ))}
@@ -499,10 +499,10 @@ export default function AppDetailPage() {
                     {app.description && (
                         <div className="rounded-2xl border border-white/5 bg-[#080b18] overflow-hidden">
                             <div className="px-5 py-4 border-b border-white/5 bg-[#0a0d18]">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Documentation</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Documentation</p>
                             </div>
                             <div className="p-5">
-                                <p className="text-xs text-gray-400 leading-relaxed font-medium italic opacity-80">"{app.description}"</p>
+                                <p className="text-xs text-slate-400 leading-relaxed font-medium italic opacity-80">"{app.description}"</p>
                             </div>
                         </div>
                     )}
@@ -536,7 +536,7 @@ export default function AppDetailPage() {
                                 </svg>
                                 Transfer Queue
                             </span>
-                            <span className="text-[10px] bg-white/10 text-gray-300 px-2 rounded-full py-0.5">{downloads.length} active</span>
+                            <span className="text-[10px] bg-white/10 text-slate-300 px-2 rounded-full py-0.5">{downloads.length} active</span>
                         </div>
 
                         <div className="relative pl-3 space-y-4">
@@ -545,7 +545,7 @@ export default function AppDetailPage() {
                                 <div key={d.id} className="relative z-10">
                                     <div className={`absolute -left-[5px] top-1.5 w-2 h-2 rounded-full border border-[#06080e] shadow-[0_0_0_2px_#06080e] ${d.status === 'loading' ? 'bg-[#FEBD8B] animate-pulse' : d.status === 'error' ? 'bg-red-500' : 'bg-[#749F8B]'}`} />
                                     <div className="ml-5">
-                                        <div className="text-[10px] text-gray-500 mb-1 ml-1 flex justify-between">
+                                        <div className="text-[10px] text-slate-500 mb-1 ml-1 flex justify-between">
                                             <span>v{d.version}</span>
                                             <span>{d.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                                         </div>
@@ -598,16 +598,16 @@ export default function AppDetailPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-sm font-bold text-white">Add New Release</h3>
-                                    <p className="text-xs text-gray-500 mt-0.5">for {app.name}</p>
+                                    <p className="text-xs text-slate-500 mt-0.5">for {app.name}</p>
                                 </div>
-                                <button onClick={() => !submittingVersion && setShowAddVersionModal(false)} className="text-gray-600 hover:text-white transition-colors" disabled={submittingVersion}>
+                                <button onClick={() => !submittingVersion && setShowAddVersionModal(false)} className="text-slate-600 hover:text-white transition-colors" disabled={submittingVersion}>
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>
 
                             <form onSubmit={handleSubmitVersion} className="space-y-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block">Version Number <span className="text-red-400">*</span></label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Version Number <span className="text-red-400">*</span></label>
                                     <input
                                         required
                                         type="text"
@@ -619,7 +619,7 @@ export default function AppDetailPage() {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block">Android Version</label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Android Version</label>
                                     <input
                                         type="text"
                                         value={newAndroidVersion}
@@ -630,7 +630,7 @@ export default function AppDetailPage() {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block">Release Notes</label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Release Notes</label>
                                     <textarea
                                         rows={3}
                                         value={newFeatures}
@@ -641,7 +641,7 @@ export default function AppDetailPage() {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
                                     <input
                                         type="text"
                                         required
@@ -650,13 +650,13 @@ export default function AppDetailPage() {
                                         placeholder="Paste Telegram file ID here"
                                         className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors font-mono"
                                     />
-                                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
                                         Telegram Document File ID
                                     </p>
                                 </div>
 
                                 <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
-                                    <button type="button" onClick={() => setShowAddVersionModal(false)} disabled={submittingVersion} className="px-4 py-2 border border-white/10 hover:bg-white/5 text-gray-400 text-sm font-medium rounded-xl transition-colors">
+                                    <button type="button" onClick={() => setShowAddVersionModal(false)} disabled={submittingVersion} className="px-4 py-2 border border-white/10 hover:bg-white/5 text-slate-400 text-sm font-medium rounded-xl transition-colors">
                                         Cancel
                                     </button>
                                     <button type="submit" disabled={submittingVersion || !newVersion || !apkFileId} className="flex items-center gap-2 px-5 py-2 bg-[#749F8B] hover:bg-[#749F8B]/80 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50">
@@ -681,9 +681,9 @@ export default function AppDetailPage() {
                             <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                         </div>
                         <h3 className="text-lg font-bold text-white mb-2">Deconstruct App?</h3>
-                        <p className="text-xs text-gray-500 mb-6">This action will permanently remove <span className="text-white font-bold">{app.name}</span> and all its versions from the core registry.</p>
+                        <p className="text-xs text-slate-500 mb-6">This action will permanently remove <span className="text-white font-bold">{app.name}</span> and all its versions from the core registry.</p>
                         <div className="flex gap-3">
-                            <button onClick={() => setConfirmDeleteApp(false)} className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</button>
+                            <button onClick={() => setConfirmDeleteApp(false)} className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-slate-400 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</button>
                             <button onClick={handleDeleteApp} disabled={deletingApp} className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-widest transition-all disabled:opacity-50">
                                 {deletingApp ? 'Processing...' : 'Delete'}
                             </button>
@@ -700,9 +700,9 @@ export default function AppDetailPage() {
                             <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </div>
                         <h3 className="text-lg font-bold text-white mb-2">Delete Version?</h3>
-                        <p className="text-xs text-gray-500 mb-6">Are you sure you want to remove this specific build from the archive?</p>
+                        <p className="text-xs text-slate-500 mb-6">Are you sure you want to remove this specific build from the archive?</p>
                         <div className="flex gap-3">
-                            <button onClick={() => setConfirmDeleteVersionId(null)} className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</button>
+                            <button onClick={() => setConfirmDeleteVersionId(null)} className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-slate-400 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Cancel</button>
                             <button 
                                 onClick={() => handleDeleteVersion(confirmDeleteVersionId)} 
                                 disabled={deletingVersionId === confirmDeleteVersionId} 

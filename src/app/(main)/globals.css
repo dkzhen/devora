@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-    --background: #f3f4f6;
-    --foreground: #111827;
+    --foreground: #cbd5e1; /* slate-300 */
+    --background: #0c0e1a;
 }
 
 [class="dark"] {
-    --background: #0f111a;
-    --foreground: #f3f4f6;
+    --background: #0c0e1a;
+    --foreground: #cbd5e1; /* slate-300 */
 }
 
 body {

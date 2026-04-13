@@ -86,8 +86,8 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                                 {user.role}
                             </span>
                         </div>
-                        <p className="text-gray-500 text-sm mt-0.5">{user.email}</p>
-                        <p className="text-gray-700 text-xs mt-1">Member since {memberSince}</p>
+                        <p className="text-slate-500 text-sm mt-0.5">{user.email}</p>
+                        <p className="text-slate-700 text-xs mt-1">Member since {memberSince}</p>
                     </div>
                 </div>
                 {!isEditing && (
@@ -101,7 +101,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                 <form onSubmit={handleSubmit} className="space-y-4 pt-4 border-t border-white/10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
+                            <label className="block text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
                                 Full Name
                             </label>
                             <input
@@ -121,7 +121,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                         </div>
 
                         <div>
-                            <label className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-2">
+                            <label className="block text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
                                 Email Address
                             </label>
                             <input
@@ -149,7 +149,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                                 setFormData({ name: user.name || '', email: user.email || '' });
                                 setErrors({});
                             }}
-                            className="px-6 py-2.5 font-bold text-[10px] uppercase tracking-widest rounded-none border border-white/20 text-gray-300 hover:bg-white/5 transition-colors"
+                            className="px-6 py-2.5 font-bold text-[10px] uppercase tracking-widest rounded-none border border-white/20 text-slate-300 hover:bg-white/5 transition-colors"
                         >
                             Cancel
                         </button>
@@ -180,7 +180,7 @@ export default function ProfileCard({ user, initials, roleBadge, roleGradient, m
                         { label: 'Member Since', value: memberSince, icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
                     ].map((item) => (
                         <div key={item.label} className="p-4 rounded-none bg-[#0B0F1A] border border-white/10 hover:border-white/30 transition-colors">
-                            <div className="flex items-center gap-2 text-gray-600 mb-2">
+                            <div className="flex items-center gap-2 text-slate-600 mb-2">
                                 {item.icon}
                                 <span className="text-[10px] uppercase tracking-widest font-bold">{item.label}</span>
                             </div>

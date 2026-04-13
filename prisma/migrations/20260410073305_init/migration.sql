@@ -69,6 +69,23 @@ CREATE TABLE `users` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `nara_wallets` (
+    `id` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NULL,
+    `encrypted_pk` TEXT NOT NULL,
+    `alias` VARCHAR(191) NULL,
+    `last_balance` VARCHAR(191) NULL,
+    `last_unit` VARCHAR(191) NULL,
+    `explorer_url` TEXT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    INDEX `nara_wallets_user_id_idx`(`user_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `telegram_updates` (
     `id` BIGINT NOT NULL,
     `user_id` VARCHAR(191) NOT NULL,
@@ -405,6 +422,9 @@ ALTER TABLE `messages` ADD CONSTRAINT `messages_account_id_fkey` FOREIGN KEY (`a
 ALTER TABLE `drive_files` ADD CONSTRAINT `drive_files_account_id_fkey` FOREIGN KEY (`account_id`) REFERENCES `accounts`(`email`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `nara_wallets` ADD CONSTRAINT `nara_wallets_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `telegram_updates` ADD CONSTRAINT `telegram_updates_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -457,4 +477,3 @@ ALTER TABLE `llm_consoles` ADD CONSTRAINT `llm_consoles_user_id_fkey` FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE `ai_model_access` ADD CONSTRAINT `ai_model_access_model_id_fkey` FOREIGN KEY (`model_id`) REFERENCES `ai_models`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-

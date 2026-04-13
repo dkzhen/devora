@@ -40,7 +40,7 @@ export default function Web3ProjectsPage() {
         (p.category && p.category.toLowerCase().includes(search.toLowerCase()))
     );
 
-    if (!mounted) return <LoadingState colorTheme="web3_projects" message="Initializing Projects..." />;
+    if (!mounted) return <LoadingState  message="Initializing Projects..." />;
 
     return (
         <div className="space-y-6 md:space-y-8">
@@ -52,7 +52,7 @@ export default function Web3ProjectsPage() {
                 title="Web3"
                 badge="Projects"
                 description="Explore the latest decentralized applications, protocols, and blockchain eco-system projects."
-                colorTheme="web3_projects"
+                
             />
 
             {/* Search Bar */}
@@ -88,11 +88,14 @@ export default function Web3ProjectsPage() {
                             
                             <div className="relative z-10 flex items-start gap-4">
                                 <div className="w-14 h-14 rounded-xl border border-[#ffd89b]/30 bg-[#1A082E] flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_10px_rgba(255,216,155,0.2)]">
-                                    <img 
+                                    <LoadingImage 
                                         src={project.logo} 
                                         alt={project.name}
                                         className={`w-full h-full object-contain p-2 ${isLocked ? 'grayscale' : ''}`}
-                                        onError={(e) => e.target.src = '/icons/digital-currency.png'}
+                                        containerClassName="w-full h-full"
+                                        fallback="/icons/digital-currency.png"
+                                        loaderWrapperClassName="absolute inset-0 bg-amber-500/5 flex items-center justify-center"
+                                        spinnerClassName="w-4 h-4 rounded-full border-2 border-amber-500/20 border-t-amber-400 animate-spin"
                                     />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -106,14 +109,14 @@ export default function Web3ProjectsPage() {
                             </div>
 
                             <div className="relative z-10 mt-4 h-12 overflow-hidden">
-                                <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed font-mono">
+                                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed font-mono">
                                     {project.description}
                                 </p>
                             </div>
 
                             <div className="relative z-10 mt-4 pt-4 border-t border-[#ffd89b]/10 flex items-center justify-between">
                                 {isLocked ? (
-                                    <div className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center gap-1">
+                                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-1">
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                         </svg>

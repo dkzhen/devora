@@ -4,33 +4,68 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-export default function AirdropActivity({ data = [], total = 0 }) {
+const THEME = {
+    blue: {
+        bg: 'from-[#0a0e1a] to-[#07090f]',
+        border: 'border-blue-500/20',
+        glow: 'shadow-[0_0_15px_rgba(59,130,246,0.05)]',
+        accentLine: 'via-blue-500/50',
+        bracketStrong: 'border-blue-500/40',
+        bracketWeak: 'border-blue-500/15',
+        headerIcon: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
+        headerBorder: 'border-blue-500/10',
+        subtext: 'text-blue-400/60',
+        linkBtn: 'border-blue-500/20 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.1)]',
+        footerBorder: 'border-blue-500/10',
+        footerVal: 'text-blue-400',
+        footerLive: 'text-blue-500'
+    },
+    purple: {
+        bg: 'from-[#110a17] to-[#0a060e]',
+        border: 'border-purple-500/20',
+        glow: 'shadow-[0_0_15px_rgba(168,85,247,0.05)]',
+        accentLine: 'via-purple-500/50',
+        bracketStrong: 'border-purple-500/40',
+        bracketWeak: 'border-purple-500/15',
+        headerIcon: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+        headerBorder: 'border-purple-500/10',
+        subtext: 'text-purple-400/60',
+        linkBtn: 'border-purple-500/20 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.1)]',
+        footerBorder: 'border-purple-500/10',
+        footerVal: 'text-purple-400',
+        footerLive: 'text-purple-500'
+    }
+};
+
+export default function AirdropActivity({ data = [], total = 0, color = 'blue' }) {
+    const theme = THEME[color] || THEME.blue;
+
     return (
-        <div className="relative overflow-hidden rounded-lg bg-linear-to-b from-[#0a0e1a] to-[#07090f] border border-blue-500/20 p-6 flex flex-col h-full group shadow-[0_0_15px_rgba(59,130,246,0.05)]">
+        <div className={`relative overflow-hidden rounded-lg bg-linear-to-b ${theme.bg} border ${theme.border} p-6 flex flex-col h-full group ${theme.glow}`}>
             {/* Top neon accent */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-blue-500/50 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
+            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity`} />
             
             {/* Corner brackets */}
-            <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t border-l border-blue-500/40 pointer-events-none" />
-            <span className="absolute top-2 right-2 w-3.5 h-3.5 border-t border-r border-blue-500/40 pointer-events-none" />
-            <span className="absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l border-blue-500/15 pointer-events-none" />
-            <span className="absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r border-blue-500/15 pointer-events-none" />
+            <span className={`absolute top-2 left-2 w-3.5 h-3.5 border-t border-l ${theme.bracketStrong} pointer-events-none`} />
+            <span className={`absolute top-2 right-2 w-3.5 h-3.5 border-t border-r ${theme.bracketStrong} pointer-events-none`} />
+            <span className={`absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l ${theme.bracketWeak} pointer-events-none`} />
+            <span className={`absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r ${theme.bracketWeak} pointer-events-none`} />
 
             {/* Gloss effect */}
             <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
             {/* Header */}
-            <div className="relative z-10 flex items-center justify-between mb-6 border-b border-blue-500/10 pb-4">
+            <div className={`relative z-10 flex items-center justify-between mb-6 border-b ${theme.headerBorder} pb-4`}>
                 <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                    <div className={`p-1.5 rounded-md ${theme.headerIcon}`}>
                         <img src="/icons/dashbooard/airdrop.png" alt="Airdrop" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Top Airdrop Projects</h3>
-                        <p className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest mt-0.5">Participation by task volume</p>
+                        <h3 className="text-xs font-black text-white tracking-widest uppercase">Top Airdrop Projects</h3>
+                        <p className={`text-[10px] font-bold ${theme.subtext} uppercase tracking-widest mt-0.5`}>Participation by task volume</p>
                     </div>
                 </div>
-                <Link href="/airdrops" className="p-1.5 rounded-md border border-blue-500/20 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 transition-all shadow-[0_0_10px_rgba(59,130,246,0.1)]" title="View Details">
+                <Link href="/airdrops" className={`p-1.5 rounded-md border ${theme.linkBtn}`} title="View Details">
                     <ExternalLink className="w-4 h-4" />
                 </Link>
             </div>
@@ -70,7 +105,7 @@ export default function AirdropActivity({ data = [], total = 0 }) {
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                    <div className="flex flex-col items-center justify-center h-full text-slate-500">
                         <svg className="w-10 h-10 mb-3 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                         <p className="text-sm">No airdrop data available</p>
                     </div>
@@ -78,9 +113,9 @@ export default function AirdropActivity({ data = [], total = 0 }) {
             </div>
 
             {/* Footer accent */}
-            <div className="relative z-10 mt-4 pt-4 border-t border-blue-500/10 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-blue-400/60 opacity-80">
-                <span>Active Projects: <span className="text-blue-400">{total}</span></span>
-                <span className="text-blue-500">Updated Live</span>
+            <div className={`relative z-10 mt-4 pt-4 border-t ${theme.footerBorder} flex items-center justify-between text-[10px] uppercase font-bold tracking-widest ${theme.subtext} opacity-80`}>
+                <span>Active Projects: <span className={theme.footerVal}>{total}</span></span>
+                <span className={theme.footerLive}>Updated Live</span>
             </div>
         </div>
     );

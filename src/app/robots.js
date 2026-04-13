@@ -4,6 +4,6 @@ export default function robots() {
             userAgent: "*",
             allow: "/",
         },
-        sitemap: "https://devora.dkzhen.org/sitemap.xml",
+        sitemap: "https://devora.my.id/sitemap.xml",
     };
 }   

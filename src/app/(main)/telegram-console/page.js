@@ -27,7 +27,7 @@ function JsonHighlight({ value }) {
                     });
                 return (
                     <div key={i} className="flex min-w-0">
-                        <span className="select-none text-gray-600 w-8 shrink-0 text-right pr-3">{i + 1}</span>
+                        <span className="select-none text-slate-600 w-8 shrink-0 text-right pr-3">{i + 1}</span>
                         <span dangerouslySetInnerHTML={{ __html: highlighted || '&ZeroWidthSpace;' }} />
                     </div>
                 );
@@ -50,7 +50,7 @@ function CopyIconBtn({ text }) {
     return (
         <button
             onClick={handleCopy}
-            className={`p-1 rounded-md ${copied ? 'text-emerald-400 bg-emerald-400/10' : 'text-gray-500 hover:text-gray-300 hover:bg-white/10'}`}
+            className={`p-1 rounded-md ${copied ? 'text-emerald-400 bg-emerald-400/10' : 'text-slate-500 hover:text-slate-300 hover:bg-white/10'}`}
             title="Copy"
         >
             {copied ? (
@@ -66,10 +66,10 @@ function CopyIconBtn({ text }) {
 function MetaChip({ icon, label, text }) {
     if (!text) return null;
     return (
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#0f172a] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:bg-white/5 hover:border-white/10 group min-w-0">
-            <span className="text-gray-500 shrink-0">{icon}</span>
-            <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest shrink-0">{label}</span>
-            <span className="font-mono text-[11px] text-gray-300 truncate" title={text}>{text}</span>
+        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#0c0e1a] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:bg-white/5 hover:border-white/10 group min-w-0">
+            <span className="text-slate-500 shrink-0">{icon}</span>
+            <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest shrink-0">{label}</span>
+            <span className="font-mono text-[11px] text-slate-300 truncate" title={text}>{text}</span>
             <div className="opacity-0 group-hover:opacity-100 shrink-0">
                 <CopyIconBtn text={text} />
             </div>
@@ -213,7 +213,7 @@ function TelegramUpdateCard({ update }) {
                                     {details.type}
                                 </span>
                                 {details.chatType === 'supergroup' && (
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-gray-400 font-bold uppercase tracking-wider border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400 font-bold uppercase tracking-wider border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
                                         Supergroup
                                     </span>
                                 )}
@@ -221,19 +221,19 @@ function TelegramUpdateCard({ update }) {
                             <h3 className="text-[15px] font-bold text-white flex items-center gap-2 truncate">
                                 {details.chatTitle}
                             </h3>
-                            <p className="text-xs text-gray-500 truncate mt-0.5">
+                            <p className="text-xs text-slate-500 truncate mt-0.5">
                                 {details.senderName || details.senderUsername ? (
-                                    <>From: <span className="text-gray-300 font-medium">{details.senderName || `@${details.senderUsername}`}</span></>
+                                    <>From: <span className="text-slate-300 font-medium">{details.senderName || `@${details.senderUsername}`}</span></>
                                 ) : 'System Event'}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-3 shrink-0">
-                        <span className="text-[11px] text-gray-500 font-mono font-medium tracking-wide">{details.time}</span>
+                        <span className="text-[11px] text-slate-500 font-mono font-medium tracking-wide">{details.time}</span>
                         <button
                             onClick={() => setExpanded(!expanded)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-bold text-gray-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:text-white"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:text-white"
                         >
                             JSON Preview
                             <svg className={`w-3.5 h-3.5 ${expanded ? 'rotate-180 text-white' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -269,7 +269,7 @@ function TelegramUpdateCard({ update }) {
 
                     {/* Message Log Bubble */}
                     {details.text && (
-                        <div className="bg-[#050810]/60 border border-white/5 rounded-[14px] p-4 font-mono text-[13px] text-gray-300 shadow-inner relative overflow-hidden group/bubble">
+                        <div className="bg-[#050810]/60 border border-white/5 rounded-[14px] p-4 font-mono text-[13px] text-slate-300 shadow-inner relative overflow-hidden group/bubble">
                             <div className={`absolute top-0 left-0 w-1 h-full bg-linear-to-b from-${details.color}-500/80 to-transparent`} />
                             <p className="whitespace-pre-wrap leading-relaxed pl-1">
                                 {details.text}
@@ -279,13 +279,13 @@ function TelegramUpdateCard({ update }) {
 
                     {/* Media Attachment */}
                     {details.media && (
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-blue-500/[0.03] border border-blue-500/10 rounded-xl hover:border-blue-500/20 hover:bg-blue-500/[0.05]">
-                            <div className="w-10 h-10 rounded-xl bg-[#0f172a] shadow-inner flex items-center justify-center text-blue-400 shrink-0 border border-white/5">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl hover:border-blue-500/20 hover:bg-blue-500/10">
+                            <div className="w-10 h-10 rounded-xl bg-[#0c0e1a] shadow-inner flex items-center justify-center text-blue-400 shrink-0 border border-white/5">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
                             </div>
                             <div className="min-w-0 flex-1">
-                                <p className="text-sm font-bold text-gray-200 truncate">{details.media.fileName}</p>
-                                <p className="text-[10px] text-gray-500 mt-0.5 uppercase tracking-wider font-semibold">{details.media.fileSize || 'Unknown Size'} • {details.media.type}</p>
+                                <p className="text-sm font-bold text-slate-200 truncate">{details.media.fileName}</p>
+                                <p className="text-[10px] text-slate-500 mt-0.5 uppercase tracking-wider font-semibold">{details.media.fileSize || 'Unknown Size'} • {details.media.type}</p>
                             </div>
                             <div className="shrink-0 flex items-center gap-2 max-w-full">
                                 <MetaChip
@@ -462,7 +462,7 @@ export default function TelegramConsolePage() {
             <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full" />
-                    <p className="text-xs text-gray-500">Connecting to Telegram API…</p>
+                    <p className="text-xs text-slate-500">Connecting to Telegram API…</p>
                 </div>
             </div>
         );
@@ -480,37 +480,22 @@ export default function TelegramConsolePage() {
 
     return (
         <div className="space-y-6 pb-20">
-            {/* Header section identical to Endpoints page theme */}
-            <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0a1229] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/5 pointer-events-none" />
-                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/5 pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-
-                <div className="relative z-10 p-8">
-                    <nav className="flex text-xs text-blue-300/60 mb-3 items-center gap-2">
-                        <Link href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </Link>
-                        <svg className="w-3 h-3 text-blue-400/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="text-blue-200 font-semibold">Telegram Console</span>
-                    </nav>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2">
-                                <span className="text-white">Telegram </span>
-                                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">Console</span>
-                            </h1>
-                            <div className="flex flex-wrap items-center gap-4">
-                                <p className="text-gray-400 text-sm max-w-xl">
-                                    Exclusive ULTRA developer utility. Real-time JSON validation and event inspections from your synced Telegram bot endpoints.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <HeroHeader
+                breadcrumbs={[
+                    {
+                        label: "Dashboard",
+                        href: "/",
+                        icon: <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    },
+                    {
+                        label: "Telegram Console",
+                        icon: <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.6)] animate-pulse mr-1" />
+                    }
+                ]}
+                title="Telegram"
+                badge="Console"
+                description="Exclusive ULTRA developer utility. Real-time JSON validation and event inspections from your synced Telegram bot endpoints."
+            />
 
             {/* Warning State: Token Not Defined - High Performance Redesign */}
             {warningState && (
@@ -534,7 +519,7 @@ export default function TelegramConsolePage() {
                                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                                     Missing Bot Token
                                 </h2>
-                                <div className="max-w-[400px] mx-auto text-gray-400 text-sm leading-relaxed">
+                                <div className="max-w-[400px] mx-auto text-slate-400 text-sm leading-relaxed">
                                     The console requires a valid Telegram Bot Token to synchronize activity. Please ensure the following key exists in your global configuration:
                                 </div>
                             </div>
@@ -548,7 +533,7 @@ export default function TelegramConsolePage() {
                                 }}
                                 className={`flex items-center gap-2 px-4 py-2 bg-[#161b29] border rounded-xl font-mono text-xs mb-8 transition-all active:scale-95 group ${tokenCopied ? 'border-emerald-500/50 text-emerald-400' : 'border-white/5 text-blue-400 hover:border-blue-500/30'}`}
                             >
-                                <span className={tokenCopied ? 'text-emerald-600' : 'text-gray-600'}>$</span>
+                                <span className={tokenCopied ? 'text-emerald-600' : 'text-slate-600'}>$</span>
                                 <span className="font-bold tracking-wider">BOT_TOKEN_TELEGRAM</span>
                                 {tokenCopied ? (
                                     <svg className="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
@@ -571,7 +556,7 @@ export default function TelegramConsolePage() {
 
             {/* API Error State */}
             {apiError && (
-                <div className="bg-[#0f172a] border border-rose-500/20 rounded-2xl overflow-hidden p-8 text-center relative shadow-2xl shadow-rose-900/20">
+                <div className="bg-[#0c0e1a] border border-rose-500/20 rounded-2xl overflow-hidden p-8 text-center relative shadow-2xl shadow-rose-900/20">
                     <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-transparent via-rose-500/50 to-transparent" />
                     <div className="absolute -left-16 -top-16 w-32 h-32 bg-rose-500/5 rounded-full" />
                     <div className="absolute -right-16 -bottom-16 w-32 h-32 bg-red-500/5 rounded-full" />
@@ -603,10 +588,10 @@ export default function TelegramConsolePage() {
 
             {/* Updates List */}
             {!warningState && !apiError && !loading && (
-                <div className="bg-[#0f172a] border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden shadow-xl relative">
+                <div className="bg-[#0c0e1a] border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden shadow-xl relative">
                     <div className="px-6 md:px-8 py-5 border-b border-white/5 bg-linear-to-r from-[#111827] to-transparent flex items-center justify-between sticky top-0 z-30">
                         <h2 className="text-lg font-bold text-white flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20 shadow-inner">
+                            <div className="w-8 h-8 rounded-lg bg-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-inner">
                                 <svg className="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" /></svg>
                             </div>
                             Activity Log
@@ -618,14 +603,14 @@ export default function TelegramConsolePage() {
                                     setApiError(null);
                                     setIsAutoSync(!isAutoSync);
                                 }}
-                                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all ${isAutoSync ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400'}`}
+                                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all ${isAutoSync ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400'}`}
                             >
                                 <svg className={`w-3.5 h-3.5 ${isAutoSync ? 'animate-spin-slow' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                 <span className="hidden sm:inline">
                                     {isAutoSync ? 'Auto Syncing' : 'Auto Sync'}
                                 </span>
                             </button>
-                            <button onClick={() => fetchUpdates(true)} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold text-gray-300 shadow-sm group">
+                            <button onClick={() => fetchUpdates(true)} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold text-slate-300 shadow-sm group">
                                 <svg className="w-3.5 h-3.5 group-active:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>
                                 <span className="hidden sm:inline">Pull Latest</span>
                             </button>
@@ -633,12 +618,12 @@ export default function TelegramConsolePage() {
                     </div>
 
                     {updates.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center p-20 md:p-32 text-gray-500">
+                        <div className="flex flex-col items-center justify-center p-20 md:p-32 text-slate-500">
                             <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/5 shadow-inner">
                                 <svg className="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                             </div>
-                            <p className="text-base font-bold text-gray-300">No events found.</p>
-                            <p className="text-sm mt-2 text-gray-500 max-w-sm text-center">No history in database yet. Click <span className="text-blue-400 font-semibold">Pull Latest</span> above to sync from Telegram for the first time.</p>
+                            <p className="text-base font-bold text-slate-300">No events found.</p>
+                            <p className="text-sm mt-2 text-slate-500 max-w-sm text-center">No history in database yet. Click <span className="text-blue-400 font-semibold">Pull Latest</span> above to sync from Telegram for the first time.</p>
                         </div>
                     ) : (
                         <div className="p-5 md:p-8 relative">
@@ -673,7 +658,7 @@ export default function TelegramConsolePage() {
                             ).map(([dateLabel, dateUpdates]) => (
                                 <div key={dateLabel} className="mb-10 last:mb-0 relative">
                                     <div className="flex items-center gap-4 mb-6 relative z-20 md:pl-0 pl-1">
-                                        <div className="bg-[#1e293b] border border-white/10 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase text-gray-300 shadow-md">
+                                        <div className="bg-[#1e293b] border border-white/10 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase text-slate-300 shadow-md">
                                             {dateLabel}
                                         </div>
                                     </div>
@@ -691,7 +676,7 @@ export default function TelegramConsolePage() {
 
             {/* Sticky/Fixed Last Sync Indicator (Desktop Bottom Right) */}
             {lastSyncTime && (
-                <div className="fixed bottom-6 right-8 z-100 hidden md:flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0f172a]/80 backdrop-blur-md border border-white/10 shadow-2xl shadow-blue-500/10 transition-all hover:bg-[#0f172a] hover:border-blue-500/30 group">
+                <div className="fixed bottom-6 right-8 z-100 hidden md:flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#0c0e1a]/80 backdrop-blur-md border border-white/10 shadow-2xl shadow-blue-500/10 transition-all hover:bg-[#0c0e1a] hover:border-blue-500/30 group">
                     <div className="relative flex items-center justify-center">
                         <div className={`w-2 h-2 rounded-full ${isAutoSync ? 'bg-emerald-500 animate-pulse' : 'bg-gray-600'}`} />
                         {isAutoSync && (
@@ -699,10 +684,10 @@ export default function TelegramConsolePage() {
                         )}
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-gray-500 group-hover:text-blue-400 transition-colors">
+                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-slate-500 group-hover:text-blue-400 transition-colors">
                             {isAutoSync ? 'Auto-Sync Active' : 'Manual Mode'}
                         </span>
-                        <span className="text-[11px] font-mono font-bold text-gray-300">
+                        <span className="text-[11px] font-mono font-bold text-slate-300">
                             Last Sync: {lastSyncTime.toLocaleTimeString()}
                         </span>
                     </div>

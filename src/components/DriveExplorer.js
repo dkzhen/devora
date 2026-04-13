@@ -202,7 +202,7 @@ export default function DriveExplorer({ accounts }) {
                         className="w-full flex items-center justify-between pl-3 pr-4 py-2 bg-transparent hover:bg-[#108dc7]/10 border-2 border-[#108dc7]/30 rounded-none text-sm text-[#108dc7] font-mono outline-none transition-none"
                     >
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <span className="truncate text-gray-300 text-sm">{selectedEmail || 'Select Account'}</span>
+                            <span className="truncate text-slate-300 text-sm">{selectedEmail || 'Select Account'}</span>
                             {selectedAccount?.status === 'active' ? (
                                 <span className="relative flex h-2 w-2 ml-1 shrink-0">
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ef8e38]" />
@@ -211,7 +211,7 @@ export default function DriveExplorer({ accounts }) {
                                 <span className="h-2 w-2 rounded-full bg-gray-600 shrink-0" />
                             )}
                         </div>
-                        <svg className={`w-4 h-4 text-gray-500 transition-transform shrink-0 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                        <svg className={`w-4 h-4 text-slate-500 transition-transform shrink-0 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </button>
 
                     {dropdownOpen && (
@@ -222,7 +222,7 @@ export default function DriveExplorer({ accounts }) {
                                     <div
                                         key={acc.email}
                                         onClick={() => { setSelectedEmail(acc.email); setDropdownOpen(false); }}
-                                        className="px-4 py-2.5 hover:bg-white/5 cursor-pointer flex items-center justify-between text-sm text-gray-300 hover:text-white transition-colors"
+                                        className="px-4 py-2.5 hover:bg-white/5 cursor-pointer flex items-center justify-between text-sm text-slate-300 hover:text-white transition-colors"
                                     >
                                         <span className="truncate">{acc.email}</span>
                                         {acc.status === 'active' ? (
@@ -275,7 +275,7 @@ export default function DriveExplorer({ accounts }) {
                         <div className="px-4 py-2 border-b border-white/5 bg-white/2 shrink-0">
                             <button
                                 onClick={handleBackClick}
-                                className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors"
+                                className="flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-white transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                 Back to {folderHistory[folderHistory.length - 1].name}
@@ -286,7 +286,7 @@ export default function DriveExplorer({ accounts }) {
                     <div className="flex-1 overflow-y-auto">
                         {loading && files.length === 0 ? (
                             <div className="flex-1 flex flex-col items-center justify-center p-12">
-                                <LoadingState message="Scanning drive..." colorTheme="drive" />
+                                <LoadingState message="Scanning drive..."  />
                             </div>
                         ) : files.length === 0 ? (
                             <div className="p-10 text-center text-[#108dc7]/50">
@@ -342,7 +342,7 @@ export default function DriveExplorer({ accounts }) {
                             <div className="md:hidden w-full mb-8">
                                 <button
                                     onClick={() => setSelectedFile(null)}
-                                    className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors"
+                                    className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                                     Back to files

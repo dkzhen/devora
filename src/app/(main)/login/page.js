@@ -69,7 +69,7 @@ export default function LoginPage() {
                         <h1 className="text-3xl font-black text-white tracking-tight mb-2">
                             Welcome back
                         </h1>
-                        <p className="text-gray-500 text-sm leading-relaxed">
+                        <p className="text-slate-500 text-sm leading-relaxed">
                             Sign in to manage your airdrop portfolio and Gmail accounts.
                         </p>
                     </div>
@@ -105,7 +105,7 @@ export default function LoginPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
                                 >
                                     {showPassword ? (
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -117,7 +117,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="flex justify-end">
-                            <a href="#" className="text-xs text-gray-600 hover:text-blue-400 transition-colors">Forgot password?</a>
+                            <a href="#" className="text-xs text-slate-600 hover:text-blue-400 transition-colors">Forgot password?</a>
                         </div>
 
                         <button
@@ -137,7 +137,7 @@ export default function LoginPage() {
                         {/* Divider */}
                         <div className="flex items-center gap-4">
                             <div className="h-px bg-white/5 flex-1" />
-                            <span className="text-xs text-gray-700">or continue with</span>
+                            <span className="text-xs text-slate-700">or continue with</span>
                             <div className="h-px bg-white/5 flex-1" />
                         </div>
 
@@ -160,7 +160,7 @@ export default function LoginPage() {
                         </div>
                     </form>
 
-                    <p className="text-center text-sm text-gray-600">
+                    <p className="text-center text-sm text-slate-600">
                         Not a member?{' '}
                         <a href="/register" className="font-semibold text-blue-400 hover:text-blue-300 transition-colors">Register now</a>
                     </p>
@@ -191,7 +191,7 @@ export default function LoginPage() {
                             Track Every<br />
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-400">Opportunity</span>
                         </h2>
-                        <p className="text-gray-600 text-xs">Airdrop hunting, email monitoring & API analytics in one place</p>
+                        <p className="text-slate-600 text-xs">Airdrop hunting, email monitoring & API analytics in one place</p>
                     </div>
 
                     {/* Staggered 3 cards */}
@@ -202,7 +202,7 @@ export default function LoginPage() {
                                 <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-0.5">Airdrop Tasks</div>
+                                <div className="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-0.5">Airdrop Tasks</div>
                                 <div className="text-2xl font-black text-white leading-none">{stats.airdrops}</div>
                                 <div className="mt-2 h-1 rounded-full bg-white/5">
                                     <div className="h-full w-4/5 rounded-full bg-linear-to-r from-blue-500 to-indigo-400" />
@@ -210,7 +210,7 @@ export default function LoginPage() {
                             </div>
                             <div className="text-right shrink-0">
                                 <div className="text-xs text-emerald-400 font-bold">Active</div>
-                                <div className="text-[10px] text-gray-600">projects</div>
+                                <div className="text-[10px] text-slate-600">projects</div>
                             </div>
                         </div>
 
@@ -220,15 +220,15 @@ export default function LoginPage() {
                                 <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-0.5">Gmail Accounts</div>
+                                <div className="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-0.5">Gmail Accounts</div>
                                 <div className="text-2xl font-black text-white leading-none">{stats.gmails}</div>
-                                <div className="text-[10px] text-gray-500 mt-1">
+                                <div className="text-[10px] text-slate-500 mt-1">
                                     {(stats.messages > 1000 ? (stats.messages / 1000).toFixed(1) + 'K' : stats.messages) || 0} msgs · {(stats.threads > 1000 ? (stats.threads / 1000).toFixed(1) + 'K' : stats.threads) || 0} threads
                                 </div>
                             </div>
                             <div className="text-right shrink-0">
                                 <div className="text-xs text-indigo-400 font-bold">Secure</div>
-                                <div className="text-[10px] text-gray-600">OAuth2</div>
+                                <div className="text-[10px] text-slate-600">OAuth2</div>
                             </div>
                         </div>
 
@@ -238,7 +238,7 @@ export default function LoginPage() {
                                 <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" /></svg>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-0.5">Request Flow</div>
+                                <div className="text-[10px] text-slate-600 uppercase tracking-widest font-bold mb-0.5">Request Flow</div>
                                 <div className="text-2xl font-black text-white leading-none">
                                     {stats.apiHits > 1000 ? `${(stats.apiHits / 1000).toFixed(1)}K` : stats.apiHits}
                                 </div>
@@ -246,7 +246,7 @@ export default function LoginPage() {
                             </div>
                             <div className="text-right shrink-0">
                                 <div className="text-xs text-cyan-400 font-bold">API</div>
-                                <div className="text-[10px] text-gray-600">endpoints</div>
+                                <div className="text-[10px] text-slate-600">endpoints</div>
                             </div>
                         </div>
                     </div>

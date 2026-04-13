@@ -3,6 +3,7 @@
   "icon": "ApiRef",
   "pages": [
     "ai-models",
+    "airdrop-v1",
     "temp-mail"
   ]
 }

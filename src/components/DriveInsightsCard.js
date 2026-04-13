@@ -30,7 +30,7 @@ export default function DriveInsightsCard({ data }) {
                         <img src="/icons/dashbooard/google-drive.png" alt="Drive" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Drive Insights</h3>
+                        <h3 className="text-xs font-black text-white tracking-widest uppercase">Drive Insights</h3>
                         <p className="text-[10px] font-bold text-purple-400/60 uppercase tracking-widest mt-0.5">Storage & File Analytics</p>
                     </div>
                 </div>
@@ -43,15 +43,15 @@ export default function DriveInsightsCard({ data }) {
             <div className="grid grid-cols-3 gap-4 mb-6 relative z-10">
                 <div className="bg-black/20 rounded-xl p-3 border border-white/5 text-center">
                     <p className="text-lg font-black text-white">{summary.totalStorage}</p>
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Storage</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Storage</p>
                 </div>
                 <div className="bg-black/20 rounded-xl p-3 border border-white/5 text-center">
                     <p className="text-lg font-black text-white">{summary.totalFiles.toLocaleString()}</p>
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Files</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Files</p>
                 </div>
                 <div className="bg-black/20 rounded-xl p-3 border border-white/5 text-center">
                     <p className="text-lg font-black text-white">{summary.connectedAccounts}</p>
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Accounts</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Accounts</p>
                 </div>
             </div>
 
@@ -91,7 +91,7 @@ export default function DriveInsightsCard({ data }) {
                             </ResponsiveContainer>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center text-gray-500">
+                        <div className="flex flex-col items-center justify-center text-slate-500">
                             <p className="text-sm">No files indexed</p>
                         </div>
                     )}
@@ -103,7 +103,7 @@ export default function DriveInsightsCard({ data }) {
                         {fileTypes.map((item) => (
                             <div key={item.name} className="flex items-center gap-1.5">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                                <span className="text-[10px] font-bold text-gray-400 tracking-wider"><span className="text-gray-200">{item.value}</span> {item.name}</span>
+                                <span className="text-[10px] font-bold text-slate-400 tracking-wider"><span className="text-slate-200">{item.value}</span> {item.name}</span>
                             </div>
                         ))}
                     </div>
@@ -112,7 +112,7 @@ export default function DriveInsightsCard({ data }) {
                 {/* Small Bar Chart - Files per Account */}
                 {filesPerAccount.length > 0 && (
                     <div className="h-[90px] w-full mt-2 pt-4 border-t border-white/5">
-                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Top Accounts</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Top Accounts</span>
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={filesPerAccount} layout="vertical" margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.02)" />

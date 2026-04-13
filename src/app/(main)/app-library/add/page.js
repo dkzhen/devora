@@ -120,7 +120,7 @@ export default function AddAppPage() {
 
             {/* Header */}
             <div>
-                <nav className="flex text-xs text-gray-500 mb-6 font-medium">
+                <nav className="flex text-xs text-slate-500 mb-6 font-medium">
                     <Link href="/" className="hover:text-blue-400 transition-colors flex items-center gap-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                         Dashboard
@@ -128,12 +128,12 @@ export default function AddAppPage() {
                     <svg className="w-3 h-3 mx-2 self-center opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     <Link href="/app-library" className="hover:text-blue-400 transition-colors">App Library</Link>
                     <svg className="w-3 h-3 mx-2 self-center opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    <span className="text-gray-300">Add New App</span>
+                    <span className="text-slate-300">Add New App</span>
                 </nav>
 
                 <div className="flex flex-col gap-1">
                     <h1 className="text-3xl font-black text-white tracking-tight">Add New App</h1>
-                    <p className="text-gray-400 text-sm">Create your application record. Direct file IDs are securely attached.</p>
+                    <p className="text-slate-400 text-sm">Create your application record. Direct file IDs are securely attached.</p>
                 </div>
             </div>
 
@@ -145,12 +145,12 @@ export default function AddAppPage() {
                         <div className="w-6 h-6 rounded bg-blue-500/10 text-blue-400 flex items-center justify-center">
                             <span className="text-xs font-black">1</span>
                         </div>
-                        <h2 className="text-lg font-bold text-gray-200">App Information</h2>
+                        <h2 className="text-lg font-bold text-slate-200">App Information</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Name <span className="text-red-400">*</span></label>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">App Name <span className="text-red-400">*</span></label>
                             <input
                                 required
                                 type="text"
@@ -161,7 +161,7 @@ export default function AddAppPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Version <span className="text-red-400">*</span></label>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Version <span className="text-red-400">*</span></label>
                             <input
                                 required
                                 type="text"
@@ -172,18 +172,18 @@ export default function AddAppPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Category</label>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Category</label>
                             <select
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                                className="w-full bg-[#0a0d16] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-blue-500/50 transition-colors appearance-none"
+                                className="w-full bg-[#0a0d16] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-blue-500/50 transition-colors appearance-none"
                             >
                                 <option value="Mod">Mod</option>
                                 <option value="Original">Original</option>
                             </select>
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Description</label>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Description</label>
                             <textarea
                                 rows={3}
                                 value={description}
@@ -201,12 +201,12 @@ export default function AddAppPage() {
                         <div className="w-6 h-6 rounded bg-purple-500/10 text-purple-400 flex items-center justify-center">
                             <span className="text-xs font-black">2</span>
                         </div>
-                        <h2 className="text-lg font-bold text-gray-200">File Storage Links</h2>
+                        <h2 className="text-lg font-bold text-slate-200">File Storage Links</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
                             <input
                                 required
                                 type="text"
@@ -215,13 +215,13 @@ export default function AddAppPage() {
                                 placeholder="Paste Telegram file ID here"
                                 className="w-full bg-[#0a0d16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-colors font-mono"
                             />
-                            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
                                 Telegram Document File ID
                             </p>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Icon File ID (Optional)</label>
+                            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">App Icon File ID (Optional)</label>
                             <input
                                 type="text"
                                 value={imageFileId}
@@ -229,7 +229,7 @@ export default function AddAppPage() {
                                 placeholder="Paste Telegram photo ID here"
                                 className="w-full bg-[#0a0d16] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-fuchsia-500/50 transition-colors font-mono"
                             />
-                            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
                                 Telegram Photo File ID
                             </p>
                         </div>
@@ -241,7 +241,7 @@ export default function AddAppPage() {
                     <Link href="/app-library">
                         <button
                             type="button"
-                            className="w-full md:w-auto px-6 py-3 bg-transparent border border-white/10 hover:bg-white/5 hover:border-white/20 text-gray-300 font-bold text-sm rounded-xl transition-all"
+                            className="w-full md:w-auto px-6 py-3 bg-transparent border border-white/10 hover:bg-white/5 hover:border-white/20 text-slate-300 font-bold text-sm rounded-xl transition-all"
                             disabled={submitting}
                         >
                             Cancel

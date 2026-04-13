@@ -246,7 +246,7 @@ export default function MaintenanceControlPage() {
             <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
-                    <p className="text-xs text-gray-500 animate-pulse">Loading maintenance configs…</p>
+                    <p className="text-xs text-slate-500 animate-pulse">Loading maintenance configs…</p>
                 </div>
             </div>
         );
@@ -279,7 +279,7 @@ export default function MaintenanceControlPage() {
                     <h1 className="text-2xl font-black text-white tracking-tight">
                         System <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">Control</span>
                     </h1>
-                    <p className="text-gray-400 text-xs mt-1.5">Manage feature availability</p>
+                    <p className="text-slate-400 text-xs mt-1.5">Manage feature availability</p>
                     {activeCount > 0 && (
                         <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-300 text-[11px] font-bold">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
@@ -310,7 +310,7 @@ export default function MaintenanceControlPage() {
                                 <span className="text-white">System </span>
                                 <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 via-orange-400 to-amber-500">Maintenance</span>
                             </h1>
-                            <p className="text-gray-400 mt-2 text-sm">Toggle feature availability and manage maintenance messages</p>
+                            <p className="text-slate-400 mt-2 text-sm">Toggle feature availability and manage maintenance messages</p>
                         </div>
                         <div className="flex flex-col items-end gap-3">
                             {activeCount > 0 && (
@@ -342,7 +342,7 @@ export default function MaintenanceControlPage() {
                     <div key={i} className="bg-white/3 border border-white/8 rounded-2xl p-4 flex flex-col">
                         <span className="text-xl mb-2">{stat.icon}</span>
                         <div className={`text-2xl font-black ${stat.color}`}>{loading ? '—' : stat.value}</div>
-                        <div className="text-xs text-gray-500 mt-1 font-medium">{stat.label}</div>
+                        <div className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</div>
                     </div>
                 ))}
             </div>
@@ -350,7 +350,7 @@ export default function MaintenanceControlPage() {
             {/* Feature cards */}
             <div className="space-y-1">
                 <div className="flex items-center justify-between mb-3 px-1">
-                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Feature Controls</h2>
+                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Feature Controls</h2>
 
                     {/* Mobile Add Button */}
                     <button
@@ -369,7 +369,7 @@ export default function MaintenanceControlPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {configs.map((config) => {
-                            const colors = FEATURE_COLORS[config.feature] || { icon: 'text-gray-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
+                            const colors = FEATURE_COLORS[config.feature] || { icon: 'text-slate-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
                             const isEditing = editingMessage === config.feature;
                             const isToggling = toggling[config.feature];
 
@@ -399,7 +399,7 @@ export default function MaintenanceControlPage() {
                                                     <div className="font-bold text-white text-base flex items-center gap-2">
                                                         {config.label}
                                                     </div>
-                                                    <div className="text-xs text-gray-500 font-mono">/{config.feature}</div>
+                                                    <div className="text-xs text-slate-500 font-mono">/{config.feature}</div>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2.5">
@@ -408,7 +408,7 @@ export default function MaintenanceControlPage() {
                                                     <button
                                                         onClick={() => handleOpenEditModal(config)}
                                                         disabled={isToggling}
-                                                        className="p-1.5 text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                                        className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                                                         title="Edit Config"
                                                     >
                                                         <Edit2 className="w-3.5 h-3.5" />
@@ -416,7 +416,7 @@ export default function MaintenanceControlPage() {
                                                     <button
                                                         onClick={() => handleDeleteFeature(config.feature, config.label)}
                                                         disabled={isToggling}
-                                                        className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                                                         title="Delete Config"
                                                     >
                                                         <Trash2 className="w-3.5 h-3.5" />
@@ -445,7 +445,7 @@ export default function MaintenanceControlPage() {
                                                     <textarea
                                                         value={messageInput}
                                                         onChange={e => setMessageInput(e.target.value)}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500/40 resize-none"
+                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-gray-500 focus:outline-none focus:border-amber-500/40 resize-none"
                                                         rows={3}
                                                         placeholder="Custom maintenance message..."
                                                     />
@@ -459,7 +459,7 @@ export default function MaintenanceControlPage() {
                                                         </button>
                                                         <button
                                                             onClick={() => setEditingMessage(null)}
-                                                            className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-gray-400 rounded-lg text-xs font-bold border border-white/10 transition-colors"
+                                                            className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-slate-400 rounded-lg text-xs font-bold border border-white/10 transition-colors"
                                                         >
                                                             Cancel
                                                         </button>
@@ -468,14 +468,14 @@ export default function MaintenanceControlPage() {
                                             ) : (
                                                 <div className="flex items-start justify-between gap-2">
                                                     <div>
-                                                        <div className="text-[10px] text-gray-600 font-semibold uppercase tracking-widest mb-1">Maintenance Message</div>
-                                                        <p className="text-xs text-gray-400 leading-relaxed">
+                                                        <div className="text-[10px] text-slate-600 font-semibold uppercase tracking-widest mb-1">Maintenance Message</div>
+                                                        <p className="text-xs text-slate-400 leading-relaxed">
                                                             {config.message || 'No custom message set.'}
                                                         </p>
                                                     </div>
                                                     <button
                                                         onClick={() => { setEditingMessage(config.feature); setMessageInput(config.message || ''); }}
-                                                        className="shrink-0 p-1.5 text-gray-600 hover:text-gray-400 hover:bg-white/5 rounded-lg transition-colors"
+                                                        className="shrink-0 p-1.5 text-slate-600 hover:text-slate-400 hover:bg-white/5 rounded-lg transition-colors"
                                                         title="Edit message"
                                                     >
                                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -485,7 +485,7 @@ export default function MaintenanceControlPage() {
                                         </div>
 
                                         {/* Last updated */}
-                                        <div className="text-[10px] text-gray-600 mt-2 text-right">
+                                        <div className="text-[10px] text-slate-600 mt-2 text-right">
                                             Updated: {new Date(config.updatedAt).toLocaleString()}
                                         </div>
                                     </div>
@@ -503,8 +503,8 @@ export default function MaintenanceControlPage() {
                 </div>
                 <div>
                     <div className="text-sm font-bold text-blue-300 mb-1">How it works</div>
-                    <p className="text-xs text-gray-400 leading-relaxed">
-                        When you enable maintenance for a feature, users who navigate to that page will be automatically redirected to the maintenance page. ULTRA admins are <strong className="text-gray-300">not affected</strong> — they can still access features normally.
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                        When you enable maintenance for a feature, users who navigate to that page will be automatically redirected to the maintenance page. ULTRA admins are <strong className="text-slate-300">not affected</strong> — they can still access features normally.
                     </p>
                 </div>
             </div>
@@ -519,7 +519,7 @@ export default function MaintenanceControlPage() {
                             <button
                                 onClick={() => setIsAddingFeature(false)}
                                 disabled={isSubmitting}
-                                className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+                                className="p-1 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -527,7 +527,7 @@ export default function MaintenanceControlPage() {
 
                         <form onSubmit={handleAddFeature} className="p-5 space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">
                                     Feature Display Name
                                 </label>
                                 <input
@@ -545,11 +545,11 @@ export default function MaintenanceControlPage() {
                                     autoFocus
                                     required
                                 />
-                                <p className="text-[10px] text-gray-500 mt-1 pl-1">The name users will see.</p>
+                                <p className="text-[10px] text-slate-500 mt-1 pl-1">The name users will see.</p>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">
                                     URL ID / Slug
                                 </label>
                                 <input
@@ -560,7 +560,7 @@ export default function MaintenanceControlPage() {
                                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all font-mono"
                                     required
                                 />
-                                <p className="text-[10px] text-gray-500 mt-1 pl-1">Used internally and in routes (lowercase, no spaces).</p>
+                                <p className="text-[10px] text-slate-500 mt-1 pl-1">Used internally and in routes (lowercase, no spaces).</p>
                             </div>
 
                             <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 mt-4">
@@ -575,7 +575,7 @@ export default function MaintenanceControlPage() {
                                     type="button"
                                     onClick={() => setIsAddingFeature(false)}
                                     disabled={isSubmitting}
-                                    className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-gray-300 transition-all disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 transition-all disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>
@@ -609,7 +609,7 @@ export default function MaintenanceControlPage() {
                             <button
                                 onClick={() => setEditingFeatureConfig(null)}
                                 disabled={isEditSubmitting}
-                                className="p-1 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+                                className="p-1 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -617,7 +617,7 @@ export default function MaintenanceControlPage() {
 
                         <form onSubmit={handleEditFeatureSubmit} className="p-5 space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">
                                     Feature Display Name
                                 </label>
                                 <input
@@ -632,7 +632,7 @@ export default function MaintenanceControlPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">
+                                <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">
                                     URL ID / Slug
                                 </label>
                                 <input
@@ -650,7 +650,7 @@ export default function MaintenanceControlPage() {
                                     type="button"
                                     onClick={() => setEditingFeatureConfig(null)}
                                     disabled={isEditSubmitting}
-                                    className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-gray-300 transition-all disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 transition-all disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>

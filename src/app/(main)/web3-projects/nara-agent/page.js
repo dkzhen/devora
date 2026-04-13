@@ -189,9 +189,9 @@ export default function NaraAgentPage() {
         }
     };
 
-    if (!mounted) return <LoadingState colorTheme="nara" message="Initializing Nara Neural Interface..." />;
+    if (!mounted) return <LoadingState  message="Initializing Nara Neural Interface..." />;
 
-    if (loading) return <LoadingState colorTheme="nara" message="Syncing Agent Registry..." />;
+    if (loading) return <LoadingState  message="Syncing Agent Registry..." />;
 
     if (!user) {
         return (
@@ -223,7 +223,7 @@ export default function NaraAgentPage() {
                 title="NARA"
                 badge="Agent Registry"
                 description="Securely manage your Nara testnet wallets. Every agent gets an ID card. Verifiable, portable, enforced by math."
-                colorTheme="nara"
+                
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -267,7 +267,7 @@ export default function NaraAgentPage() {
                                     <div className="w-16 h-16 bg-green-500/5 rounded-full flex items-center justify-center mb-4">
                                         <svg className="w-8 h-8 text-green-500/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                     </div>
-                                    <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">No wallet found in neural registry.</p>
+                                    <p className="text-xs font-mono text-slate-500 uppercase tracking-widest">No wallet found in neural registry.</p>
                                     <button 
                                         onClick={() => setShowAddModal(true)}
                                         className="mt-4 text-[10px] font-black text-green-500 hover:text-green-400 uppercase tracking-widest underline decoration-2 underline-offset-4"
@@ -298,7 +298,7 @@ export default function NaraAgentPage() {
                                                                 <button onClick={() => saveWalletAlias(wallet.id)} className="text-green-500 hover:text-green-400">
                                                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                                                 </button>
-                                                                <button onClick={() => setEditingWalletId(null)} className="text-gray-500 hover:text-gray-400">
+                                                                <button onClick={() => setEditingWalletId(null)} className="text-slate-500 hover:text-slate-400">
                                                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                                                                 </button>
                                                             </div>
@@ -316,7 +316,7 @@ export default function NaraAgentPage() {
                                                             </div>
                                                         )}
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-[10px] font-mono text-gray-500 truncate">{wallet.address || 'PENDING SYNC...'}</span>
+                                                            <span className="text-[10px] font-mono text-slate-500 truncate">{wallet.address || 'PENDING SYNC...'}</span>
                                                             <button 
                                                                 onClick={() => { navigator.clipboard.writeText(wallet.address); showToast('Address copied!'); }}
                                                                 className="text-green-500/20 hover:text-green-500 transition-colors"
@@ -329,7 +329,7 @@ export default function NaraAgentPage() {
 
                                                 <div className="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
                                                     <div className="bg-green-500/5 border border-green-500/10 px-4 py-2 rounded-xl">
-                                                        <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-none mb-1 text-center">Wallet Balance</p>
+                                                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1 text-center">Wallet Balance</p>
                                                         <p className="text-sm font-black text-green-400 text-center">{wallet.lastBalance || '0'} {wallet.lastUnit || 'NARA'}</p>
                                                     </div>
                                                     <div className="flex gap-2">
@@ -399,12 +399,12 @@ export default function NaraAgentPage() {
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <p className="text-[9px] font-bold text-amber-500 uppercase tracking-widest mb-1">Warning: Temporary Key</p>
-                                            <p className="text-xs text-gray-400 font-mono">Copy and save this JSON byte array securely right now. It cannot be recovered later.</p>
+                                            <p className="text-xs text-slate-400 font-mono">Copy and save this JSON byte array securely right now. It cannot be recovered later.</p>
                                         </div>
                                     </div>
                                     <div className="space-y-4">
                                         <div>
-                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Assigned Address</p>
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Assigned Address</p>
                                             <div className="flex items-center justify-between gap-4">
                                                 <p className="text-xs text-green-400 font-mono truncate">{generatedWallet.address}</p>
                                                 <button onClick={() => { navigator.clipboard.writeText(generatedWallet.address); showToast('Address copied!'); }} className="text-green-500/40 hover:text-green-500 shrink-0">
@@ -414,7 +414,7 @@ export default function NaraAgentPage() {
                                         </div>
                                         <div>
                                             <div className="flex items-center justify-between mb-2">
-                                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Private Key (JSON Array)</p>
+                                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Private Key (JSON Array)</p>
                                                 <button 
                                                     onClick={copyGeneratedPk}
                                                     className="px-3 py-1 bg-green-500/10 hover:bg-green-500/20 text-green-500 rounded text-[9px] font-black uppercase tracking-wider transition-colors flex items-center gap-1"
@@ -444,21 +444,21 @@ export default function NaraAgentPage() {
                         </div>
                         <div className="p-6 space-y-4">
                             <div className="flex justify-between items-center text-xs font-mono">
-                                <span className="text-gray-500">Total NARA</span>
+                                <span className="text-slate-500">Total NARA</span>
                                 <span className="text-green-500 font-black">
                                     {wallets.reduce((acc, curr) => acc + (parseFloat(curr.lastBalance) || 0), 0).toFixed(4)} NARA
                                 </span>
                             </div>
                             <div className="flex justify-between items-center text-xs font-mono">
-                                <span className="text-gray-500">Node Uptime</span>
+                                <span className="text-slate-500">Node Uptime</span>
                                 <span className="text-green-500">99.98%</span>
                             </div>
                             <div className="flex justify-between items-center text-xs font-mono">
-                                <span className="text-gray-500">Encryption</span>
+                                <span className="text-slate-500">Encryption</span>
                                 <span className="text-green-500">AES-256 GCM</span>
                             </div>
                             <div className="flex justify-between items-center text-xs font-mono">
-                                <span className="text-gray-500">Nara API Status</span>
+                                <span className="text-slate-500">Nara API Status</span>
                                 <span className="text-green-500">ONLINE</span>
                             </div>
                         </div>
@@ -487,14 +487,14 @@ export default function NaraAgentPage() {
                                     <h3 className="text-lg font-black text-white tracking-tight uppercase">Register Neural Key</h3>
                                     <p className="text-xs text-green-500/50 mt-1 font-mono uppercase tracking-widest">Secure encrypted storage for testnet assets</p>
                                 </div>
-                                <button type="button" onClick={() => !submitting && setShowAddModal(false)} className="text-gray-600 hover:text-white transition-colors">
+                                <button type="button" onClick={() => !submitting && setShowAddModal(false)} className="text-slate-600 hover:text-white transition-colors">
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest block">Wallet Alias (Optional)</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Wallet Alias (Optional)</label>
                                     <input
                                         type="text"
                                         value={aliasInput}
@@ -504,7 +504,7 @@ export default function NaraAgentPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest block">Private Key Array <span className="text-green-500">*</span></label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Private Key Array <span className="text-green-500">*</span></label>
                                     <textarea
                                         required
                                         rows={3}
@@ -513,7 +513,7 @@ export default function NaraAgentPage() {
                                         placeholder="[173, 31, 93, 45, 87, 12, ...]"
                                         className="w-full bg-black border border-green-500/20 rounded-xl px-4 py-3 text-xs text-green-400 focus:outline-none focus:border-green-500/60 transition-all font-mono resize-none"
                                     />
-                                    <p className="text-[9px] text-gray-600 font-mono italic mt-1">Input must be a valid byte array format: [N, N, N...]</p>
+                                    <p className="text-[9px] text-slate-600 font-mono italic mt-1">Input must be a valid byte array format: [N, N, N...]</p>
                                 </div>
                             </div>
 
@@ -521,7 +521,7 @@ export default function NaraAgentPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 py-4 bg-transparent border border-white/5 hover:bg-white/5 text-gray-500 font-black text-[10px] uppercase tracking-widest rounded-2xl transition-colors"
+                                    className="flex-1 py-4 bg-transparent border border-white/5 hover:bg-white/5 text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-2xl transition-colors"
                                     disabled={submitting}
                                 >
                                     Abort

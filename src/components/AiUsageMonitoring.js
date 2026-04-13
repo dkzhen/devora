@@ -33,7 +33,7 @@ export default function AiUsageMonitoring({ children }) {
 
     if (loading || !data || !data.usage) {
         return (
-            <div className="col-span-full h-32 flex items-center justify-center border border-white/5 bg-[#0B0F1A]/40 rounded-lg animate-pulse font-mono text-[10px] text-gray-500 uppercase tracking-widest">
+            <div className="col-span-full h-32 flex items-center justify-center border border-white/5 bg-[#0B0F1A]/40 rounded-lg animate-pulse font-mono text-[10px] text-slate-500 uppercase tracking-widest">
                 Synchronizing AI Cluster Analytics...
             </div>
         );
@@ -99,7 +99,7 @@ function CardWrapper({ title, subtitle, icon: Icon, children, colorClass = "blue
                         <Icon className="w-4 h-4" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white tracking-widest uppercase">{title}</h3>
+                        <h3 className="text-xs font-black text-white tracking-widest uppercase">{title}</h3>
                         <p className={`text-[10px] font-bold text-${accent.replace('500', '400')} uppercase tracking-widest mt-0.5`}>{subtitle}</p>
                     </div>
                 </div>

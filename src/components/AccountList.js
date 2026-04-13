@@ -78,7 +78,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
 
     if (loading) {
         return (
-            <div className={`relative overflow-hidden ${flat ? 'rounded-none border-l border-r border-b border-t-2 border-t-[#acf7f0] border-white/5 bg-[#0f172a]/60 backdrop-blur-xl' : 'rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b]'} p-8`}>
+            <div className={`relative overflow-hidden ${flat ? 'rounded-none border-l border-r border-b border-t-2 border-t-[#acf7f0] border-white/5 bg-[#0c0e1a]/60 backdrop-blur-xl' : 'rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b]'} p-8`}>
                 <div className="space-y-3 animate-pulse">
                     {[1, 2, 3].map(i => (
                         <div key={i} className="h-14 bg-white/5 rounded-xl" />
@@ -90,7 +90,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
 
     if (!accounts || accounts.length === 0) {
         return (
-            <div className={`relative overflow-hidden ${flat ? 'rounded-none border-2 border-dashed border-[#f0acf7]/30 bg-[#0f172a]/60 backdrop-blur-xl' : 'rounded-2xl border border-dashed border-white/10 bg-linear-to-br from-[#0f172a] to-[#1e293b]'} p-16 text-center`}>
+            <div className={`relative overflow-hidden ${flat ? 'rounded-none border-2 border-dashed border-[#f0acf7]/30 bg-[#0c0e1a]/60 backdrop-blur-xl' : 'rounded-2xl border border-dashed border-white/10 bg-linear-to-br from-[#0f172a] to-[#1e293b]'} p-16 text-center`}>
                 <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-blue-600/5 blur-3xl pointer-events-none" />
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
@@ -99,7 +99,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                         </svg>
                     </div>
                     <h3 className="text-xl font-black text-white mb-2">No Accounts Connected</h3>
-                    <p className="text-gray-500 text-sm mb-6 max-w-sm">Connect your first Gmail account to start tracking your email activity.</p>
+                    <p className="text-slate-500 text-sm mb-6 max-w-sm">Connect your first Gmail account to start tracking your email activity.</p>
                     <a
                         href="/auth/google"
                         className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-xl shadow-blue-700/30 transition-all active:scale-95 border border-white/10"
@@ -114,7 +114,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
 
     return (
         <>
-        <div className={`relative overflow-hidden ${flat ? 'rounded-none border-l border-r border-b border-t-2 border-t-[#acf7f0] border-white/5 bg-[#0f172a]/60 backdrop-blur-xl' : 'rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b]'}`}>
+        <div className={`relative overflow-hidden ${flat ? 'rounded-none border-l border-r border-b border-t-2 border-t-[#acf7f0] border-white/5 bg-[#0c0e1a]/60 backdrop-blur-xl' : 'rounded-2xl border border-white/8 bg-linear-to-br from-[#0f172a] to-[#1e293b]'}`}>
             {/* Header */}
             <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
                 <h2 className="text-sm font-bold text-white">Connected Accounts</h2>
@@ -129,7 +129,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                     <thead>
                         <tr className="border-b border-white/5">
                             {['Account', 'Status', 'Stats', 'Last Check', 'Actions'].map((h, i) => (
-                                <th key={h} className={`px-6 py-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest ${i === 2 ? 'text-center' : i === 4 ? 'text-right' : ''}`}>{h}</th>
+                                <th key={h} className={`px-6 py-3 text-[10px] font-bold text-slate-600 uppercase tracking-widest ${i === 2 ? 'text-center' : i === 4 ? 'text-right' : ''}`}>{h}</th>
                             ))}
                         </tr>
                     </thead>
@@ -144,7 +144,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                         </div>
                                         <div>
                                             <div className="font-semibold text-white text-sm">{account.name || 'Unknown'}</div>
-                                            <div className="text-xs text-gray-500">{account.email}</div>
+                                            <div className="text-xs text-slate-500">{account.email}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -163,16 +163,16 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                     <div className="flex justify-center gap-6">
                                         <div className="text-center">
                                             <div className="text-sm font-black text-white">{account.totalMessages || '-'}</div>
-                                            <div className="text-[9px] text-gray-600 uppercase font-bold tracking-wider">Msgs</div>
+                                            <div className="text-[9px] text-slate-600 uppercase font-bold tracking-wider">Msgs</div>
                                         </div>
                                         <div className="text-center">
                                             <div className="text-sm font-black text-white">{account.totalThreads || '-'}</div>
-                                            <div className="text-[9px] text-gray-600 uppercase font-bold tracking-wider">Threads</div>
+                                            <div className="text-[9px] text-slate-600 uppercase font-bold tracking-wider">Threads</div>
                                         </div>
                                     </div>
                                 </td>
                                 {/* Last Check */}
-                                <td className="px-6 py-4 text-xs text-gray-500 font-medium">
+                                <td className="px-6 py-4 text-xs text-slate-500 font-medium">
                                     {account.lastCheck ? new Date(account.lastCheck).toLocaleString() : 'Never'}
                                 </td>
                                 {/* Actions */}
@@ -181,7 +181,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                         <button
                                             onClick={() => handleManage(account)}
                                             title="Auto Activity Settings"
-                                            className="p-2 rounded-lg bg-white/0 hover:bg-purple-500/10 text-gray-600 hover:text-purple-400 transition-colors border border-transparent hover:border-purple-500/20"
+                                            className="p-2 rounded-lg bg-white/0 hover:bg-purple-500/10 text-slate-600 hover:text-purple-400 transition-colors border border-transparent hover:border-purple-500/20"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                         </button>
@@ -189,7 +189,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                             onClick={() => handleRefresh(account.email)}
                                             disabled={refreshing}
                                             title="Refresh stats"
-                                            className="p-2 rounded-lg bg-white/0 hover:bg-blue-500/10 text-gray-600 hover:text-blue-400 transition-colors border border-transparent hover:border-blue-500/20"
+                                            className="p-2 rounded-lg bg-white/0 hover:bg-blue-500/10 text-slate-600 hover:text-blue-400 transition-colors border border-transparent hover:border-blue-500/20"
                                         >
                                             <svg className={`w-4 h-4 ${refreshing ? 'animate-spin text-blue-400' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                         </button>
@@ -198,8 +198,8 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                             disabled={deletingEmail === account.email}
                                             title="Remove account"
                                             className={`p-2 rounded-lg border border-transparent transition-colors ${deletingEmail === account.email
-                                                    ? 'text-gray-700 cursor-not-allowed'
-                                                    : 'bg-white/0 hover:bg-red-500/10 text-gray-600 hover:text-red-400 hover:border-red-500/20'
+                                                    ? 'text-slate-700 cursor-not-allowed'
+                                                    : 'bg-white/0 hover:bg-red-500/10 text-slate-600 hover:text-red-400 hover:border-red-500/20'
                                                 }`}
                                         >
                                             {deletingEmail === account.email ? (
@@ -227,7 +227,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-white text-xs truncate">{account.name || 'Unknown'}</div>
-                                    <div className="text-[10px] text-gray-500 truncate">{account.email}</div>
+                                    <div className="text-[10px] text-slate-500 truncate">{account.email}</div>
                                 </div>
                             </div>
                             
@@ -249,7 +249,7 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                     onClick={() => handleDelete(account.email)}
                                     disabled={deletingEmail === account.email}
                                     className={`p-1.5 transition-colors ${deletingEmail === account.email
-                                            ? 'text-gray-700 cursor-not-allowed'
+                                            ? 'text-slate-700 cursor-not-allowed'
                                             : flat ? 'text-[#f0acf7] hover:bg-[#f0acf7]/10 border border-transparent hover:border-[#f0acf7]/30 bg-transparent' : 'text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg'
                                         }`}
                                 >
@@ -289,16 +289,16 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
 
         {managingAccount && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                <div className={`bg-[#0f172a] border ${flat ? 'border-[#f0acf7]/30 rounded-none' : 'border-white/10 rounded-2xl'} w-full max-w-sm overflow-hidden shadow-2xl shadow-[#f0acf7]/10`}>
+                <div className={`bg-[#0c0e1a] border ${flat ? 'border-[#f0acf7]/30 rounded-none' : 'border-white/10 rounded-2xl'} w-full max-w-sm overflow-hidden shadow-2xl shadow-[#f0acf7]/10`}>
                     <div className="p-5 border-b border-white/10 flex justify-between items-center bg-white/5">
                         <h3 className="font-black text-white flex items-center gap-2">
                             <svg className="w-5 h-5 text-[#f0acf7]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             Auto Activity
                         </h3>
-                        <button onClick={() => setManagingAccount(null)} className="text-gray-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+                        <button onClick={() => setManagingAccount(null)} className="text-slate-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
                     </div>
                     <div className="p-5 space-y-4">
-                        <p className="text-xs text-gray-400 leading-relaxed">Aktifkan Auto Activity untuk membaca kotak masuk dan melakukan ping kirim email setiap minggunya (hari diacak otomatis) agar akun tetap terlihat hidup.</p>
+                        <p className="text-xs text-slate-400 leading-relaxed">Aktifkan Auto Activity untuk membaca kotak masuk dan melakukan ping kirim email setiap minggunya (hari diacak otomatis) agar akun tetap terlihat hidup.</p>
                         
                         <label className={`flex items-center justify-between p-3 border border-white/5 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors ${flat ? 'rounded-none' : 'rounded-xl'}`}>
                             <span className="text-sm font-bold text-white">Enable Auto Activity</span>
@@ -316,9 +316,9 @@ export default function AccountList({ accounts, loading, onRefresh, setAccounts,
                                     value={autoSettings.targetEmail} 
                                     onChange={e => setAutoSettings(prev => ({...prev, targetEmail: e.target.value}))}
                                     placeholder="ping-target@example.com"
-                                    className={`w-full bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-[none] focus:border-[#acf7f0]/50 transition-colors ${flat ? 'rounded-none' : 'rounded-xl'}`}
+                                    className={`w-full bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-[none] focus:border-[#acf7f0]/50 transition-colors ${flat ? 'rounded-none' : 'rounded-xl'}`}
                                 />
-                                <p className="text-[10px] text-gray-500">Email ini akan menerima 1x pesan otomatis setiap minggunya.</p>
+                                <p className="text-[10px] text-slate-500">Email ini akan menerima 1x pesan otomatis setiap minggunya.</p>
                             </div>
                         )}
 

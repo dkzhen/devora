@@ -180,7 +180,7 @@ export default function RecentMessages({ accounts }) {
                 <div className={`w-full md:w-[320px] shrink-0 border-r-2 border-[#e0165c]/30 overflow-y-auto ${selectedMessage ? 'hidden md:block' : 'block'}`}>
                     {loading && messages.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center p-12">
-                            <LoadingState message="Intercepting Data Stream..." colorTheme="mail_control" />
+                            <LoadingState message="Intercepting Data Stream..."  />
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="p-10 text-center text-[#e0165c]/50">

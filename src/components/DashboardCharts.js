@@ -14,7 +14,7 @@ export default function DashboardCharts({ data, hideSmallCharts = false }) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Messages Over Time Line Chart */}
-            <div className={`p-6 rounded-2xl transition-all duration-300 ${hideSmallCharts ? 'col-span-1 lg:col-span-2 bg-transparent' : 'bg-[#0f172a] border border-white/8 shadow-sm col-span-1 lg:col-span-2'}`}>
+            <div className={`p-6 rounded-2xl transition-all duration-300 ${hideSmallCharts ? 'col-span-1 lg:col-span-2 bg-transparent' : 'bg-[#0c0e1a] border border-white/8 shadow-sm col-span-1 lg:col-span-2'}`}>
                 {!hideSmallCharts && <h3 className="text-lg font-bold text-white mb-6 tracking-tight text-center md:text-left">Messages Received (Last 24h)</h3>}
                 <div className="h-[320px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
@@ -69,7 +69,7 @@ export default function DashboardCharts({ data, hideSmallCharts = false }) {
             {!hideSmallCharts && (
                 <>
                     {/* Messages per Account Bar Chart */}
-                    <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/8 shadow-sm">
+                    <div className="bg-[#0c0e1a] p-6 rounded-2xl border border-white/8 shadow-sm">
                         <h3 className="text-lg font-bold text-white mb-6 tracking-tight">Messages per Account</h3>
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
@@ -99,7 +99,7 @@ export default function DashboardCharts({ data, hideSmallCharts = false }) {
                     </div>
 
                     {/* Account Status Pie Chart */}
-                    <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/8 shadow-sm">
+                    <div className="bg-[#0c0e1a] p-6 rounded-2xl border border-white/8 shadow-sm">
                         <h3 className="text-lg font-bold text-white mb-6 tracking-tight">Account Status</h3>
                         <div className="h-[300px] w-full flex items-center justify-center">
                             <ResponsiveContainer width="100%" height="100%">

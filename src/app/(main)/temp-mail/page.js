@@ -318,13 +318,13 @@ export default function TempMail() {
                     title="Temp"
                     badge="Mail"
                     description="Loading temporary inbox..."
-                    colorTheme="nebula"
+                    
                     breadcrumbs={[
                         { label: 'Dashboard', href: '/' },
                         { label: 'Temp Mail' }
                     ]}
                 />
-                <LoadingState message="Connecting to secure mail server..." colorTheme="nebula" />
+                <LoadingState message="Connecting to secure mail server..."  />
             </div>
         );
     }
@@ -335,7 +335,7 @@ export default function TempMail() {
                 title="Temp"
                 badge="Mail"
                 description="Generate temporary emails instantly to protect your privacy and reduce spam."
-                colorTheme="nebula"
+                
                 breadcrumbs={[
                     { label: 'Dashboard', href: '/' },
                     { label: 'Temp Mail' }
@@ -370,7 +370,7 @@ export default function TempMail() {
 
                         {!account ? (
                             <div className="text-center py-6 relative z-10">
-                                <p className="text-sm text-gray-400 mb-6">You don't have an active temporary email address right now. Generate one to receive emails anonymously.</p>
+                                <p className="text-sm text-slate-400 mb-6">You don't have an active temporary email address right now. Generate one to receive emails anonymously.</p>
                                 <button
                                     onClick={generateNewEmail}
                                     disabled={generating}
@@ -388,7 +388,7 @@ export default function TempMail() {
                                 {user && (
                                     <button
                                         onClick={() => setShowHistoryModal(true)}
-                                        className="w-full mt-2 flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95"
+                                        className="w-full mt-2 flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 rounded-xl transition-all font-semibold text-sm active:scale-95"
                                     >
                                         <svg className="w-4 h-4 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         History
@@ -400,12 +400,12 @@ export default function TempMail() {
                                 <div className="p-4 bg-[#0a0e1a]/60 border border-[#A1C2BD]/20 rounded-xl mb-4 group/copy hover:border-[#A1C2BD]/40 transition-colors">
                                     <div className="flex items-center justify-between gap-3">
                                         <div className="min-w-0 flex-1">
-                                            <div className="text-[10px] uppercase tracking-wider font-bold text-gray-500 mb-1">Email Address</div>
+                                            <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Email Address</div>
                                             <div className="text-sm font-mono text-[#A1C2BD] truncate font-bold tracking-wide">{account.address}</div>
                                         </div>
                                         <button
                                             onClick={handleCopy}
-                                            className={`p-2 rounded-lg transition-colors shrink-0 flex items-center justify-center ${isCopied ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white'}`}
+                                            className={`p-2 rounded-lg transition-colors shrink-0 flex items-center justify-center ${isCopied ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white'}`}
                                             title="Copy to clipboard"
                                         >
                                             {isCopied ? (
@@ -420,7 +420,7 @@ export default function TempMail() {
                                     <button
                                         onClick={generateNewEmail}
                                         disabled={generating}
-                                        className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-white/5 hover:border-red-500/20 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95 disabled:opacity-50"
+                                        className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-red-500/10 hover:text-red-400 border border-white/5 hover:border-red-500/20 text-slate-300 rounded-xl transition-all font-semibold text-sm active:scale-95 disabled:opacity-50"
                                     >
                                         {generating ? (
                                             <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -434,7 +434,7 @@ export default function TempMail() {
                                     {user && (
                                         <button
                                             onClick={() => setShowHistoryModal(true)}
-                                            className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 rounded-xl transition-all font-semibold text-sm active:scale-95"
+                                            className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 rounded-xl transition-all font-semibold text-sm active:scale-95"
                                         >
                                             <svg className="w-4 h-4 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             History Email
@@ -448,12 +448,12 @@ export default function TempMail() {
                     {/* Inbox List */}
                     <div className="bg-[#0a0e1a]/95 border border-white/5 hover:border-[#A1C2BD]/20 transition-colors rounded-2xl flex-1 flex flex-col shadow-lg overflow-hidden">
                         <div className="p-4 border-b border-white/5 flex items-center justify-between bg-black/20">
-                            <h3 className="font-semibold text-white text-sm">Inbox {messages.length > 0 && <span className="text-gray-500">({messages.length})</span>}</h3>
+                            <h3 className="font-semibold text-white text-sm">Inbox {messages.length > 0 && <span className="text-slate-500">({messages.length})</span>}</h3>
                             {account && (
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => setAutoSync(!autoSync)}
-                                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${autoSync ? 'bg-[#A1C2BD]/20 text-[#A1C2BD] border border-[#A1C2BD]/30 shadow-[0_0_10px_rgba(161,194,189,0.1)]' : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-gray-300'}`}
+                                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${autoSync ? 'bg-[#A1C2BD]/20 text-[#A1C2BD] border border-[#A1C2BD]/30 shadow-[0_0_10px_rgba(161,194,189,0.1)]' : 'bg-white/5 text-slate-400 border border-transparent hover:bg-white/10 hover:text-slate-300'}`}
                                         title={autoSync ? "Auto Sync: ON (Every 5s)" : "Auto Sync: OFF"}
                                     >
                                         <div className={`w-1.5 h-1.5 rounded-full ${autoSync ? 'bg-[#A1C2BD] animate-pulse shadow-[0_0_5px_rgba(161,194,189,0.8)]' : 'bg-gray-500'}`} />
@@ -462,7 +462,7 @@ export default function TempMail() {
                                     <button
                                         onClick={() => fetchMessages(token, account.id, true)}
                                         disabled={isRefreshing}
-                                        className="p-1.5 text-gray-400 hover:text-white bg-white/5 rounded-lg transition-colors hover:bg-white/10 disabled:opacity-50"
+                                        className="p-1.5 text-slate-400 hover:text-white bg-white/5 rounded-lg transition-colors hover:bg-white/10 disabled:opacity-50"
                                         title="Manual Refresh"
                                     >
                                         <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -475,9 +475,9 @@ export default function TempMail() {
                             {!account ? (
                                 <div className="h-full flex flex-col items-center justify-center p-6 text-center">
                                     <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-                                        <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                        <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                                     </div>
-                                    <p className="text-sm text-gray-400 font-medium">Generate an email to view your inbox</p>
+                                    <p className="text-sm text-slate-400 font-medium">Generate an email to view your inbox</p>
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center p-6 text-center">
@@ -486,8 +486,8 @@ export default function TempMail() {
                                             <svg className="w-6 h-6 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2h8m4 0a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                         </div>
                                     </div>
-                                    <p className="text-sm text-gray-300 font-medium mb-1">Waiting for emails...</p>
-                                    <p className="text-xs text-gray-500">Your inbox automatically refreshes every 10s</p>
+                                    <p className="text-sm text-slate-300 font-medium mb-1">Waiting for emails...</p>
+                                    <p className="text-xs text-slate-500">Your inbox automatically refreshes every 10s</p>
                                 </div>
                             ) : (
                                 <div className="divide-y divide-white/5">
@@ -501,11 +501,11 @@ export default function TempMail() {
                                             className={`w-full text-left p-4 transition-all hover:bg-white/5 ${selectedMessage?.id === msg.id ? 'bg-[#19183B]/40 border-l-2 border-l-[#A1C2BD] shadow-[inset_4px_0_0_rgba(161,194,189,0.5)]' : 'border-l-2 border-transparent'}`}
                                         >
                                             <div className="flex items-center justify-between mb-1.5 gap-2">
-                                                <span className="text-sm font-semibold text-gray-200 truncate">{msg.from.name || msg.from.address}</span>
-                                                <span className="text-[10px] text-gray-500 whitespace-nowrap">{formatDate(msg.createdAt)}</span>
+                                                <span className="text-sm font-semibold text-slate-200 truncate">{msg.from.name || msg.from.address}</span>
+                                                <span className="text-[10px] text-slate-500 whitespace-nowrap">{formatDate(msg.createdAt)}</span>
                                             </div>
                                             <div className="text-xs text-[#708993] font-semibold mb-1 truncate">{msg.subject}</div>
-                                            <div className="text-xs text-gray-500 truncate">{msg.intro}</div>
+                                            <div className="text-xs text-slate-500 truncate">{msg.intro}</div>
                                         </button>
                                     ))}
                                 </div>
@@ -518,12 +518,12 @@ export default function TempMail() {
                 <div className="w-full lg:w-2/3 bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl shadow-xl overflow-hidden flex flex-col min-h-[500px] relative group">
                     <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/10 via-transparent to-[#19183B]/10 opacity-20 pointer-events-none" />
                     {!selectedMessage ? (
-                        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center text-gray-500">
+                        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500">
                             <div className="w-16 h-16 rounded-3xl bg-[#A1C2BD]/5 border border-[#A1C2BD]/10 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(161,194,189,0.02)]">
                                 <svg className="w-8 h-8 text-[#708993]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5M10 12l2.25 1.5M14 12l-2.25 1.5" /></svg>
                             </div>
-                            <h3 className="text-lg font-medium text-gray-300 mb-2">No Message Selected</h3>
-                            <p className="text-sm max-w-sm text-gray-500">Select an email from your inbox on the left to read its contents.</p>
+                            <h3 className="text-lg font-medium text-slate-300 mb-2">No Message Selected</h3>
+                            <p className="text-sm max-w-sm text-slate-500">Select an email from your inbox on the left to read its contents.</p>
                         </div>
                     ) : (
                         <div className="relative z-10 flex-1 flex flex-col h-full">
@@ -536,10 +536,10 @@ export default function TempMail() {
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                                            <span className="font-semibold text-gray-200 truncate">{selectedMessage.from.name}</span>
-                                            <span className="text-xs text-gray-400 font-mono bg-white/5 px-1.5 py-0.5 rounded">&lt;{selectedMessage.from.address}&gt;</span>
+                                            <span className="font-semibold text-slate-200 truncate">{selectedMessage.from.name}</span>
+                                            <span className="text-xs text-slate-400 font-mono bg-white/5 px-1.5 py-0.5 rounded">&lt;{selectedMessage.from.address}&gt;</span>
                                         </div>
-                                        <div className="text-[11px] text-gray-500">
+                                        <div className="text-[11px] text-slate-500">
                                             Received: {formatDate(selectedMessage.createdAt)}
                                         </div>
                                     </div>
@@ -555,9 +555,9 @@ export default function TempMail() {
                                 ) : messageContent?.error ? (
                                     <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto">
                                         <svg className="w-12 h-12 mb-4 text-rose-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                        <p className="text-gray-300 font-medium mb-2">Message body unavailable</p>
-                                        <div className="text-sm text-gray-400 bg-white/5 p-4 rounded-xl border border-white/5 whitespace-pre-wrap text-left w-full relative">
-                                            <span className="absolute -top-2.5 left-4 bg-[#0a0f1e] text-[10px] uppercase font-bold text-gray-500 px-1">Message Preview</span>
+                                        <p className="text-slate-300 font-medium mb-2">Message body unavailable</p>
+                                        <div className="text-sm text-slate-400 bg-white/5 p-4 rounded-xl border border-white/5 whitespace-pre-wrap text-left w-full relative">
+                                            <span className="absolute -top-2.5 left-4 bg-[#0a0f1e] text-[10px] uppercase font-bold text-slate-500 px-1">Message Preview</span>
                                             {selectedMessage?.intro || "No preview available for this message. It might not be stored in the database locally."}
                                         </div>
                                     </div>
@@ -566,20 +566,20 @@ export default function TempMail() {
                                         {messageContent.html ? (
                                             <div
                                                 dangerouslySetInnerHTML={{ __html: messageContent.html.join('') }}
-                                                className="w-full h-full pb-10 text-gray-200 **:text-gray-200! **:bg-transparent! **:border-gray-700!"
+                                                className="w-full h-full pb-10 text-slate-200 **:text-slate-200! **:bg-transparent! **:border-gray-700!"
                                             />
                                         ) : messageContent.text ? (
-                                            <div className="whitespace-pre-wrap font-sans text-sm text-gray-300 pb-10">
+                                            <div className="whitespace-pre-wrap font-sans text-sm text-slate-300 pb-10">
                                                 {messageContent.text}
                                             </div>
                                         ) : (
-                                            <div className="whitespace-pre-wrap font-sans text-sm text-gray-400 italic pb-10">
+                                            <div className="whitespace-pre-wrap font-sans text-sm text-slate-400 italic pb-10">
                                                 {selectedMessage?.intro || "This message has no textual content."}
                                             </div>
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="h-full flex items-center justify-center text-gray-500">
+                                    <div className="h-full flex items-center justify-center text-slate-500">
                                         Select a message to read.
                                     </div>
                                 )}
@@ -599,14 +599,14 @@ export default function TempMail() {
                                 <svg className="w-5 h-5 text-[#A1C2BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 Email History
                             </h3>
-                            <button onClick={() => setShowHistoryModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-colors">
+                            <button onClick={() => setShowHistoryModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
                         <div className="max-h-[400px] overflow-y-auto p-4 flex flex-col gap-3">
                             {history.filter(item => item.id !== account?.id).length === 0 ? (
                                 <div className="py-10 text-center">
-                                    <p className="text-gray-500 text-sm italic">No history found</p>
+                                    <p className="text-slate-500 text-sm italic">No history found</p>
                                 </div>
                             ) : (
                                 history
@@ -614,8 +614,8 @@ export default function TempMail() {
                                     .map((item) => (
                                         <div key={item.id} className="p-4 rounded-xl border transition-all flex items-center justify-between gap-4 group bg-white/5 border-transparent hover:border-white/10">
                                             <div className="min-w-0 flex-1">
-                                                <div className="text-sm font-bold text-gray-200 truncate">{item.address}</div>
-                                                <div className="text-[10px] text-gray-500 mt-0.5">Created: {new Date(item.createdAt).toLocaleDateString()}</div>
+                                                <div className="text-sm font-bold text-slate-200 truncate">{item.address}</div>
+                                                <div className="text-[10px] text-slate-500 mt-0.5">Created: {new Date(item.createdAt).toLocaleDateString()}</div>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <button 
@@ -640,7 +640,7 @@ export default function TempMail() {
                             )}
                         </div>
                         <div className="p-4 bg-black/20 border-t border-white/5 flex justify-end">
-                            <button onClick={() => setShowHistoryModal(false)} className="px-4 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Close</button>
+                            <button onClick={() => setShowHistoryModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">Close</button>
                         </div>
                     </div>
                 </div>

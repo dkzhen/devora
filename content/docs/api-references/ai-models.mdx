@@ -10,11 +10,11 @@ Devora provides an OpenAI-compatible reverse proxy that allows you to access mul
 
 To use Devora AI models with any OpenAI-compatible client, use the following configuration:
 
-- **Base URL**: `https://devora.dkzhen.org/api/v1/ai`
+- **Base URL**: `https://devora.my.id/api/v1/ai`
 - **Endpoint**: `/chat/completions`
 
 > [!TIP]
-> When using the OpenAI SDK, set the `base_url` to `https://devora.dkzhen.org/api/v1/ai`. The SDK will automatically append `/chat/completions` to your requests.
+> When using the OpenAI SDK, set the `base_url` to `https://devora.my.id/api/v1/ai`. The SDK will automatically append `/chat/completions` to your requests.
 
 ---
 
@@ -58,7 +58,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="devora_your_key",
-    base_url="https://devora.dkzhen.org/api/v1/ai"
+    base_url="https://devora.my.id/api/v1/ai"
 )
 
 response = client.chat.completions.create(
@@ -74,7 +74,7 @@ for chunk in response:
 ### cURL
 
 ```bash
-curl https://devora.dkzhen.org/api/v1/ai/chat/completions \
+curl https://devora.my.id/api/v1/ai/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer devora_your_api_key" \
   -d '{

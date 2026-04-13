@@ -296,7 +296,7 @@ export default function GroqIntelligencePage() {
                 breadcrumbs={breadcrumbs}
                 title="Groq Intelligence"
                 description="Advanced AI Acceleration"
-                colorTheme="emerald"
+                
             />
 
             {/* Sidebar and Overlay moved back inside content container for local behavior */}
@@ -306,7 +306,7 @@ export default function GroqIntelligencePage() {
 
                 {loading ? (
                     <div className="flex-1 flex items-center justify-center">
-                        <LoadingState message="Initializing AI Interface..." colorTheme="emerald" />
+                        <LoadingState message="Initializing AI Interface..."  />
                     </div>
                 ) : !hasCredential && !showKeyModal ? (
                     <div className="flex-1 overflow-y-auto pb-20 custom-scrollbar">
@@ -389,7 +389,7 @@ export default function GroqIntelligencePage() {
                             </div>
                             <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
                                 {sessions.map(s => (
-                                    <div key={s.id} onClick={() => loadSession(s.id)} className={`flex items-center justify-between p-3 cursor-pointer transition-all border ${currentSessionId === s.id ? 'bg-emerald-500/20 border-emerald-500/50 text-white' : 'border-emerald-500/10 hover:bg-emerald-500/10 text-gray-400'}`} style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}>
+                                    <div key={s.id} onClick={() => loadSession(s.id)} className={`flex items-center justify-between p-3 cursor-pointer transition-all border ${currentSessionId === s.id ? 'bg-emerald-500/20 border-emerald-500/50 text-white' : 'border-emerald-500/10 hover:bg-emerald-500/10 text-slate-400'}`} style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}>
                                         <span className="flex-1 text-sm truncate">{s.title || "New Chat"}</span>
                                         <button onClick={(e) => deleteSession(s.id, e)} className="p-1 hover:text-red-400"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                                     </div>
@@ -403,7 +403,7 @@ export default function GroqIntelligencePage() {
                         <div className="flex-1 flex flex-col min-w-0">
                             <div className="bg-black/60 backdrop-blur-sm border-b-2 border-emerald-500/20 p-4">
                                 <div className="flex items-center justify-between gap-4">
-                                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/5 border border-white/5 text-gray-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+                                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 bg-white/5 border border-white/5 text-slate-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg></button>
                                     <div className="relative flex-1 md:flex-none">
                                         <select value={selectedModel} onChange={(e) => setSelectedModel(e.target.value)} className="absolute inset-0 w-full opacity-0 z-20 cursor-pointer">
                                             <option value="groq/compound">groq/compound</option>
@@ -418,8 +418,8 @@ export default function GroqIntelligencePage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <button onClick={() => setShowSettingsModal(true)} className="p-2 border border-white/10 text-gray-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button>
-                                        <button onClick={() => setShowKeyModal(true)} className="p-2 border border-white/10 text-gray-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg></button>
+                                        <button onClick={() => setShowSettingsModal(true)} className="p-2 border border-white/10 text-slate-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button>
+                                        <button onClick={() => setShowKeyModal(true)} className="p-2 border border-white/10 text-slate-400 hover:text-white"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg></button>
                                     </div>
                                 </div>
                             </div>

@@ -134,7 +134,7 @@ function EmailListContent() {
 
             {/* ── Page Header ── */}
             <HeroHeader
-                colorTheme="unicorn"
+                
                 title="Gmail"
                 badge="Center"
                 description="Manage your connected Gmail accounts securely in a high-performance workspace."
@@ -146,7 +146,7 @@ function EmailListContent() {
 
             {loading ? (
                 <div className="py-24">
-                    <LoadingState message="Connecting to Gmail servers..." colorTheme="unicorn" />
+                    <LoadingState message="Connecting to Gmail servers..."  />
                 </div>
             ) : (
                 <>

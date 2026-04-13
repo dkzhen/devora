@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const publicPaths = ['/', '/llm-console', '/register', '/airdrops', '/app-library', '/login', '/auth/google', '/maintenance', '/http-client', '/temp-mail', '/ai-providers', '/docs'];
+const publicPaths = ['/', '/llm-console', '/register', '/airdrops', '/app-library', '/login', '/auth/google', '/maintenance', '/http-client', '/temp-mail', '/ai-providers', '/docs', '/web3-projects'];
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;

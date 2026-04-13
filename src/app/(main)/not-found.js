@@ -40,7 +40,7 @@ export default function NotFound() {
                         </span>
                     </h1>
 
-                    <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                    <p className="text-slate-400 text-sm leading-relaxed mb-6">
                         The page you&apos;re looking for doesn&apos;t exist, was moved, or was deleted. Double-check the URL or navigate back to safety.
                     </p>
 
@@ -57,8 +57,8 @@ export default function NotFound() {
                     </a>
                 </div>
 
-                <p className="text-gray-600 text-xs">
-                    Error 404 · <span className="text-gray-500">Devora Platform</span>
+                <p className="text-slate-600 text-xs">
+                    Error 404 · <span className="text-slate-500">Devora Platform</span>
                 </p>
             </div>
         </div>

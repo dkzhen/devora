@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import LockedFeatureScreen from '@/components/LockedFeatureScreen';
+import { HeroHeader } from '@/components/HeroHeader';
 
 // --- Syntax Highlighter ---
 function JsonHighlight({ value }) {
@@ -26,7 +27,7 @@ function JsonHighlight({ value }) {
                     });
                 return (
                     <div key={i} className="flex min-w-0">
-                        <span className="select-none text-gray-600 w-8 shrink-0 text-right pr-3">{i + 1}</span>
+                        <span className="select-none text-slate-600 w-8 shrink-0 text-right pr-3">{i + 1}</span>
                         <span dangerouslySetInnerHTML={{ __html: highlighted || '&ZeroWidthSpace;' }} />
                     </div>
                 );
@@ -46,7 +47,7 @@ function MethodBadge({ method, size = 'sm' }) {
     };
     const s = size === 'sm' ? 'text-[10px] px-2 py-0.5 w-14' : 'text-xs px-3 py-1 w-16';
     return (
-        <span className={`${s} ${map[method] || 'bg-gray-500/15 text-gray-400 border-gray-500/30'} text-center rounded border font-semibold tracking-normal shrink-0`}>
+        <span className={`${s} ${map[method] || 'bg-gray-500/15 text-slate-400 border-gray-500/30'} text-center rounded border font-semibold tracking-normal shrink-0`}>
             {method}
         </span>
     );
@@ -63,7 +64,7 @@ function StatCard({ label, value, icon, iconBg, glowBg }) {
                 </div>
                 <div>
                     <p className="text-2xl font-black text-white">{value}</p>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">{label}</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">{label}</p>
                 </div>
             </div>
         </div>
@@ -188,7 +189,7 @@ export default function EndpointsPage() {
             <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-                    <p className="text-xs text-gray-500 animate-pulse">Loading playground…</p>
+                    <p className="text-xs text-slate-500 animate-pulse">Loading playground…</p>
                 </div>
             </div>
         );
@@ -323,65 +324,55 @@ export default function EndpointsPage() {
 
     return (
         <div className="space-y-6 animate-fade-in-up pb-20">
-            {/* Header */}
-            <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#0d1b3e] to-gray-900" />
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-                <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-
-                <div className="relative z-10 p-8">
-                    <nav className="flex text-xs text-blue-300/60 mb-3 items-center gap-2">
-                        <a href="/" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </a>
-                        <svg className="w-3 h-3 text-blue-400/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="text-blue-200 font-semibold">Endpoints</span>
-                    </nav>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2">
-                                <span className="text-white">Endpoints </span>
-                                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-indigo-400 to-purple-400">Playground</span>
-                            </h1>
-                            <p className="text-gray-400 text-sm max-w-xl">
-                                Exclusive developer access. Monitor real-time traffic, inspect responses, and test any endpoint interactively.
-                            </p>
-                        </div>
-                        {/* Stats Row */}
-                        <div className="grid flex-1 w-full grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
-                            <StatCard
-                                label="Endpoints"
-                                value={totalEndpoints}
-                                glowBg="bg-blue-500"
-                                iconBg="bg-blue-500/25"
-                                icon={<svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3" /></svg>}
-                            />
-                            <StatCard
-                                label="Total Hits"
-                                value={totalHits}
-                                glowBg="bg-emerald-500"
-                                iconBg="bg-emerald-500/25"
-                                icon={<svg className="w-5 h-5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
-                            />
+            <HeroHeader
+                breadcrumbs={[
+                    {
+                        label: "Dashboard",
+                        href: "/",
+                        icon: <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    },
+                    {
+                        label: "Endpoints",
+                        icon: <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.6)] animate-pulse mr-1" />
+                    }
+                ]}
+                title="Playground"
+                badge="Endpoints"
+                description="Monitor real-time traffic, inspect responses, and test any endpoint interactively from this central hub."
+                actionContent={
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <StatCard
+                            label="Endpoints"
+                            value={totalEndpoints}
+                            glowBg="bg-purple-500"
+                            iconBg="bg-purple-500/25"
+                            icon={<svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3" /></svg>}
+                        />
+                        <StatCard
+                            label="Total Hits"
+                            value={totalHits}
+                            glowBg="bg-indigo-500"
+                            iconBg="bg-indigo-500/25"
+                            icon={<svg className="w-4 h-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+                        />
+                        <div className="hidden md:block">
                             <StatCard
                                 label="History"
                                 value={history.length}
                                 glowBg="bg-purple-500"
                                 iconBg="bg-purple-500/25"
-                                icon={<svg className="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                                icon={<svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
                             />
                         </div>
                     </div>
-                </div>
-            </div>
+                }
+            />
 
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                 {/* Search */}
                 <div className="relative flex-1">
-                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input
@@ -389,7 +380,7 @@ export default function EndpointsPage() {
                         placeholder="Search endpoints or descriptions…"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-gray-300 placeholder:text-gray-600 outline-none focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
+                        className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-300 placeholder:text-slate-600 outline-none focus:border-blue-500/50 focus:bg-white/[0.07] transition-all"
                     />
                 </div>
                 {/* Method Filter */}
@@ -400,7 +391,7 @@ export default function EndpointsPage() {
                             onClick={() => setFilterMethod(m)}
                             className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-all ${filterMethod === m
                                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                                : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                                : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                                 }`}
                         >
                             {m}
@@ -422,21 +413,21 @@ export default function EndpointsPage() {
 
             {/* History Panel */}
             {historyOpen && history.length > 0 && (
-                <div className="bg-[#0f172a]/90 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
+                <div className="bg-[#0c0e1a]/90 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
                     <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
                         <h3 className="text-sm font-bold text-white flex items-center gap-2">
                             <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             Request History
                         </h3>
-                        <button onClick={() => { setHistory([]); setHistoryOpen(false); }} className="text-[10px] text-gray-500 hover:text-gray-300 transition-colors">Clear All</button>
+                        <button onClick={() => { setHistory([]); setHistoryOpen(false); }} className="text-[10px] text-slate-500 hover:text-slate-300 transition-colors">Clear All</button>
                     </div>
                     <div className="divide-y divide-white/5 max-h-64 overflow-y-auto">
                         {history.map((h, i) => (
                             <div key={i} className="flex items-center gap-3 px-5 py-2.5 hover:bg-white/3 transition-colors">
                                 <MethodBadge method={h.method} />
-                                <code className="text-xs text-gray-300 flex-1 truncate font-mono">{h.path}</code>
+                                <code className="text-xs text-slate-300 flex-1 truncate font-mono">{h.path}</code>
                                 <span className={`text-[10px] px-2 py-0.5 rounded border ${statusColor(h.status)}`}>{h.status}</span>
-                                <span className="text-[10px] text-gray-600 w-14 text-right shrink-0">{h.time}ms</span>
+                                <span className="text-[10px] text-slate-600 w-14 text-right shrink-0">{h.time}ms</span>
                             </div>
                         ))}
                     </div>
@@ -445,7 +436,7 @@ export default function EndpointsPage() {
 
             {/* Categories */}
             {filteredCategories.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-600">
+                <div className="flex flex-col items-center justify-center py-20 text-slate-600">
                     <svg className="w-12 h-12 mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     <p className="text-sm">No endpoints match your filter.</p>
                 </div>
@@ -457,12 +448,12 @@ export default function EndpointsPage() {
                             <button
                                 key={catIdx}
                                 onClick={() => setActiveCategory(cat.category)}
-                                className={`w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center gap-4 ${activeCategory === cat.category ? 'bg-blue-600/10 border-blue-500/30 text-white shadow-lg shadow-blue-500/5' : 'bg-[#0f172a]/80 backdrop-blur-xl border-white/5 hover:bg-white/5 hover:border-white/10 text-gray-400'}`}
+                                className={`w-full text-left px-5 py-4 rounded-2xl border transition-all flex items-center gap-4 ${activeCategory === cat.category ? 'bg-blue-600/10 border-blue-500/30 text-white shadow-lg shadow-blue-500/5' : 'bg-[#0c0e1a]/80 backdrop-blur-xl border-white/5 hover:bg-white/5 hover:border-white/10 text-slate-400'}`}
                             >
                                 <span className="text-2xl shrink-0">{cat.icon}</span>
                                 <div className="flex-1 min-w-0">
-                                    <p className={`text-sm font-bold truncate ${activeCategory === cat.category ? 'text-white' : 'text-gray-300'}`}>{cat.category}</p>
-                                    <p className="text-[11px] truncate text-gray-500 mt-0.5">{cat.endpoints.length} endpoint{cat.endpoints.length !== 1 ? 's' : ''}</p>
+                                    <p className={`text-sm font-bold truncate ${activeCategory === cat.category ? 'text-white' : 'text-slate-300'}`}>{cat.category}</p>
+                                    <p className="text-[11px] truncate text-slate-500 mt-0.5">{cat.endpoints.length} endpoint{cat.endpoints.length !== 1 ? 's' : ''}</p>
                                 </div>
                             </button>
                         ))}
@@ -471,14 +462,14 @@ export default function EndpointsPage() {
                     {/* Active Category Endpoints */}
                     <div className="flex-1 min-w-0 w-full">
                         {displayCategory && (
-                            <div className="bg-[#0f172a]/80 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
+                            <div className="bg-[#0c0e1a]/80 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
                                 {/* Category Header */}
                                 <div className="px-6 py-5 border-b border-white/5 bg-linear-to-r from-blue-900/10 to-transparent flex flex-col sm:flex-row sm:items-center gap-3">
                                     <div className="flex items-center gap-4 flex-1 min-w-0">
                                         <span className="text-3xl shrink-0">{displayCategory.icon}</span>
                                         <div className="min-w-0">
                                             <h2 className="text-lg font-bold text-white truncate">{displayCategory.category}</h2>
-                                            <p className="text-xs text-gray-400 mt-0.5">{displayCategory.desc}</p>
+                                            <p className="text-xs text-slate-400 mt-0.5">{displayCategory.desc}</p>
                                         </div>
                                     </div>
                                     <div className="ml-12 sm:ml-auto">
@@ -505,19 +496,19 @@ export default function EndpointsPage() {
                                                 >
                                                     <div className="flex items-center gap-3 flex-1 min-w-0">
                                                         <MethodBadge method={ep.method} />
-                                                        <code className="text-sm font-mono text-gray-200 truncate">{ep.path}</code>
-                                                        <span className="hidden sm:flex items-center gap-1 text-[10px] text-gray-500 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
+                                                        <code className="text-sm font-mono text-slate-200 truncate">{ep.path}</code>
+                                                        <span className="hidden sm:flex items-center gap-1 text-[10px] text-slate-500 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
                                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                                                             {hitCount}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-3 shrink-0">
-                                                        <p className="text-xs text-gray-500 max-w-[240px] truncate hidden lg:block">{ep.desc}</p>
+                                                        <p className="text-xs text-slate-500 max-w-[240px] truncate hidden lg:block">{ep.desc}</p>
                                                         <button
                                                             onClick={(e) => { e.stopPropagation(); handleExpand(ep); }}
                                                             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all border ${isExpanded
                                                                 ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/25'
-                                                                : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20'
+                                                                : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
                                                                 }`}
                                                         >
                                                             {isExpanded ? (
@@ -535,12 +526,12 @@ export default function EndpointsPage() {
                                                         {/* URL Bar */}
                                                         <div className="px-6 py-3 border-b border-white/5 flex items-center gap-3">
                                                             <MethodBadge method={ep.method} size="md" />
-                                                            <div className="flex-1 bg-black/50 border border-white/10 rounded-lg px-3 py-1.5 font-mono text-xs text-gray-300 overflow-x-auto whitespace-nowrap scrollbar-thin flex items-center gap-2">
-                                                                <span className="text-gray-600">localhost:3000</span>
+                                                            <div className="flex-1 bg-black/50 border border-white/10 rounded-lg px-3 py-1.5 font-mono text-xs text-slate-300 overflow-x-auto whitespace-nowrap scrollbar-thin flex items-center gap-2">
+                                                                <span className="text-slate-600">localhost:3000</span>
                                                                 {resolvedUrl.split('/').map((seg, j) => (
                                                                     <span key={j}>
-                                                                        {j > 0 && <span className="text-gray-600">/</span>}
-                                                                        <span className={seg.startsWith(':') ? 'text-amber-400' : 'text-gray-300'}>{seg}</span>
+                                                                        {j > 0 && <span className="text-slate-600">/</span>}
+                                                                        <span className={seg.startsWith(':') ? 'text-amber-400' : 'text-slate-300'}>{seg}</span>
                                                                     </span>
                                                                 ))}
                                                                 {user && (
@@ -576,7 +567,7 @@ export default function EndpointsPage() {
                                                                             onClick={() => setRequestTab(tab)}
                                                                             className={`px-4 py-2.5 text-[11px] font-semibold capitalize border-b-2 transition-all ${requestTab === tab
                                                                                 ? 'border-blue-500 text-blue-400'
-                                                                                : 'border-transparent text-gray-500 hover:text-gray-300'
+                                                                                : 'border-transparent text-slate-500 hover:text-slate-300'
                                                                                 }`}
                                                                         >
                                                                             {tab}
@@ -591,7 +582,7 @@ export default function EndpointsPage() {
                                                                         <div>
                                                                             {pathParams.length > 0 ? (
                                                                                 <div className="space-y-2.5">
-                                                                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Path Parameters</p>
+                                                                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Path Parameters</p>
                                                                                     {pathParams.map(param => {
                                                                                         const pName = param.substring(1);
                                                                                         return (
@@ -602,14 +593,14 @@ export default function EndpointsPage() {
                                                                                                     value={testParams[pName] || ''}
                                                                                                     onChange={(e) => handleParamChange(pName, e.target.value)}
                                                                                                     placeholder={`Enter ${pName}…`}
-                                                                                                    className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-gray-600 outline-none focus:border-blue-500/50 transition-all"
+                                                                                                    className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-slate-600 outline-none focus:border-blue-500/50 transition-all"
                                                                                                 />
                                                                                             </div>
                                                                                         );
                                                                                     })}
                                                                                 </div>
                                                                             ) : (
-                                                                                <div className="flex flex-col items-center justify-center h-32 text-gray-600">
+                                                                                <div className="flex flex-col items-center justify-center h-32 text-slate-600">
                                                                                     <svg className="w-6 h-6 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                                                                     <p className="text-xs">No path parameters</p>
                                                                                 </div>
@@ -620,7 +611,7 @@ export default function EndpointsPage() {
                                                                     {/* Headers Tab */}
                                                                     {requestTab === 'headers' && (
                                                                         <div className="space-y-2.5">
-                                                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Request Headers</p>
+                                                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Request Headers</p>
                                                                             {testHeaders.map((h, hIdx) => (
                                                                                 <div key={hIdx} className="flex items-center gap-2">
                                                                                     <button
@@ -633,17 +624,17 @@ export default function EndpointsPage() {
                                                                                         value={h.key}
                                                                                         onChange={e => setTestHeaders(prev => prev.map((x, i) => i === hIdx ? { ...x, key: e.target.value } : x))}
                                                                                         placeholder="Header name"
-                                                                                        className="flex-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-blue-300 font-mono placeholder:text-gray-600 outline-none focus:border-blue-500/50 transition-all"
+                                                                                        className="flex-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-blue-300 font-mono placeholder:text-slate-600 outline-none focus:border-blue-500/50 transition-all"
                                                                                     />
                                                                                     <input
                                                                                         value={h.value}
                                                                                         onChange={e => setTestHeaders(prev => prev.map((x, i) => i === hIdx ? { ...x, value: e.target.value } : x))}
                                                                                         placeholder="Value"
-                                                                                        className="flex-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-gray-300 font-mono placeholder:text-gray-600 outline-none focus:border-blue-500/50 transition-all"
+                                                                                        className="flex-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-slate-300 font-mono placeholder:text-slate-600 outline-none focus:border-blue-500/50 transition-all"
                                                                                     />
                                                                                     <button
                                                                                         onClick={() => setTestHeaders(prev => prev.filter((_, i) => i !== hIdx))}
-                                                                                        className="text-gray-600 hover:text-rose-400 transition-colors shrink-0"
+                                                                                        className="text-slate-600 hover:text-rose-400 transition-colors shrink-0"
                                                                                     >
                                                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                                                                     </button>
@@ -663,7 +654,7 @@ export default function EndpointsPage() {
                                                                     {requestTab === 'body' && (ep.method === 'POST' || ep.method === 'PUT' || ep.method === 'PATCH') && (
                                                                         <div className="space-y-2">
                                                                             <div className="flex items-center justify-between">
-                                                                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Request Body (JSON)</p>
+                                                                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Request Body (JSON)</p>
                                                                                 <div className="flex items-center gap-2">
                                                                                     {ep.autoCleanupEndpoint && (
                                                                                         <span className="text-[10px] text-emerald-400 flex items-center gap-1 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">
@@ -685,7 +676,7 @@ export default function EndpointsPage() {
                                                                                 value={testBody}
                                                                                 onChange={(e) => setTestBody(e.target.value)}
                                                                                 rows={10}
-                                                                                className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-xs text-gray-300 font-mono outline-none focus:border-blue-500/50 resize-y transition-all"
+                                                                                className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-xs text-slate-300 font-mono outline-none focus:border-blue-500/50 resize-y transition-all"
                                                                                 placeholder="{}"
                                                                                 spellCheck={false}
                                                                             />
@@ -704,7 +695,7 @@ export default function EndpointsPage() {
                                                                             onClick={() => setResponseTab(tab)}
                                                                             className={`px-4 py-2.5 text-[11px] font-semibold capitalize border-b-2 transition-all ${responseTab === tab
                                                                                 ? 'border-blue-500 text-blue-400'
-                                                                                : 'border-transparent text-gray-500 hover:text-gray-300'
+                                                                                : 'border-transparent text-slate-500 hover:text-slate-300'
                                                                                 }`}
                                                                         >
                                                                             {tab}
@@ -715,10 +706,10 @@ export default function EndpointsPage() {
                                                                             <span className={`text-[10px] px-2 py-0.5 rounded border font-bold ${statusColor(testResult.status)}`}>
                                                                                 {testResult.status}
                                                                             </span>
-                                                                            <span className="text-[10px] text-gray-500">{testResult.time}ms</span>
+                                                                            <span className="text-[10px] text-slate-500">{testResult.time}ms</span>
                                                                             <button
                                                                                 onClick={copyResponse}
-                                                                                className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-gray-300 transition-colors"
+                                                                                className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-slate-300 transition-colors"
                                                                             >
                                                                                 {copyDone ? (
                                                                                     <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -734,7 +725,7 @@ export default function EndpointsPage() {
                                                                 {/* Response Body */}
                                                                 <div ref={responseRef} className="flex-1 bg-[#070d1a] min-h-[250px] overflow-auto p-4">
                                                                     {testLoading ? (
-                                                                        <div className="flex flex-col items-center justify-center h-full text-gray-600 gap-3">
+                                                                        <div className="flex flex-col items-center justify-center h-full text-slate-600 gap-3">
                                                                             <div className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
                                                                             <p className="text-xs animate-pulse">Waiting for response…</p>
                                                                         </div>
@@ -742,14 +733,14 @@ export default function EndpointsPage() {
                                                                         responseTab === 'pretty' ? (
                                                                             <JsonHighlight value={testResult.data} />
                                                                         ) : (
-                                                                            <pre className="text-xs font-mono text-gray-400 whitespace-pre-wrap break-all">
+                                                                            <pre className="text-xs font-mono text-slate-400 whitespace-pre-wrap break-all">
                                                                                 {typeof testResult.data === 'object'
                                                                                     ? JSON.stringify(testResult.data, null, 2)
                                                                                     : String(testResult.data)}
                                                                             </pre>
                                                                         )
                                                                     ) : (
-                                                                        <div className="flex flex-col items-center justify-center h-full text-gray-700 gap-2">
+                                                                        <div className="flex flex-col items-center justify-center h-full text-slate-700 gap-2">
                                                                             <svg className="w-10 h-10 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                                                             <p className="text-xs">Hit <span className="text-blue-500 font-semibold">Send</span> to see the response</p>
                                                                         </div>

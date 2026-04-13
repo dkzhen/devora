@@ -89,7 +89,7 @@ const ConfigForm = ({ form, setForm, onSave, onCancel, saving, fields }) => (
                         <h2 className="text-sm font-black text-white tracking-widest uppercase">
                             Token Configuration
                         </h2>
-                        <p className="text-[10px] text-gray-500 mt-0.5 leading-relaxed">
+                        <p className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
                             Open DevTools → Network at{" "}
                             <span className="text-red-400/80">my.telkomsel.com</span>, copy
                             these 6 headers.
@@ -103,11 +103,11 @@ const ConfigForm = ({ form, setForm, onSave, onCancel, saving, fields }) => (
                     {fields.map((f) => (
                         <div key={f.key} className="space-y-1.5">
                             <div className="flex items-center justify-between gap-2">
-                                <label className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-1.5">
+                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-1.5">
                                     <span className="w-1 h-1 rounded-full bg-red-500/70" />
                                     {f.label}
                                 </label>
-                                <span className="text-[9px] text-gray-600 italic truncate max-w-[130px]">
+                                <span className="text-[9px] text-slate-600 italic truncate max-w-[130px]">
                                     {f.hint}
                                 </span>
                             </div>
@@ -122,18 +122,18 @@ const ConfigForm = ({ form, setForm, onSave, onCancel, saving, fields }) => (
                                     setForm((prev) => ({ ...prev, [f.key]: e.target.value }))
                                 }
                                 placeholder={f.placeholder}
-                                className="w-full bg-[#040811] border border-[#171f30] focus:border-red-500/30 focus:bg-[#060d1a] rounded px-4 py-2.5 text-[11px] text-gray-300 placeholder-gray-800 outline-none font-mono resize-none leading-relaxed"
+                                className="w-full bg-[#040811] border border-[#171f30] focus:border-red-500/30 focus:bg-[#060d1a] rounded px-4 py-2.5 text-[11px] text-slate-300 placeholder-gray-800 outline-none font-mono resize-none leading-relaxed"
                             />
                         </div>
                     ))}
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4 mt-7 pt-5 border-t border-[#171f30]">
-                    <div className="flex-1 text-[10px] text-gray-500 flex items-start gap-2.5 bg-red-500/4 p-3.5 rounded border border-red-500/10">
+                    <div className="flex-1 text-[10px] text-slate-500 flex items-start gap-2.5 bg-red-500/4 p-3.5 rounded border border-red-500/10">
                         <Shield className="w-3.5 h-3.5 text-red-500/60 shrink-0 mt-0.5" />
                         <span className="leading-relaxed">
                             Token is stored with{" "}
-                            <strong className="text-gray-400">AES-256-CBC</strong> encryption. Only
+                            <strong className="text-slate-400">AES-256-CBC</strong> encryption. Only
                             you can access it.
                         </span>
                     </div>
@@ -141,7 +141,7 @@ const ConfigForm = ({ form, setForm, onSave, onCancel, saving, fields }) => (
                         {onCancel && (
                             <button
                                 onClick={onCancel}
-                                className="px-5 py-2.5 text-gray-500 hover:text-white rounded border border-[#171f30] hover:border-white/10 text-[10px] font-bold uppercase tracking-widest"
+                                className="px-5 py-2.5 text-slate-500 hover:text-white rounded border border-[#171f30] hover:border-white/10 text-[10px] font-bold uppercase tracking-widest"
                             >
                                 Cancel
                             </button>
@@ -165,12 +165,12 @@ const ConfigForm = ({ form, setForm, onSave, onCancel, saving, fields }) => (
 function TierBadge({ tier }) {
     const map = {
         Gold: "from-yellow-500/20 to-amber-500/20 text-yellow-400 border-yellow-500/30",
-        Silver: "from-gray-400/15 to-slate-400/15 text-gray-300 border-gray-400/30",
+        Silver: "from-gray-400/15 to-slate-400/15 text-slate-300 border-gray-400/30",
         Diamond: "from-cyan-400/20 to-blue-400/20 text-cyan-300 border-cyan-400/30",
         Platinum:
             "from-purple-400/20 to-pink-400/20 text-purple-300 border-purple-400/30",
     };
-    const cls = map[tier] || "bg-white/10 text-gray-300 border-white/20";
+    const cls = map[tier] || "bg-white/10 text-slate-300 border-white/20";
     return (
         <span
             className={`inline-flex items-center px-3 py-1 bg-linear-to-r rounded-sm border text-[9px] font-black uppercase tracking-[0.2em] ${cls}`}
@@ -439,7 +439,7 @@ export default function TelkomselClientPage() {
             >
                 {/* ── HERO HEADER ─────────────────────────────────────────────── */}
                 <HeroHeader
-                    colorTheme="red"
+                    
                     breadcrumbs={[
                         { label: "Dashboard", href: "/" },
                         { label: "Telkomsel Client" }
@@ -450,7 +450,7 @@ export default function TelkomselClientPage() {
                 />
 
                 {/* Loading state */}
-                {state === "loading" && <LoadingState message="Loading..." colorTheme="red" />}
+                {state === "loading" && <LoadingState message="Loading..."  />}
 
                 {/* Config Form */}
                 {state === "config" && (
@@ -494,21 +494,21 @@ export default function TelkomselClientPage() {
 
                                         {/* Section label row */}
                                         <div className="relative z-10 flex items-center justify-between">
-                                            <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.25em] flex items-center gap-2">
+                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] flex items-center gap-2">
                                                 <span className="w-4 h-px bg-linear-to-r from-red-500/50 to-transparent" />
                                                 Profile
                                             </span>
                                             <button
                                                 onClick={fetchProfile}
                                                 data-testid="refresh-profile-btn"
-                                                className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded border border-transparent hover:border-red-500/20"
+                                                className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded border border-transparent hover:border-red-500/20"
                                             >
                                                 <RefreshCw className={`w-3.5 h-3.5 ${loadingProfile ? "animate-spin" : ""}`} />
                                             </button>
                                         </div>
 
                                         {loadingProfile && !profile ? (
-                                            <div className="relative z-10 text-[10px] text-gray-600 font-mono uppercase tracking-widest text-center py-6">
+                                            <div className="relative z-10 text-[10px] text-slate-600 font-mono uppercase tracking-widest text-center py-6">
                                                 Loading data...
                                             </div>
                                         ) : profile ? (
@@ -536,7 +536,7 @@ export default function TelkomselClientPage() {
                                                             <div className="p-1.5 rounded bg-blue-500/10 border border-blue-500/15">
                                                                 <Mail className="w-3 h-3 text-blue-400" />
                                                             </div>
-                                                            <span className="text-gray-400 truncate text-[10px] font-medium">
+                                                            <span className="text-slate-400 truncate text-[10px] font-medium">
                                                                 {profile.email}
                                                             </span>
                                                         </div>
@@ -545,7 +545,7 @@ export default function TelkomselClientPage() {
                                                         <div className="p-1.5 rounded bg-red-500/10 border border-red-500/15">
                                                             <Smartphone className="w-3 h-3 text-red-400" />
                                                         </div>
-                                                        <span className="text-gray-300 font-mono text-[11px] font-bold tracking-wide">
+                                                        <span className="text-slate-300 font-mono text-[11px] font-bold tracking-wide">
                                                             {configInfo?.webMsisdn || "-"}
                                                         </span>
                                                     </div>
@@ -554,11 +554,11 @@ export default function TelkomselClientPage() {
                                                 {/* Balance & Expiry (Merged) */}
                                                 <div className="grid grid-cols-2 gap-2 pt-1">
                                                     <div className="p-2.5 rounded bg-red-500/3 border border-red-500/10">
-                                                        <div className="text-[8px] text-gray-500 mb-1 font-black uppercase tracking-wider">BALANCE</div>
+                                                        <div className="text-[8px] text-slate-500 mb-1 font-black uppercase tracking-wider">BALANCE</div>
                                                         <div className="text-sm font-black text-white">{formatBalance(profile.balance)}</div>
                                                     </div>
                                                     <div className="p-2.5 rounded bg-amber-500/3 border border-amber-500/10">
-                                                        <div className="text-[8px] text-gray-500 mb-1 font-black uppercase tracking-wider">EXPIRY DATE</div>
+                                                        <div className="text-[8px] text-slate-500 mb-1 font-black uppercase tracking-wider">EXPIRY DATE</div>
                                                         <div className="text-[10px] font-black text-amber-500">{profile.expiryDate ? formatDate(profile.expiryDate) : "-"}</div>
                                                     </div>
                                                 </div>
@@ -584,14 +584,14 @@ export default function TelkomselClientPage() {
                                                 )}
                                             </div>
                                         ) : (
-                                            <p className="relative z-10 text-[11px] text-gray-600 text-center py-4">
+                                            <p className="relative z-10 text-[11px] text-slate-600 text-center py-4">
                                                 Failed to load profile
                                             </p>
                                         )}
 
                                         {configInfo && (
                                             <>
-                                                <div className="relative z-10 pt-3 border-t border-white/[0.05] text-[9px] text-gray-600 flex items-center gap-1.5 font-mono">
+                                                <div className="relative z-10 pt-3 border-t border-white/[0.05] text-[9px] text-slate-600 flex items-center gap-1.5 font-mono">
                                                     <Clock className="w-3 h-3" />
                                                     Token saved: {formatDate(configInfo.savedAt)}
                                                 </div>
@@ -606,7 +606,7 @@ export default function TelkomselClientPage() {
                                                     <button
                                                         onClick={() => setShowEdit(!showEdit)}
                                                         data-testid="update-token-btn"
-                                                        className="px-3 py-1.5 bg-white/[0.02] border border-white/10 hover:border-red-500/30 hover:bg-red-500/5 rounded-md text-[9px] font-bold text-gray-400 hover:text-red-400 flex items-center gap-1.5 transition-all shadow-[0_0_8px_rgba(255,255,255,0.02)] active:scale-95"
+                                                        className="px-3 py-1.5 bg-white/[0.02] border border-white/10 hover:border-red-500/30 hover:bg-red-500/5 rounded-md text-[9px] font-bold text-slate-400 hover:text-red-400 flex items-center gap-1.5 transition-all shadow-[0_0_8px_rgba(255,255,255,0.02)] active:scale-95"
                                                     >
                                                         <Edit3 className="w-3 h-3" />
                                                         Update Token
@@ -618,14 +618,14 @@ export default function TelkomselClientPage() {
                                         <button
                                             onClick={handleDelete}
                                             data-testid="delete-token-btn"
-                                            className="relative z-10 mt-auto flex items-center justify-center gap-1.5 py-2.5 text-[10px] text-gray-600 hover:text-red-400 hover:bg-red-500/8 border border-transparent hover:border-red-500/15 rounded font-bold"
+                                            className="relative z-10 mt-auto flex items-center justify-center gap-1.5 py-2.5 text-[10px] text-slate-600 hover:text-red-400 hover:bg-red-500/8 border border-transparent hover:border-red-500/15 rounded font-bold"
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
                                             Delete Token
                                         </button>
                                     </div>
-                                    <p className="text-[10px] text-gray-500 leading-relaxed font-medium">
-                                        Member id: <span className="font-mono text-gray-400">{profile?.acc_id || "-"}</span>
+                                    <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+                                        Member id: <span className="font-mono text-slate-400">{profile?.acc_id || "-"}</span>
                                     </p>
                                 </div>
 
@@ -641,21 +641,21 @@ export default function TelkomselClientPage() {
 
                                             {/* Quota Header */}
                                             <div className="relative z-10 flex items-center justify-between px-5 pt-5 pb-3">
-                                                <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.25em] flex items-center gap-2">
+                                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] flex items-center gap-2">
                                                     <span className="w-4 h-px bg-linear-to-r from-cyan-500/50 to-transparent" />
                                                     Quota Details
                                                 </span>
                                                 <button
                                                     onClick={fetchQuota}
                                                     data-testid="refresh-quota-btn"
-                                                    className="p-1.5 text-gray-600 hover:text-cyan-400 hover:bg-cyan-500/10 rounded border border-transparent hover:border-cyan-500/20"
+                                                    className="p-1.5 text-slate-600 hover:text-cyan-400 hover:bg-cyan-500/10 rounded border border-transparent hover:border-cyan-500/20"
                                                 >
                                                     <RefreshCw className={`w-3.5 h-3.5 ${loadingQuota ? "animate-spin" : ""}`} />
                                                 </button>
                                             </div>
 
                                             {loadingQuota && !quota ? (
-                                                <div className="px-5 pb-5 text-[10px] text-gray-600 font-mono uppercase tracking-widest text-center py-6">
+                                                <div className="px-5 pb-5 text-[10px] text-slate-600 font-mono uppercase tracking-widest text-center py-6">
                                                     Loading quota...
                                                 </div>
                                             ) : quota ? (
@@ -677,7 +677,7 @@ export default function TelkomselClientPage() {
                                                                         data-testid={`quota-tab-${tab.key.toLowerCase()}`}
                                                                         className={`flex-1 min-w-0 py-2.5 px-1.5 flex flex-col items-center justify-center rounded relative overflow-hidden ${isActive
                                                                             ? "bg-linear-to-b from-red-600/85 to-rose-700/85 text-white border border-red-500/30 shadow-[0_0_14px_rgba(239,68,68,0.2)]"
-                                                                            : "text-gray-500 hover:text-gray-300 hover:bg-white/[0.03]"
+                                                                            : "text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]"
                                                                             }`}
                                                                     >
                                                                         <Icon className="w-3.5 h-3.5 mb-1 relative z-10" />
@@ -688,7 +688,7 @@ export default function TelkomselClientPage() {
                                                                             <span
                                                                                 className={`text-[8px] mt-1 px-1.5 py-px font-black rounded-sm relative z-10 ${isActive
                                                                                     ? "bg-white/20 text-white"
-                                                                                    : "bg-white/5 text-gray-600"
+                                                                                    : "bg-white/5 text-slate-600"
                                                                                     }`}
                                                                             >
                                                                                 {total}
@@ -718,11 +718,11 @@ export default function TelkomselClientPage() {
                                                                             >
                                                                                 <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-b from-red-500/50 to-transparent pointer-events-none" />
                                                                                 <div className="flex-1 min-w-0 pl-2">
-                                                                                    <div className="text-[11px] font-bold text-gray-200 truncate mb-1">
+                                                                                    <div className="text-[11px] font-bold text-slate-200 truncate mb-1">
                                                                                         {item.name}
                                                                                     </div>
                                                                                     {item.expiry && (
-                                                                                        <div className="text-[9px] text-gray-600 flex items-center gap-1">
+                                                                                        <div className="text-[9px] text-slate-600 flex items-center gap-1">
                                                                                             <Clock className="w-2.5 h-2.5" />
                                                                                             Expires on {item.expiry}
                                                                                         </div>
@@ -739,13 +739,13 @@ export default function TelkomselClientPage() {
                                                                 const Icon = QUOTA_ICONS[activeQuotaTab];
                                                                 return (
                                                                     <div className="py-10 flex flex-col items-center justify-center text-center">
-                                                                        <div className="w-14 h-14 rounded-xl bg-[#040811] border border-white/[0.06] flex items-center justify-center text-gray-700 mb-3.5">
+                                                                        <div className="w-14 h-14 rounded-xl bg-[#040811] border border-white/[0.06] flex items-center justify-center text-slate-700 mb-3.5">
                                                                             <Icon className="w-7 h-7" />
                                                                         </div>
-                                                                        <p className="text-gray-500 text-[11px] font-bold mb-1.5">
+                                                                        <p className="text-slate-500 text-[11px] font-bold mb-1.5">
                                                                             No active packages
                                                                         </p>
-                                                                        <p className="text-gray-700 text-[10px] max-w-xs leading-relaxed">
+                                                                        <p className="text-slate-700 text-[10px] max-w-xs leading-relaxed">
                                                                             Kamu belum memiliki paket{" "}
                                                                             {QUOTA_TABS.find(
                                                                                 (t) => t.key === activeQuotaTab,
@@ -753,7 +753,7 @@ export default function TelkomselClientPage() {
                                                                             saat ini.
                                                                         </p>
                                                                         {activeGroupData?.total && (
-                                                                            <div className="mt-4 px-4 py-2 bg-white/[0.025] rounded border border-white/[0.07] text-gray-500 text-[10px] font-bold flex items-center gap-2">
+                                                                            <div className="mt-4 px-4 py-2 bg-white/[0.025] rounded border border-white/[0.07] text-slate-500 text-[10px] font-bold flex items-center gap-2">
                                                                                 Total:{" "}
                                                                                 <span className="text-white text-xs font-black">
                                                                                     {activeGroupData.total}
@@ -767,7 +767,7 @@ export default function TelkomselClientPage() {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <p className="text-[11px] text-gray-600 text-center py-8">
+                                                <p className="text-[11px] text-slate-600 text-center py-8">
                                                     Failed to load quota
                                                 </p>
                                             )}
@@ -799,7 +799,7 @@ export default function TelkomselClientPage() {
                                         onClick={() => setOfferCategory("internet")}
                                         className={`px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest transition-all ${offerCategory === "internet"
                                             ? "bg-red-600 text-white shadow-[0_0_10px_rgba(239,68,68,0.2)]"
-                                            : "text-gray-500 hover:text-gray-300"
+                                            : "text-slate-500 hover:text-slate-300"
                                             }`}
                                     >
                                         Internet
@@ -808,7 +808,7 @@ export default function TelkomselClientPage() {
                                         onClick={() => setOfferCategory("voice_sms")}
                                         className={`px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest transition-all ${offerCategory === "voice_sms"
                                             ? "bg-red-600 text-white shadow-[0_0_10px_rgba(239,68,68,0.2)]"
-                                            : "text-gray-500 hover:text-gray-300"
+                                            : "text-slate-500 hover:text-slate-300"
                                             }`}
                                     >
                                         Voice &amp; SMS
@@ -818,7 +818,7 @@ export default function TelkomselClientPage() {
                                 <button
                                     onClick={() => fetchOffers(offerCategory)}
                                     disabled={loadingOffers}
-                                    className="ml-auto p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-md border border-white/5 hover:border-red-500/20 transition-all active:scale-90"
+                                    className="ml-auto p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-md border border-white/5 hover:border-red-500/20 transition-all active:scale-90"
                                 >
                                     <RefreshCw className={`w-4 h-4 ${loadingOffers ? "animate-spin" : ""}`} />
                                 </button>
@@ -830,7 +830,7 @@ export default function TelkomselClientPage() {
                                     return (
                                         <div className="px-6 py-12 flex flex-col items-center justify-center gap-4">
                                             <RefreshCw className="w-6 h-6 text-red-500/40 animate-spin" />
-                                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                                 Scanning for {offerCategory === "voice_sms" ? "voice & sms" : "internet"} offers...
                                             </span>
                                         </div>
@@ -848,7 +848,7 @@ export default function TelkomselClientPage() {
                                                             onClick={() => setActiveOfferTab(idx)}
                                                             className={`shrink-0 px-5 py-2 rounded-sm border text-[10px] font-black uppercase tracking-widest transition-all ${activeOfferTab === idx
                                                                 ? "bg-red-600 text-white border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.3)]"
-                                                                : "bg-white/5 text-gray-500 border-white/10 hover:border-white/20 hover:text-gray-300"
+                                                                : "bg-white/5 text-slate-500 border-white/10 hover:border-white/20 hover:text-slate-300"
                                                                 }`}
                                                         >
                                                             {group.title}
@@ -868,7 +868,7 @@ export default function TelkomselClientPage() {
                                                             <div className="absolute inset-0 bg-linear-to-br from-red-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                                             <div className="relative z-10 flex justify-between items-start mb-3 text-left">
                                                                 <div className="flex flex-col">
-                                                                    <div className="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-0.5">
+                                                                    <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5">
                                                                         {offer.category || offer.subcategory || (offerCategory === "voice_sms" ? "VOICE/SMS" : "PACKAGE")}
                                                                     </div>
                                                                     <h4 className="text-xs font-black text-white uppercase tracking-tight line-clamp-1">{offer.name}</h4>
@@ -879,14 +879,14 @@ export default function TelkomselClientPage() {
                                                             </div>
                                                             <div className="relative z-10 flex-1 mb-4 text-left">
                                                                 <div
-                                                                    className="text-[10px] text-gray-400 leading-relaxed line-clamp-3 overflow-hidden offer-desc-html"
+                                                                    className="text-[10px] text-slate-400 leading-relaxed line-clamp-3 overflow-hidden offer-desc-html"
                                                                     dangerouslySetInnerHTML={{ __html: offer.longdesc || offer.shortdesc }}
                                                                 />
                                                             </div>
                                                             <div className="relative z-10 pt-3 border-t border-white/[0.03] flex items-center justify-between gap-3">
                                                                 <div className="flex flex-col text-left">
-                                                                    <div className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">VALIDITY</div>
-                                                                    <div className="text-[10px] text-gray-300 font-black font-mono">{offer.productlength || "-"}</div>
+                                                                    <div className="text-[8px] text-slate-600 font-bold uppercase tracking-widest">VALIDITY</div>
+                                                                    <div className="text-[10px] text-slate-300 font-black font-mono">{offer.productlength || "-"}</div>
                                                                 </div>
                                                                 <button
                                                                     className="px-4 py-1.5 bg-white/5 hover:bg-red-600 border border-white/10 hover:border-red-500 rounded-sm text-[9px] font-black text-white uppercase tracking-widest transition-all shadow-sm hover:shadow-[0_0_12px_rgba(239,68,68,0.4)]"
@@ -905,8 +905,8 @@ export default function TelkomselClientPage() {
                                 }
                                 return (
                                     <div className="px-6 py-12 flex flex-col items-center justify-center text-center opacity-40">
-                                        <Zap className="w-8 h-8 text-gray-600 mb-3" />
-                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                        <Zap className="w-8 h-8 text-slate-600 mb-3" />
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                             No offers found in this segment
                                         </p>
                                     </div>

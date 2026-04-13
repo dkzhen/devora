@@ -49,17 +49,17 @@ export default function AiProvidersPage() {
         navigator.clipboard.writeText(text);
         toast.success(`Copied to clipboard`, {
             style: {
-                background: '#0F1219',
-                color: '#D9C5C5',
-                border: '1px solid #D9C5C533',
+                background: '#0c0e1a',
+                color: '#cbd5e1',
+                border: '1px solid rgba(255,255,255,0.1)',
                 fontSize: '10px',
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em'
             },
             iconTheme: {
-                primary: '#D9C5C5',
-                secondary: '#0F1219',
+                primary: '#8b5cf6',
+                secondary: '#0c0e1a',
             },
         });
     };
@@ -123,9 +123,9 @@ export default function AiProvidersPage() {
 
             toast.success(`Model status updated to ${newStatus.toUpperCase()}`, {
                 style: {
-                    background: '#0B0F1A',
-                    color: '#D9C5C5',
-                    border: '1px solid #D9C5C511',
+                    background: '#0c0e1a',
+                    color: '#cbd5e1',
+                    border: '1px solid rgba(255,255,255,0.05)',
                     fontSize: '9px',
                     fontWeight: 'black',
                     textTransform: 'uppercase'
@@ -136,9 +136,9 @@ export default function AiProvidersPage() {
             setModels(previousModels);
             toast.error(err.message, {
                 style: {
-                    background: '#111111',
-                    color: '#ff4b4b',
-                    border: '1px solid #ff4b4b22',
+                    background: '#0c0e1a',
+                    color: '#ef4444',
+                    border: '1px solid rgba(239,68,68,0.2)',
                     fontSize: '9px',
                 }
             });
@@ -237,25 +237,34 @@ export default function AiProvidersPage() {
     return (
         <div className="flex flex-col gap-6 pb-12">
             <HeroHeader
-                colorTheme="whinehouse"
-                breadcrumbs={[{ label: 'DASHBOARD', href: '/' }, { label: 'AI PROVIDERS' }]}
+                breadcrumbs={[
+                    {
+                        label: "Dashboard",
+                        href: "/",
+                        icon: <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    },
+                    {
+                        label: "AI Providers",
+                        icon: <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.6)] animate-pulse mr-1" />
+                    }
+                ]}
                 title="AI"
                 badge="Providers"
-                description="Manage your local API core and supported upstream models. Flat developer-focused architecture."
+                description="Manage your local API core and supported upstream models. Flat developer-focused architecture optimized for ultra-low latency."
             />
 
             {loading ? (
-                <LoadingState colorTheme="whinehouse" message="Synchronizing Upstream Models..." />
+                <LoadingState  message="Synchronizing Upstream Models..." />
             ) : error ? (
                 <div className="py-20 text-center border border-dashed border-red-500/10 rounded text-red-500/60 text-[10px] font-mono uppercase tracking-[0.2em]">
                     API CONNECTION ERROR: {error}
                 </div>
             ) : (
                 <>
-                    <div className="border border-white/5 bg-[#0B0F1A] rounded overflow-hidden">
-                        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="border border-white/5 bg-[#0c0e1a] rounded-xl overflow-hidden shadow-xl">
+                        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-start sm:items-center gap-4">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-sm border border-[#D9C5C5]/30 flex items-center justify-center bg-[#111111] text-[#D9C5C5] shadow-inner shrink-0">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-white/10 flex items-center justify-center bg-white/5 text-purple-400 shadow-inner shrink-0">
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -283,28 +292,27 @@ export default function AiProvidersPage() {
                         </div>
                     </div>
 
-                    <div className="border border-[#D9C5C5]/20 bg-[#D9C5C5]/5 p-4 sm:p-5 rounded-sm flex flex-col sm:flex-row items-start gap-4">
-                        <div className="p-2 rounded-xs bg-[#111111] border border-[#D9C5C5]/30 text-[#D9C5C5] shrink-0">
+                    <div className="border border-white/10 bg-white/3 p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row items-start gap-4 backdrop-blur-sm">
+                        <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 shrink-0">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
-                        <div className="flex-1">
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D9C5C5]">Developer Notice</p>
-                            <div className="text-[10px] text-slate-400 mt-2.5 space-y-2 font-mono">
+                        <div className="flex-1">                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Developer Notice</p>
+                            <div className="text-[10px] text-slate-500 mt-2.5 space-y-2 font-mono">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1 h-1 rounded-full bg-[#D9C5C5]/40" />
+                                    <span className="w-1 h-1 rounded-full bg-slate-700" />
                                     <span><span className="text-emerald-400 font-bold">ACTIVE</span> &mdash; Highly available system endpoints.</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1 h-1 rounded-full bg-[#D9C5C5]/40" />
+                                    <span className="w-1 h-1 rounded-full bg-slate-700" />
                                     <span><span className="text-amber-500 font-bold">SUSPENDED</span> &mdash; Model is temporarily offline.</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1 h-1 rounded-full bg-[#D9C5C5]/40" />
+                                    <span className="w-1 h-1 rounded-full bg-slate-700" />
                                     <span><span className="text-blue-400 font-bold">RESTRICTED</span> &mdash; Whitelist authorization required.</span>
                                 </div>
-
-                                <div className="mt-3 text-[#D9C5C5]/80 italic bg-[#111111]/30 p-2 border-l border-[#D9C5C5]/20">
-                                    * API access requires a valid <a href="/api-key" className="text-slate-200 hover:text-white underline underline-offset-4 decoration-[#D9C5C5]/40 transition-colors font-bold">Bearer Token</a>.
+ 
+                                <div className="mt-3 text-slate-500 italic bg-white/5 p-2 border-l border-white/10 rounded-r-md">
+                                    * API access requires a valid <a href="/api-key" className="text-slate-300 hover:text-white underline underline-offset-4 decoration-white/20 transition-colors font-bold">Bearer Token</a>.
                                 </div>
                             </div>
                         </div>
@@ -334,8 +342,8 @@ export default function AiProvidersPage() {
                                     <button
                                         key={t.id}
                                         onClick={() => setStatusFilter(t.id)}
-                                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-xs transition-all flex items-center gap-2 ${statusFilter === t.id
-                                            ? 'bg-[#D9C5C5]/10 text-[#D9C5C5] shadow-inner'
+                                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 ${statusFilter === t.id
+                                            ? 'bg-white/10 text-white shadow-inner'
                                             : 'text-slate-500 hover:text-slate-300'
                                             }`}
                                     >
@@ -345,10 +353,10 @@ export default function AiProvidersPage() {
                                 ))}
                             </div>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 text-[10px] font-black uppercase tracking-widest px-5 py-3 sm:py-2.5 border border-[#D9C5C5]/30 rounded bg-[#111111] shadow-[0_0_30px_rgba(217,197,197,0.05)] overflow-hidden">
-                            <div className="flex items-center justify-between sm:justify-start gap-3 border-b sm:border-b-0 sm:border-r border-white/10 pb-2 sm:pb-0 sm:pr-5">
-                                <span className="text-white brightness-125">Synchronized Models</span>
-                                <span className="text-[#D9C5C5] font-mono text-xs font-bold">{models.length}</span>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 text-[10px] font-black uppercase tracking-widest px-5 py-3 sm:py-2.5 border border-white/10 rounded-xl bg-[#0c0e1a] shadow-xl overflow-hidden">
+                            <div className="flex items-center justify-between sm:justify-start gap-3 border-b sm:border-b-0 sm:border-r border-white/5 pb-2 sm:pb-0 sm:pr-5">
+                                <span className="text-slate-400">Synchronized Models</span>
+                                <span className="text-white font-mono text-xs font-bold">{models.length}</span>
                             </div>
 
                             <div className="flex items-center justify-around sm:justify-start gap-8 sm:gap-5 pt-1 sm:pt-0">
@@ -372,14 +380,14 @@ export default function AiProvidersPage() {
                         {Object.entries(groupedModels).map(([owner, ownerModels]) => (
                             <div key={owner} className="space-y-4">
                                 <div className="flex items-center gap-3 px-1">
-                                    <span className="w-3 h-2 rounded-xs bg-[#D9C5C5]/40" />
-                                    <h4 className="text-[11px] font-black text-[#D9C5C5] uppercase tracking-[0.4em]">{owner}</h4>
+                                    <span className="w-3 h-2 rounded-full bg-purple-500/40" />
+                                    <h4 className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">{owner}</h4>
                                     <div className="h-px flex-1 bg-white/5 ml-4" />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                     {ownerModels.map(model => (
-                                        <div key={model.id} className={`p-4 border border-white/5 bg-[#0B0F1A] hover:bg-white/2 transition-all rounded group flex flex-col justify-between min-h-[120px] ${model.status === 'hidden' ? 'ring-1 ring-white/10 opacity-50' : ''}`}>
+                                        <div key={model.id} className={`p-4 border border-white/5 bg-[#0c0e1a] hover:bg-white/5 transition-all rounded-xl group flex flex-col justify-between min-h-[120px] ${model.status === 'hidden' ? 'ring-1 ring-white/10 opacity-50' : 'shadow-lg shadow-black/20'}`}>
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex flex-col gap-1.5">
                                                     <code className="text-[11px] font-mono text-blue-400 group-hover:text-blue-300 transition-colors break-all leading-relaxed">

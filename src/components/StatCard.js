@@ -14,7 +14,7 @@ export default function StatCard({ title, value, icon, color, flat = false }) {
 
     const c = colors[color] || colors.blue;
     const roundedClass = flat ? `rounded-none border-t-2 ${c.solid}` : 'rounded-2xl border';
-    const bgClass = flat ? 'bg-[#0f172a]/60 backdrop-blur-md hover:bg-[#0f172a]/80 border-white/5 border-l border-r border-b' : 'bg-linear-to-br from-[#0f172a] to-[#1e293b] border-white/8 hover:border-white/15';
+    const bgClass = flat ? 'bg-[#0c0e1a]/60 backdrop-blur-md hover:bg-[#0c0e1a]/80 border-white/5 border-l border-r border-b' : 'bg-linear-to-br from-[#0f172a] to-[#1e293b] border-white/8 hover:border-white/15';
 
     return (
         <div className={`relative overflow-hidden ${roundedClass} ${bgClass} p-4 md:p-6 transition-all duration-300 group`}>
@@ -22,7 +22,7 @@ export default function StatCard({ title, value, icon, color, flat = false }) {
             <div className={`absolute -top-6 -right-6 w-20 h-20 md:w-28 md:h-28 rounded-full ${c.orb} blur-2xl pointer-events-none transition-all group-hover:scale-125`} />
             <div className="relative z-10 flex items-start justify-between">
                 <div>
-                    <p className={`text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 md:mb-2 ${flat ? c.text : 'text-gray-500'} pr-2`}>{title}</p>
+                    <p className={`text-[9px] md:text-xs font-bold uppercase tracking-widest mb-1 md:mb-2 ${flat ? c.text : 'text-slate-500'} pr-2`}>{title}</p>
                     <h3 className="text-xl md:text-3xl font-black text-white tracking-tight">{value}</h3>
                 </div>
                 <div className={`w-8 h-8 md:w-11 md:h-11 ${flat ? 'rounded-none border-2' : 'rounded-xl border'} ${c.glow} ${c.border} flex items-center justify-center shrink-0 ${c.text}`}>

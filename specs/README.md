@@ -141,6 +141,10 @@ Located in `tests/` folder:
 ├── prisma/
 │   ├── schema.prisma    # Database Schema
 │   └── seed.js          # Admin User Seeder
+│   ├── specs/           # Project Documentation
+│   │   ├── README.md    # Main Documentation
+│   │   ├── dashboard.md # Dashboard Connection Map
+│   │   └── ...
 ├── src/
 │   ├── app/
 │   │   ├── api/         # Backend API Routes

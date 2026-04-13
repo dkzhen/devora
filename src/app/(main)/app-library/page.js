@@ -251,7 +251,7 @@ export default function AppLibraryPage() {
                 title="App"
                 badge="Library"
                 description="Discover, download, and share applications. Keep up entirely with all our latest app versions."
-                colorTheme="dawn"
+                
             />
 
             {/* Main Action Bar: Search + Buttons */}
@@ -307,7 +307,7 @@ export default function AppLibraryPage() {
 
             {/* Loading State & Content */}
             {loading ? (
-                <LoadingState colorTheme="blue" message="Loading App Library..." />
+                <LoadingState  message="Loading App Library..." />
             ) : (
                 <div className="relative space-y-4 md:space-y-8">
                     {/* Storage Config Section (ULTRA only) - MOVED ABOVE GRID */}
@@ -323,7 +323,7 @@ export default function AppLibraryPage() {
                                         <div className="space-y-2 mb-8">
                                             <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-[#FEBD8B]/80 bg-[#FEBD8B]/5 px-3 py-1 rounded-full border border-[#FEBD8B]/10 mb-2">Configuration Required</span>
                                             <h2 className="text-xl font-bold text-white tracking-tight text-center">Missing Bot Token</h2>
-                                            <p className="max-w-md mx-auto text-gray-400 text-sm leading-relaxed text-center">The storage module requires a Telegram Bot Token. Please add this key to your global configuration first:</p>
+                                            <p className="max-w-md mx-auto text-slate-400 text-sm leading-relaxed text-center">The storage module requires a Telegram Bot Token. Please add this key to your global configuration first:</p>
                                         </div>
                                         <button
                                             onClick={() => {
@@ -333,7 +333,7 @@ export default function AppLibraryPage() {
                                             }}
                                             className={`flex items-center gap-2 px-4 py-2 bg-[#1A082E] border rounded-xl font-mono text-xs mb-8 transition-colors group ${tokenCopied ? 'border-emerald-500/50 text-emerald-400' : 'border-white/5 text-[#749F8B] hover:border-[#749F8B]/30'}`}
                                         >
-                                            <span className={tokenCopied ? 'text-emerald-600' : 'text-gray-600'}>$</span>
+                                            <span className={tokenCopied ? 'text-emerald-600' : 'text-slate-600'}>$</span>
                                             <span className="font-bold tracking-wider">BOT_TOKEN_TELEGRAM</span>
                                             {tokenCopied ? (
                                                 <svg className="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
@@ -355,7 +355,7 @@ export default function AppLibraryPage() {
                                                 <h2 className="text-base font-bold text-white tracking-tight">Storage Parameters</h2>
                                                 <p className="text-[10px] text-[#FEBD8B]/60 mt-0.5 uppercase font-black tracking-widest">Telegram Cloud Integration</p>
                                             </div>
-                                            <button onClick={() => setShowConfig(false)} className="text-gray-500 hover:text-white transition-colors">
+                                            <button onClick={() => setShowConfig(false)} className="text-slate-500 hover:text-white transition-colors">
                                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
                                         </div>
@@ -363,7 +363,7 @@ export default function AppLibraryPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {/* Group Chat ID */}
                                             <div className="space-y-2 lg:col-span-1">
-                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
                                                     Target Chat ID
                                                 </label>
                                                 <div className="relative group">
@@ -372,14 +372,14 @@ export default function AppLibraryPage() {
                                                         value={config.TELEGRAM_STORAGE_CHAT_ID}
                                                         onChange={(e) => setConfig({ ...config, TELEGRAM_STORAGE_CHAT_ID: e.target.value })}
                                                         placeholder="-100xxxxxxxxxx"
-                                                        className="w-full bg-[#1A082E] border border-[#FEBD8B]/10 rounded-xl px-4 py-2.5 font-mono text-xs text-[#FDF2D9] placeholder:text-gray-700 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
+                                                        className="w-full bg-[#1A082E] border border-[#FEBD8B]/10 rounded-xl px-4 py-2.5 font-mono text-xs text-[#FDF2D9] placeholder:text-slate-700 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
                                                     />
                                                 </div>
                                             </div>
 
                                             {/* APK Topic */}
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
                                                     <span>APK Topic ID</span>
                                                     <button
                                                         onClick={() => handleTestSync('apk', config.TELEGRAM_STORAGE_TOPIC_APK)}
@@ -399,7 +399,7 @@ export default function AppLibraryPage() {
 
                                             {/* Image Topic */}
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between">
                                                     <span>Image Topic ID</span>
                                                     <button
                                                         onClick={() => handleTestSync('images', config.TELEGRAM_STORAGE_TOPIC_IMAGES)}
@@ -508,9 +508,9 @@ export default function AppLibraryPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-lg font-black text-white tracking-tight">Add New App</h3>
-                                    <p className="text-sm text-gray-400 mt-1">Upload a new application to the library</p>
+                                    <p className="text-sm text-slate-400 mt-1">Upload a new application to the library</p>
                                 </div>
-                                <button onClick={() => !submittingApp && setShowAddAppModal(false)} className="text-gray-500 hover:text-white transition-colors" disabled={submittingApp}>
+                                <button onClick={() => !submittingApp && setShowAddAppModal(false)} className="text-slate-500 hover:text-white transition-colors" disabled={submittingApp}>
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>
@@ -518,7 +518,7 @@ export default function AppLibraryPage() {
                             <form onSubmit={handleSubmitApp} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Name <span className="text-red-400">*</span></label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">App Name <span className="text-red-400">*</span></label>
                                         <input
                                             required
                                             type="text"
@@ -529,7 +529,7 @@ export default function AppLibraryPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Developer</label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Developer</label>
                                         <input
                                             type="text"
                                             value={developer}
@@ -539,7 +539,7 @@ export default function AppLibraryPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Version <span className="text-red-400">*</span></label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Version <span className="text-red-400">*</span></label>
                                         <input
                                             required
                                             type="text"
@@ -550,7 +550,7 @@ export default function AppLibraryPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Android Version</label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Android Version</label>
                                         <input
                                             type="text"
                                             value={androidVersion}
@@ -560,18 +560,18 @@ export default function AppLibraryPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Category</label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Category</label>
                                         <select
                                             value={category}
                                             onChange={(e) => setCategory(e.target.value)}
-                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-[#FEBD8B]/50 transition-colors appearance-none"
+                                            className="w-full bg-[#110a17] border border-white/5 rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-[#FEBD8B]/50 transition-colors appearance-none"
                                         >
                                             <option value="Mod">Mod</option>
                                             <option value="Original">Original</option>
                                         </select>
                                     </div>
                                     <div className="space-y-2 md:col-span-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">Description</label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">Description</label>
                                         <textarea
                                             rows={2}
                                             value={description}
@@ -584,7 +584,7 @@ export default function AppLibraryPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
                                         <input
                                             required
                                             type="text"
@@ -595,7 +595,7 @@ export default function AppLibraryPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest block">App Icon File ID (Optional)</label>
+                                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">App Icon File ID (Optional)</label>
                                         <input
                                             type="text"
                                             value={imageFileId}
@@ -610,7 +610,7 @@ export default function AppLibraryPage() {
                                     <button
                                         type="button"
                                         onClick={() => setShowAddAppModal(false)}
-                                        className="px-5 py-2.5 bg-transparent border border-white/10 hover:bg-white/5 text-gray-300 font-bold text-sm rounded-xl transition-colors"
+                                        className="px-5 py-2.5 bg-transparent border border-white/10 hover:bg-white/5 text-slate-300 font-bold text-sm rounded-xl transition-colors"
                                         disabled={submittingApp}
                                     >
                                         Cancel

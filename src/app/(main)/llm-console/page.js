@@ -64,7 +64,7 @@ function StatusPill({ code }) {
         ? 'bg-[#76D2DB]/15 text-[#76D2DB] border-[#76D2DB]/40'
         : warn
             ? 'bg-[#DA4848]/15 text-[#DA4848] border-[#DA4848]/40'
-            : 'bg-gray-500/15 text-gray-400 border-gray-500/30';
+            : 'bg-gray-500/15 text-slate-400 border-gray-500/30';
     return (
         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest border font-mono ${cls}`}>
             {ok ? (
@@ -385,13 +385,13 @@ export default function LlmConsolePage() {
         return (
             <div className="flex flex-col gap-6">
                 <HeroHeader
-                    colorTheme="cyberpunk"
+                    
                     breadcrumbs={[{ label: 'DASHBOARD', href: '/' }, { label: 'LLM CONSOLE' }]}
                     title="LLM"
                     badge="Console"
                     description="Test any OpenAI-compatible API endpoint in seconds."
                 />
-                <LoadingState message="Initializing console..." colorTheme="cyberpunk" />
+                <LoadingState message="Initializing console..."  />
             </div>
         );
     }
@@ -399,7 +399,7 @@ export default function LlmConsolePage() {
     return (
         <div className="flex flex-col gap-6 pb-12">
             <HeroHeader
-                colorTheme="cyberpunk"
+                
                 breadcrumbs={[{ label: 'DASHBOARD', href: '/' }, { label: 'LLM CONSOLE' }]}
                 title="LLM"
                 badge="Console"
@@ -482,14 +482,14 @@ export default function LlmConsolePage() {
                                         </h4>
                                         <div className="space-y-3">
                                             <div>
-                                                <label className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] block mb-1">Base URL</label>
+                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-1">Base URL</label>
                                                 <div className="flex items-center gap-2">
                                                     <code className="flex-1 text-[10px] font-mono text-[#76D2DB] bg-[#76D2DB]/5 border border-[#76D2DB]/10 rounded px-2.5 py-1.5 truncate">{baseUrl}</code>
                                                     <CopyBtn value={baseUrl} />
                                                 </div>
                                             </div>
                                             <div>
-                                                <label className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] block mb-1">Model</label>
+                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-1">Model</label>
                                                 <div className="flex items-center gap-2">
                                                     <code className="flex-1 text-[10px] font-mono text-[#76D2DB] bg-[#76D2DB]/5 border border-[#76D2DB]/10 rounded px-2.5 py-1.5">{model}</code>
                                                     <CopyBtn value={model} />
@@ -510,7 +510,7 @@ export default function LlmConsolePage() {
                                                 </code>
                                                 <div className="flex gap-1">
                                                     {!user && (
-                                                        <button onClick={() => setShowKey(v => !v)} className="p-1.5 text-gray-600 hover:text-[#76D2DB]">
+                                                        <button onClick={() => setShowKey(v => !v)} className="p-1.5 text-slate-600 hover:text-[#76D2DB]">
                                                             {showKey ? <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242" /></svg> : <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
                                                         </button>
                                                     )}
@@ -534,7 +534,7 @@ export default function LlmConsolePage() {
                                                     className="flex items-center gap-2 px-3 py-2 rounded border border-white/5 bg-black/40 hover:border-[#76D2DB]/40 hover:bg-[#76D2DB]/5 transition-all group/p"
                                                 >
                                                     <div className="shrink-0 text-[#76D2DB]/60 group-hover/p:text-[#76D2DB]">{p.icon}</div>
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover/p:text-gray-300">{p.name}</span>
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 group-hover/p:text-slate-300">{p.name}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -548,7 +548,7 @@ export default function LlmConsolePage() {
                                         </h4>
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] block mb-1.5">Base URL</label>
+                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.1em] block mb-1.5">Base URL</label>
                                                 <input
                                                     type="url"
                                                     value={baseUrl}
@@ -558,7 +558,7 @@ export default function LlmConsolePage() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="text-[9px] font-black text-gray-500 uppercase tracking-[0.1em] block mb-1.5">Model ID</label>
+                                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.1em] block mb-1.5">Model ID</label>
                                                 <input
                                                     type="text"
                                                     value={model}
@@ -587,12 +587,12 @@ export default function LlmConsolePage() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowKey(v => !v)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-[#76D2DB] transition-colors"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-700 hover:text-[#76D2DB] transition-colors"
                                             >
                                                 {showKey ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
                                             </button>
                                         </div>
-                                        <p className="text-[8px] text-gray-600 mt-2 italic font-mono">Leave blank to keep current key</p>
+                                        <p className="text-[8px] text-slate-600 mt-2 italic font-mono">Leave blank to keep current key</p>
                                     </div>
 
                                     <div className="flex gap-2 pt-2">
@@ -614,7 +614,7 @@ export default function LlmConsolePage() {
                                         </button>
                                         <button
                                             onClick={() => { setEditing(false); setApiKey(''); setShowKey(false); }}
-                                            className="px-4 py-2.5 rounded text-[10px] font-black uppercase tracking-widest border border-gray-700 text-gray-500 hover:text-gray-300 transition-all"
+                                            className="px-4 py-2.5 rounded text-[10px] font-black uppercase tracking-widest border border-gray-700 text-slate-500 hover:text-slate-300 transition-all"
                                         >
                                             Cancel
                                         </button>
@@ -627,7 +627,7 @@ export default function LlmConsolePage() {
                     {!user && (
                         <div className="rounded-xl border border-[#DA4848]/20 bg-[#DA4848]/5 px-4 py-3 flex items-start gap-3">
                             <svg className="w-4 h-4 text-[#DA4848] shrink-0 fill-current" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            <p className="text-[9px] text-gray-500">Guest mode – Local storage only. <a href="/login" className="text-[#76D2DB] hover:underline">Sign in</a> to sync.</p>
+                            <p className="text-[9px] text-slate-500">Guest mode – Local storage only. <a href="/login" className="text-[#76D2DB] hover:underline">Sign in</a> to sync.</p>
                         </div>
                     )}
                 </div>
@@ -645,7 +645,7 @@ export default function LlmConsolePage() {
                             </div>
                         ) : (
                             <>
-                                <p className="text-xs text-gray-500 text-center max-w-xs">Fire a test request to verify your endpoint and API credentials.</p>
+                                <p className="text-xs text-slate-500 text-center max-w-xs">Fire a test request to verify your endpoint and API credentials.</p>
                                 <button
                                     onClick={handleTest}
                                     disabled={testing}
@@ -671,7 +671,7 @@ export default function LlmConsolePage() {
                                 {result.success ? (
                                     <>
                                         <div>
-                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] block mb-2">Stream Content</label>
+                                            <label className="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] block mb-2">Stream Content</label>
                                             <div className="relative">
                                                 <div className="bg-[#76D2DB]/5 border border-[#76D2DB]/10 rounded-lg px-4 py-3.5 font-mono text-sm text-white break-all">{result.content || <span className="opacity-30">EMPTY_BODY</span>}</div>
                                                 <div className="absolute top-2 right-2"><CopyBtn value={result.content || ''} /></div>
@@ -685,7 +685,7 @@ export default function LlmConsolePage() {
                                                     { label: 'Total', val: result.usage.total_tokens },
                                                 ].map(({ label, val }) => (
                                                     <div key={label} className="rounded bg-white/5 border border-white/5 p-3 text-center">
-                                                        <div className="text-[9px] text-gray-600 uppercase tracking-widest mb-1">{label}</div>
+                                                        <div className="text-[9px] text-slate-600 uppercase tracking-widest mb-1">{label}</div>
                                                         <div className="text-sm font-black font-mono text-[#76D2DB]">{val ?? '0'}</div>
                                                     </div>
                                                 ))}

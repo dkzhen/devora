@@ -38,7 +38,7 @@ function Countdown({ endTime }) {
     if (!endTime) return null;
     const m = String(Math.floor(secs / 60)).padStart(2, '0');
     const s = String(secs % 60).padStart(2, '0');
-    const color = secs <= 0 ? 'text-gray-500' : secs <= 30 ? 'text-[#FFF799] animate-pulse' : secs <= 60 ? 'text-[#80C60C]' : 'text-gray-400';
+    const color = secs <= 0 ? 'text-slate-500' : secs <= 30 ? 'text-[#FFF799] animate-pulse' : secs <= 60 ? 'text-[#80C60C]' : 'text-slate-400';
     return (
         <span className={`font-mono text-xs ${color}`}>
             {secs <= 0 ? 'Expired' : `${m}:${s}`}
@@ -59,7 +59,7 @@ function StatusBadge({ status }) {
         '4': { label: 'Success', cls: 'bg-[#80C60C]/15 text-[#80C60C] border-[#80C60C]/25' },
         '8': { label: 'Cancelled', cls: 'bg-[#406093]/15 text-[#406093] border-[#406093]/25' },
     };
-    const info = map[status] || { label: status || 'Unknown', cls: 'bg-gray-500/15 text-gray-400 border-gray-500/25' };
+    const info = map[status] || { label: status || 'Unknown', cls: 'bg-gray-500/15 text-slate-400 border-gray-500/25' };
     return (
         <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide border ${info.cls}`}>
             {(status === 'STATUS_WAIT_CODE' || status === '1') && <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />}
@@ -472,7 +472,7 @@ export default function HeroSMSClient() {
         <div className="flex flex-col gap-6 text-[#FFF799] min-h-screen">
             {/* ── Hero Header ── */}
             <HeroHeader
-                colorTheme="herosms"
+                
                 breadcrumbs={[
                     { label: 'DASHBOARD', href: '/' },
                     { label: 'HEROSMS CLIENT' }
@@ -485,9 +485,9 @@ export default function HeroSMSClient() {
             {/* ── Main Content Area ── */}
             <div className="max-w-[1700px] mx-auto w-full px-4 md:px-8 pb-12 mt-6">
                 {!configLoaded ? (
-                    <LoadingState message="Initializing connection..." colorTheme="herosms" />
+                    <LoadingState message="Initializing connection..."  />
                 ) : loadingCountries && savedKey ? (
-                    <LoadingState message="Loading services..." colorTheme="herosms" />
+                    <LoadingState message="Loading services..."  />
                 ) : (
                     <div className="space-y-6">
                         {/* ── Tab Navigation (Cyberpunk Style) ── */}
@@ -500,7 +500,7 @@ export default function HeroSMSClient() {
                                             onClick={() => setTab(t.id)}
                                             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all border-2 ${tab === t.id
                                                 ? 'bg-[#4C8CE4]/10 border-[#4C8CE4] text-[#4C8CE4] shadow-[0_0_20px_rgba(76,140,228,0.2)]'
-                                                : 'bg-transparent border-transparent text-gray-500 hover:text-gray-300 hover:bg-[#406093]/10'
+                                                : 'bg-transparent border-transparent text-slate-500 hover:text-slate-300 hover:bg-[#406093]/10'
                                                 }`}
                                         >
                                             <span className="opacity-70">{t.icon}</span>
@@ -593,7 +593,7 @@ export default function HeroSMSClient() {
                                                                     onClick={() => { setSelectedCountry(c.id); setSelectedCountryName(c.name); setSelectedCountryDial(c.dial); setCountryOpen(false); setCountrySearch(''); }}
                                                                     className={`w-full text-left px-4 py-3 text-sm transition-colors flex items-center justify-between ${selectedCountry === c.id
                                                                         ? 'text-[#4C8CE4] font-bold bg-[#4C8CE4]/10'
-                                                                        : 'text-gray-300 hover:bg-[#406093]/10 hover:text-white'
+                                                                        : 'text-slate-300 hover:bg-[#406093]/10 hover:text-white'
                                                                         }`}
                                                                 >
                                                                     <div className="flex items-center gap-3">
@@ -613,7 +613,7 @@ export default function HeroSMSClient() {
                                                                         </div>
                                                                         <span>{c.name}</span>
                                                                     </div>
-                                                                    {c.dial && <span className="text-xs text-gray-500 font-mono">{c.dial}</span>}
+                                                                    {c.dial && <span className="text-xs text-slate-500 font-mono">{c.dial}</span>}
                                                                 </button>
                                                             ))
                                                         }
@@ -649,7 +649,7 @@ export default function HeroSMSClient() {
                                                                 }
                                                             </div >
                                                         ) : filteredServices.length === 0 ? (
-                                                            <div className="text-center py-12 text-gray-500">
+                                                            <div className="text-center py-12 text-slate-500">
                                                                 < div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-[#406093]/10 flex items-center justify-center">
                                                                     < svg className="w-6 h-6 text-[#406093]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                                 </div >
@@ -665,7 +665,7 @@ export default function HeroSMSClient() {
                                                                         onClick={() => handleSelectService(s)}
                                                                         className={`group w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all border-2 ${isSelected
                                                                             ? 'bg-[#4C8CE4]/10 border-[#4C8CE4] shadow-[0_0_20px_rgba(76,140,228,0.2)] text-white'
-                                                                            : 'bg-[#0B0F1A]/50 border-[#406093]/20 hover:border-[#406093]/50 text-gray-400 hover:text-white'
+                                                                            : 'bg-[#0B0F1A]/50 border-[#406093]/20 hover:border-[#406093]/50 text-slate-400 hover:text-white'
                                                                             }`}
                                                                     >
                                                                         <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-[#406093]/20 border border-[#406093]/30">
@@ -707,7 +707,7 @@ export default function HeroSMSClient() {
                                                     < svg className="w-10 h-10 text-[#406093]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                 </div >
                                                 <h3 className="text-2xl font-black text-[#FFF799] mb-2">Select Target Country</h3>
-                                                < p className="text-sm text-gray-500 max-w-md">Initialize your OTP session by selecting a country from the left panel.</p>
+                                                < p className="text-sm text-slate-500 max-w-md">Initialize your OTP session by selecting a country from the left panel.</p>
                                             </div >
                                         ) : !selectedService ? (
                                             <div className="flex flex-col items-center justify-center h-full text-center py-20">
@@ -715,7 +715,7 @@ export default function HeroSMSClient() {
                                                     < svg className="w-10 h-10 text-[#80C60C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
                                                 </div >
                                                 <h3 className="text-2xl font-black text-[#FFF799] mb-2">Choose Service</h3>
-                                                < p className="text-sm text-gray-500 max-w-md">
+                                                < p className="text-sm text-slate-500 max-w-md">
                                                     < span className="text-[#4C8CE4] font-bold">{filteredServices.length} services</span> available in <span className="text-[#80C60C] font-bold">{selectedCountryName}</span>
                                                 </p >
                                             </div >
@@ -742,8 +742,8 @@ export default function HeroSMSClient() {
                                                         <h2 className="text-2xl font-black text-white mb-2">{selectedService.name || getServiceName(selectedService.code)}</h2>
                                                         <div className="flex flex-wrap items-center gap-3">
                                                             <span className="px-2 py-1 bg-[#406093]/20 border border-[#406093]/40 rounded-lg text-[10px] font-mono font-bold text-[#4C8CE4] uppercase">{selectedService.code}</span>
-                                                            <span className="text-xs text-gray-600">•</span>
-                                                            <span className="text-xs text-gray-400">Available in <span className="text-[#80C60C] font-bold">{selectedCountryName}</span></span>
+                                                            <span className="text-xs text-slate-600">•</span>
+                                                            <span className="text-xs text-slate-400">Available in <span className="text-[#80C60C] font-bold">{selectedCountryName}</span></span>
                                                         </div>
                                                     </div>
                                                 </div >
@@ -751,7 +751,7 @@ export default function HeroSMSClient() {
                                                 {/* Filters - Cyberpunk Toggle Style */}
                                                 < div className="flex flex-wrap items-center gap-4 mb-6 pb-6 border-b border-[#406093]/20">
                                                     < div className="flex items-center gap-3">
-                                                        < span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Fixed Price</span>
+                                                        < span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Fixed Price</span>
                                                         < button
                                                             onClick={() => setFixedPrice(f => !f)
                                                             }
@@ -761,7 +761,7 @@ export default function HeroSMSClient() {
                                                         </button >
                                                     </div >
                                                     <div className="flex items-center gap-3">
-                                                        < span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Max Price</span>
+                                                        < span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Max Price</span>
                                                         < div className="relative">
                                                             < span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#406093] font-bold">$</span>
                                                             < input
@@ -783,7 +783,7 @@ export default function HeroSMSClient() {
                                                                 }
                                                                 className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all border-2 ${selectedOperator === null
                                                                     ? 'bg-[#4C8CE4]/20 border-[#4C8CE4] text-[#4C8CE4] shadow-[0_0_10px_rgba(76,140,228,0.3)]'
-                                                                    : 'bg-[#0B0F1A] border-[#406093]/30 text-gray-500 hover:text-gray-300 hover:border-[#406093]/60'
+                                                                    : 'bg-[#0B0F1A] border-[#406093]/30 text-slate-500 hover:text-slate-300 hover:border-[#406093]/60'
                                                                     }`}
                                                             >
                                                                 All Providers
@@ -795,7 +795,7 @@ export default function HeroSMSClient() {
                                                                         onClick={() => setSelectedOperator(op === selectedOperator ? null : op)}
                                                                         className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all border-2 ${selectedOperator === op
                                                                             ? 'bg-[#4C8CE4]/20 border-[#4C8CE4] text-[#4C8CE4] shadow-[0_0_10px_rgba(76,140,228,0.3)]'
-                                                                            : 'bg-[#0B0F1A] border-[#406093]/30 text-gray-500 hover:text-gray-300 hover:border-[#406093]/60'
+                                                                            : 'bg-[#0B0F1A] border-[#406093]/30 text-slate-500 hover:text-slate-300 hover:border-[#406093]/60'
                                                                             }`}
                                                                     >
                                                                         {op}
@@ -821,8 +821,8 @@ export default function HeroSMSClient() {
                                                                 < div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#406093]/10 flex items-center justify-center border-2 border-[#406093]/30">
                                                                     < svg className="w-8 h-8 text-[#406093]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                                                 </div >
-                                                                <p className="text-sm font-bold text-gray-400 mb-1">No inventory available</p>
-                                                                < p className="text-xs text-gray-600">Try different provider or remove price cap</p>
+                                                                <p className="text-sm font-bold text-slate-400 mb-1">No inventory available</p>
+                                                                < p className="text-xs text-slate-600">Try different provider or remove price cap</p>
                                                             </div >
                                                         ) : (
                                                             <>
@@ -864,7 +864,7 @@ export default function HeroSMSClient() {
                                                                                     } />
                                                                                     < div >
                                                                                         <div className="text-lg font-black text-white">{p.count.toLocaleString()}</div>
-                                                                                        < div className="text-[9px] text-gray-600 uppercase tracking-wide">Available</div>
+                                                                                        < div className="text-[9px] text-slate-600 uppercase tracking-wide">Available</div>
                                                                                     </div >
                                                                                 </div >
 
@@ -913,7 +913,7 @@ export default function HeroSMSClient() {
                                             <svg className="w-10 h-10 text-[#406093]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                         </div>
                                         <h3 className="text-2xl font-black text-[#FFF799] mb-2">No Active Orders</h3>
-                                        <p className="text-sm text-gray-500">You don't have any active number rentals at the moment.</p>
+                                        <p className="text-sm text-slate-500">You don't have any active number rentals at the moment.</p>
                                     </div>
                                 ) : (
                                     <div className="grid gap-4">
@@ -939,7 +939,7 @@ export default function HeroSMSClient() {
                                                             <div className="text-[10px] font-mono font-bold text-[#4C8CE4] uppercase tracking-widest mb-1">{getServiceName(a.serviceCode)}</div>
                                                             <div className="flex items-center gap-3">
                                                                 <span className="text-xl font-black text-white tracking-wider">+{a.phone}</span>
-                                                                <button onClick={() => copyToClipboard(a.phone, `phone-${a.id}`)} className="p-1.5 text-gray-500 hover:text-[#FFF799] hover:bg-[#FFF799]/10 rounded-lg transition-all">
+                                                                <button onClick={() => copyToClipboard(a.phone, `phone-${a.id}`)} className="p-1.5 text-slate-500 hover:text-[#FFF799] hover:bg-[#FFF799]/10 rounded-lg transition-all">
                                                                     {copiedId === `phone-${a.id}` ? <svg className="w-4 h-4 text-[#80C60C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 8h3m-3 3h3" /></svg>}
                                                                 </button>
                                                             </div>
@@ -948,11 +948,11 @@ export default function HeroSMSClient() {
 
                                                     <div className="flex items-center gap-8">
                                                         <div>
-                                                            <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Time Left</div>
+                                                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Time Left</div>
                                                             <Countdown endTime={a.activationEndTime} />
                                                         </div>
                                                         <div>
-                                                            <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-2">Status</div>
+                                                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Status</div>
                                                             <StatusBadge status={a.activationStatus} />
                                                         </div>
                                                         <div className="min-w-[140px]">
@@ -970,12 +970,12 @@ export default function HeroSMSClient() {
                                                                 <div className="flex flex-col items-end">
                                                                     <div className="flex items-center gap-2 mb-1">
                                                                         {pollingIds[a.id] && <div className="w-1.5 h-1.5 rounded-full bg-[#FFF799] animate-ping" />}
-                                                                        <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Waiting for SMS</span>
+                                                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Waiting for SMS</span>
                                                                     </div>
                                                                     <button
                                                                         onClick={() => handleReceiveSms(a.id)}
                                                                         disabled={receivingIds[a.id]}
-                                                                        className="px-4 py-1.5 bg-[#406093]/10 border border-[#406093]/30 hover:border-[#4C8CE4]/50 rounded-xl text-[10px] font-black uppercase text-gray-400 hover:text-white transition-all disabled:opacity-50"
+                                                                        className="px-4 py-1.5 bg-[#406093]/10 border border-[#406093]/30 hover:border-[#4C8CE4]/50 rounded-xl text-[10px] font-black uppercase text-slate-400 hover:text-white transition-all disabled:opacity-50"
                                                                     >
                                                                         {receivingIds[a.id] ? 'Fetching...' : 'Check Manual'}
                                                                     </button>
@@ -1019,7 +1019,7 @@ export default function HeroSMSClient() {
                                             <svg className="w-10 h-10 text-[#406093]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         </div>
                                         <h3 className="text-2xl font-black text-[#FFF799] mb-2">Operation History Empty</h3>
-                                        <p className="text-sm text-gray-500">No past activations found in the neural archives.</p>
+                                        <p className="text-sm text-slate-500">No past activations found in the neural archives.</p>
                                     </div>
                                 ) : (
                                     <div className="bg-[#0B0F1A]/50 border-2 border-[#406093]/30 rounded-2xl overflow-hidden">
@@ -1027,12 +1027,12 @@ export default function HeroSMSClient() {
                                             <table className="w-full text-left">
                                                 <thead>
                                                     <tr className="border-b border-[#406093]/30 bg-[#406093]/5">
-                                                        <th className="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Service</th>
-                                                        <th className="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Phone Number</th>
-                                                        <th className="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Cost</th>
-                                                        <th className="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">Status</th>
-                                                        <th className="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest">SMS/OTP</th>
-                                                        <th className="px-6 py-4 text-[10px] font-black text-gray-500 uppercase tracking-widest text-right">ID</th>
+                                                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Service</th>
+                                                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Phone Number</th>
+                                                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Cost</th>
+                                                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</th>
+                                                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest">SMS/OTP</th>
+                                                        <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">ID</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-[#406093]/20">
@@ -1071,13 +1071,13 @@ export default function HeroSMSClient() {
                                                                     {h.smsCode ? (
                                                                         <span className="text-sm font-black text-[#FFF799] tracking-widest font-mono">{h.smsCode}</span>
                                                                     ) : (
-                                                                        <span className="text-[10px] text-gray-600 uppercase font-mono italic">No OTP Received</span>
+                                                                        <span className="text-[10px] text-slate-600 uppercase font-mono italic">No OTP Received</span>
                                                                     )}
-                                                                    {h.smsText && <p className="text-[9px] text-gray-500 truncate leading-tight">{h.smsText}</p>}
+                                                                    {h.smsText && <p className="text-[9px] text-slate-500 truncate leading-tight">{h.smsText}</p>}
                                                                 </div>
                                                             </td>
                                                             <td className="px-6 py-4 text-right">
-                                                                <span className="text-[9px] font-mono text-gray-600">#{h.id}</span>
+                                                                <span className="text-[9px] font-mono text-slate-600">#{h.id}</span>
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -1100,7 +1100,7 @@ export default function HeroSMSClient() {
                                             </div>
                                             <div>
                                                 <h3 className="text-xl font-black text-white uppercase tracking-tight">API Configuration</h3>
-                                                <p className="text-xs text-gray-500">Manage your connection to the Hero SMS network.</p>
+                                                <p className="text-xs text-slate-500">Manage your connection to the Hero SMS network.</p>
                                             </div>
                                         </div>
 
@@ -1117,7 +1117,7 @@ export default function HeroSMSClient() {
                                                     />
                                                     <button
                                                         onClick={() => setShowKeyInput(!showKeyInput)}
-                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#4C8CE4]"
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-[#4C8CE4]"
                                                     >
                                                         {showKeyInput ? <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.888 9.888L1.732 1.732m0 0a1 1 0 011.414 0l6.742 6.742M1.732 4.557l2.122-2.122M4.557 1.732l2.122 2.122M22.268 11.643a10.05 10.05 0 00-1.563-3.029m-5.858-4.108A10.003 10.003 0 0012 5c-4.478 0-8.268-2.943-9.543 7a9.97 9.97 0 001.563 3.029m5.858 4.108A10.003 10.003 0 0012 19c4.478 0 8.268-2.943 9.543-7a9.97 9.97 0 00-1.563-3.029" /></svg> : <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268-2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}
                                                     </button>
@@ -1139,7 +1139,7 @@ export default function HeroSMSClient() {
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                                 <h4 className="text-xs font-black uppercase tracking-widest">Danger Zone</h4>
                                             </div>
-                                            <p className="text-[10px] text-gray-500 uppercase tracking-wide">Destroying the key will immediately reset your session and disconnect all active interfaces.</p>
+                                            <p className="text-[10px] text-slate-500 uppercase tracking-wide">Destroying the key will immediately reset your session and disconnect all active interfaces.</p>
                                             <button
                                                 onClick={handleDestroyKey}
                                                 className="w-full py-3 border-2 border-[#DA4848]/40 hover:bg-[#DA4848]/20 text-[#DA4848] rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
@@ -1151,7 +1151,7 @@ export default function HeroSMSClient() {
                                 </div>
                                 <div className="mt-8 p-6 bg-[#4C8CE4]/5 border border-[#4C8CE4]/20 rounded-2xl">
                                     <h4 className="text-[10px] font-black text-[#4C8CE4] uppercase tracking-[0.2em] mb-3 ml-1">Documentation Reference</h4>
-                                    <p className="text-xs text-gray-400 leading-relaxed">Your API key is used to authenticate requests to Hero SMS. Keep it secure and never share it. You can find your key in your personal Hero SMS dashboard under API settings.</p>
+                                    <p className="text-xs text-slate-400 leading-relaxed">Your API key is used to authenticate requests to Hero SMS. Keep it secure and never share it. You can find your key in your personal Hero SMS dashboard under API settings.</p>
                                 </div>
                             </div>
                         )}

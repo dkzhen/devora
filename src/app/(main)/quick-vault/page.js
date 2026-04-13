@@ -103,7 +103,7 @@ export default function QuickVault() {
                         </svg>
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-slate-400 leading-relaxed">
                         Quick Vault is restricted to logged-in users only. Please sign in to securely store your credentials.
                     </p>
                 </div>
@@ -167,22 +167,27 @@ export default function QuickVault() {
             }}></div>
 
             <div className="flex flex-col space-y-6 relative z-10 w-full">
-                <HeroHeader 
-                    title="Quick" 
-                    badge="Vault" 
-                    description="Secure repository for IDs, addresses, and credentials."
-                    colorTheme="orange"
+                <HeroHeader
+                    title="Vault"
+                    badge="Quick"
+                    description="Secure repository for IDs, addresses, and credentials. All data is AES-256 encrypted before storage."
                     breadcrumbs={[
-                        { label: 'Dashboard', href: '/' },
-                        { label: 'Quick Vault' }
+                        {
+                            label: "Dashboard",
+                            href: "/",
+                            icon: <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        },
+                        {
+                            label: "Quick Vault",
+                            icon: <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.6)] animate-pulse mr-1" />
+                        }
                     ]}
-                    className="shrink-0"
                 />
 
                 {loading ? (
                     <div className="py-24 flex flex-col items-center justify-center bg-[#1a1a24]/30 rounded-2xl border border-white/5 ">
-                        <LoadingState message="Connecting to secure storage..." colorTheme="orange" />
-                        <p className="text-[10px] text-gray-500 mt-3 font-mono uppercase tracking-[0.3em] animate-pulse">Decrypting local vault...</p>
+                        <LoadingState message="Connecting to secure storage..."  />
+                        <p className="text-[10px] text-slate-500 mt-3 font-mono uppercase tracking-[0.3em] animate-pulse">Decrypting local vault...</p>
                     </div>
                 ) : (
                     <div className="flex flex-col space-y-4 md:space-y-10">
@@ -240,7 +245,7 @@ export default function QuickVault() {
                                                         <div className="flex gap-0.5">
                                                             <button
                                                                 onClick={(e) => openEditModal(item, e)}
-                                                                className="p-1.5 rounded-lg text-gray-500 hover:bg-orange-500/10 hover:text-orange-400 transition-all opacity-0 group-hover:opacity-100"
+                                                                className="p-1.5 rounded-lg text-slate-500 hover:bg-orange-500/10 hover:text-orange-400 transition-all opacity-0 group-hover:opacity-100"
                                                                 title="Edit item"
                                                             >
                                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -249,7 +254,7 @@ export default function QuickVault() {
                                                             </button>
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); setItemToDelete(item.id); }}
-                                                                className="p-1.5 rounded-lg text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition-all opacity-0 group-hover:opacity-100"
+                                                                className="p-1.5 rounded-lg text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all opacity-0 group-hover:opacity-100"
                                                                 title="Delete item"
                                                             >
                                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -281,25 +286,25 @@ export default function QuickVault() {
 
                         {/* Empty Search State */}
                         {search && displayCategories.length === 0 && (
-                            <div className="text-center py-16 bg-linear-to-br from-[#1a1a24] to-[#0f0f18] rounded-2xl border-2 border-orange-500/20">
+                            <div className="text-center py-16 bg-linear-to-br from-[#0c0e1a] to-[#080a14] rounded-2xl border-2 border-orange-500/20">
                                 <svg className="w-16 h-16 mx-auto text-orange-400/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                                 <h3 className="text-xl font-bold text-white mb-2">No matching items</h3>
-                                <p className="text-gray-400">We couldn't find any vault entries matching "<span className="text-orange-400 font-semibold">{search}</span>"</p>
+                                <p className="text-slate-400">We couldn't find any vault entries matching "<span className="text-orange-400 font-semibold">{search}</span>"</p>
                             </div>
                         )}
 
                         {/* Empty Vault State */}
                         {!search && vaultItems.length === 0 && (
-                            <div className="text-center py-10 md:py-16 bg-linear-to-br from-[#1a1a24] to-[#0f0f18] rounded-2xl border-2 border-orange-500/30 shadow-lg shadow-orange-500/10">
+                            <div className="text-center py-10 md:py-16 bg-linear-to-br from-[#0c0e1a] to-[#080a14] rounded-2xl border-2 border-orange-500/30 shadow-lg shadow-orange-500/10">
                                 <div className="w-24 h-24 mx-auto mb-6 bg-linear-to-br from-orange-500/20 to-red-500/20 rounded-2xl flex items-center justify-center border-2 border-orange-500/30">
                                     <svg className="w-12 h-12 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
                                 <h3 className="text-2xl font-bold text-white mb-2">Your Vault is Empty</h3>
-                                <p className="text-gray-400 mb-6 max-w-md mx-auto leading-relaxed">
+                                <p className="text-slate-400 mb-6 max-w-md mx-auto leading-relaxed">
                                     Keep your sensitive credentials, API keys, and phrases securely encrypted.
                                     Everything stored here is encrypted before saving and only accessible by you.
                                 </p>
@@ -313,7 +318,7 @@ export default function QuickVault() {
                                         </div>
                                         <div className="text-left">
                                             <div className="text-sm font-bold text-white">AES-256 Secured</div>
-                                            <div className="text-xs text-gray-500">Military-grade encryption</div>
+                                            <div className="text-xs text-slate-500">Military-grade encryption</div>
                                         </div>
                                     </div>
 
@@ -326,7 +331,7 @@ export default function QuickVault() {
                                         </div>
                                         <div className="text-left">
                                             <div className="text-sm font-bold text-white">Private Access</div>
-                                            <div className="text-xs text-gray-500">Private only to you</div>
+                                            <div className="text-xs text-slate-500">Private only to you</div>
                                         </div>
                                     </div>
                                 </div>
@@ -447,7 +452,7 @@ function EntryModal({ isOpen, onClose, editingItem, onSave }) {
 
     return (
         <div className="fixed inset-0 bg-black/80  flex items-center justify-center p-4 z-50">
-            <div className="bg-linear-to-br from-[#1a1a24] to-[#0f0f18] rounded-2xl max-w-md w-full border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 overflow-hidden">
+            <div className="bg-linear-to-br from-[#0c0e1a] to-[#080a14] rounded-2xl max-w-md w-full border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 overflow-hidden">
                 <div className="bg-linear-to-r from-[#fbb034] via-[#ff8c42] to-[#e60000] p-6">
                     <h3 className="text-2xl font-black text-white flex items-center gap-2">
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -525,7 +530,7 @@ function EntryModal({ isOpen, onClose, editingItem, onSave }) {
                             onChange={(e) => setNewItem({ ...newItem, value: e.target.value })}
                             className="w-full bg-[#0a0f1e] border-2 border-orange-500/20 focus:border-orange-500/60 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none transition-all font-medium resize-none font-mono text-sm"
                         />
-                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                        <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
@@ -538,7 +543,7 @@ function EntryModal({ isOpen, onClose, editingItem, onSave }) {
                             type="button"
                             onClick={onClose}
                             disabled={isSubmitting}
-                            className="flex-1 py-3 text-sm font-bold text-gray-400 hover:text-white transition-colors border-2 border-gray-700 hover:border-gray-600 rounded-xl"
+                            className="flex-1 py-3 text-sm font-bold text-slate-400 hover:text-white transition-colors border-2 border-gray-700 hover:border-gray-600 rounded-xl"
                         >
                             Cancel
                         </button>
@@ -576,14 +581,14 @@ function DeleteModal({ itemId, onClose, onConfirm }) {
 
     return (
         <div className="fixed inset-0 bg-black/80  flex items-center justify-center p-4 z-50">
-            <div className="bg-linear-to-br from-[#1a1a24] to-[#0f0f18] rounded-2xl max-w-sm w-full border-2 border-red-500/30 shadow-lg shadow-red-500/20 p-6">
+            <div className="bg-linear-to-br from-[#0c0e1a] to-[#080a14] rounded-2xl max-w-sm w-full border-2 border-red-500/30 shadow-lg shadow-red-500/20 p-6">
                 <div className="w-16 h-16 mx-auto mb-4 bg-red-500/10 rounded-full flex items-center justify-center border-2 border-red-500/30">
                     <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
                 <h3 className="text-xl font-bold text-white text-center mb-2">Are you sure?</h3>
-                <p className="text-gray-400 text-sm text-center mb-6">
+                <p className="text-slate-400 text-sm text-center mb-6">
                     This action cannot be undone. This credential will be permanently removed from your secure vault.
                 </p>
                 <div className="space-y-3">
@@ -597,7 +602,7 @@ function DeleteModal({ itemId, onClose, onConfirm }) {
                     <button
                         onClick={onClose}
                         disabled={isSubmitting}
-                        className="w-full py-3 text-sm font-bold text-gray-500 hover:text-white transition-colors"
+                        className="w-full py-3 text-sm font-bold text-slate-500 hover:text-white transition-colors"
                     >
                         Go Back
                     </button>

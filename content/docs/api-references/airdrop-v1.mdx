@@ -1,0 +1,108 @@
+---
+title: Airdrop API (v1)
+description: Programmatically manage airdrop projects and tasks.
+icon: Layers
+---
+
+The Airdrop API (v1) allows you to register new projects and add tasks to your dashboard externally. This is useful for automated tracking or integration with other hunting tools.
+
+---
+
+## Authentication
+
+All requests require an API Key in the `Authorization` header as a Bearer token.
+
+```http
+Authorization: Bearer devora_your_api_key
+```
+
+> [!IMPORTANT]
+> API Keys must be generated from your user settings and must start with the `devora_` prefix.
+
+---
+
+## 1. Projects (Airdrops)
+
+### Register a New Project
+Create a new airdrop project in the system.
+
+- **Endpoint**: `/api/v1/airdrops`
+- **Method**: `POST`
+
+#### Request Body
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `name` | String | **Required**. Name of the project. |
+| `status` | String | Initial status (New, Potential, Confirmed, etc.). Defaults to `New`. |
+| `cost` | String | Estimated cost (e.g., "$0", "Rp. 50.000"). |
+| `time` | String | Estimated time (e.g., "10 minutes"). |
+| `raise` | String | Total funding raised (e.g., "$11B"). |
+| `projectType`| String | Category (e.g., "Infra", "DeFi"). |
+| `links` | Array | Objects containing `{ "name": "web", "url": "..." }`. |
+
+#### Example cURL
+
+```bash
+curl https://devora.my.id/api/v1/airdrops \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer devora_your_api_key" \
+  -d '{
+    "name": "Devora Protocol",
+    "status": "New",
+    "cost": "$0",
+    "time": "5 minutes",
+    "links": [
+      { "name": "web", "url": "https://devora.ai" }
+    ]
+  }'
+```
+
+---
+
+## 2. Tasks
+
+### Add Task to Project
+Add a new task to an existing project.
+
+- **Endpoint**: `/api/v1/airdrops/:id/tasks`
+- **Method**: `POST`
+
+#### Path Parameters
+- `id`: The UUID of the project (e.g., `123e4567-e89b-12d3-a456-426614174000`).
+
+#### Request Body
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `title` | String | **Required**. Title of the task. |
+| `category` | String | **Required**. Task category (Social, Testnet, etc.). |
+| `description`| String | Detailed instructions. |
+| `steps` | Array | Objects containing `{ "text": "...", "isPrivate": boolean }`. |
+
+#### Example cURL
+
+```bash
+curl https://devora.my.id/api/v1/airdrops/project-id-here/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer devora_your_api_key" \
+  -d '{
+    "title": "Join Telegram",
+    "category": "Social",
+    "steps": [
+      { "text": "Click the link", "isPrivate": false },
+      { "text": "Verify username", "isPrivate": true }
+    ]
+  }'
+```
+
+---
+
+## Error Codes
+
+| Status | Message | Description |
+| :--- | :--- | :--- |
+| **401** | Unauthorized | Invalid or missing API Key. |
+| **403** | Forbidden | You are trying to modify a project you don't own. |
+| **404** | Not Found | The project ID provided does not exist. |
+| **400** | Bad Request | Missing required fields (e.g., name, title). |
