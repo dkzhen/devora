@@ -97,12 +97,16 @@ export async function PUT(request, { params }) {
             }
 
             // Handle publish specific actions from ULTRA
-            if (publishStatus === 'APPROVED') {
-                newIsPublic = true;
-                newPublishStatus = 'APPROVED';
-            } else if (publishStatus === 'REJECTED') {
-                newIsPublic = false;
-                newPublishStatus = 'NONE'; // Reset so they can request again
+            if (publishStatus !== undefined) {
+                if (publishStatus === 'APPROVED') {
+                    newIsPublic = true;
+                    newPublishStatus = 'APPROVED';
+                } else if (publishStatus === 'REJECTED') {
+                    newIsPublic = false;
+                    newPublishStatus = 'NONE'; // Reset so they can request again
+                } else if (publishStatus === 'PENDING') {
+                    newPublishStatus = 'PENDING';
+                }
             }
         } else if (airdrop.userId === user.id) {
             // Owner can request publish

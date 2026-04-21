@@ -5,14 +5,6 @@ import { jwtVerify } from 'jose';
 
 export const dynamic = 'force-dynamic';
 
-const DEFAULT_FEATURES = [
-    { feature: 'airdrops', label: 'Airdrops', message: 'The Airdrops section is currently under maintenance. Please check back soon.' },
-    { feature: 'gmail-center', label: 'Gmail Center', message: 'Gmail Center is temporarily unavailable while we make improvements.' },
-    { feature: 'mail-control', label: 'Mail Control', message: 'Mail Control is undergoing scheduled maintenance.' },
-    { feature: 'drive-center', label: 'Drive Center', message: 'Drive Center is currently undergoing maintenance.' },
-    { feature: 'groq-intelligence', label: 'Groq Intelligence', message: 'Groq Intelligence is currently receiving upgrades. Please check back later.' },
-];
-
 async function getUser(request) {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
@@ -29,15 +21,6 @@ async function getUser(request) {
 // GET - Fetch all maintenance configs (public)
 export async function GET() {
     try {
-        // Seed defaults if not present
-        for (const f of DEFAULT_FEATURES) {
-            await prisma.maintenanceConfig.upsert({
-                where: { feature: f.feature },
-                update: {},
-                create: { feature: f.feature, label: f.label, enabled: false, message: f.message },
-            });
-        }
-
         const configs = await prisma.maintenanceConfig.findMany({
             orderBy: { feature: 'asc' },
         });
@@ -57,7 +40,7 @@ export async function POST(request) {
         }
 
         const body = await request.json();
-        const { feature, label } = body;
+        const { feature, label, icon, color } = body;
 
         if (!feature || !label) {
             return NextResponse.json({ error: 'Feature ID and Label are required' }, { status: 400 });
@@ -72,6 +55,8 @@ export async function POST(request) {
                 label,
                 enabled: false,
                 message,
+                icon: icon || '/icons/menu.png',
+                color: color || 'slate',
             },
         });
 

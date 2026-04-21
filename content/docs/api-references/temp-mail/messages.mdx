@@ -1,44 +1,144 @@
 ---
 title: Messages
-description: Manage inbox and message content.
+description: Fetch messages from temporary email inbox
 ---
 
-# Inbox & Messages
+## Get Messages
 
-Interact with the messages received by your temporary accounts.
+Retrieve messages from a temporary email account inbox. Supports both Mail.tm and MoeMail providers.
 
-### 📥 List Messages (Inbox)
+### Endpoint
 
-`GET /api/v1/temp-mail/accounts/{id}/messages`
-
-Returns the inbox for the specified account.
-
-**Response `200`:**
-```json
-[
-  {
-    "id": "...",
-    "from": { "name": "Sender", "address": "sender@domain.com" },
-    "subject": "Hello!",
-    "intro": "Preview of the email...",
-    "seen": false,
-    "createdAt": "..."
-  }
-]
+```
+GET /api/v1/temp-mail/messages
 ```
 
----
+### Authentication
 
-### 📄 Get Message Detail
+Requires API Key in header:
 
-`GET /api/v1/temp-mail/accounts/{accountId}/messages/{msgId}`
+```
+X-API-Key: your_api_key_here
+```
 
-Returns the full content (HTML/text) of a specific message.
+### Query Parameters
 
----
+| Parameter   | Type   | Required | Description                                                |
+| ----------- | ------ | -------- | ---------------------------------------------------------- |
+| `accountId` | string | Yes      | The temporary email account ID                             |
+| `provider`  | string | No       | Provider type: `mail.tm` or `moemail` (default: `mail.tm`) |
 
-### 🖼️ Image Proxy
+### Response
 
-`GET /api/v1/temp-mail/image?url={imageUrl}&accountId={accountId}`
+#### Success Response (200 OK)
 
-Proxies images embedded in emails so they load securely through Devora.
+```json
+{
+  "success": true,
+  "messages": [
+    {
+      "id": "msg_123abc",
+      "from": {
+        "name": "Sender Name",
+        "address": "sender@example.com"
+      },
+      "subject": "Welcome Email",
+      "intro": "This is a preview of the message...",
+      "createdAt": "2026-04-20T12:00:00.000Z",
+      "seen": false
+    }
+  ],
+  "count": 1
+}
+```
+
+#### Error Responses
+
+**400 Bad Request** - Missing accountId
+
+```json
+{
+  "error": "accountId required"
+}
+```
+
+**401 Unauthorized** - Invalid API key or account not found
+
+```json
+{
+  "error": "Invalid API key"
+}
+```
+
+**500 Internal Server Error**
+
+```json
+{
+  "error": "Failed to fetch messages"
+}
+```
+
+### Features
+
+- **Automatic Database Storage**: All messages are automatically saved to the database
+- **Statistics Tracking**: New messages increment the global message counter
+- **Duplicate Prevention**: Messages are upserted to prevent duplicates
+- **Multi-Provider Support**: Works with both Mail.tm and MoeMail
+- **API Usage Tracking**: All requests are tracked for analytics
+
+### Example Usage
+
+#### cURL
+
+```bash
+curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?accountId=abc123&provider=mail.tm" \
+  -H "X-API-Key: your_api_key_here"
+```
+
+#### JavaScript (Fetch)
+
+```javascript
+const response = await fetch(
+  "/api/v1/temp-mail/messages?accountId=abc123&provider=moemail",
+  {
+    headers: {
+      "X-API-Key": "your_api_key_here",
+    },
+  },
+);
+
+const data = await response.json();
+console.log(`Received ${data.count} messages`);
+```
+
+#### Python
+
+```python
+import requests
+
+headers = {
+    'X-API-Key': 'your_api_key_here'
+}
+
+params = {
+    'accountId': 'abc123',
+    'provider': 'mail.tm'
+}
+
+response = requests.get(
+    'https://your-domain.com/api/v1/temp-mail/messages',
+    headers=headers,
+    params=params
+)
+
+data = response.json()
+print(f"Received {data['count']} messages")
+```
+
+### Notes
+
+- Messages are automatically saved to the database for persistence
+- The `messagesReceived` statistic is incremented for each new message
+- For Mail.tm accounts, the token is retrieved from the database
+- MoeMail accounts don't require tokens
+- Messages are returned in the order received from the provider

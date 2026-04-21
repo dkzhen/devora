@@ -9,15 +9,15 @@ function MaintenanceContent() {
     const feature = searchParams.get('feature') || 'this feature';
     const message = searchParams.get('message') || 'We\'re performing some scheduled maintenance. We\'ll be back online shortly.';
 
-    const featureLabels = {
-        'airdrops': 'Airdrops',
-        'gmail-center': 'Gmail Center',
-        'mail-control': 'Mail Control',
-        'endpoints': 'API Endpoints',
-        'app-library': 'App Library',
+    // Format slug to Title Case (e.g., "drive-center" -> "Drive Center")
+    const formatFeatureName = (slug) => {
+        return slug
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
     };
 
-    const featureLabel = featureLabels[feature] || feature;
+    const featureLabel = formatFeatureName(feature);
 
     return (
         <div className="min-h-screen bg-[#080d1a] flex items-center justify-center p-4 relative overflow-hidden">

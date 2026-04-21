@@ -1,6 +1,10 @@
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Callout } from '@/components/docs/Callout';
+import { ApiCard } from '@/components/docs/ApiCard';
+import { Cards, Card } from '@/components/docs/Cards';
 
 /**
  * @param {import('mdx/types').MDXComponents} [components]
@@ -13,6 +17,12 @@ export function getMDXComponents(components) {
         Step,
         Tabs,
         Tab,
+        Accordion,
+        Accordions,
+        Callout,
+        ApiCard,
+        Cards,
+        Card,
         ...components,
     };
 }

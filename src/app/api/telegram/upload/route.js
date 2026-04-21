@@ -48,6 +48,31 @@ export async function POST(req) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        // Get Bot Token to fetch file info
+        const botTokenConfig = await prisma.globalConfig.findUnique({
+            where: { key: 'BOT_TOKEN_TELEGRAM' }
+        });
+
+        if (!botTokenConfig) {
+            return NextResponse.json({ error: 'Bot Token not configured' }, { status: 500 });
+        }
+
+        const botToken = decrypt(botTokenConfig.value);
+
+        // Fetch file size from Telegram API
+        let fileSize = null;
+        try {
+            const fileInfoRes = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${apkFileId}`);
+            const fileInfoData = await fileInfoRes.json();
+            
+            if (fileInfoData.ok && fileInfoData.result && fileInfoData.result.file_size) {
+                fileSize = BigInt(fileInfoData.result.file_size);
+            }
+        } catch (error) {
+            console.error('Failed to fetch file size from Telegram:', error);
+            // Continue without file size if fetch fails
+        }
+
         // Save to Database
         const appRecord = await prisma.app.create({
             data: {
@@ -61,7 +86,8 @@ export async function POST(req) {
                         version: version,
                         androidVersion: androidVersion || null,
                         apkUrl: apkFileId,
-                        imageUrl: imageFileId || null
+                        imageUrl: imageFileId || null,
+                        fileSize: fileSize
                     }
                 }
             },

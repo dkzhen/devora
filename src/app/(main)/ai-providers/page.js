@@ -12,6 +12,9 @@ export default function AiProvidersPage() {
     const [user, setUser] = useState(null);
     const [baseUrl, setBaseUrl] = useState('');
     const [statusFilter, setStatusFilter] = useState('all'); // all | active | suspend
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [editingModel, setEditingModel] = useState(null);
+    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', baseUrl: '' });
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -145,6 +148,105 @@ export default function AiProvidersPage() {
         }
     };
 
+    const handleAddModel = async () => {
+        if (!formData.id || !formData.name || !formData.ownedBy) {
+            toast.error('All fields are required');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/ai-providers/models', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to add model');
+            }
+
+            const { data } = await res.json();
+            setModels(prev => [...prev, {
+                id: data.id,
+                name: data.name,
+                owned_by: data.ownedBy,
+                created: data.created,
+                status: data.status,
+                isRestricted: data.isRestricted,
+                allowedEmails: []
+            }]);
+
+            toast.success('Model added successfully');
+            setShowAddModal(false);
+            setFormData({ id: '', name: '', ownedBy: '', baseUrl: '' });
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    const handleEditModel = async () => {
+        if (!formData.id || !formData.name || !formData.ownedBy) {
+            toast.error('All fields are required');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/ai-providers/models', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to update model');
+            }
+
+            setModels(prev => prev.map(m => 
+                m.id === formData.id 
+                    ? { ...m, name: formData.name, owned_by: formData.ownedBy }
+                    : m
+            ));
+
+            toast.success('Model updated successfully');
+            setEditingModel(null);
+            setFormData({ id: '', name: '', ownedBy: '' });
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    const handleDeleteModel = async (modelId) => {
+        if (!confirm('Are you sure you want to delete this model?')) return;
+
+        try {
+            const res = await fetch(`/api/ai-providers/models?id=${modelId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to delete model');
+            }
+
+            setModels(prev => prev.filter(m => m.id !== modelId));
+            toast.success('Model deleted successfully');
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    const openEditModal = (model) => {
+        setEditingModel(model);
+        setFormData({
+            id: model.id,
+            name: model.name,
+            ownedBy: model.owned_by,
+            baseUrl: model.baseUrl || ''
+        });
+    };
+
     const filteredModels = models.filter(m => {
         // 1. Search filter
         const matchesSearch = m.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -188,9 +290,9 @@ export default function AiProvidersPage() {
 
     const getStatusStyle = (status) => {
         switch (status) {
-            case 'suspend': return 'text-amber-400 border-amber-400/20 bg-amber-400/5';
-            case 'hidden': return 'text-slate-500 border-white/10 bg-white/5 opacity-70';
-            default: return 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5';
+            case 'suspend': return 'text-amber-400 border-amber-400/30 bg-amber-400/10';
+            case 'hidden': return 'text-slate-400 border-slate-600/30 bg-slate-700/20 opacity-70';
+            default: return 'text-emerald-300 border-emerald-400/30 bg-emerald-400/10';
         }
     };
 
@@ -209,14 +311,14 @@ export default function AiProvidersPage() {
         };
 
         return (
-            <div className="mt-3 pt-3 border-t border-white/2">
-                <p className="text-[7px] font-black uppercase text-blue-400 tracking-widest mb-2 flex items-center justify-between">
+            <div className="mt-3 pt-3 border-t border-slate-600/30">
+                <p className="text-[7px] font-bold uppercase text-blue-300 tracking-widest mb-2 flex items-center justify-between">
                     <span>Whitelist Emails ({emails.length})</span>
-                    {emails.length === 0 && <span className="text-amber-500/60 lowercase italic font-light">None set</span>}
+                    {emails.length === 0 && <span className="text-amber-400/70 lowercase italic font-light">None set</span>}
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-2">
                     {emails.map(email => (
-                        <span key={email} className="text-[8px] bg-blue-500/10 border border-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-sm flex items-center gap-1 group/chip">
+                        <span key={email} className="text-[8px] bg-blue-500/15 border border-blue-400/30 text-blue-300 px-1.5 py-0.5 rounded-sm flex items-center gap-1 group/chip">
                             {email}
                             <button onClick={() => removeEmail(email)} className="hover:text-red-400">×</button>
                         </span>
@@ -228,7 +330,7 @@ export default function AiProvidersPage() {
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={addEmail}
                     placeholder="Add user email..."
-                    className="w-full bg-black/60 border border-white/10 rounded-sm px-3 py-1.5 text-[9px] text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500/50 font-mono transition-all"
+                    className="w-full bg-slate-800/60 border border-slate-600/50 rounded-sm px-3 py-1.5 text-[9px] text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-400/50 font-mono transition-all"
                 />
             </div>
         );
@@ -261,19 +363,19 @@ export default function AiProvidersPage() {
                 </div>
             ) : (
                 <>
-                    <div className="border border-white/5 bg-[#0c0e1a] rounded-xl overflow-hidden shadow-xl">
-                        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="border border-white/10 bg-gradient-to-br from-slate-800/40 to-slate-900/40 rounded-xl overflow-hidden shadow-xl">
+                        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-start sm:items-center gap-4">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-white/10 flex items-center justify-center bg-white/5 text-purple-400 shadow-inner shrink-0">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border border-purple-400/30 flex items-center justify-center bg-purple-500/10 text-purple-300 shadow-inner shrink-0">
                                     <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
-                                        <h3 className="text-[9px] sm:text-[10px] font-black text-slate-100 uppercase tracking-[0.2em]">Core Endpoint</h3>
+                                        <h3 className="text-[9px] sm:text-[10px] font-bold text-slate-200 uppercase tracking-[0.2em]">Core Endpoint</h3>
                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
                                     </div>
                                     <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
-                                        <code className="text-[9px] sm:text-[10px] font-mono text-slate-300 bg-white/5 border border-white/5 px-2 py-0.5 rounded-xs truncate sm:whitespace-normal break-all">{baseUrl}</code>
+                                        <code className="text-[9px] sm:text-[10px] font-mono text-slate-200 bg-slate-700/50 border border-slate-600/50 px-2 py-0.5 rounded-xs truncate sm:whitespace-normal break-all">{baseUrl}</code>
                                         <button
                                             onClick={() => copyToClipboard(baseUrl)}
                                             className="text-slate-600 hover:text-slate-100 transition-colors shrink-0"
@@ -285,34 +387,34 @@ export default function AiProvidersPage() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-sm border text-emerald-400 border-emerald-400/20 bg-emerald-400/5">
+                                <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm border text-emerald-300 border-emerald-400/30 bg-emerald-400/10">
                                     CORE ACTIVE
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="border border-white/10 bg-white/3 p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row items-start gap-4 backdrop-blur-sm">
-                        <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 shrink-0">
+                    <div className="border border-slate-600/40 bg-slate-800/30 p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row items-start gap-4 backdrop-blur-sm">
+                        <div className="p-2 rounded-lg bg-slate-700/40 border border-slate-600/40 text-slate-300 shrink-0">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
-                        <div className="flex-1">                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Developer Notice</p>
-                            <div className="text-[10px] text-slate-500 mt-2.5 space-y-2 font-mono">
+                        <div className="flex-1">                            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-300">Developer Notice</p>
+                            <div className="text-[10px] text-slate-300 mt-2.5 space-y-2 font-mono">
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1 h-1 rounded-full bg-slate-700" />
-                                    <span><span className="text-emerald-400 font-bold">ACTIVE</span> &mdash; Highly available system endpoints.</span>
+                                    <span className="w-1 h-1 rounded-full bg-slate-500" />
+                                    <span><span className="text-emerald-300 font-bold">ACTIVE</span> &mdash; Highly available system endpoints.</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1 h-1 rounded-full bg-slate-700" />
-                                    <span><span className="text-amber-500 font-bold">SUSPENDED</span> &mdash; Model is temporarily offline.</span>
+                                    <span className="w-1 h-1 rounded-full bg-slate-500" />
+                                    <span><span className="text-amber-400 font-bold">SUSPENDED</span> &mdash; Model is temporarily offline.</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="w-1 h-1 rounded-full bg-slate-700" />
-                                    <span><span className="text-blue-400 font-bold">RESTRICTED</span> &mdash; Whitelist authorization required.</span>
+                                    <span className="w-1 h-1 rounded-full bg-slate-500" />
+                                    <span><span className="text-blue-300 font-bold">RESTRICTED</span> &mdash; Whitelist authorization required.</span>
                                 </div>
  
-                                <div className="mt-3 text-slate-500 italic bg-white/5 p-2 border-l border-white/10 rounded-r-md">
-                                    * API access requires a valid <a href="/api-key" className="text-slate-300 hover:text-white underline underline-offset-4 decoration-white/20 transition-colors font-bold">Bearer Token</a>.
+                                <div className="mt-3 text-slate-300 italic bg-slate-700/40 p-2 border-l border-slate-500/50 rounded-r-md">
+                                    * API access requires a valid <a href="/api-key" className="text-slate-100 hover:text-white underline underline-offset-4 decoration-slate-400/40 transition-colors font-bold">Bearer Token</a>.
                                 </div>
                             </div>
                         </div>
@@ -321,7 +423,7 @@ export default function AiProvidersPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
                         <div className="flex flex-col sm:flex-row flex-1 items-stretch gap-2 max-w-2xl">
                             <div className="relative flex-1 group">
-                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-[#D9C5C5] transition-colors">
+                                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-purple-400 transition-colors">
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </div>
                                 <input
@@ -329,11 +431,11 @@ export default function AiProvidersPage() {
                                     value={search}
                                     onChange={e => setSearch(e.target.value)}
                                     placeholder="Search identifiers or providers..."
-                                    className="w-full bg-[#0B0F1A] border border-white/10 rounded-sm pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-[#D9C5C5]/50 transition-all font-mono"
+                                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-sm pl-9 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all font-mono"
                                 />
                             </div>
 
-                            <div className="flex items-center p-1 bg-[#0B0F1A] border border-white/10 rounded-sm shrink-0">
+                            <div className="flex items-center p-1 bg-slate-800/50 border border-slate-600/50 rounded-sm shrink-0">
                                 {[
                                     { id: 'all', label: 'ALL' },
                                     { id: 'active', label: 'ACTIVE', dot: 'bg-emerald-400' },
@@ -342,9 +444,9 @@ export default function AiProvidersPage() {
                                     <button
                                         key={t.id}
                                         onClick={() => setStatusFilter(t.id)}
-                                        className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 ${statusFilter === t.id
-                                            ? 'bg-white/10 text-white shadow-inner'
-                                            : 'text-slate-500 hover:text-slate-300'
+                                        className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center gap-2 ${statusFilter === t.id
+                                            ? 'bg-slate-700/60 text-slate-100 shadow-inner'
+                                            : 'text-slate-400 hover:text-slate-200'
                                             }`}
                                     >
                                         {t.dot && <span className={`w-1 h-1 rounded-full ${t.dot} ${statusFilter === t.id ? 'animate-pulse' : ''}`} />}
@@ -353,57 +455,69 @@ export default function AiProvidersPage() {
                                 ))}
                             </div>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 text-[10px] font-black uppercase tracking-widest px-5 py-3 sm:py-2.5 border border-white/10 rounded-xl bg-[#0c0e1a] shadow-xl overflow-hidden">
-                            <div className="flex items-center justify-between sm:justify-start gap-3 border-b sm:border-b-0 sm:border-r border-white/5 pb-2 sm:pb-0 sm:pr-5">
-                                <span className="text-slate-400">Synchronized Models</span>
-                                <span className="text-white font-mono text-xs font-bold">{models.length}</span>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 text-[10px] font-bold uppercase tracking-widest px-5 py-3 sm:py-2.5 border border-slate-600/40 rounded-xl bg-slate-800/40 shadow-xl overflow-hidden">
+                            <div className="flex items-center justify-between sm:justify-start gap-3 border-b sm:border-b-0 sm:border-r border-slate-600/30 pb-2 sm:pb-0 sm:pr-5">
+                                <span className="text-slate-300">Synchronized Models</span>
+                                <span className="text-slate-100 font-mono text-xs font-bold">{models.length}</span>
                             </div>
 
                             <div className="flex items-center justify-around sm:justify-start gap-8 sm:gap-5 pt-1 sm:pt-0">
                                 <div className="flex items-center gap-2.5 group">
                                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#10B981]" />
-                                    <span className="text-emerald-400 font-black hidden sm:inline">ACTIVE</span>
-                                    <span className="text-white font-mono text-xs italic">{activeCount}</span>
+                                    <span className="text-emerald-300 font-bold hidden sm:inline">ACTIVE</span>
+                                    <span className="text-slate-100 font-mono text-xs italic">{activeCount}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2.5 group">
                                     <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_#F59E0B]" />
-                                    <span className="text-amber-500 font-black hidden sm:inline">SUSPENDED</span>
-                                    <span className="text-white font-mono text-xs italic">{suspendCount}</span>
+                                    <span className="text-amber-400 font-bold hidden sm:inline">SUSPENDED</span>
+                                    <span className="text-slate-100 font-mono text-xs italic">{suspendCount}</span>
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
+                    {user?.role === 'ULTRA' && (
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30 rounded-lg text-purple-300 text-[10px] font-bold uppercase tracking-widest transition-all"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                Add Model
+                            </button>
+                        </div>
+                    )}
+
                     <div className="grid gap-6 sm:gap-10">
                         {Object.entries(groupedModels).map(([owner, ownerModels]) => (
                             <div key={owner} className="space-y-4">
                                 <div className="flex items-center gap-3 px-1">
-                                    <span className="w-3 h-2 rounded-full bg-purple-500/40" />
-                                    <h4 className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">{owner}</h4>
-                                    <div className="h-px flex-1 bg-white/5 ml-4" />
+                                    <span className="w-3 h-2 rounded-full bg-purple-400/50" />
+                                    <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-[0.4em]">{owner}</h4>
+                                    <div className="h-px flex-1 bg-slate-600/30 ml-4" />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                     {ownerModels.map(model => (
-                                        <div key={model.id} className={`p-4 border border-white/5 bg-[#0c0e1a] hover:bg-white/5 transition-all rounded-xl group flex flex-col justify-between min-h-[120px] ${model.status === 'hidden' ? 'ring-1 ring-white/10 opacity-50' : 'shadow-lg shadow-black/20'}`}>
+                                        <div key={model.id} className={`p-4 border border-slate-600/40 bg-slate-800/40 hover:bg-slate-700/40 transition-all rounded-xl group flex flex-col justify-between min-h-[120px] ${model.status === 'hidden' ? 'ring-1 ring-slate-600/40 opacity-50' : 'shadow-lg shadow-black/20'}`}>
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex flex-col gap-1.5">
-                                                    <code className="text-[11px] font-mono text-blue-400 group-hover:text-blue-300 transition-colors break-all leading-relaxed">
+                                                    <code className="text-[11px] font-mono text-blue-300 group-hover:text-blue-200 transition-colors break-all leading-relaxed">
                                                         {model.id}
                                                     </code>
                                                     <div className="flex gap-1.5">
-                                                        <span className={`text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${getStatusStyle(model.status)}`}>
+                                                        <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${getStatusStyle(model.status)}`}>
                                                             {model.status}
                                                         </span>
                                                         {model.isRestricted && (
-                                                            <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-blue-500/20 text-blue-400 bg-blue-500/5">
+                                                            <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-blue-400/30 text-blue-300 bg-blue-500/10">
                                                                 RESTRICTED
                                                             </span>
                                                         )}
                                                         {user?.role === 'ULTRA' && (
-                                                            <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-purple-500/20 text-purple-400 bg-purple-500/5">
+                                                            <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-purple-400/30 text-purple-300 bg-purple-500/10">
                                                                 ADMIN_VISIBLE
                                                             </span>
                                                         )}
@@ -440,11 +554,25 @@ export default function AiProvidersPage() {
                                                             >
                                                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
                                                             </button>
+                                                            <button
+                                                                onClick={() => openEditModal(model)}
+                                                                className="p-1 rounded-sm bg-blue-500/10 border border-white/10 text-slate-600 hover:text-blue-400"
+                                                                title="Edit Model"
+                                                            >
+                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteModel(model.id)}
+                                                                className="p-1 rounded-sm bg-red-500/10 border border-white/10 text-slate-600 hover:text-red-400"
+                                                                title="Delete Model"
+                                                            >
+                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                            </button>
                                                         </div>
                                                     ) : (
                                                         <button
                                                             onClick={() => copyToClipboard(model.id)}
-                                                            className="text-slate-600 hover:text-[#D9C5C5] transition-colors p-1"
+                                                            className="text-slate-400 hover:text-purple-300 transition-colors p-1"
                                                             title="Copy Model ID"
                                                         >
                                                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
@@ -461,11 +589,11 @@ export default function AiProvidersPage() {
                                                 />
                                             )}
 
-                                            <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">
+                                            <div className="mt-4 pt-4 border-t border-slate-600/30 flex items-center justify-between">
+                                                <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
                                                     SYS_MODEL
                                                 </span>
-                                                <span className="text-[9px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded-xs">
+                                                <span className="text-[9px] font-mono text-slate-300 bg-slate-700/40 px-2 py-0.5 rounded-xs">
                                                     v{model.created ? new Date(model.created * 1000).getFullYear() : '2026'}.{model.created ? new Date(model.created * 1000).getMonth() + 1 : '1'}
                                                 </span>
                                             </div>
@@ -476,6 +604,91 @@ export default function AiProvidersPage() {
                         ))}
                     </div>
                 </>
+            )}
+
+            {/* Add/Edit Model Modal */}
+            {(showAddModal || editingModel) && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+                    <div className="bg-slate-800 border border-slate-600/50 rounded-xl p-6 max-w-md w-full">
+                        <h3 className="text-lg font-bold text-slate-100 mb-4 uppercase tracking-wider">
+                            {editingModel ? 'Edit Model' : 'Add New Model'}
+                        </h3>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
+                                    Model ID
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.id}
+                                    onChange={e => setFormData({ ...formData, id: e.target.value })}
+                                    disabled={!!editingModel}
+                                    placeholder="e.g., gpt-4, claude-3-opus"
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
+                                    Model Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="e.g., GPT-4, Claude 3 Opus"
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
+                                    Owned By
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.ownedBy}
+                                    onChange={e => setFormData({ ...formData, ownedBy: e.target.value })}
+                                    placeholder="e.g., OpenAI, Anthropic"
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
+                                    Base URL <span className="text-slate-500">(Optional)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.baseUrl}
+                                    onChange={e => setFormData({ ...formData, baseUrl: e.target.value })}
+                                    placeholder="e.g., https://api.openai.com/v1"
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={() => {
+                                    setShowAddModal(false);
+                                    setEditingModel(null);
+                                    setFormData({ id: '', name: '', ownedBy: '', baseUrl: '' });
+                                }}
+                                className="flex-1 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 rounded-lg text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={editingModel ? handleEditModel : handleAddModel}
+                                className="flex-1 px-4 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/30 rounded-lg text-purple-300 text-[10px] font-bold uppercase tracking-widest transition-all"
+                            >
+                                {editingModel ? 'Update' : 'Add'} Model
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

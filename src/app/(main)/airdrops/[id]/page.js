@@ -4,6 +4,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 import LoadingImage from '@/components/LoadingImage';
+import { DEFAULT_STEP, TASK_STATUS, PUBLISH_STATUS } from '@/constants/airdrops.constants';
+import { processTaskDeadlines } from '@/lib/utils/airdrops.utils';
 
 export default function AirdropDetailPage() {
     const { id } = useParams();
@@ -16,7 +18,7 @@ export default function AirdropDetailPage() {
     const [activeTask, setActiveTask] = useState(null);
     const [showAddTask, setShowAddTask] = useState(false);
     const [activeCategory, setActiveCategory] = useState(null);
-    const [newSteps, setNewSteps] = useState([{ text: '', link: '', image: '', isPrivate: false }]);
+    const [newSteps, setNewSteps] = useState([DEFAULT_STEP]);
     const [isEditingTask, setIsEditingTask] = useState(false);
     const [fullscreenImage, setFullscreenImage] = useState(null);
 
@@ -29,6 +31,11 @@ export default function AirdropDetailPage() {
     const [telegramError, setTelegramError] = useState(null);
     const [customBannerUrl, setCustomBannerUrl] = useState('');
     const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
+    
+    // Telegram Credentials Check
+    const [telegramConfigured, setTelegramConfigured] = useState(false);
+    const [telegramConfigLoading, setTelegramConfigLoading] = useState(true);
+    const [missingCredentials, setMissingCredentials] = useState([]);
 
     const handleToggleVisibility = async () => {
         setIsTogglingVisibility(true);
@@ -74,6 +81,33 @@ export default function AirdropDetailPage() {
         }
     };
 
+    // Check Telegram credentials configuration (only for ULTRA users)
+    useEffect(() => {
+        const checkTelegramConfig = async () => {
+            if (!user || user.role !== 'ULTRA') {
+                setTelegramConfigLoading(false);
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/config/check-telegram');
+                if (res.ok) {
+                    const data = await res.json();
+                    setTelegramConfigured(data.configured);
+                    setMissingCredentials(data.missingKeys || []);
+                }
+            } catch (error) {
+                console.error('Failed to check telegram config:', error);
+            } finally {
+                setTelegramConfigLoading(false);
+            }
+        };
+
+        if (user) {
+            checkTelegramConfig();
+        }
+    }, [user]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -98,19 +132,7 @@ export default function AirdropDetailPage() {
                 const tasksRes = await fetch(`/api/airdrops/${id}/tasks`);
                 if (tasksRes.ok) {
                     const tasksData = await tasksRes.json();
-
-                    const now = new Date();
-                    const processedTasks = tasksData.map(task => {
-                        if (task.status === 'Open' && task.deadline) {
-                            const deadlineDate = new Date(task.deadline);
-                            deadlineDate.setHours(23, 59, 59, 999);
-                            if (now > deadlineDate) {
-                                return { ...task, status: 'Closed' };
-                            }
-                        }
-                        return task;
-                    });
-
+                    const processedTasks = processTaskDeadlines(tasksData);
                     setTasks(processedTasks);
                     if (processedTasks.length > 0) setActiveTask(processedTasks[0]);
                 }
@@ -202,7 +224,7 @@ export default function AirdropDetailPage() {
                 setTasks([...tasks, newTask]);
                 setShowAddTask(false);
                 setActiveTask(newTask);
-                setNewSteps([{ text: '', link: '', image: '' }]); // Reset form state
+                setNewSteps([{ text: '', link: '', image: '', isPrivate: false }]); // Reset form state
             } else {
                 alert('Failed to add task');
             }
@@ -397,9 +419,7 @@ export default function AirdropDetailPage() {
             />
 
             {/* Links & Status Chips Section */}
-            <div className="relative z-10 p-5 mt-4 bg-[#0a0312]/80 backdrop-blur-xl border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.05)] rounded-2xl flex flex-col gap-5 group overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-900/10 blur-3xl rounded-full pointer-events-none transition-colors" />
-                <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-purple-500 to-transparent" />
+            <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 flex flex-col gap-5">
                 
                 {/* Links */}
                 {(airdrop.links && airdrop.links !== '[]') && (
@@ -507,16 +527,59 @@ export default function AirdropDetailPage() {
 
                         {/* Post to Telegram Button */}
                         {user?.role === 'ULTRA' && airdrop.isPublic && (
-                            <button
-                                onClick={handleTelegramPreview}
-                                disabled={telegramLoading}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-purple-500/30 bg-linear-to-r from-purple-500/30 to-indigo-500/30 hover:from-purple-500/50 hover:to-indigo-500/50 text-white shadow-lg shadow-purple-900/40 disabled:opacity-50"
-                            >
-                                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.45.9-4.08 2.68-.39.26-.74.39-1.05.38-.34-.01-.98-.19-1.46-.35-.59-.19-1.05-.29-1.01-.61.02-.17.29-.35.81-.54 3.19-1.39 5.32-2.32 6.38-2.76 3.03-1.26 3.66-1.48 4.07-1.48.09 0 .28.02.4.1.1.07.13.18.14.28.01.07.01.18 0 .2z" />
-                                </svg>
-                                {telegramLoading ? 'Loading...' : 'Telegram'}
-                            </button>
+                            <div className="relative group">
+                                <button
+                                    onClick={telegramConfigured ? handleTelegramPreview : undefined}
+                                    disabled={telegramLoading || !telegramConfigured}
+                                    className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-lg ${
+                                        telegramConfigured
+                                            ? 'border-purple-500/30 bg-linear-to-r from-purple-500/30 to-indigo-500/30 hover:from-purple-500/50 hover:to-indigo-500/50 text-white shadow-purple-900/40'
+                                            : 'border-red-500/30 bg-red-500/10 text-red-400 cursor-not-allowed shadow-red-900/20'
+                                    } disabled:opacity-50`}
+                                >
+                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.45.9-4.08 2.68-.39.26-.74.39-1.05.38-.34-.01-.98-.19-1.46-.35-.59-.19-1.05-.29-1.01-.61.02-.17.29-.35.81-.54 3.19-1.39 5.32-2.32 6.38-2.76 3.03-1.26 3.66-1.48 4.07-1.48.09 0 .28.02.4.1.1.07.13.18.14.28.01.07.01.18 0 .2z" />
+                                    </svg>
+                                    {telegramLoading ? 'Loading...' : telegramConfigured ? 'Telegram' : 'Config Required'}
+                                </button>
+                                
+                                {/* Tooltip for missing credentials */}
+                                {!telegramConfigured && !telegramConfigLoading && (
+                                    <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block z-50 w-72">
+                                        <div className="bg-[#0c0e1a] border border-red-500/30 rounded-xl p-4 shadow-2xl">
+                                            <div className="flex items-start gap-3">
+                                                <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                </svg>
+                                                <div className="flex-1">
+                                                    <p className="text-red-400 font-semibold text-xs mb-2">Missing Credentials</p>
+                                                    <p className="text-slate-400 text-xs mb-3">
+                                                        Please configure these variables in Config page:
+                                                    </p>
+                                                    <ul className="space-y-1 mb-3">
+                                                        {missingCredentials.map(key => (
+                                                            <li key={key} className="text-xs text-red-300 font-mono flex items-center gap-2">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                                                {key}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <a
+                                                        href="/config"
+                                                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors"
+                                                    >
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        </svg>
+                                                        Go to Config Page
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>
@@ -596,7 +659,7 @@ export default function AirdropDetailPage() {
                                             {task.deadline && (
                                                 <div className="flex items-center gap-2 text-slate-400">
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                    <span>Available {task.status === 'Closed' ? 'from' : 'until'} {new Date(task.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                                    <span>{task.status === 'Closed' ? 'Ended on' : 'Available until'} {new Date(task.deadline).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                                 </div>
                                             )}
                                             {!task.deadline && (
@@ -609,40 +672,66 @@ export default function AirdropDetailPage() {
                                         <div className="mt-4 flex items-center justify-between">
                                             <span className="px-3 py-1 rounded-md bg-[#0a0312] text-xs font-semibold text-purple-400/80 border border-purple-500/20">{task.category}</span>
                                             {user && user.role === 'ULTRA' && airdrop.isPublic && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        // Convert the single task into an array to pass to the telegram API
-                                                        setActiveTask(task);
-                                                        setTelegramPreview(null);
-                                                        setTelegramSuccess(false);
-                                                        setTelegramError(null);
-                                                        setTelegramLoading(true);
-                                                        setShowTelegramModal(true);
-                                                        
-                                                        fetch('/api/airdrops/telegram-post', {
-                                                            method: 'POST',
-                                                            headers: { 'Content-Type': 'application/json' },
-                                                            body: JSON.stringify({ airdrop, tasks: [task], action: 'preview' })
-                                                        })
-                                                            .then(r => r.json())
-                                                            .then(data => {
-                                                                setTelegramLoading(false);
-                                                                if (data.error) setTelegramError(data.error);
-                                                                else setTelegramPreview(data);
+                                                <div className="relative group/task">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (!telegramConfigured) return;
+                                                            
+                                                            // Convert the single task into an array to pass to the telegram API
+                                                            setActiveTask(task);
+                                                            setTelegramPreview(null);
+                                                            setTelegramSuccess(false);
+                                                            setTelegramError(null);
+                                                            setTelegramLoading(true);
+                                                            setShowTelegramModal(true);
+                                                            
+                                                            fetch('/api/airdrops/telegram-post', {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ airdrop, tasks: [task], action: 'preview' })
                                                             })
-                                                            .catch(e => {
-                                                                setTelegramLoading(false);
-                                                                setTelegramError('Failed to generate preview');
-                                                            });
-                                                    }}
-                                                    className="flex items-center gap-1.5 px-3 py-1 bg-[#229ED9]/10 hover:bg-[#229ED9]/20 text-[#229ED9] text-[10px] font-bold uppercase tracking-wider rounded transition-colors border border-[#229ED9]/30"
-                                                >
-                                                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.45.9-4.08 2.68-.39.26-.74.39-1.05.38-.34-.01-.98-.19-1.46-.35-.59-.19-1.05-.29-1.01-.61.02-.17.29-.35.81-.54 3.19-1.39 5.32-2.32 6.38-2.76 3.03-1.26 3.66-1.48 4.07-1.48.09 0 .28.02.4.1.1.07.13.18.14.28.01.07.01.18 0 .2z" />
-                                                    </svg>
-                                                    Post
-                                                </button>
+                                                                .then(r => r.json())
+                                                                .then(data => {
+                                                                    setTelegramLoading(false);
+                                                                    if (data.error) setTelegramError(data.error);
+                                                                    else setTelegramPreview(data);
+                                                                })
+                                                                .catch(e => {
+                                                                    setTelegramLoading(false);
+                                                                    setTelegramError('Failed to generate preview');
+                                                                });
+                                                        }}
+                                                        disabled={!telegramConfigured}
+                                                        className={`flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded transition-colors border ${
+                                                            telegramConfigured
+                                                                ? 'bg-[#229ED9]/10 hover:bg-[#229ED9]/20 text-[#229ED9] border-[#229ED9]/30'
+                                                                : 'bg-red-500/10 text-red-400 border-red-500/30 cursor-not-allowed opacity-60'
+                                                        }`}
+                                                        title={!telegramConfigured ? 'Configure Telegram credentials first' : 'Post to Telegram'}
+                                                    >
+                                                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.45.9-4.08 2.68-.39.26-.74.39-1.05.38-.34-.01-.98-.19-1.46-.35-.59-.19-1.05-.29-1.01-.61.02-.17.29-.35.81-.54 3.19-1.39 5.32-2.32 6.38-2.76 3.03-1.26 3.66-1.48 4.07-1.48.09 0 .28.02.4.1.1.07.13.18.14.28.01.07.01.18 0 .2z" />
+                                                        </svg>
+                                                        Post
+                                                    </button>
+                                                    
+                                                    {/* Mini tooltip for task button */}
+                                                    {!telegramConfigured && (
+                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/task:block z-50 w-48">
+                                                            <div className="bg-[#0c0e1a] border border-red-500/30 rounded-lg p-2 shadow-xl">
+                                                                <p className="text-red-400 text-[10px] font-semibold text-center mb-1">
+                                                                    Missing credentials
+                                                                </p>
+                                                                <div className="text-[9px] text-slate-400 space-y-0.5">
+                                                                    {missingCredentials.map(key => (
+                                                                        <div key={key} className="font-mono text-red-300">{key}</div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                     </div>

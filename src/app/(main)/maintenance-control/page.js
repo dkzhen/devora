@@ -1,24 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; import { Plug, Wrench, CheckCircle2, Activity, Plus, X, Edit2, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Plug, Wrench, CheckCircle2, Activity, Plus, X, Edit2, Trash2, RefreshCw, AlertTriangle } from 'lucide-react';
+import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 
-const FEATURE_ICONS = {
-    'airdrops': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Airdrops" />,
-    'gmail-center': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Gmail" />,
-    'mail-control': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Mail" />,
-    'drive-center': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Drive" />,
-    'groq-intelligence': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="Groq Intelligence" />,
-    'app-library': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="App Library" />,
-    'http-client': <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt="HTTP Client" />,
-};
-
-const FEATURE_COLORS = {
-    'airdrops': { icon: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-    'gmail-center': { icon: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
-    'mail-control': { icon: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-    'drive-center': { icon: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-    'groq-intelligence': { icon: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20' },
+// Helper function to get color classes based on color name from database
+const getColorClasses = (color) => {
+    const colorMap = {
+        'blue': { icon: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+        'red': { icon: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+        'purple': { icon: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
+        'emerald': { icon: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+        'teal': { icon: 'text-teal-400', bg: 'bg-teal-500/10', border: 'border-teal-500/20' },
+        'indigo': { icon: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
+        'cyan': { icon: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' },
+        'violet': { icon: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
+        'orange': { icon: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
+        'pink': { icon: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
+        'slate': { icon: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20' },
+    };
+    return colorMap[color] || colorMap['slate'];
 };
 
 function ToggleSwitch({ enabled, onChange, loading }) {
@@ -56,6 +58,11 @@ export default function MaintenanceControlPage() {
     const [editFeatureLabel, setEditFeatureLabel] = useState('');
     const [isEditSubmitting, setIsEditSubmitting] = useState(false);
 
+    // Sync state
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [syncResults, setSyncResults] = useState(null);
+    const [showSyncModal, setShowSyncModal] = useState(false);
+
     const router = useRouter();
 
     const showToast = (message, type = 'success') => {
@@ -80,9 +87,31 @@ export default function MaintenanceControlPage() {
     // Guard: redirect if not ULTRA
     useEffect(() => {
         if (user && user.role !== 'ULTRA') {
-            router.replace('/');
+            router.replace('/no-access?feature=maintenance-control&role=ULTRA');
         }
     }, [user, router]);
+
+    // Don't render content if user is not ULTRA (prevent flash)
+    if (user && user.role !== 'ULTRA') {
+        return (
+            <div className="space-y-6">
+                <HeroHeader
+                    breadcrumbs={[
+                        { 
+                            label: 'Dashboard', 
+                            href: '/',
+                            icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        },
+                        { label: 'Maintenance Control' }
+                    ]}
+                    title="System"
+                    badge="Maintenance"
+                    description="Toggle feature availability and manage maintenance messages"
+                />
+                <LoadingState message="Checking access..." />
+            </div>
+        );
+    }
 
     const handleToggle = async (feature) => {
         const config = configs.find(c => c.feature === feature);
@@ -239,21 +268,35 @@ export default function MaintenanceControlPage() {
         }
     };
 
+    const handleSync = async () => {
+        setIsSyncing(true);
+        try {
+            const res = await fetch('/api/maintenance/sync', {
+                method: 'POST',
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setSyncResults(data);
+                setShowSyncModal(true);
+                if (data.missing > 0) {
+                    showToast(`Sync complete: ${data.missing} page(s) not found`, 'warning');
+                } else {
+                    showToast('All pages are in sync!', 'success');
+                }
+            } else {
+                showToast('Failed to sync', 'error');
+            }
+        } catch {
+            showToast('An error occurred', 'error');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
     const activeCount = configs.filter(c => c.enabled).length;
 
-    if (loading || !user) {
-        return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
-                    <p className="text-xs text-slate-500 animate-pulse">Loading maintenance configs…</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             {/* Toast */}
             {toast && (
                 <div className={`fixed bottom-4 right-4 z-50 px-4 py-2.5 rounded-xl shadow-lg text-white text-sm font-medium animate-fade-in-up border border-white/10 ${toast.type === 'success' ? 'bg-green-600' : toast.type === 'warning' ? 'bg-amber-600' : 'bg-red-600'}`}>
@@ -261,78 +304,60 @@ export default function MaintenanceControlPage() {
                 </div>
             )}
 
-            {/* Mobile Header */}
-            <div className="md:hidden relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#1a0d2e] to-gray-900" />
-                <div className="absolute -top-8 -left-8 w-52 h-52 rounded-full bg-amber-600/15 blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-12 right-0 w-44 h-44 rounded-full bg-orange-500/15 blur-3xl pointer-events-none" />
-                <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-                <div className="relative z-10 p-5 pt-4">
-                    <nav className="flex text-xs text-amber-300/70 mb-4">
-                        <a href="/" className="flex items-center gap-1 hover:text-amber-300 transition-colors">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                            Dashboard
-                        </a>
-                        <svg className="w-3 h-3 mx-1.5 text-amber-400/40 mt-px self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        <span className="font-semibold text-amber-200">Maintenance</span>
-                    </nav>
-                    <h1 className="text-2xl font-black text-white tracking-tight">
-                        System <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">Control</span>
-                    </h1>
-                    <p className="text-slate-400 text-xs mt-1.5">Manage feature availability</p>
+            {/* Hero Header */}
+            <HeroHeader
+                breadcrumbs={[
+                    { 
+                        label: 'Dashboard', 
+                        href: '/',
+                        icon: <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    },
+                    { label: 'Maintenance Control' }
+                ]}
+                title="System"
+                badge="Maintenance"
+                description="Toggle feature availability and manage maintenance messages"
+            />
+
+            {/* Action Buttons & Status Badge */}
+            {!loading && user && (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
                     {activeCount > 0 && (
-                        <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-300 text-[11px] font-bold">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-xs font-bold">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                             {activeCount} feature{activeCount > 1 ? 's' : ''} in maintenance
                         </div>
                     )}
                 </div>
-            </div>
-
-            {/* Desktop Header */}
-            <div className="hidden md:block">
-                <div className="relative overflow-hidden rounded-2xl mb-2">
-                    <div className="absolute inset-0 bg-linear-to-br from-gray-900 via-[#1a0d2e] to-gray-900" />
-                    <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-amber-600/10 blur-3xl pointer-events-none" />
-                    <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
-                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-                    <div className="relative z-10 p-8 flex items-end justify-between">
-                        <div>
-                            <nav className="flex text-xs text-amber-300/60 mb-4">
-                                <a href="/" className="flex items-center gap-1 hover:text-amber-300 transition-colors">
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                                    Dashboard
-                                </a>
-                                <svg className="w-3 h-3 mx-2 text-amber-400/30 self-center" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                <span className="text-amber-200 font-semibold">Maintenance Control</span>
-                            </nav>
-                            <h1 className="text-4xl font-black tracking-tight">
-                                <span className="text-white">System </span>
-                                <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 via-orange-400 to-amber-500">Maintenance</span>
-                            </h1>
-                            <p className="text-slate-400 mt-2 text-sm">Toggle feature availability and manage maintenance messages</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-3">
-                            {activeCount > 0 && (
-                                <div className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-sm font-bold">
-                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                                    {activeCount} Active
-                                </div>
-                            )}
-                            <button
-                                onClick={() => setIsAddingFeature(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl text-blue-300 text-sm font-bold transition-colors"
-                            >
-                                <Plus className="w-4 h-4" />
-                                Add Feature
-                            </button>
-                        </div>
-                    </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleSync}
+                        disabled={isSyncing}
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-xl text-purple-300 text-sm font-bold transition-colors disabled:opacity-50"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                        {isSyncing ? 'Syncing...' : 'Sync Pages'}
+                    </button>
+                    <button
+                        onClick={() => setIsAddingFeature(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl text-blue-300 text-sm font-bold transition-colors"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Feature
+                    </button>
                 </div>
-            </div>
+                </div>
+            )}
 
-            {/* Status overview */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {/* Loading State */}
+            {(loading || !user) && (
+                <LoadingState message="Loading maintenance configs..." />
+            )}
+
+            {/* Status Overview */}
+            {!loading && user && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {[
                     { label: 'Total Features', value: configs.length, color: 'text-blue-400', icon: <Plug className="w-5 h-5 opacity-80" /> },
                     { label: 'In Maintenance', value: activeCount, color: 'text-amber-400', icon: <Wrench className="w-5 h-5 opacity-80" /> },
@@ -345,22 +370,13 @@ export default function MaintenanceControlPage() {
                         <div className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</div>
                     </div>
                 ))}
-            </div>
-
-            {/* Feature cards */}
-            <div className="space-y-1">
-                <div className="flex items-center justify-between mb-3 px-1">
-                    <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Feature Controls</h2>
-
-                    {/* Mobile Add Button */}
-                    <button
-                        onClick={() => setIsAddingFeature(true)}
-                        className="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg text-blue-300 text-[11px] font-bold transition-colors"
-                    >
-                        <Plus className="w-3.5 h-3.5" />
-                        Add
-                    </button>
                 </div>
+            )}
+
+            {/* Feature Cards */}
+            {!loading && user && (
+                <div className="space-y-3">
+                <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Feature Controls</h2>
 
                 {loading ? (
                     Array.from({ length: 4 }).map((_, i) => (
@@ -369,31 +385,50 @@ export default function MaintenanceControlPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {configs.map((config) => {
-                            const colors = FEATURE_COLORS[config.feature] || { icon: 'text-slate-400', bg: 'bg-gray-500/10', border: 'border-gray-500/20' };
+                            const colors = getColorClasses(config.color);
                             const isEditing = editingMessage === config.feature;
                             const isToggling = toggling[config.feature];
+                            const syncResult = syncResults?.results?.find(r => r.feature === config.feature);
+                            const pageNotFound = syncResult && !syncResult.exists;
 
                             return (
                                 <div
                                     key={config.feature}
-                                    className={`relative overflow-hidden rounded-2xl border transition-all duration-300 ${config.enabled
-                                        ? 'bg-amber-500/5 border-amber-500/20 shadow-lg shadow-amber-500/5'
-                                        : 'bg-white/3 border-white/8'
+                                    className={`relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+                                        pageNotFound 
+                                            ? 'bg-red-500/5 border-red-500/20 shadow-lg shadow-red-500/5'
+                                            : config.enabled
+                                            ? 'bg-amber-500/5 border-amber-500/20 shadow-lg shadow-amber-500/5'
+                                            : 'bg-white/3 border-white/8'
                                         }`}
                                 >
-                                    {/* Glow when active */}
-                                    {config.enabled && (
+                                    {/* Glow when active or warning */}
+                                    {pageNotFound ? (
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-red-500/50 to-transparent" />
+                                    ) : config.enabled && (
                                         <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-500/50 to-transparent" />
                                     )}
 
                                     <div className="p-5">
+                                        {/* Page Not Found Warning */}
+                                        {pageNotFound && (
+                                            <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                                                <p className="text-xs text-red-300 font-medium">
+                                                    Page not found at <code className="text-[10px] bg-black/30 px-1.5 py-0.5 rounded">/{config.feature}</code>
+                                                </p>
+                                            </div>
+                                        )}
                                         {/* Header row */}
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-11 h-11 rounded-xl ${colors.bg} border ${colors.border} flex items-center justify-center`}>
-                                                    {FEATURE_ICONS[config.feature] || (
-                                                        <img src="/icons/menu.png" className="w-6 h-6 object-contain" alt={config.label} />
-                                                    )}
+                                                    <img 
+                                                        src={config.icon || '/icons/menu.png'} 
+                                                        className="w-6 h-6 object-contain" 
+                                                        alt={config.label}
+                                                        onError={(e) => { e.target.src = '/icons/menu.png'; }}
+                                                    />
                                                 </div>
                                                 <div>
                                                     <div className="font-bold text-white text-base flex items-center gap-2">
@@ -494,23 +529,11 @@ export default function MaintenanceControlPage() {
                         })}
                     </div>
                 )}
-            </div>
-
-            {/* Info box */}
-            <div className="bg-blue-500/5 border border-blue-500/15 rounded-2xl p-5 flex gap-4">
-                <div className="shrink-0 w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <div>
-                    <div className="text-sm font-bold text-blue-300 mb-1">How it works</div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                        When you enable maintenance for a feature, users who navigate to that page will be automatically redirected to the maintenance page. ULTRA admins are <strong className="text-slate-300">not affected</strong> — they can still access features normally.
-                    </p>
-                </div>
-            </div>
+            )}
 
             {/* Add Feature Modal */}
-            {isAddingFeature && (
+            {!loading && user && isAddingFeature && (
                 <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsAddingFeature(false)} />
                     <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up">
@@ -600,7 +623,7 @@ export default function MaintenanceControlPage() {
             )}
 
             {/* Edit Feature Modal */}
-            {editingFeatureConfig && (
+            {!loading && user && editingFeatureConfig && (
                 <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isEditSubmitting && setEditingFeatureConfig(null)} />
                     <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in-up">
@@ -670,6 +693,72 @@ export default function MaintenanceControlPage() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Sync Results Modal */}
+            {!loading && user && showSyncModal && syncResults && (
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowSyncModal(false)} />
+                    <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl animate-fade-in-up max-h-[80vh] overflow-hidden flex flex-col">
+                        <div className="flex items-center justify-between p-5 border-b border-white/5">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Sync Results</h3>
+                                <p className="text-xs text-slate-400 mt-1">
+                                    {syncResults.existing} found, {syncResults.missing} missing
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setShowSyncModal(false)}
+                                className="p-1 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="p-5 overflow-y-auto">
+                            <div className="space-y-2">
+                                {syncResults.results.map((result) => (
+                                    <div
+                                        key={result.feature}
+                                        className={`flex items-center justify-between p-3 rounded-xl border ${
+                                            result.exists
+                                                ? 'bg-emerald-500/5 border-emerald-500/20'
+                                                : 'bg-red-500/5 border-red-500/20'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            {result.exists ? (
+                                                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                                            ) : (
+                                                <AlertTriangle className="w-5 h-5 text-red-400" />
+                                            )}
+                                            <div>
+                                                <div className="font-bold text-white text-sm">{result.label}</div>
+                                                <div className="text-xs text-slate-500 font-mono">/{result.feature}</div>
+                                            </div>
+                                        </div>
+                                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                                            result.exists
+                                                ? 'bg-emerald-500/15 text-emerald-300'
+                                                : 'bg-red-500/15 text-red-300'
+                                        }`}>
+                                            {result.exists ? 'EXISTS' : 'NOT FOUND'}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="p-5 border-t border-white/5">
+                            <button
+                                onClick={() => setShowSyncModal(false)}
+                                className="w-full px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-semibold text-slate-300 transition-all"
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

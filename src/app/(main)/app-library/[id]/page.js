@@ -1,8 +1,10 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import LoadingImage from '@/components/LoadingImage';
+import { HeroHeader } from '@/components/HeroHeader';
 
 export default function AppDetailPage() {
     const params = useParams();
@@ -20,7 +22,9 @@ export default function AppDetailPage() {
     const [newVersion, setNewVersion] = useState('');
     const [newAndroidVersion, setNewAndroidVersion] = useState('');
     const [newFeatures, setNewFeatures] = useState('');
+    const [storageMethod, setStorageMethod] = useState('telegram');
     const [apkFileId, setApkFileId] = useState('');
+    const [apkFile, setApkFile] = useState(null);
     const [submittingVersion, setSubmittingVersion] = useState(false);
 
     // Delete state
@@ -31,6 +35,24 @@ export default function AppDetailPage() {
 
     // Download Queue
     const [downloads, setDownloads] = useState([]);
+
+    // Function to capitalize first letter of each word
+    const capitalizeWords = (str) => {
+        if (!str) return '';
+        return str.split(' ').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        ).join(' ');
+    };
+
+    // Function to format file size
+    const formatFileSize = (bytes) => {
+        if (!bytes) return 'Unknown';
+        const size = parseInt(bytes);
+        if (size < 1024) return size + ' B';
+        if (size < 1024 * 1024) return (size / 1024).toFixed(2) + ' KB';
+        if (size < 1024 * 1024 * 1024) return (size / (1024 * 1024)).toFixed(2) + ' MB';
+        return (size / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    };
 
     useEffect(() => {
         const fetchAppAndUser = async () => {
@@ -225,19 +247,40 @@ export default function AppDetailPage() {
 
     const handleSubmitVersion = async (e) => {
         e.preventDefault();
-        if (!newVersion || !apkFileId) { showToast('Please provide version and APK File ID.'); return; }
+        
+        // Validation based on storage method
+        if (storageMethod === 'telegram') {
+            if (!newVersion || !apkFileId) { 
+                showToast('Please provide version and APK File ID.'); 
+                return; 
+            }
+        } else {
+            if (!newVersion || !apkFile) { 
+                showToast('Please provide version and APK file.'); 
+                return; 
+            }
+        }
 
         setSubmittingVersion(true);
         const formData = new FormData();
         formData.append('appId', appId);
         formData.append('appName', app.name);
         formData.append('version', newVersion);
-        formData.append('apkFileId', apkFileId);
         if (newAndroidVersion) formData.append('androidVersion', newAndroidVersion);
         if (newFeatures) formData.append('features', newFeatures);
 
+        if (storageMethod === 'telegram') {
+            formData.append('apkFileId', apkFileId);
+        } else {
+            formData.append('apkFile', apkFile);
+        }
+
         try {
-            const res = await fetch('/api/telegram/upload-version', { method: 'POST', body: formData });
+            const endpoint = storageMethod === 'telegram' 
+                ? '/api/telegram/upload-version' 
+                : '/api/cloudisk/upload-version';
+
+            const res = await fetch(endpoint, { method: 'POST', body: formData });
             const data = await res.json();
 
             if (res.ok && data.success) {
@@ -246,7 +289,9 @@ export default function AppDetailPage() {
                 setNewVersion('');
                 setNewAndroidVersion('');
                 setNewFeatures('');
+                setStorageMethod('telegram');
                 setApkFileId('');
+                setApkFile(null);
 
                 const refreshRes = await fetch('/api/apps');
                 const refreshData = await refreshRes.json();
@@ -295,51 +340,58 @@ export default function AppDetailPage() {
                 </div>
             )}
 
-            {/* ── HERO HEADER OVERHAUL ── */}
-            <div className="relative overflow-hidden rounded-4xl border border-[#FEBD8B]/20 mb-6 group transition-all hover:border-[#FEBD8B]/40" style={{ background: 'linear-gradient(165deg, #0a0312 0%, #1A082E 100%)' }}>
-                <div className="absolute top-0 right-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#FEBD8B]/10 rounded-full blur-[80px] pointer-events-none" />
-                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-[#749F8B]/10 rounded-full blur-[60px] pointer-events-none" />
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-[#FEBD8B]/40 to-transparent" />
+            {/* Hero Header with Breadcrumb */}
+            <HeroHeader
+                breadcrumbs={[
+                    { label: 'Dashboard', href: '/' },
+                    { label: 'App Library', href: '/app-library' },
+                    { label: capitalizeWords(app.name) }
+                ]}
+                title={capitalizeWords(app.name)}
+                badge={app.category}
+                description={app.description || `${app.developer || 'Unknown Labs'} • ${app.versions?.length || 0} releases available`}
+                className="mb-6"
+            />
 
-                <div className="relative z-10 px-6 py-8 md:px-10 md:py-10">
-                    <div className="flex flex-col lg:flex-row gap-8 items-start">
-                        <div className="flex-1 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-4xl border-2 border-[#FEBD8B]/20 bg-[#110a17] p-1 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center justify-center shrink-0 relative overflow-hidden group/icon">
-                                <div className="absolute inset-0 bg-linear-to-br from-[#FEBD8B]/5 to-transparent transition-opacity group-hover/icon:opacity-100 opacity-0" />
+            {/* App Details Section */}
+            <div className="relative overflow-hidden rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 mb-6 shadow-xl">
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FEBD8B] via-[#749F8B] to-[#FEBD8B]" />
+
+                <div className="relative z-10 p-6">
+                    <div className="flex flex-col lg:flex-row gap-6 items-start">
+                        <div className="flex-1 flex flex-row gap-5 items-start">
+                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl border-2 border-slate-700 bg-slate-800 p-1.5 shadow-lg flex items-center justify-center shrink-0 relative overflow-hidden">
                                 {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
-                                    <LoadingImage src={`/api/telegram/image/${app.versions[0].imageUrl}`} alt={app.name} className="w-full h-full object-cover rounded-[1.8rem] relative z-10" />
+                                    <LoadingImage src={`/api/telegram/image/${app.versions[0].imageUrl}`} alt={app.name} className="w-full h-full object-cover rounded-xl" />
                                 ) : app.iconStatic && app.iconStatic !== '📦' ? (
-                                    <LoadingImage src={app.iconStatic} alt={app.name} className="w-full h-full object-cover rounded-[1.8rem] relative z-10" />
+                                    <LoadingImage src={app.iconStatic} alt={app.name} className="w-full h-full object-cover rounded-xl" />
                                 ) : (
-                                    <span className="text-4xl text-[#FEBD8B]/30 font-black relative z-10">?</span>
+                                    <span className="text-4xl text-slate-300 font-black">?</span>
                                 )}
                             </div>
 
                             <div className="flex-1">
-                                <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-3">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-[#FEBD8B]/10 text-[#FEBD8B] border border-[#FEBD8B]/20">{app.category}</span>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#FEBD8B] text-white">{app.category}</span>
                                     {app.versions?.[0]?.androidVersion && (
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded bg-[#749F8B]/10 text-[#749F8B] border border-[#749F8B]/20">Android {app.versions[0].androidVersion}</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#749F8B] text-white">Android {app.versions[0].androidVersion}</span>
                                     )}
                                 </div>
-                                <h1 className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{app.name}</h1>
-                                <p className="text-[#FEBD8B]/60 font-mono tracking-widest text-xs uppercase font-bold">{app.developer || 'Unknown Labs'}</p>
+                                <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight leading-none mb-2">{capitalizeWords(app.name)}</h1>
+                                <p className="text-slate-400 font-medium text-sm">{app.developer || 'Unknown Labs'}</p>
                                 
-                                <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-8">
+                                <div className="grid grid-cols-3 gap-4 mt-6">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Downloads</span>
-                                        <span className="text-lg font-bold text-white font-mono">{(app.downloadCount ?? 0).toLocaleString()}</span>
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mb-1">Downloads</span>
+                                        <span className="text-lg md:text-xl font-bold text-white">{(app.downloadCount ?? 0).toLocaleString()}</span>
                                     </div>
-                                    <div className="w-px h-8 bg-white/5 self-end mb-1" />
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Page Views</span>
-                                        <span className="text-lg font-bold text-white font-mono">{(app.viewCount ?? 0).toLocaleString()}</span>
+                                    <div className="flex flex-col border-x border-slate-700/50 px-4">
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mb-1">Views</span>
+                                        <span className="text-lg md:text-xl font-bold text-white">{(app.viewCount ?? 0).toLocaleString()}</span>
                                     </div>
-                                    <div className="w-px h-8 bg-white/5 self-end mb-1" />
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Releases</span>
-                                        <span className="text-lg font-bold text-white font-mono">{app.versions?.length ?? 0}</span>
+                                        <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mb-1">Releases</span>
+                                        <span className="text-lg md:text-xl font-bold text-white">{app.versions?.length ?? 0}</span>
                                     </div>
                                 </div>
                             </div>
@@ -349,23 +401,23 @@ export default function AppDetailPage() {
                             {app.versions && app.versions.length > 0 && (
                                 <button
                                     onClick={() => handleDownload(app.versions[0].apkUrl, app.versions[0].version)}
-                                    className="relative w-full overflow-hidden px-8 py-4 rounded-2xl bg-[#749F8B] text-white font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_25px_rgba(116,159,139,0.2)] hover:shadow-[0_0_35px_rgba(116,159,139,0.4)] transition-all flex items-center justify-center gap-3 active:scale-95"
+                                    className="relative w-full overflow-hidden px-8 py-4 rounded-2xl bg-[#749F8B] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#749F8B]/90 transition-all flex items-center justify-center gap-3 shadow-md"
                                 >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                    Initial Protocol
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                    Download Latest
                                 </button>
                             )}
                             <div className="grid grid-cols-2 gap-2">
                                 <button
                                     onClick={handleCopyMainLink}
-                                    className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest text-[#FEBD8B]/60 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-3 rounded-xl bg-slate-700/50 border border-slate-600 text-[10px] font-bold uppercase tracking-wider text-slate-300 hover:bg-slate-700 hover:text-white transition-colors flex items-center justify-center gap-2"
                                 >
                                     Share
                                 </button>
                                 {isUltra && (
                                     <button
                                         onClick={() => setShowAddVersionModal(true)}
-                                        className="flex-1 px-4 py-3 rounded-xl bg-[#749F8B]/5 border border-[#749F8B]/20 text-[10px] font-black uppercase tracking-widest text-[#749F8B] hover:bg-[#749F8B]/10 transition-colors flex items-center justify-center gap-2"
+                                        className="flex-1 px-4 py-3 rounded-xl bg-[#FEBD8B]/10 border border-[#FEBD8B]/30 text-[10px] font-bold uppercase tracking-wider text-[#FEBD8B] hover:bg-[#FEBD8B]/20 transition-colors flex items-center justify-center gap-2"
                                     >
                                         Update
                                     </button>
@@ -374,9 +426,9 @@ export default function AppDetailPage() {
                             {isUltra && (
                                 <button 
                                     onClick={() => setConfirmDeleteApp(true)}
-                                    className="w-full px-4 py-2 rounded-xl border border-red-500/10 text-[9px] font-black uppercase tracking-[0.3em] text-red-500/40 hover:text-red-500 hover:border-red-500/30 transition-all text-center mt-1"
+                                    className="w-full px-4 py-2 rounded-xl border border-red-500/30 text-[10px] font-bold uppercase tracking-wider text-red-400 hover:bg-red-500/10 hover:border-red-500/50 transition-all text-center"
                                 >
-                                    Deconstruct App
+                                    Delete App
                                 </button>
                             )}
                         </div>
@@ -385,17 +437,15 @@ export default function AppDetailPage() {
             </div>
 
             {/* ── TWO-COLUMN LAYOUT ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* LEFT COLUMN — Version List Overhaul */}
-                <div className="lg:col-span-2 space-y-4">
-                    <div className="flex items-center justify-between px-2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-5 h-[2px] bg-[#FEBD8B] shadow-[0_0_8px_rgba(254,189,139,0.5)]" />
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FEBD8B]/80">Historical Records</h2>
-                        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* LEFT COLUMN — Version List */}
+                <div className="lg:col-span-2 space-y-3">
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="w-1 h-5 bg-gradient-to-b from-[#FEBD8B] to-[#749F8B] rounded-full" />
+                        <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wide">Version History</h2>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                         {app.versions.map((vid, idx) => {
                             const isHighlighted = highlightedVersion === vid.version;
                             const isLatest = idx === 0;
@@ -403,22 +453,28 @@ export default function AppDetailPage() {
                                 <div
                                     key={idx}
                                     id={vid.version}
-                                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${isHighlighted ? 'bg-[#FEBD8B]/10 border-[#FEBD8B]/50 shadow-[0_0_30px_rgba(254,189,139,0.1)]' : 'bg-[#110a17] border-white/5 hover:border-[#FEBD8B]/20 hover:bg-[#FEBD8B]/2'}`}
+                                    className={`group relative overflow-hidden rounded-2xl border transition-all ${isHighlighted ? 'bg-[#FEBD8B]/10 border-[#FEBD8B] shadow-lg' : 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600 hover:bg-slate-800/70'}`}
                                 >
                                     <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border font-mono text-xs font-black ${isLatest ? 'bg-[#749F8B]/10 border-[#749F8B]/30 text-[#749F8B]' : 'bg-white/5 border-white/10 text-slate-500'}`}>
-                                                {isLatest ? 'NEW' : idx + 1}
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 font-bold text-xs ${isLatest ? 'bg-[#749F8B] border-[#749F8B] text-white' : 'bg-slate-700/50 border-slate-600 text-slate-400'}`}>
+                                                {isLatest ? 'NEW' : `#${idx + 1}`}
                                             </div>
                                             <div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-bold text-white font-mono tracking-tight">{vid.version}</span>
-                                                    {isLatest && <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded">Stable</span>}
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-base font-bold text-white">{vid.version}</span>
+                                                    {isLatest && <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Stable</span>}
                                                 </div>
-                                                <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-500 font-medium">
+                                                <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium">
                                                     <span>{new Date(vid.releaseDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-                                                    <span className="w-1 h-1 rounded-full bg-white/20" />
-                                                    <span className="font-mono text-[#FEBD8B]/50 uppercase tracking-widest">{vid.androidVersion || 'SDK ANY'}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-slate-600" />
+                                                    <span>{vid.androidVersion || 'All Versions'}</span>
+                                                    {vid.fileSize && (
+                                                        <>
+                                                            <span className="w-1 h-1 rounded-full bg-slate-600" />
+                                                            <span className="font-mono">{formatFileSize(vid.fileSize)}</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -426,21 +482,21 @@ export default function AppDetailPage() {
                                         <div className="flex items-center gap-2 self-end sm:self-center">
                                             <button
                                                 onClick={() => handleCopyVersionLink(vid.version)}
-                                                className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-blue-400 hover:border-blue-500/30 transition-all"
+                                                className="p-2.5 rounded-xl bg-slate-700/50 border border-slate-600 text-slate-400 hover:text-blue-400 hover:bg-slate-700 hover:border-blue-500/50 transition-all"
                                                 title="Copy Link"
                                             >
                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                                             </button>
                                             <button
                                                 onClick={() => handleDownload(vid.apkUrl, vid.version)}
-                                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#749F8B] text-white text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(116,159,139,0.2)] hover:shadow-[0_0_25px_rgba(116,159,139,0.4)] transition-all"
+                                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#749F8B] text-white text-[10px] font-bold uppercase tracking-wider hover:bg-[#749F8B]/90 transition-all shadow-md"
                                             >
                                                 Download
                                             </button>
                                             {isUltra && (
                                                 <button
                                                     onClick={() => setConfirmDeleteVersionId(vid.id)}
-                                                    className="p-2.5 rounded-xl bg-red-500/5 border border-red-500/10 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                                                    className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                                 </button>
@@ -449,16 +505,15 @@ export default function AppDetailPage() {
                                     </div>
 
                                     {vid.features && (
-                                        <div className="px-5 pb-5 pt-2 border-t border-white/2">
-                                            <div className="bg-[#0a0312] rounded-xl p-4 border border-[#FEBD8B]/10">
-                                                <div className="text-[9px] font-black text-[#FEBD8B]/60 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-[#FEBD8B] group-hover:animate-pulse" />
-                                                    Changelog Details
+                                        <div className="px-5 pb-5 pt-2 border-t border-slate-700/50">
+                                            <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50">
+                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">
+                                                    What's New
                                                 </div>
                                                 <ul className="space-y-2">
                                                     {vid.features.split('\n').filter(f => f.trim()).map((feat, i) => (
-                                                        <li key={i} className="flex items-start gap-3 text-xs text-slate-400 font-medium">
-                                                            <span className="text-[#FEBD8B]/40 mt-0.5">»</span>
+                                                        <li key={i} className="flex items-start gap-3 text-sm text-slate-300">
+                                                            <span className="text-[#749F8B] mt-0.5">•</span>
                                                             <span className="leading-relaxed">{feat}</span>
                                                         </li>
                                                     ))}
@@ -473,53 +528,51 @@ export default function AppDetailPage() {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="rounded-2xl border border-[#FEBD8B]/10 bg-[#110a17] overflow-hidden shadow-xl">
-                        <div className="px-5 py-4 border-b border-[#FEBD8B]/5 bg-[#0a0312]">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FEBD8B]/60">Core Parameters</p>
+                    <div className="rounded-2xl border border-slate-700/50 bg-slate-800/50 overflow-hidden shadow-lg">
+                        <div className="px-5 py-4 border-b border-slate-700/50 bg-slate-900/50">
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-300">App Information</p>
                         </div>
                         <div className="p-5 space-y-4">
                             {[
-                                { label: 'Codename', value: app.name },
-                                { label: 'Origin', value: app.developer || 'Unknown Labs' },
-                                { label: 'Class', value: app.category },
+                                { label: 'Name', value: app.name },
+                                { label: 'Developer', value: app.developer || 'Unknown Labs' },
+                                { label: 'Category', value: app.category },
                                 ...(app.versions && app.versions.length > 0 ? [
-                                    { label: 'Integrity', value: app.versions[0].version },
-                                    { label: 'Registry', value: new Date(app.versions[0].releaseDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) },
-                                    { label: 'OS Build', value: app.versions[0].androidVersion ? `Android ${app.versions[0].androidVersion}` : 'Generic' },
+                                    { label: 'Latest Version', value: app.versions[0].version },
+                                    { label: 'Release Date', value: new Date(app.versions[0].releaseDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) },
+                                    { label: 'Android Version', value: app.versions[0].androidVersion ? `Android ${app.versions[0].androidVersion}` : 'All Versions' },
                                 ] : []),
                             ].map((row, i) => (
-                                <div key={i} className="flex flex-col gap-1">
-                                    <span className="text-[9px] text-slate-600 uppercase font-black tracking-widest">{row.label}</span>
-                                    <span className="text-xs text-[#FEBD8B]/90 font-bold truncate">{row.value}</span>
+                                <div key={i} className="flex flex-col gap-1.5">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{row.label}</span>
+                                    <span className="text-sm text-white font-semibold truncate">{row.value}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     {app.description && (
-                        <div className="rounded-2xl border border-white/5 bg-[#080b18] overflow-hidden">
-                            <div className="px-5 py-4 border-b border-white/5 bg-[#0a0d18]">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Documentation</p>
+                        <div className="rounded-2xl border border-slate-700/50 bg-slate-800/50 overflow-hidden shadow-lg">
+                            <div className="px-5 py-4 border-b border-slate-700/50 bg-slate-900/50">
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Description</p>
                             </div>
                             <div className="p-5">
-                                <p className="text-xs text-slate-400 leading-relaxed font-medium italic opacity-80">"{app.description}"</p>
+                                <p className="text-sm text-slate-300 leading-relaxed">{app.description}</p>
                             </div>
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 gap-3">
-                        <div className="p-1 rounded-2xl bg-linear-to-r from-[#FEBD8B]/20 to-[#749F8B]/20">
-                            <button
-                                onClick={() => handleDownload(app.versions?.[0]?.apkUrl, app.versions?.[0]?.version)}
-                                className="w-full bg-[#1A082E] hover:bg-transparent transition-all rounded-[calc(1rem-4px)] px-6 py-4 flex items-center justify-between group shadow-2xl"
-                            >
-                                <div className="flex flex-col items-start gap-1">
-                                    <span className="text-[10px] font-black text-[#FEBD8B] uppercase tracking-widest">Execute Download</span>
-                                    <span className="text-xs font-bold text-white font-mono">LATEST_BUILD.APK</span>
-                                </div>
-                                <svg className="w-5 h-5 text-[#FEBD8B] group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                            </button>
-                        </div>
+                    <div className="rounded-2xl border-2 border-[#749F8B]/50 bg-gradient-to-br from-[#749F8B]/10 to-[#FEBD8B]/10 overflow-hidden shadow-lg">
+                        <button
+                            onClick={() => handleDownload(app.versions?.[0]?.apkUrl, app.versions?.[0]?.version)}
+                            className="w-full px-6 py-5 flex items-center justify-between group hover:bg-[#749F8B]/20 transition-all"
+                        >
+                            <div className="flex flex-col items-start gap-1">
+                                <span className="text-[10px] font-bold text-[#749F8B] uppercase tracking-wider">Quick Download</span>
+                                <span className="text-sm font-bold text-white">Latest Version</span>
+                            </div>
+                            <svg className="w-6 h-6 text-[#749F8B] group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -614,7 +667,7 @@ export default function AppDetailPage() {
                                         value={newVersion}
                                         onChange={(e) => setNewVersion(e.target.value)}
                                         placeholder="e.g. v2.0.0"
-                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors font-mono"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 font-mono"
                                     />
                                 </div>
 
@@ -625,7 +678,7 @@ export default function AppDetailPage() {
                                         value={newAndroidVersion}
                                         onChange={(e) => setNewAndroidVersion(e.target.value)}
                                         placeholder="e.g. 8.0+"
-                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40"
                                     />
                                 </div>
 
@@ -636,30 +689,75 @@ export default function AppDetailPage() {
                                         value={newFeatures}
                                         onChange={(e) => setNewFeatures(e.target.value)}
                                         placeholder="What's new? (one item per line)"
-                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors resize-none"
+                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 resize-none"
                                     />
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={apkFileId}
-                                        onChange={(e) => setApkFileId(e.target.value)}
-                                        placeholder="Paste Telegram file ID here"
-                                        className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 transition-colors font-mono"
-                                    />
-                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
-                                        Telegram Document File ID
-                                    </p>
+                                {/* Storage Method Selection */}
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">Storage Method</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setStorageMethod('telegram')}
+                                            className={`p-2 rounded-lg border text-xs font-bold ${
+                                                storageMethod === 'telegram'
+                                                    ? 'border-[#749F8B] bg-[#749F8B]/10 text-[#749F8B]'
+                                                    : 'border-white/10 bg-[#0a0312] text-slate-500'
+                                            }`}
+                                        >
+                                            Telegram
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setStorageMethod('cloudisk')}
+                                            className={`p-2 rounded-lg border text-xs font-bold ${
+                                                storageMethod === 'cloudisk'
+                                                    ? 'border-[#FEBD8B] bg-[#FEBD8B]/10 text-[#FEBD8B]'
+                                                    : 'border-white/10 bg-[#0a0312] text-slate-500'
+                                            }`}
+                                        >
+                                            Cloudisk
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {storageMethod === 'telegram' ? (
+                                    <div className="space-y-1.5">
+                                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">APK File ID <span className="text-red-400">*</span></label>
+                                        <input
+                                            type="text"
+                                            required={storageMethod === 'telegram'}
+                                            value={apkFileId}
+                                            onChange={(e) => setApkFileId(e.target.value)}
+                                            placeholder="Paste Telegram file ID here"
+                                            className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#FEBD8B]/40 font-mono"
+                                        />
+                                        <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
+                                            Telegram Document File ID
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-1.5">
+                                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">APK File <span className="text-red-400">*</span></label>
+                                        <input
+                                            type="file"
+                                            required={storageMethod === 'cloudisk'}
+                                            accept=".apk"
+                                            onChange={(e) => setApkFile(e.target.files[0])}
+                                            className="w-full bg-[#0a0312] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#FEBD8B]/40 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#FEBD8B]/10 file:text-[#FEBD8B]"
+                                        />
+                                        <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
+                                            Max 50MB - APK files only
+                                        </p>
+                                    </div>
+                                )}
 
                                 <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
                                     <button type="button" onClick={() => setShowAddVersionModal(false)} disabled={submittingVersion} className="px-4 py-2 border border-white/10 hover:bg-white/5 text-slate-400 text-sm font-medium rounded-xl transition-colors">
                                         Cancel
                                     </button>
-                                    <button type="submit" disabled={submittingVersion || !newVersion || !apkFileId} className="flex items-center gap-2 px-5 py-2 bg-[#749F8B] hover:bg-[#749F8B]/80 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50">
+                                    <button type="submit" disabled={submittingVersion || !newVersion || (storageMethod === 'telegram' ? !apkFileId : !apkFile)} className="flex items-center gap-2 px-5 py-2 bg-[#749F8B] hover:bg-[#749F8B]/80 text-white font-bold text-sm rounded-xl disabled:opacity-50">
                                         {submittingVersion ? (
                                             <>
                                                 <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>

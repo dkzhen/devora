@@ -173,10 +173,39 @@ export async function GET() {
             }).sort((a, b) => b.value - a.value).slice(0, 5)
         };
 
-        // Fetch Temp Mail Stats
-        const tempMailStats = await prisma.tempMailStats.findUnique({
-            where: { id: 1 }
-        }) || { emailsGenerated: 0, messagesReceived: 0 };
+        // Fetch Temp Mail Stats - Count directly from database for accuracy
+        const totalEmailsGenerated = await prisma.tempMailAccount.count();
+        
+        // Count messages received from actual DB records (all providers)
+        const messagesReceived = await prisma.tempMailMessage.count();
+
+        // Fetch recent temp mail accounts (last 10)
+        const recentTempMailAccounts = await prisma.tempMailAccount.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 10,
+            select: {
+                id: true,
+                address: true,
+                createdAt: true
+            }
+        });
+
+        // Count active temp mail accounts (created in last 7 days)
+        const sevenDaysAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+        const activeTempMailAccounts = await prisma.tempMailAccount.count({
+            where: {
+                createdAt: {
+                    gte: sevenDaysAgo
+                }
+            }
+        });
+
+        const tempMailStats = {
+            emailsGenerated: totalEmailsGenerated, // Count from actual DB records
+            messagesReceived: messagesReceived,
+            activeAccounts: activeTempMailAccounts,
+            recentEmails: recentTempMailAccounts
+        };
 
         return NextResponse.json({
             totalRequests: totalRequestsData, // Repurposed as "Messages Over Time"

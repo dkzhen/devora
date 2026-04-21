@@ -1,0 +1,5 @@
+{
+  "title": "Authentication",
+  "icon": "Lock",
+  "pages": ["sign-up", "login"]
+}

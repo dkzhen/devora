@@ -5,6 +5,27 @@ import { useRouter } from 'next/navigation';
 import { Activity, Trophy, ListTodo, CircleDollarSign } from 'lucide-react';
 import { ActionHero, HeroHeader, LoadingState } from '@/components/HeroHeader';
 import LoadingImage from '@/components/LoadingImage';
+import AirdropStatusBadge from '@/components/airdrops/AirdropStatusBadge';
+import CategoryBadges from '@/components/airdrops/CategoryBadges';
+import VisibilityBadge from '@/components/airdrops/VisibilityBadge';
+import { 
+  AIRDROP_STATUS, 
+  AIRDROP_STATUS_OPTIONS, 
+  CURRENCY_TYPES, 
+  TOAST_TYPES,
+  STATUS_COLORS 
+} from '@/constants/airdrops.constants';
+import { 
+  formatTime, 
+  formatCost, 
+  formatRaise, 
+  extractActiveLinks,
+  getAllUniqueTaskTypes,
+  calculateAverageRaised,
+  filterAirdrops,
+  countByStatus,
+  formatDate
+} from '@/lib/utils/airdrops.utils';
 
 function StatCard({ title, value, icon, color, subtext }) {
     return (
@@ -27,12 +48,12 @@ function AirdropRow({ airdrop, user, onDelete, onEdit }) {
 
     return (
         <tr
-            className="group hover:bg-[#0a0e1a]/90 transition-all border-b border-purple-500/10 last:border-0 cursor-pointer hover:shadow-[inset_4px_0_0_rgba(168,85,247,0.5)]"
+            className="group hover:bg-slate-800/30 border-b border-slate-800 last:border-0 cursor-pointer"
             onClick={() => router.push(`/airdrops/${airdrop.id}`)}
         >
-            <td className="py-4 px-4 w-1/3">
+            <td className="py-4 px-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#0a0312] border border-purple-500/30 flex items-center justify-center text-lg shrink-0 overflow-hidden shadow-[0_0_10px_rgba(168,85,247,0.2)] group-hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-shadow">
+                    <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
                         <LoadingImage 
                             src={airdrop.icon} 
                             alt={airdrop.name} 
@@ -41,88 +62,25 @@ function AirdropRow({ airdrop, user, onDelete, onEdit }) {
                         />
                     </div>
                     <div>
-                        <div className="font-bold text-white flex items-center gap-2">
-                            {airdrop.name}
-                            {!airdrop.isPublic && airdrop.publishStatus !== 'PENDING' && <span className="px-1.5 py-0.5 rounded text-[10px] bg-gray-500/20 text-slate-400 border border-gray-500/30 font-bold">PRIVATE</span>}
-                            {!airdrop.isPublic && airdrop.publishStatus === 'PENDING' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-bold" title="Pending Publish Request">
-                                    PENDING
-                                </span>
-                            )}
-                        </div>
+                                <div className="font-semibold text-white flex items-center gap-2">
+                                    {airdrop.name}
+                                    <VisibilityBadge isPublic={airdrop.isPublic} publishStatus={airdrop.publishStatus} />
+                                </div>
                     </div>
                 </div>
             </td>
-            <td className="py-4 px-4">
-                <div className="flex flex-wrap gap-1.5 mb-1.5 items-center">
-                    {(() => {
-                        let categories = [];
-                        if (airdrop.tasks && airdrop.tasks.length > 0) {
-                            categories = airdrop.tasks.map(t => t.category.trim());
-                        } else if (airdrop.taskType) {
-                            categories = airdrop.taskType.split(',').map(t => t.trim());
-                        }
-
-                        // Deduplicate case-insensitively, keeping the first encountered case
-                        const seen = new Set();
-                        categories = categories.filter(c => {
-                            const lower = c.toLowerCase();
-                            if (seen.has(lower)) return false;
-                            seen.add(lower);
-                            return true;
-                        });
-
-                        if (categories.length === 0) {
-                            return <span className="text-sm font-medium text-white">-</span>;
-                        }
-
-                        const displayedCategories = categories.slice(0, 2);
-                        const hiddenCategories = categories.slice(2);
-
-                        return (
-                            <>
-                                {displayedCategories.map((category, idx) => (
-                                    <span key={idx} className="px-2 py-0.5 rounded text-xs font-medium bg-gray-800 text-slate-100">
-                                        {category.toUpperCase()}
-                                    </span>
-                                ))}
-                                {hiddenCategories.length > 0 && (
-                                    <div className="relative group cursor-help">
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-500/10 text-purple-400">
-                                            +{hiddenCategories.length}
-                                        </span>
-                                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-50 w-max max-w-xs bg-gray-900 text-white rounded-lg shadow-xl border border-gray-700/50 overflow-hidden">
-                                            <div className="flex flex-col py-1">
-                                                {hiddenCategories.map((category, idx) => (
-                                                    <span key={idx} className="px-3 py-1.5 text-xs font-medium hover:bg-gray-800">
-                                                        {category}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </>
-                        );
-                    })()}
+            <td className="py-4 px-6">
+                <div className="flex flex-wrap gap-1.5 items-center">
+                    <CategoryBadges airdrop={airdrop} maxDisplay={2} />
                 </div>
-                <div className="text-xs text-slate-500">Cost: {airdrop.cost} • Time: {airdrop.time}</div>
-            </td>
-            <td className="py-4 px-4">
-                <div className="flex items-center gap-2">
-                    {airdrop.status === 'Confirmed' ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-50 text-orange-600">
-                            CONFIRMED
-                        </span>
-                    ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-600">
-                            {airdrop.status ? airdrop.status.toUpperCase() : 'POTENTIAL'}
-                        </span>
-                    )}
+                <div className="text-xs text-slate-500 mt-1">
+                    {airdrop.cost} • {airdrop.time}
                 </div>
-                {airdrop.statusDate && <div className="text-[10px] text-slate-400 mt-1 ml-1">{new Date(airdrop.statusDate).toLocaleDateString()}</div>}
             </td>
-            <td className="py-4 px-4 text-right">
+            <td className="py-4 px-6">
+                <AirdropStatusBadge status={airdrop.status} statusDate={airdrop.statusDate} />
+            </td>
+            <td className="py-4 px-6 text-right">
                 <div className="flex items-center justify-end gap-2">
                     {(user?.role === 'ULTRA' || airdrop.userId === user?.id) && (
                         <>
@@ -131,26 +89,30 @@ function AirdropRow({ airdrop, user, onDelete, onEdit }) {
                                     e.stopPropagation();
                                     onEdit(airdrop);
                                 }}
-                                className="p-2 text-slate-400 hover:text-purple-400 transition-colors"
-                                title="Edit Project"
+                                className="p-2 text-slate-500 hover:text-purple-400"
+                                title="Edit"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
                             </button>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onDelete(airdrop.id);
                                 }}
-                                className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                                title="Delete Project"
+                                className="p-2 text-slate-500 hover:text-red-400"
+                                title="Delete"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
                             </button>
                         </>
                     )}
-                    <button className="text-slate-400 hover:text-white transition-colors">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    </button>
+                    <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                 </div>
             </td>
         </tr>
@@ -396,135 +358,124 @@ export default function AirdropsPage() {
 
     if (loading) {
         return (
-            <div className="space-y-8">
+            <div className="space-y-6">
                 <HeroHeader
                     title="Drop"
                     badge="Hunting"
                     description="Track and manage your airdrop activities"
-                    
                     breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Airdrops' }]}
                 />
-                <LoadingState message="Scanning blockchain for airdrops..."  />
+                <LoadingState message="Loading projects..."  />
             </div>
         );
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             {toast && (
-                <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg text-white text-sm font-medium animate-fade-in-up ${toast.type === 'success' ? 'bg-purple-600' : 'bg-red-500'}`}>
+                <div className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg shadow-xl text-white text-sm font-medium ${toast.type === 'success' ? 'bg-purple-600' : 'bg-red-600'}`}>
                     {toast.message}
                 </div>
             )}
+            
             <HeroHeader
                 title="Drop"
                 badge="Hunting"
                 description="Track and manage your airdrop activities"
-                
                 breadcrumbs={[{ label: 'Dashboard', href: '/' }, { label: 'Airdrops' }]}
             />
 
-            {/* Mobile Stats chips */}
-            <div className="md:hidden grid grid-cols-4 gap-2">
-                {[
-                    { icon: <Activity className="w-5 h-5 text-purple-400" />, label: 'New Activity', value: newActivityCount.toString(), color: 'text-white' },
-                    { icon: <Trophy className="w-5 h-5 text-orange-400" />, label: 'Confirmed', value: confirmedCount.toString(), color: 'text-white' },
-                    { icon: <ListTodo className="w-5 h-5 text-indigo-400" />, label: 'To Check', value: toCheckCount.toString(), color: 'text-white' },
-                    { icon: <CircleDollarSign className="w-5 h-5 text-cyan-400" />, label: 'Avg. Raised', value: formattedRaised, color: 'text-cyan-400' },
-                ].map((stat, i) => (
-                    <div key={i} className="bg-[#0a0312]/40 border border-purple-500/10 rounded-xl p-2 flex flex-col items-center text-center shadow-lg shadow-black/20 backdrop-blur-md">
-                        <span className="flex items-center justify-center p-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 mb-1">{stat.icon}</span>
-                        <span className={`text-sm font-black tracking-tight ${stat.color}`}>{stat.value}</span>
-                        <span className="text-[9px] text-purple-400/60 mt-0.5 leading-none font-bold uppercase tracking-wider">{stat.label}</span>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5">
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-3">
+                        <Activity className="w-4 h-4" />
+                        <span>New activity</span>
                     </div>
-                ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-4">
-                <div className="bg-[#0a0312]/80 backdrop-blur-xl border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.05)] rounded-2xl p-6 relative overflow-hidden text-white group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full pointer-events-none group-hover:bg-purple-500/20 transition-colors" />
-                    <span className="absolute top-0 left-0 w-16 h-1 bg-linear-to-r from-purple-500 to-transparent" />
-                    <span className="absolute bottom-0 right-0 w-16 h-1 bg-linear-to-l from-indigo-500 to-transparent" />
-                    <h3 className="text-purple-400/80 text-sm font-bold uppercase tracking-wider mb-6 border-b border-purple-500/10 pb-4 relative z-10">Activity Overview</h3>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-                        <div>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
-                                <Activity className="w-4 h-4 text-purple-400" /> New activity
-                            </div>
-                            <div className="text-3xl font-bold">{newActivityCount}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
-                                <Trophy className="w-4 h-4 text-orange-400" /> Award confirmed
-                            </div>
-                            <div className="text-3xl font-bold">{confirmedCount}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
-                                <ListTodo className="w-4 h-4 text-indigo-400" /> Rewards to check
-                            </div>
-                            <div className="text-3xl font-bold">{toCheckCount}</div>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
-                                <CircleDollarSign className="w-4 h-4 text-cyan-400" /> Avg. Raised
-                            </div>
-                            <div className="text-3xl font-bold text-cyan-400">{formattedRaised}</div>
-                        </div>
+                    <div className="text-3xl font-bold text-white">{newActivityCount}</div>
+                </div>
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5">
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-3">
+                        <Trophy className="w-4 h-4" />
+                        <span>Award confirmed</span>
                     </div>
+                    <div className="text-3xl font-bold text-white">{confirmedCount}</div>
+                </div>
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5">
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-3">
+                        <ListTodo className="w-4 h-4" />
+                        <span>Rewards to check</span>
+                    </div>
+                    <div className="text-3xl font-bold text-white">{toCheckCount}</div>
+                </div>
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5">
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-3">
+                        <CircleDollarSign className="w-4 h-4" />
+                        <span>Avg. Raised</span>
+                    </div>
+                    <div className="text-3xl font-bold text-cyan-400">{formattedRaised}</div>
                 </div>
             </div>
 
             {/* ===== MOBILE: Filter Bar + Card List ===== */}
             <div className="md:hidden space-y-3">
                 {/* Mobile Filter Bar */}
-                <div className="relative overflow-hidden rounded-2xl">
-                    <div className="absolute inset-0 bg-linear-to-br from-[#0a0312] via-purple-900/40 to-[#0a0312]" />
-                    <div className="relative z-10 p-3 space-y-2">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3">
+                    <div className="space-y-2">
                         {/* Row 1: Search inputs */}
                         <div className="grid grid-cols-2 gap-2">
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                    <svg className="h-3.5 w-3.5 text-purple-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                </div>
-                                <input type="text" placeholder="Project Name" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className="w-full pl-7 pr-2 py-2 bg-black/20 border border-white/10 rounded-xl text-xs text-slate-100 placeholder-gray-500 focus:ring-1 focus:ring-purple-500 focus:outline-none" />
-                            </div>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                    <svg className="h-3.5 w-3.5 text-purple-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                </div>
-                                <input type="text" placeholder="Global Search" value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} className="w-full pl-7 pr-2 py-2 bg-black/20 border border-white/10 rounded-xl text-xs text-slate-100 placeholder-gray-500 focus:ring-1 focus:ring-purple-500 focus:outline-none" />
-                            </div>
+                            <input 
+                                type="text" 
+                                placeholder="Project name..." 
+                                value={nameFilter} 
+                                onChange={(e) => setNameFilter(e.target.value)} 
+                                className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                            />
+                            <input 
+                                type="text" 
+                                placeholder="Search..." 
+                                value={globalSearch} 
+                                onChange={(e) => setGlobalSearch(e.target.value)} 
+                                className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                            />
                         </div>
                         {/* Row 2: dropdowns + add button */}
                         <div className="grid grid-cols-2 gap-2">
-                            <div className="relative">
-                                <select value={taskTypeFilter} onChange={(e) => setTaskTypeFilter(e.target.value)} className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-slate-300 outline-none focus:ring-1 focus:ring-purple-500">
-                                    <option value="">All Types</option>
-                                    {uniqueTaskTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                            </div>
-                            <div className="relative">
-                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-slate-300 outline-none focus:ring-1 focus:ring-purple-500">
-                                    <option value="">All Status</option>
-                                    {uniqueStatuses.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                            </div>
-                            <div className="relative">
-                                <select value={visibilityFilter} onChange={(e) => setVisibilityFilter(e.target.value)} className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl pl-2.5 pr-6 py-2 text-xs text-slate-300 outline-none focus:ring-1 focus:ring-purple-500">
-                                    <option value="">All Visibility</option>
-                                    <option value="public">Public</option>
-                                    <option value="private">Private</option>
-                                    {user?.role === 'ULTRA' && <option value="pending">Pending</option>}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                            </div>
+                            <select 
+                                value={taskTypeFilter} 
+                                onChange={(e) => setTaskTypeFilter(e.target.value)} 
+                                className="w-full px-2.5 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-purple-500"
+                            >
+                                <option value="">All Types</option>
+                                {uniqueTaskTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
+                            </select>
+                            <select 
+                                value={statusFilter} 
+                                onChange={(e) => setStatusFilter(e.target.value)} 
+                                className="w-full px-2.5 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-purple-500"
+                            >
+                                <option value="">All Status</option>
+                                {uniqueStatuses.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                            </select>
+                            <select 
+                                value={visibilityFilter} 
+                                onChange={(e) => setVisibilityFilter(e.target.value)} 
+                                className="w-full px-2.5 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-purple-500"
+                            >
+                                <option value="">All Visibility</option>
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                {user?.role === 'ULTRA' && <option value="pending">Pending</option>}
+                            </select>
                             {user && (
-                                <button onClick={() => setShowAddModal(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-[#F25278]/90 hover:to-[#FEA47F]/90 text-white rounded-xl text-xs font-bold shadow-lg shadow-purple-500/30 transition-all active:scale-95 border border-white/10">
-                                    <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                                    Add Project
+                                <button 
+                                    onClick={() => setShowAddModal(true)} 
+                                    className="flex items-center justify-center gap-1.5 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-medium"
+                                >
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add
                                 </button>
                             )}
                         </div>
@@ -533,9 +484,14 @@ export default function AirdropsPage() {
 
                 {/* Mobile Stats bar */}
                 <div className="flex items-center justify-between px-1">
-                    <span className="text-xs text-slate-500">{filteredAirdrops.length} project{filteredAirdrops.length !== 1 ? 's' : ''} found</span>
+                    <span className="text-xs text-slate-500">{filteredAirdrops.length} projects</span>
                     {(nameFilter || globalSearch || taskTypeFilter || statusFilter || visibilityFilter) && (
-                        <button onClick={() => { setNameFilter(''); setGlobalSearch(''); setTaskTypeFilter(''); setStatusFilter(''); setVisibilityFilter(''); }} className="text-xs text-purple-400 hover:text-purple-300 transition-colors">Clear filters</button>
+                        <button 
+                            onClick={() => { setNameFilter(''); setGlobalSearch(''); setTaskTypeFilter(''); setStatusFilter(''); setVisibilityFilter(''); }} 
+                            className="text-xs text-purple-400 hover:text-purple-300"
+                        >
+                            Clear
+                        </button>
                     )}
                 </div>
 
@@ -571,14 +527,12 @@ export default function AirdropsPage() {
                         return (
                             <div
                                 key={airdrop.id}
-                                className="group relative overflow-hidden rounded-2xl bg-[#0a0e1a]/80 backdrop-blur-md border border-purple-500/10 active:scale-[0.99] transition-all cursor-pointer hover:border-purple-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.2)]"
+                                className="group bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 cursor-pointer transition-colors"
                                 onClick={() => window.location.href = `/airdrops/${airdrop.id}`}
                             >
-                                {/* Glow accent for new */}
-                                {airdrop.status === 'New' && <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-purple-500/60 to-transparent" />}
-                                <div className="p-3 flex items-center gap-3 relative z-10">
+                                <div className="p-4 flex items-center gap-3">
                                     {/* Project Icon */}
-                                    <div className="w-11 h-11 rounded-xl bg-[#0c0e1a] shadow-[0_0_10px_rgba(168,85,247,0.15)] group-hover:shadow-[0_0_15px_rgba(168,85,247,0.3)] flex items-center justify-center text-lg shrink-0 overflow-hidden border border-blue-500/30">
+                                    <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
                                         <LoadingImage 
                                             src={airdrop.icon} 
                                             alt={airdrop.name} 
@@ -588,35 +542,61 @@ export default function AirdropsPage() {
                                     </div>
                                     {/* Project Info */}
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5 mb-0.5">
-                                            <span className="font-bold text-sm text-white truncate">{airdrop.name}</span>
-                                            {!airdrop.isPublic && airdrop.publishStatus !== 'PENDING' && <span className="shrink-0 px-1 py-0.5 rounded text-[9px] bg-gray-500/20 text-slate-400 font-bold border border-gray-500/30">PRIVATE</span>}
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="font-semibold text-sm text-white truncate">{airdrop.name}</span>
+                                            {!airdrop.isPublic && airdrop.publishStatus !== 'PENDING' && (
+                                                <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] bg-slate-700 text-slate-400 font-medium">PRIVATE</span>
+                                            )}
                                             {!airdrop.isPublic && airdrop.publishStatus === 'PENDING' && (
-                                                <span className="shrink-0 px-1 py-0.5 rounded text-[9px] bg-yellow-500/20 text-yellow-400 font-bold border border-yellow-500/30" title="Pending Publish Request">
-                                                    PENDING
-                                                </span>
+                                                <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] bg-yellow-500/20 text-yellow-400 font-medium">PENDING</span>
                                             )}
                                         </div>
                                         {/* Categories */}
-                                        <div className="flex flex-wrap gap-1">
+                                        <div className="flex flex-wrap gap-1 mb-1">
                                             {categories.slice(0, 2).map((cat, idx) => (
-                                                <span key={idx} className="px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-gray-700/60 text-slate-300 border border-gray-600/50">{cat.toUpperCase()}</span>
+                                                <span key={idx} className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                                                    {cat.toUpperCase()}
+                                                </span>
                                             ))}
-                                            {categories.length > 2 && <span className="px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">+{categories.length - 2}</span>}
+                                            {categories.length > 2 && (
+                                                <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800 text-slate-400 border border-slate-700">
+                                                    +{categories.length - 2}
+                                                </span>
+                                            )}
                                         </div>
-                                        <div className="text-[10px] text-slate-500 mt-0.5">{airdrop.cost && `Cost: ${airdrop.cost}`}{airdrop.cost && airdrop.time && ' · '}{airdrop.time && `Time: ${airdrop.time}`}</div>
+                                        <div className="text-[10px] text-slate-500">
+                                            {airdrop.cost && `${airdrop.cost}`}
+                                            {airdrop.cost && airdrop.time && ' • '}
+                                            {airdrop.time && `${airdrop.time}`}
+                                        </div>
                                     </div>
-                                    {/* Status + chevron */}
-                                    <div className="shrink-0 flex flex-col items-end gap-1.5">
-                                        <span className={`px-2 py-1 rounded-lg text-[10px] font-bold border ${statusStyle}`}>{airdrop.status?.toUpperCase()}</span>
-                                        {airdrop.statusDate && <span className="text-[9px] text-slate-600">{new Date(airdrop.statusDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>}
+                                    {/* Status */}
+                                    <div className="shrink-0 flex flex-col items-end gap-1">
+                                        <span className={`px-2 py-1 rounded-lg text-[10px] font-medium border ${statusStyle}`}>
+                                            {airdrop.status?.toUpperCase()}
+                                        </span>
+                                        {airdrop.statusDate && (
+                                            <span className="text-[9px] text-slate-500">
+                                                {new Date(airdrop.statusDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                                 {/* Admin actions */}
                                 {(user?.role === 'ULTRA' || airdrop.userId === user?.id) && (
-                                    <div className="px-3 pb-2 flex gap-2">
-                                        <button onClick={(e) => { e.stopPropagation(); setEditingProject(airdrop); setShowAddModal(true); }} className="flex-1 py-1 text-[10px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-lg hover:bg-blue-500/20 transition-colors">Edit</button>
-                                        <button onClick={(e) => { e.stopPropagation(); handleDeleteAirdrop(airdrop.id, e); }} className="flex-1 py-1 text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors">Delete</button>
+                                    <div className="px-4 pb-3 flex gap-2 border-t border-slate-800 pt-3">
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); setEditingProject(airdrop); setShowAddModal(true); }} 
+                                            className="flex-1 py-1.5 text-[11px] font-medium text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-lg hover:bg-purple-500/20"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteAirdrop(airdrop.id); }} 
+                                            className="flex-1 py-1.5 text-[11px] font-medium text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -627,76 +607,83 @@ export default function AirdropsPage() {
 
             {/* ===== DESKTOP: Filter Bar + Table ===== */}
             <div className="hidden md:block space-y-4">
-                {/* Futuristic Filter Bar */}
-                <div className="relative overflow-hidden rounded-2xl border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.03)] bg-[#0a0312]/80 backdrop-blur-xl">
-                    <div className="relative z-10 px-5 py-3 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-3 flex-wrap">
-                            {/* Project Name */}
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-4 w-4 text-purple-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                                </div>
-                                <input type="text" placeholder="Project Name" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className="pl-9 pr-4 py-2 bg-black/20 border border-white/10 rounded-xl text-sm text-slate-100 placeholder-gray-600 focus:ring-1 focus:ring-purple-500 focus:outline-none w-44" />
-                            </div>
-                            {/* Global Search */}
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-4 w-4 text-purple-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                </div>
-                                <input type="text" placeholder="Global Search" value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)} className="pl-9 pr-4 py-2 bg-black/20 border border-white/10 rounded-xl text-sm text-slate-100 placeholder-gray-600 focus:ring-1 focus:ring-purple-500 focus:outline-none w-44" />
-                            </div>
-                            {/* Task Type */}
-                            <div className="relative">
-                                <select value={taskTypeFilter} onChange={(e) => setTaskTypeFilter(e.target.value)} className="appearance-none bg-black/20 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-slate-300 outline-none focus:ring-1 focus:ring-purple-500 cursor-pointer">
-                                    <option value="">Task Type: All</option>
-                                    {uniqueTaskTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                            </div>
-                            {/* Status */}
-                            <div className="relative">
-                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="appearance-none bg-black/20 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-slate-300 outline-none focus:ring-1 focus:ring-purple-500 cursor-pointer">
-                                    <option value="">Status: All</option>
-                                    {uniqueStatuses.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                            </div>
-                            {/* Visibility */}
-                            <div className="relative">
-                                <select value={visibilityFilter} onChange={(e) => setVisibilityFilter(e.target.value)} className="appearance-none bg-black/20 border border-white/10 rounded-xl pl-3 pr-8 py-2 text-sm text-slate-300 outline-none focus:ring-1 focus:ring-purple-500 cursor-pointer">
-                                    <option value="">Visibility: All</option>
-                                    <option value="public">Public</option>
-                                    <option value="private">Private</option>
-                                    {user?.role === 'ULTRA' && <option value="pending">Pending</option>}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400"><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></div>
-                            </div>
-                            {/* Results count */}
-                            <span className="text-xs text-slate-600 pl-1">{filteredAirdrops.length} projects</span>
+                {/* Modern Filter Bar */}
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4">
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 flex-1">
+                            {/* Search Inputs */}
+                            <input 
+                                type="text" 
+                                placeholder="Project name..." 
+                                value={nameFilter} 
+                                onChange={(e) => setNameFilter(e.target.value)} 
+                                className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 w-40"
+                            />
+                            <input 
+                                type="text" 
+                                placeholder="Search..." 
+                                value={globalSearch} 
+                                onChange={(e) => setGlobalSearch(e.target.value)} 
+                                className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 w-40"
+                            />
+                            
+                            {/* Filters */}
+                            <select 
+                                value={taskTypeFilter} 
+                                onChange={(e) => setTaskTypeFilter(e.target.value)} 
+                                className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-purple-500 cursor-pointer"
+                            >
+                                <option value="">All Types</option>
+                                {uniqueTaskTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
+                            </select>
+                            
+                            <select 
+                                value={statusFilter} 
+                                onChange={(e) => setStatusFilter(e.target.value)} 
+                                className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-purple-500 cursor-pointer"
+                            >
+                                <option value="">All Status</option>
+                                {uniqueStatuses.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                            </select>
+                            
+                            <select 
+                                value={visibilityFilter} 
+                                onChange={(e) => setVisibilityFilter(e.target.value)} 
+                                className="px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-300 focus:outline-none focus:border-purple-500 cursor-pointer"
+                            >
+                                <option value="">All Visibility</option>
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                {user?.role === 'ULTRA' && <option value="pending">Pending</option>}
+                            </select>
+                            
+                            <span className="text-xs text-slate-500 ml-2">{filteredAirdrops.length} projects</span>
                         </div>
-                        {/* Add button */}
-                        {user ? (
-                            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-[#F25278]/90 hover:to-[#FEA47F]/90 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-500/25 transition-all active:scale-95 border border-white/10">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        
+                        {/* Add Button */}
+                        {user && (
+                            <button 
+                                onClick={() => setShowAddModal(true)} 
+                                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                </svg>
                                 Add Project
                             </button>
-                        ) : (
-                            <div className="flex items-center justify-center p-2 bg-black/20 rounded-xl border border-white/10 cursor-not-allowed" title="Requires Login to Add Project">
-                                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            </div>
                         )}
                     </div>
                 </div>
                 {/* Table */}
-                <div className="relative overflow-hidden rounded-2xl border border-purple-500/20 shadow-[0_0_30px_rgba(168,85,247,0.05)] bg-[#0a0312]/80 backdrop-blur-xl">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-linear-to-r from-[#F25278]/10 to-[#FEA47F]/10 text-xs uppercase text-purple-400/80 font-bold tracking-widest border-b border-purple-500/20">
-                                    <th className="py-4 px-6 w-1/3">Name</th>
-                                    <th className="py-4 px-6">Task Type</th>
-                                    <th className="py-4 px-6">Status</th>
-                                    <th className="py-4 px-6 w-10"></th>
+                                <tr className="bg-slate-800/50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-700">
+                                    <th className="py-3 px-6">Name</th>
+                                    <th className="py-3 px-6">Task Type</th>
+                                    <th className="py-3 px-6">Status</th>
+                                    <th className="py-3 px-6"></th>
                                 </tr>
                             </thead>
                             <tbody>

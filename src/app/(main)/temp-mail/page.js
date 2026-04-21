@@ -3,6 +3,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 import { toast } from 'react-hot-toast';
+import {
+    PROVIDERS,
+    STORAGE_KEYS,
+    API_ENDPOINTS,
+    POLLING_CONFIG,
+    MESSAGES,
+    detectProvider,
+    formatDate as formatDateUtil,
+    isProviderMoemail,
+    isProviderMailTm
+} from '@/constants/temp-mail.constants';
 
 export default function TempMail() {
     const [account, setAccount] = useState(null);
@@ -19,24 +30,31 @@ export default function TempMail() {
     const [history, setHistory] = useState([]);
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [user, setUser] = useState(null);
+    const [provider, setProvider] = useState(PROVIDERS.MAIL_TM);
+    const [historySearch, setHistorySearch] = useState('');
 
     const intervalRef = useRef(null);
 
     useEffect(() => {
         // Init user
-        const storedUser = localStorage.getItem('user_info');
+        const storedUser = localStorage.getItem(STORAGE_KEYS.USER_INFO);
         if (storedUser) setUser(JSON.parse(storedUser));
 
         // Init session from localStorage
-        const storedToken = localStorage.getItem('temp_mail_token');
-        const storedAccount = localStorage.getItem('temp_mail_account');
+        const storedToken = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        const storedAccount = localStorage.getItem(STORAGE_KEYS.ACCOUNT);
+        const storedProvider = localStorage.getItem(STORAGE_KEYS.PROVIDER);
 
-        if (storedToken && storedAccount) {
-            setToken(storedToken);
+        if (storedProvider) setProvider(storedProvider);
+
+        if (storedAccount) {
             const parsedAccount = JSON.parse(storedAccount);
             setAccount(parsedAccount);
-            fetchMessages(storedToken, parsedAccount.id).finally(() => setLoading(false));
-            startPolling(storedToken, parsedAccount.id);
+            // Only mail.tm uses tokens like this
+            if (storedToken) setToken(storedToken);
+            
+            fetchMessages(storedToken, parsedAccount.id, false, storedProvider || PROVIDERS.MAIL_TM).finally(() => setLoading(false));
+            startPolling(storedToken, parsedAccount.id, storedProvider || PROVIDERS.MAIL_TM);
         } else {
             setLoading(false);
         }
@@ -47,19 +65,19 @@ export default function TempMail() {
     }, []);
 
     useEffect(() => {
-        if (autoSync && token && account) {
-            startPolling(token, account.id);
+        if (autoSync && account) {
+            startPolling(token, account.id, provider);
         } else {
             stopPolling();
         }
         return () => stopPolling();
-    }, [autoSync, token, account]);
+    }, [autoSync, token, account, provider]);
 
-    const startPolling = (authToken, accountId) => {
+    const startPolling = (authToken, accountId, currentProvider) => {
         stopPolling();
         intervalRef.current = setInterval(() => {
-            fetchMessages(authToken, accountId, false);
-        }, 5000); // 5 seconds
+            fetchMessages(authToken, accountId, false, currentProvider);
+        }, POLLING_CONFIG.INTERVAL);
     };
 
     const stopPolling = () => {
@@ -68,7 +86,7 @@ export default function TempMail() {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch('/api/temp-mail/accounts/history');
+            const res = await fetch(API_ENDPOINTS.INTERNAL.HISTORY);
             if (res.ok) {
                 const data = await res.json();
                 setHistory(data);
@@ -86,56 +104,67 @@ export default function TempMail() {
         setMessageContent(null);
 
         try {
-            // Get fresh token for this account
-            const tokenRes = await fetch('/api/temp-mail/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address: oldAccount.address, password: oldAccount.password })
-            });
+            let newToken = null;
+            const currentProvider = detectProvider(oldAccount.address);
 
-            if (!tokenRes.ok) throw new Error("Failed to get token for existing account");
-            const tokenData = await tokenRes.json();
+            if (isProviderMailTm(currentProvider)) {
+                // Get fresh token for this account
+                const tokenRes = await fetch(API_ENDPOINTS.INTERNAL.TOKEN, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address: oldAccount.address, password: oldAccount.password })
+                });
+
+                if (!tokenRes.ok) throw new Error(MESSAGES.ERROR.TOKEN_FAILED);
+                const tokenData = await tokenRes.json();
+                newToken = tokenData.token;
+                setToken(newToken);
+                localStorage.setItem(STORAGE_KEYS.TOKEN, newToken);
+            } else {
+                setToken(null);
+                localStorage.removeItem(STORAGE_KEYS.TOKEN);
+            }
 
             setAccount(oldAccount);
-            setToken(tokenData.token);
+            setProvider(currentProvider);
 
-            localStorage.setItem('temp_mail_account', JSON.stringify(oldAccount));
-            localStorage.setItem('temp_mail_token', tokenData.token);
+            localStorage.setItem(STORAGE_KEYS.ACCOUNT, JSON.stringify(oldAccount));
+            localStorage.setItem(STORAGE_KEYS.PROVIDER, currentProvider);
 
-            fetchMessages(tokenData.token, oldAccount.id).finally(() => setLoading(false));
-            startPolling(tokenData.token, oldAccount.id);
+            fetchMessages(newToken, oldAccount.id, false, currentProvider).finally(() => setLoading(false));
+            startPolling(newToken, oldAccount.id, currentProvider);
             setShowHistoryModal(false);
             
-            toast.success("Switched to email: " + oldAccount.address);
+            toast.success(MESSAGES.SUCCESS.SWITCHED + oldAccount.address);
         } catch (error) {
             console.error(error);
             setLoading(false);
-            toast.error("Failed to switch account");
+            toast.error(MESSAGES.ERROR.SWITCH_FAILED);
         }
     };
 
     const destroyAccount = async (targetId) => {
-        if (!confirm("Are you sure you want to permanently delete this email address? This action cannot be undone.")) return;
+        if (!confirm(MESSAGES.CONFIRM.DELETE)) return;
         try {
-            const res = await fetch(`/api/temp-mail/accounts?id=${targetId}`, {
+            const res = await fetch(`${API_ENDPOINTS.INTERNAL.ACCOUNTS}?id=${targetId}`, {
                 method: 'DELETE'
             });
             if (res.ok) {
-                toast.success("Email address destroyed");
+                toast.success(MESSAGES.SUCCESS.DESTROYED);
                 fetchHistory();
                 if (account?.id === targetId) {
                     setAccount(null);
                     setToken(null);
                     setMessages([]);
-                    localStorage.removeItem('temp_mail_account');
-                    localStorage.removeItem('temp_mail_token');
+                    localStorage.removeItem(STORAGE_KEYS.ACCOUNT);
+                    localStorage.removeItem(STORAGE_KEYS.TOKEN);
                 }
             } else {
-                toast.error("Failed to destroy email address");
+                toast.error(MESSAGES.ERROR.DESTROY_FAILED);
             }
         } catch (error) {
             console.error("Destroy error", error);
-            toast.error("An error occurred while destroying");
+            toast.error(MESSAGES.ERROR.DESTROY_FAILED);
         }
     };
 
@@ -147,94 +176,143 @@ export default function TempMail() {
         setMessageContent(null);
 
         try {
-            // 0. Clean up old account if exists (only if NOT logged in, to preserve history for users)
-            if (account && token && !user) {
-                try {
-                    await fetch(`/api/temp-mail/accounts?id=${account.id}`, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                } catch (e) {
-                    console.error("Cleanup old account failed", e);
+            if (isProviderMoemail(provider)) {
+                const res = await fetch(API_ENDPOINTS.INTERNAL.MOEMAIL_GENERATE, { method: 'POST' });
+                if (!res.ok) throw new Error(MESSAGES.ERROR.GENERATE_FAILED);
+                const data = await res.json();
+                
+                const accountData = {
+                    id: data.id,
+                    address: data.email,
+                    provider: PROVIDERS.MOEMAIL,
+                    createdAt: data.createdAt
+                };
+                
+                setAccount(accountData);
+                setToken(null);
+
+                localStorage.setItem(STORAGE_KEYS.ACCOUNT, JSON.stringify(accountData));
+                localStorage.setItem(STORAGE_KEYS.PROVIDER, PROVIDERS.MOEMAIL);
+                localStorage.removeItem(STORAGE_KEYS.TOKEN);
+
+                toast.success(MESSAGES.SUCCESS.GENERATED);
+                startPolling(null, accountData.id, PROVIDERS.MOEMAIL);
+            } else {
+                // Original Mail.tm logic
+                // 0. Clean up old account if exists (only if NOT logged in, to preserve history for users)
+                if (account && token && !user && isProviderMailTm(provider)) {
+                    try {
+                        await fetch(`${API_ENDPOINTS.INTERNAL.ACCOUNTS}?id=${account.id}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                    } catch (e) {
+                        console.error("Cleanup old account failed", e);
+                    }
                 }
-            }
 
-            // 1. Get available domains
-            const domainsRes = await fetch('/api/temp-mail/domains?page=1');
-            const domainsData = await domainsRes.json();
-            if (!domainsData['hydra:member'] || domainsData['hydra:member'].length === 0) {
-                throw new Error("No domains available");
-            }
+                // 1. Get available domains
+                const domainsRes = await fetch(`${API_ENDPOINTS.INTERNAL.DOMAINS}?page=1`);
+                const domainsData = await domainsRes.json();
+                if (!domainsData['hydra:member'] || domainsData['hydra:member'].length === 0) {
+                    throw new Error("No domains available");
+                }
 
-            const domain = domainsData['hydra:member'][0].domain;
-            const username = 'devora_' + Math.random().toString(36).substring(2, 10);
-            const address = `${username}@${domain}`;
-            const password = Math.random().toString(36).substring(2, 15);
+                const domain = domainsData['hydra:member'][0].domain;
+                const username = 'devora_' + Math.random().toString(36).substring(2, 10);
+                const address = `${username}@${domain}`;
+                const password = Math.random().toString(36).substring(2, 15);
 
-            // 2. Create account
-            let createRes = await fetch('/api/temp-mail/accounts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address, password })
-            });
-
-            if (createRes.status === 422) {
-                // Retry once if address is taken
-                const newUsername = 'devora_' + Math.random().toString(36).substring(2, 10);
-                const newAddress = `${newUsername}@${domain}`;
-                createRes = await fetch('/api/temp-mail/accounts', {
+                // 2. Create account
+                let createRes = await fetch(API_ENDPOINTS.INTERNAL.ACCOUNTS, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address: newAddress, password })
+                    body: JSON.stringify({ address, password })
                 });
-                if (!createRes.ok) throw new Error("Failed to create account after retry");
-            } else if (!createRes.ok) {
-                throw new Error("Failed to create account");
+
+                if (createRes.status === 422) {
+                    // Retry once if address is taken
+                    const newUsername = 'devora_' + Math.random().toString(36).substring(2, 10);
+                    const newAddress = `${newUsername}@${domain}`;
+                    createRes = await fetch(API_ENDPOINTS.INTERNAL.ACCOUNTS, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ address: newAddress, password })
+                    });
+                    if (!createRes.ok) throw new Error("Failed to create account after retry");
+                } else if (!createRes.ok) {
+                    throw new Error("Failed to create account");
+                }
+
+                const accountData = await createRes.json();
+                accountData.provider = PROVIDERS.MAIL_TM;
+
+                // 3. Get token
+                const tokenRes = await fetch(API_ENDPOINTS.INTERNAL.TOKEN, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address: accountData.address, password })
+                });
+
+                if (!tokenRes.ok) throw new Error("Failed to get token");
+                const tokenData = await tokenRes.json();
+
+                // Save to state & local storage
+                setAccount(accountData);
+                setToken(tokenData.token);
+
+                localStorage.setItem(STORAGE_KEYS.ACCOUNT, JSON.stringify(accountData));
+                localStorage.setItem(STORAGE_KEYS.TOKEN, tokenData.token);
+                localStorage.setItem(STORAGE_KEYS.PROVIDER, PROVIDERS.MAIL_TM);
+
+                toast.success(MESSAGES.SUCCESS.GENERATED);
+                startPolling(tokenData.token, accountData.id, PROVIDERS.MAIL_TM);
             }
 
-            const accountData = await createRes.json();
-
-            // 3. Get token
-            const tokenRes = await fetch('/api/temp-mail/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address: accountData.address, password })
-            });
-
-            if (!tokenRes.ok) throw new Error("Failed to get token");
-            const tokenData = await tokenRes.json();
-
-            // Save to state & local storage
-            setAccount(accountData);
-            setToken(tokenData.token);
-
-            localStorage.setItem('temp_mail_account', JSON.stringify(accountData));
-            localStorage.setItem('temp_mail_token', tokenData.token);
-
             await fetchHistory();
-
-            toast.success("New email generated!");
-            startPolling(tokenData.token, accountData.id);
         } catch (error) {
             console.error(error);
-            toast.error("Error generating temp mail");
+            toast.error(MESSAGES.ERROR.GENERATE_FAILED);
         } finally {
             setGenerating(false);
             setLoading(false);
         }
     };
 
-    const fetchMessages = async (authToken, accountId, manual = false) => {
+    const fetchMessages = async (authToken, accountId, manual = false, currentProvider = provider) => {
         if (manual) setIsRefreshing(true);
         try {
-            const res = await fetch('/api/temp-mail/messages?accountId=' + accountId, {
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
+            if (currentProvider === 'moemail') {
+                const res = await fetch(`/api/moemail/inbox/${accountId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    // The API might return { error: "Email not found" } which we map to [] in the backend,
+                    // Or it returns { email: "...", messages: [] }
+                    const messagesArray = Array.isArray(data) ? data : (data.messages || []);
+
+                    // MoeMail standardizes message objects slightly differently, but mapping them here
+                    const formatted = messagesArray.map(msg => ({
+                        id: msg.id,
+                        from: { 
+                            name: msg.fromName || (msg.from ? msg.from.split('@')[0] : 'Unknown'), 
+                            address: msg.fromAddress || msg.from || '' 
+                        },
+                        subject: msg.subject || '(No Subject)',
+                        intro: msg.body?.substring(0, 100) || msg.subject || '',
+                        createdAt: msg.createdAt || msg.receivedAt,
+                        seen: false
+                    }));
+                    setMessages(formatted);
                 }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setMessages(Array.isArray(data) ? data : (data['hydra:member'] || []));
+            } else {
+                const res = await fetch('/api/temp-mail/messages?accountId=' + accountId, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setMessages(Array.isArray(data) ? data : (data['hydra:member'] || []));
+                }
             }
         } catch (error) {
             console.error("Failed to fetch messages", error);
@@ -244,47 +322,63 @@ export default function TempMail() {
     };
 
     const fetchMessageDetail = async (id) => {
-        if (!token) return;
         setLoadingMessage(true);
         setMessageContent(null);
         try {
-            const res = await fetch(`/api/temp-mail/messages/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+            if (provider === 'moemail') {
+                const res = await fetch(`/api/moemail/message/${id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setMessageContent({
+                        html: data.bodyHtml ? [data.bodyHtml] : (data.html ? [data.html] : null),
+                        text: data.bodyText || data.body || "",
+                        from: { 
+                            name: data.fromName || (data.from ? data.from.split('@')[0] : 'Unknown'), 
+                            address: data.fromAddress || data.from || '' 
+                        },
+                        subject: data.subject
+                    });
                 }
-            });
-            if (res.ok) {
-                const data = await res.json();
-
-                // Process HTML images to inject auth token
-                if (data.html && data.html.length > 0) {
-                    let htmlString = data.html.join('');
-                    const regex = /src=["'](https:\/\/api\.mail\.tm\/[^"']+)["']/g;
-                    let match;
-                    const urlsToFetch = new Set();
-                    while ((match = regex.exec(htmlString)) !== null) {
-                        urlsToFetch.add(match[1]);
-                    }
-
-                    for (const url of urlsToFetch) {
-                        try {
-                            const imgRes = await fetch(`/api/temp-mail/image?url=${encodeURIComponent(url)}`, { headers: { Authorization: `Bearer ${token}` } });
-                            if (imgRes.ok) {
-                                const blob = await imgRes.blob();
-                                const objectUrl = URL.createObjectURL(blob);
-                                htmlString = htmlString.split(url).join(objectUrl);
-                            }
-                        } catch (e) {
-                            console.error('Failed to fetch inline image', e);
-                        }
-                    }
-                    data.html = [htmlString];
-                }
-
-                setMessageContent(data);
             } else {
-                setMessageContent({ error: true });
-                toast.error("Failed to load full message body");
+                if (!token) return;
+                const res = await fetch(`/api/temp-mail/messages/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Process HTML images to inject auth token
+                    if (data.html && data.html.length > 0) {
+                        let htmlString = data.html.join('');
+                        const regex = /src=["'](https:\/\/api\.mail\.tm\/[^"']+)["']/g;
+                        let match;
+                        const urlsToFetch = new Set();
+                        while ((match = regex.exec(htmlString)) !== null) {
+                            urlsToFetch.add(match[1]);
+                        }
+
+                        for (const url of urlsToFetch) {
+                            try {
+                                const imgRes = await fetch(`/api/temp-mail/image?url=${encodeURIComponent(url)}`, { headers: { Authorization: `Bearer ${token}` } });
+                                if (imgRes.ok) {
+                                    const blob = await imgRes.blob();
+                                    const objectUrl = URL.createObjectURL(blob);
+                                    htmlString = htmlString.split(url).join(objectUrl);
+                                }
+                            } catch (e) {
+                                console.error('Failed to fetch inline image', e);
+                            }
+                        }
+                        data.html = [htmlString];
+                    }
+
+                    setMessageContent(data);
+                } else {
+                    setMessageContent({ error: true });
+                    toast.error("Failed to load full message body");
+                }
             }
         } catch (error) {
             console.error(error);
@@ -294,6 +388,7 @@ export default function TempMail() {
             setLoadingMessage(false);
         }
     };
+
 
     const handleCopy = () => {
         if (account?.address) {
@@ -346,6 +441,33 @@ export default function TempMail() {
 
                 {/* Left Panel: Inbox and Controls */}
                 <div className="w-full lg:w-1/3 flex flex-col gap-6">
+                    {/* Provider Selector */}
+                    <div className="bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl p-4 shadow-lg">
+                        <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-3 ml-1">Select Provider</div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={() => {
+                                    setProvider('mail.tm');
+                                    localStorage.setItem('temp_mail_provider', 'mail.tm');
+                                }}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border transition-all text-xs font-bold ${provider === 'mail.tm' ? 'bg-[#A1C2BD]/20 border-[#A1C2BD]/40 text-[#A1C2BD] shadow-[0_0_15px_rgba(161,194,189,0.1)]' : 'bg-white/5 border-transparent text-slate-400 hover:bg-white/10'}`}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                                Mail.tm
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setProvider('moemail');
+                                    localStorage.setItem('temp_mail_provider', 'moemail');
+                                }}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border transition-all text-xs font-bold ${provider === 'moemail' ? 'bg-[#A1C2BD]/20 border-[#A1C2BD]/40 text-[#A1C2BD] shadow-[0_0_15px_rgba(161,194,189,0.1)]' : 'bg-white/5 border-transparent text-slate-400 hover:bg-white/10'}`}
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                MoeMail
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Header Card */}
                     <div className="bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl p-6 relative overflow-hidden group shadow-lg">
                         <div className="absolute inset-0 bg-linear-to-br from-[#A1C2BD]/10 to-[#19183B]/10 opacity-30 pointer-events-none" />
@@ -400,7 +522,12 @@ export default function TempMail() {
                                 <div className="p-4 bg-[#0a0e1a]/60 border border-[#A1C2BD]/20 rounded-xl mb-4 group/copy hover:border-[#A1C2BD]/40 transition-colors">
                                     <div className="flex items-center justify-between gap-3">
                                         <div className="min-w-0 flex-1">
-                                            <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">Email Address</div>
+                                            <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1 flex items-center gap-1.5">
+                                                Email Address
+                                                {account.provider && (
+                                                    <span className="text-[8px] px-1 py-0.5 rounded bg-white/5 border border-white/10 text-slate-400">{account.provider}</span>
+                                                )}
+                                            </div>
                                             <div className="text-sm font-mono text-[#A1C2BD] truncate font-bold tracking-wide">{account.address}</div>
                                         </div>
                                         <button
@@ -416,6 +543,7 @@ export default function TempMail() {
                                         </button>
                                     </div>
                                 </div>
+                                
                                 <div className="grid grid-cols-1 gap-2">
                                     <button
                                         onClick={generateNewEmail}
@@ -460,7 +588,7 @@ export default function TempMail() {
                                         Auto Sync
                                     </button>
                                     <button
-                                        onClick={() => fetchMessages(token, account.id, true)}
+                                        onClick={() => fetchMessages(token, account.id, true, account.provider || provider)}
                                         disabled={isRefreshing}
                                         className="p-1.5 text-slate-400 hover:text-white bg-white/5 rounded-lg transition-colors hover:bg-white/10 disabled:opacity-50"
                                         title="Manual Refresh"
@@ -603,15 +731,55 @@ export default function TempMail() {
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
+                        
+                        {/* Search Bar */}
+                        <div className="p-4 border-b border-white/5 bg-black/20">
+                            <div className="relative">
+                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    value={historySearch}
+                                    onChange={(e) => setHistorySearch(e.target.value)}
+                                    placeholder="Search email addresses..."
+                                    className="w-full bg-[#03040a] border border-white/10 rounded-lg pl-10 pr-10 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#A1C2BD]/40 focus:bg-[#A1C2BD]/5 transition-all"
+                                />
+                                {historySearch && (
+                                    <button
+                                        onClick={() => setHistorySearch('')}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
                         <div className="max-h-[400px] overflow-y-auto p-4 flex flex-col gap-3">
-                            {history.filter(item => item.id !== account?.id).length === 0 ? (
-                                <div className="py-10 text-center">
-                                    <p className="text-slate-500 text-sm italic">No history found</p>
-                                </div>
-                            ) : (
-                                history
+                            {(() => {
+                                // Filter and sort history
+                                const filteredHistory = history
                                     .filter(item => item.id !== account?.id)
-                                    .map((item) => (
+                                    .filter(item => 
+                                        historySearch === '' || 
+                                        item.address.toLowerCase().includes(historySearch.toLowerCase())
+                                    )
+                                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by newest first
+
+                                if (filteredHistory.length === 0) {
+                                    return (
+                                        <div className="py-10 text-center">
+                                            <p className="text-slate-500 text-sm italic">
+                                                {historySearch ? 'No matching emails found' : 'No history found'}
+                                            </p>
+                                        </div>
+                                    );
+                                }
+
+                                return filteredHistory.map((item) => (
                                         <div key={item.id} className="p-4 rounded-xl border transition-all flex items-center justify-between gap-4 group bg-white/5 border-transparent hover:border-white/10">
                                             <div className="min-w-0 flex-1">
                                                 <div className="text-sm font-bold text-slate-200 truncate">{item.address}</div>
@@ -619,7 +787,12 @@ export default function TempMail() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <button 
-                                                    onClick={() => switchAccount(item)}
+                                                    onClick={() => {
+                                                        const p = item.address.includes('zenra.my.id') || item.address.includes('moemail') ? 'moemail' : 'mail.tm';
+                                                        setProvider(p);
+                                                        localStorage.setItem('temp_mail_provider', p);
+                                                        switchAccount(item);
+                                                    }}
                                                     className="flex items-center gap-1.5 px-3 py-1.5 bg-[#A1C2BD]/10 hover:bg-[#A1C2BD]/20 text-[#A1C2BD] text-xs font-bold rounded-lg border border-[#A1C2BD]/20 transition-all active:scale-95 group/sw"
                                                     title="Switch to this account"
                                                 >
@@ -636,8 +809,8 @@ export default function TempMail() {
                                                 </button>
                                             </div>
                                         </div>
-                                    ))
-                            )}
+                                    ));
+                            })()}
                         </div>
                         <div className="p-4 bg-black/20 border-t border-white/5 flex justify-end">
                             <button onClick={() => setShowHistoryModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors">Close</button>

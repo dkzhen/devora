@@ -26,7 +26,12 @@ export async function POST(request) {
 
         // 3. Generate JWT
         const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-        const token = await new SignJWT({ sub: user.id, email: user.email, name: user.name })
+        const token = await new SignJWT({ 
+            sub: user.id, 
+            email: user.email, 
+            name: user.name,
+            role: user.role // Include role in JWT payload
+        })
             .setProtectedHeader({ alg: 'HS256' })
             .setExpirationTime('24h')
             .sign(secret);
@@ -34,7 +39,7 @@ export async function POST(request) {
         // 4. Create Response with Cookie
         const response = NextResponse.json({
             success: true,
-            user: { email: user.email, name: user.name },
+            user: { email: user.email, name: user.name, role: user.role },
             token // Sending token in body for localStorage if needed
         });
 

@@ -92,17 +92,17 @@ model User {
 }
 
 model NaraWallet {
-  id           String   @id @default(uuid())
-  userId       String   @map("user_id")
-  address      String?
-  encryptedPk  String   @map("encrypted_pk") @db.Text
-  alias        String?
-  lastBalance  String?  @map("last_balance")
-  lastUnit     String?  @map("last_unit")
-  explorerUrl  String?  @map("explorer_url") @db.Text
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  address     String?
+  encryptedPk String   @map("encrypted_pk") @db.Text
+  alias       String?
+  lastBalance String?  @map("last_balance")
+  lastUnit    String?  @map("last_unit")
+  explorerUrl String?  @map("explorer_url") @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("nara_wallets")
@@ -295,6 +295,7 @@ model AppVersion {
   releaseDate    DateTime @default(now()) @map("release_date")
   createdAt      DateTime @default(now()) @map("created_at")
   androidVersion String?  @map("android_version")
+  fileSize       BigInt?  @map("file_size")
   app            App      @relation(fields: [appId], references: [id], onDelete: Cascade)
 
   @@index([appId], map: "app_versions_app_id_fkey")
@@ -411,9 +412,14 @@ model LlmConsole {
 
 model AiModel {
   id            String          @id
+  name          String
+  ownedBy       String          @map("owned_by")
+  created       Int?
   status        String          @default("active")
   updatedAt     DateTime        @updatedAt @map("updated_at")
   isRestricted  Boolean         @default(false) @map("is_restricted")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  baseUrl       String?         @map("base_url") @db.Text
   allowedEmails AiModelAccess[]
 
   @@map("ai_models")

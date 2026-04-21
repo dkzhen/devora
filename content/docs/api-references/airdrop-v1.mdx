@@ -23,7 +23,54 @@ Authorization: Bearer devora_your_api_key
 
 ## 1. Projects (Airdrops)
 
+### List All Projects
+
+Get all airdrop projects (your own projects and public projects).
+
+- **Endpoint**: `/api/v1/airdrops`
+- **Method**: `GET`
+
+#### Query Parameters
+
+| Parameter     | Type    | Description                                         |
+| :------------ | :------ | :-------------------------------------------------- |
+| `status`      | String  | Filter by status (New, Potential, Confirmed, etc.). |
+| `projectType` | String  | Filter by project type (Infra, DeFi, etc.).         |
+| `isPublic`    | Boolean | Filter by visibility (true/false).                  |
+
+#### Example cURL
+
+```bash
+curl "https://devora.my.id/api/v1/airdrops?status=New" \
+  -H "Authorization: Bearer devora_your_api_key"
+```
+
+#### Response
+
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Devora Protocol",
+    "status": "New",
+    "cost": "$0",
+    "time": "5 minutes",
+    "raise": "$11B",
+    "projectType": "Infra",
+    "links": "[{\"name\":\"web\",\"url\":\"https://devora.ai\"}]",
+    "isPublic": false,
+    "publishStatus": "NONE",
+    "_count": {
+      "tasks": 3
+    }
+  }
+]
+```
+
+---
+
 ### Register a New Project
+
 Create a new airdrop project in the system.
 
 - **Endpoint**: `/api/v1/airdrops`
@@ -31,15 +78,24 @@ Create a new airdrop project in the system.
 
 #### Request Body
 
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `name` | String | **Required**. Name of the project. |
-| `status` | String | Initial status (New, Potential, Confirmed, etc.). Defaults to `New`. |
-| `cost` | String | Estimated cost (e.g., "$0", "Rp. 50.000"). |
-| `time` | String | Estimated time (e.g., "10 minutes"). |
-| `raise` | String | Total funding raised (e.g., "$11B"). |
-| `projectType`| String | Category (e.g., "Infra", "DeFi"). |
-| `links` | Array | Objects containing `{ "name": "web", "url": "..." }`. |
+| Field         | Type    | Description                                                          |
+| :------------ | :------ | :------------------------------------------------------------------- |
+| `name`        | String  | **Required**. Name of the project.                                   |
+| `icon`        | String  | URL to project icon/logo.                                            |
+| `description` | String  | Project description and instructions.                                |
+| `status`      | String  | Initial status (New, Potential, Confirmed, etc.). Defaults to `New`. |
+| `cost`        | String  | Estimated cost (e.g., "$0", "Rp. 50.000").                           |
+| `time`        | String  | Estimated time (e.g., "10 minutes").                                 |
+| `raise`       | String  | Total funding raised (e.g., "$11B").                                 |
+| `score`       | String  | Project score or rating.                                             |
+| `symbol`      | String  | Token symbol.                                                        |
+| `rewardDate`  | String  | Expected reward date.                                                |
+| `rewardType`  | String  | Type of reward (Airdrop, Points, etc.).                              |
+| `taskType`    | String  | Type of tasks involved.                                              |
+| `stage`       | String  | Project stage.                                                       |
+| `projectType` | String  | Category (e.g., "Infra", "DeFi").                                    |
+| `links`       | Array   | Objects containing `{ "name": "web", "url": "..." }`.                |
+| `isPublic`    | Boolean | Make project public (ULTRA users only).                              |
 
 #### Example cURL
 
@@ -49,36 +105,168 @@ curl https://devora.my.id/api/v1/airdrops \
   -H "Authorization: Bearer devora_your_api_key" \
   -d '{
     "name": "Devora Protocol",
+    "icon": "https://devora.ai/logo.png",
+    "description": "Complete tasks to earn rewards",
     "status": "New",
     "cost": "$0",
     "time": "5 minutes",
+    "raise": "$11B",
+    "symbol": "DVR",
+    "rewardType": "Airdrop",
+    "projectType": "Infra",
     "links": [
-      { "name": "web", "url": "https://devora.ai" }
+      { "name": "web", "url": "https://devora.ai" },
+      { "name": "x", "url": "https://x.com/devora" }
     ]
   }'
 ```
 
 ---
 
+### Update a Project
+
+Update an existing airdrop project.
+
+- **Endpoint**: `/api/v1/airdrops`
+- **Method**: `PUT`
+
+#### Request Body
+
+| Field         | Type   | Description                           |
+| :------------ | :----- | :------------------------------------ |
+| `id`          | String | **Required**. Project UUID to update. |
+| `name`        | String | Updated project name.                 |
+| `icon`        | String | Updated icon URL.                     |
+| `description` | String | Updated description.                  |
+| `status`      | String | Updated status.                       |
+| `links`       | Array  | Updated links array.                  |
+| ...           | ...    | Any other project fields to update.   |
+
+> [!NOTE]
+> Only the project owner or ULTRA users can update projects. ULTRA users can also update `isPublic` and `publishStatus` fields.
+
+#### Example cURL
+
+```bash
+curl -X PUT https://devora.my.id/api/v1/airdrops \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer devora_your_api_key" \
+  -d '{
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "status": "Confirmed",
+    "raise": "$15B"
+  }'
+```
+
+---
+
+### Delete a Project
+
+Delete an airdrop project and all its tasks.
+
+- **Endpoint**: `/api/v1/airdrops?id=PROJECT_ID`
+- **Method**: `DELETE`
+
+#### Query Parameters
+
+| Parameter | Type   | Description                           |
+| :-------- | :----- | :------------------------------------ |
+| `id`      | String | **Required**. Project UUID to delete. |
+
+> [!WARNING]
+> This will permanently delete the project and all associated tasks. This action cannot be undone.
+
+#### Example cURL
+
+```bash
+curl -X DELETE "https://devora.my.id/api/v1/airdrops?id=123e4567-e89b-12d3-a456-426614174000" \
+  -H "Authorization: Bearer devora_your_api_key"
+```
+
+---
+
 ## 2. Tasks
 
+### List All Tasks
+
+Get all tasks for a specific project.
+
+- **Endpoint**: `/api/v1/airdrops/:id/tasks`
+- **Method**: `GET`
+
+#### Path Parameters
+
+- `id`: The UUID of the project.
+
+#### Query Parameters
+
+| Parameter  | Type   | Description                                 |
+| :--------- | :----- | :------------------------------------------ |
+| `category` | String | Filter by category (Social, Testnet, etc.). |
+| `status`   | String | Filter by status (Open, Closed).            |
+
+#### Example cURL
+
+```bash
+curl "https://devora.my.id/api/v1/airdrops/project-id-here/tasks?category=Social" \
+  -H "Authorization: Bearer devora_your_api_key"
+```
+
+#### Response
+
+```json
+[
+  {
+    "id": "task-uuid",
+    "title": "Join Telegram",
+    "category": "Social",
+    "description": "Join our community",
+    "status": "Open",
+    "deadline": "2026-12-31T00:00:00.000Z",
+    "steps": [
+      {
+        "text": "Click the link",
+        "image": "https://example.com/image.png",
+        "link": "https://t.me/devora",
+        "isPrivate": false
+      }
+    ]
+  }
+]
+```
+
+---
+
 ### Add Task to Project
+
 Add a new task to an existing project.
 
 - **Endpoint**: `/api/v1/airdrops/:id/tasks`
 - **Method**: `POST`
 
 #### Path Parameters
-- `id`: The UUID of the project (e.g., `123e4567-e89b-12d3-a456-426614174000`).
+
+- `id`: The UUID of the project.
 
 #### Request Body
 
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `title` | String | **Required**. Title of the task. |
-| `category` | String | **Required**. Task category (Social, Testnet, etc.). |
-| `description`| String | Detailed instructions. |
-| `steps` | Array | Objects containing `{ "text": "...", "isPrivate": boolean }`. |
+| Field         | Type   | Description                                          |
+| :------------ | :----- | :--------------------------------------------------- |
+| `title`       | String | **Required**. Title of the task.                     |
+| `category`    | String | **Required**. Task category (Social, Testnet, etc.). |
+| `description` | String | Detailed instructions.                               |
+| `deadline`    | String | Task deadline (ISO 8601 format).                     |
+| `status`      | String | Task status (Open, Closed). Defaults to `Open`.      |
+| `steps`       | Array  | Array of step objects with detailed information.     |
+
+#### Steps Object Structure
+
+| Field       | Type    | Description                                      |
+| :---------- | :------ | :----------------------------------------------- |
+| `text`      | String  | Step instruction text.                           |
+| `image`     | String  | Optional image URL for the step.                 |
+| `link`      | String  | Optional link URL for the step.                  |
+| `isPrivate` | Boolean | Whether step is private (only visible to owner). |
 
 #### Example cURL
 
@@ -89,20 +277,106 @@ curl https://devora.my.id/api/v1/airdrops/project-id-here/tasks \
   -d '{
     "title": "Join Telegram",
     "category": "Social",
+    "description": "Join our community and verify your username",
+    "deadline": "2026-12-31",
     "steps": [
-      { "text": "Click the link", "isPrivate": false },
-      { "text": "Verify username", "isPrivate": true }
+      {
+        "text": "Click the link below to join",
+        "link": "https://t.me/devora",
+        "image": "https://example.com/telegram-guide.png",
+        "isPrivate": false
+      },
+      {
+        "text": "Send your username to admin",
+        "isPrivate": true
+      }
     ]
   }'
 ```
 
 ---
 
+### Update a Task
+
+Update an existing task.
+
+- **Endpoint**: `/api/v1/airdrops/:id/tasks`
+- **Method**: `PUT`
+
+#### Path Parameters
+
+- `id`: The UUID of the project.
+
+#### Request Body
+
+| Field         | Type   | Description                        |
+| :------------ | :----- | :--------------------------------- |
+| `taskId`      | String | **Required**. Task UUID to update. |
+| `title`       | String | Updated task title.                |
+| `category`    | String | Updated category.                  |
+| `description` | String | Updated description.               |
+| `deadline`    | String | Updated deadline.                  |
+| `status`      | String | Updated status (Open, Closed).     |
+| `steps`       | Array  | Updated steps array.               |
+
+> [!NOTE]
+> Only the project owner or ULTRA users can update tasks.
+
+#### Example cURL
+
+```bash
+curl -X PUT https://devora.my.id/api/v1/airdrops/project-id-here/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer devora_your_api_key" \
+  -d '{
+    "taskId": "task-uuid-here",
+    "status": "Closed",
+    "steps": [
+      {
+        "text": "Updated instruction",
+        "link": "https://new-link.com",
+        "isPrivate": false
+      }
+    ]
+  }'
+```
+
+---
+
+### Delete a Task
+
+Delete a task from a project.
+
+- **Endpoint**: `/api/v1/airdrops/:id/tasks?taskId=TASK_ID`
+- **Method**: `DELETE`
+
+#### Path Parameters
+
+- `id`: The UUID of the project.
+
+#### Query Parameters
+
+| Parameter | Type   | Description                        |
+| :-------- | :----- | :--------------------------------- |
+| `taskId`  | String | **Required**. Task UUID to delete. |
+
+> [!WARNING]
+> This will permanently delete the task and all user progress records. This action cannot be undone.
+
+#### Example cURL
+
+```bash
+curl -X DELETE "https://devora.my.id/api/v1/airdrops/project-id-here/tasks?taskId=task-uuid-here" \
+  -H "Authorization: Bearer devora_your_api_key"
+```
+
+---
+
 ## Error Codes
 
-| Status | Message | Description |
-| :--- | :--- | :--- |
-| **401** | Unauthorized | Invalid or missing API Key. |
-| **403** | Forbidden | You are trying to modify a project you don't own. |
-| **404** | Not Found | The project ID provided does not exist. |
-| **400** | Bad Request | Missing required fields (e.g., name, title). |
+| Status  | Message      | Description                                       |
+| :------ | :----------- | :------------------------------------------------ |
+| **401** | Unauthorized | Invalid or missing API Key.                       |
+| **403** | Forbidden    | You are trying to modify a project you don't own. |
+| **404** | Not Found    | The project ID provided does not exist.           |
+| **400** | Bad Request  | Missing required fields (e.g., name, title).      |

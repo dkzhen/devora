@@ -1,0 +1,27 @@
+{
+  "name": "Devora - One Platform. Endless Possibilities.",
+  "short_name": "Devora",
+  "description": "Devora is a unified platform to organize, automate, and manage tools and connected services in one place.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0e1a",
+  "theme_color": "#749F8B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/devora-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/devora-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "developer tools"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

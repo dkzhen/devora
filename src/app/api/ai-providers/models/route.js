@@ -3,49 +3,105 @@ import prisma from '@/lib/db';
 
 export async function GET() {
     try {
-        const aiProxyBase = process.env.AI_PROXY_URL || 'http://localhost:8317';
-        const res = await fetch(`${aiProxyBase}/v1/models`, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0',
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Authorization': 'Bearer Bandulan113',
-                'Cookie': 'webui_auth=e779b1ea2cd3df69a15cfd9885d001feb07641291aeed5d7e38d26a6a83bc262',
-                'Pragma': 'no-cache',
-                'Cache-Control': 'no-cache',
-            },
-            cache: 'no-store',
-        });
-
-        if (!res.ok) {
-            throw new Error(`Failed to fetch models from VPS: ${res.status}`);
-        }
-
-        const data = await res.json();
-        const externalModels = data.data || [];
-
-        // Fetch persisted statuses and access info from DB
-        const localModels = await prisma.aiModel.findMany({
+        // Fetch all models from database
+        const models = await prisma.aiModel.findMany({
             include: { allowedEmails: true }
         });
-        
-        const configMap = Object.fromEntries(localModels.map(m => [m.id, {
-            status: m.status,
-            isRestricted: m.isRestricted,
-            allowedEmails: m.allowedEmails.map(a => a.email)
-        }]));
 
-        // Merge external models with local config
-        const dataWithStatus = externalModels.map(model => ({
-            ...model,
-            status: configMap[model.id]?.status || 'active',
-            isRestricted: configMap[model.id]?.isRestricted || false,
-            allowedEmails: configMap[model.id]?.allowedEmails || []
+        const dataWithStatus = models.map(model => ({
+            id: model.id,
+            name: model.name,
+            owned_by: model.ownedBy,
+            created: model.created,
+            status: model.status,
+            isRestricted: model.isRestricted,
+            baseUrl: model.baseUrl,
+            allowedEmails: model.allowedEmails.map(a => a.email)
         }));
 
         return NextResponse.json({ data: dataWithStatus });
     } catch (error) {
         console.error('Fetch Models Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function POST(request) {
+    try {
+        const body = await request.json();
+        const { id, name, ownedBy, created, baseUrl } = body;
+
+        if (!id || !name || !ownedBy) {
+            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        }
+
+        // Check if model already exists
+        const existing = await prisma.aiModel.findUnique({ where: { id } });
+        if (existing) {
+            return NextResponse.json({ error: 'Model ID already exists' }, { status: 400 });
+        }
+
+        const model = await prisma.aiModel.create({
+            data: {
+                id,
+                name,
+                ownedBy,
+                created: created || Math.floor(Date.now() / 1000),
+                status: 'active',
+                isRestricted: false,
+                baseUrl: baseUrl || null
+            }
+        });
+
+        return NextResponse.json({ success: true, data: model });
+    } catch (error) {
+        console.error('Create Model Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function DELETE(request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const modelId = searchParams.get('id');
+
+        if (!modelId) {
+            return NextResponse.json({ error: 'Model ID required' }, { status: 400 });
+        }
+
+        await prisma.aiModel.delete({
+            where: { id: modelId }
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Delete Model Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function PUT(request) {
+    try {
+        const body = await request.json();
+        const { id, name, ownedBy, created, baseUrl } = body;
+
+        if (!id) {
+            return NextResponse.json({ error: 'Model ID required' }, { status: 400 });
+        }
+
+        const model = await prisma.aiModel.update({
+            where: { id },
+            data: {
+                ...(name && { name }),
+                ...(ownedBy && { ownedBy }),
+                ...(created !== undefined && { created }),
+                ...(baseUrl !== undefined && { baseUrl: baseUrl || null })
+            }
+        });
+
+        return NextResponse.json({ success: true, data: model });
+    } catch (error) {
+        console.error('Update Model Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

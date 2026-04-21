@@ -14,6 +14,7 @@ module.exports = {
             },
             fontFamily: {
                 passero: ['var(--font-passero)'],
+                'space-mono': ['var(--font-space-mono)', 'monospace'],
             }
         },
     },

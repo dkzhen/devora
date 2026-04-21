@@ -3,12 +3,38 @@ import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import prisma from '@/lib/db';
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHANNEL_ID = process.env.CHANNEL_ID;
 const BASE_URL = process.env.NODE_ENV === 'production'
     ? process.env.BASE_URL_PROD
     : process.env.BASE_URL_DEV;
+
+/**
+ * Get credentials from GlobalConfig
+ */
+const getGlobalCredentials = async () => {
+    try {
+        const configs = await prisma.globalConfig.findMany({
+            where: {
+                key: {
+                    in: ['GROQ_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHANNEL_ID']
+                }
+            }
+        });
+
+        const credentials = {};
+        configs.forEach(config => {
+            credentials[config.key] = config.value;
+        });
+
+        return {
+            groqApiKey: credentials.GROQ_API_KEY || null,
+            telegramBotToken: credentials.TELEGRAM_BOT_TOKEN || null,
+            channelId: credentials.TELEGRAM_CHANNEL_ID || null
+        };
+    } catch (error) {
+        console.error('[telegram-post] getGlobalCredentials error:', error);
+        return { groqApiKey: null, telegramBotToken: null, channelId: null };
+    }
+};
 
 /**
  * Get user ID from session
@@ -30,8 +56,7 @@ const getUserId = async () => {
 /**
  * Generate Telegram caption using Groq AI (HTML parse mode)
  */
-async function generateCaption(airdrop, tasks, userId) {
-    // Telegram strips <a> tags with localhost URLs, so we force the prod URL for the post
+async function generateCaption(airdrop, tasks, userId, groqApiKey) {
     const publicBaseUrl = process.env.BASE_URL_PROD || 'https://devora.my.id';
     const detailUrl = `${publicBaseUrl}/airdrops/${airdrop.id}`;
 
@@ -101,7 +126,7 @@ Requirements:
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Authorization': `Bearer ${groqApiKey}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -123,10 +148,8 @@ Requirements:
     const data = await resp.json();
     let caption = data.choices?.[0]?.message?.content?.trim() || '';
 
-    // Strip any markdown code block wrappers if AI accidentally added them
     caption = caption.replace(/^```html?\n?/i, '').replace(/\n?```$/i, '').trim();
 
-    // Track Usage
     const usage = data.usage;
     if (usage && userId) {
         await prisma.groqCredential.update({
@@ -145,23 +168,22 @@ Requirements:
 /**
  * Fetch channel info from Telegram
  */
-async function getTelegramChannelInfo() {
-    const telegramBase = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+async function getTelegramChannelInfo(telegramBotToken, channelId) {
+    const telegramBase = `https://api.telegram.org/bot${telegramBotToken}`;
     try {
-        const res = await fetch(`${telegramBase}/getChat?chat_id=${CHANNEL_ID}`);
+        const res = await fetch(`${telegramBase}/getChat?chat_id=${channelId}`);
         if (!res.ok) return null;
         const data = await res.json();
         if (!data.ok || !data.result) return null;
 
         const info = { title: data.result.title || 'Your Channel', photoUrl: null };
 
-        // If channel has a photo, get the actual file URL
         if (data.result.photo?.small_file_id) {
             const fileRes = await fetch(`${telegramBase}/getFile?file_id=${data.result.photo.small_file_id}`);
             if (fileRes.ok) {
                 const fileData = await fileRes.json();
                 if (fileData.ok && fileData.result?.file_path) {
-                    info.photoUrl = `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${fileData.result.file_path}`;
+                    info.photoUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${fileData.result.file_path}`;
                 }
             }
         }
@@ -175,8 +197,8 @@ async function getTelegramChannelInfo() {
 /**
  * Send message to Telegram
  */
-async function sendToTelegram(caption, imageUrl) {
-    const telegramBase = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+async function sendToTelegram(caption, imageUrl, telegramBotToken, channelId) {
+    const telegramBase = `https://api.telegram.org/bot${telegramBotToken}`;
 
     const sendMsg = async (endpoint, body) => {
         const res = await fetch(`${telegramBase}/${endpoint}`, {
@@ -188,23 +210,19 @@ async function sendToTelegram(caption, imageUrl) {
     };
 
     if (imageUrl) {
-        // Try sendPhoto first
         const photoResult = await sendMsg('sendPhoto', {
-            chat_id: CHANNEL_ID,
+            chat_id: channelId,
             photo: imageUrl,
             caption: caption,
             parse_mode: 'HTML',
         });
 
         if (photoResult.ok) return photoResult;
-
-        // Fallback: sendPhoto failed (bad URL/format) → try sendMessage with HTML
         console.warn('[telegram-post] sendPhoto failed, falling back to sendMessage:', photoResult.description);
     }
 
-    // Send as text message
     return sendMsg('sendMessage', {
-        chat_id: CHANNEL_ID,
+        chat_id: channelId,
         text: caption,
         parse_mode: 'HTML',
     });
@@ -212,8 +230,6 @@ async function sendToTelegram(caption, imageUrl) {
 
 /**
  * POST handler
- * action: "preview" → return caption from Groq (no Telegram call)
- * action: "post"    → send to Telegram channel
  */
 export async function POST(request) {
     try {
@@ -224,13 +240,24 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Missing airdrop data' }, { status: 400 });
         }
 
+        // Get credentials from GlobalConfig
+        const credentials = await getGlobalCredentials();
+        
+        // Check if credentials are configured
+        if (!credentials.groqApiKey || !credentials.telegramBotToken || !credentials.channelId) {
+            return NextResponse.json({ 
+                error: 'Telegram credentials not configured',
+                message: 'Please configure GROQ_API_KEY, TELEGRAM_BOT_TOKEN, and TELEGRAM_CHANNEL_ID in Config page'
+            }, { status: 400 });
+        }
+
         const imageUrl = providedImageUrl !== undefined ? providedImageUrl : (airdrop.icon || null);
 
         if (action === 'preview') {
             const userId = await getUserId();
             const [caption, channelInfo] = await Promise.all([
-                generateCaption(airdrop, tasks, userId),
-                getTelegramChannelInfo()
+                generateCaption(airdrop, tasks, userId, credentials.groqApiKey),
+                getTelegramChannelInfo(credentials.telegramBotToken, credentials.channelId)
             ]);
 
             return NextResponse.json({
@@ -247,7 +274,7 @@ export async function POST(request) {
                 return NextResponse.json({ error: 'Missing caption for post action' }, { status: 400 });
             }
 
-            const telegramData = await sendToTelegram(caption, imageUrl);
+            const telegramData = await sendToTelegram(caption, imageUrl, credentials.telegramBotToken, credentials.channelId);
 
             if (!telegramData.ok) {
                 return NextResponse.json({

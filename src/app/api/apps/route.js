@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/db';
 import { trackApiHit } from '@/lib/monitoring';
-
-const prisma = new PrismaClient();
 
 export async function GET(req) {
     try {
@@ -32,7 +30,8 @@ export async function GET(req) {
                 releaseDate: v.releaseDate,
                 features: v.features,
                 apkUrl: v.apkUrl,
-                imageUrl: v.imageUrl
+                imageUrl: v.imageUrl,
+                fileSize: v.fileSize ? v.fileSize.toString() : null
             }))
         }));
 

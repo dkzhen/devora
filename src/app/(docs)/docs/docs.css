@@ -3,22 +3,101 @@
 @import 'fumadocs-ui/css/preset.css';
 
 @theme {
-  --color-fd-primary: var(--color-yellow-400);
-  --color-fd-primary-foreground: var(--color-black);
+  --color-fd-primary: var(--color-orange-500);
+  --color-fd-primary-foreground: var(--color-white);
   
-  /* Optional: Extra gold accents for the docs */
-  --color-fd-accent: var(--color-yellow-400);
-  --color-fd-accent-foreground: var(--color-black);
+  --color-fd-accent: var(--color-blue-500);
+  --color-fd-accent-foreground: var(--color-white);
 }
 
 :root {
-    --fd-primary: 45 93% 47%;
-    --fd-primary-foreground: 0 0% 0%;
+    --fd-primary: 24 100% 50%; /* Orange */
+    --fd-primary-foreground: 0 0% 100%;
+    --fd-accent: 217 91% 60%; /* Blue */
+    --fd-accent-foreground: 0 0% 100%;
+    
+    /* Geist Fonts */
+    --font-sans: "Geist", "Geist Fallback", system-ui, -apple-system, sans-serif;
+    --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
 }
 
 .dark {
-    --fd-primary: 45 93% 47%;
-    --fd-primary-foreground: 0 0% 0%;
-    --fd-background: 0 0% 2%; /* Darker background like the official site */
+    --fd-primary: 24 100% 50%;
+    --fd-primary-foreground: 0 0% 100%;
+    --fd-accent: 217 91% 60%;
+    --fd-accent-foreground: 0 0% 100%;
+    --fd-background: 222 47% 4%; /* Very dark blue-gray */
+    --fd-card: 222 47% 6%;
+    --fd-popover: 222 47% 6%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(var(--fd-primary) / 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--fd-primary) / 0.5);
+}
+
+/* Smooth page transitions */
+.docs-page {
+    animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced code blocks */
+pre {
+    border-radius: 8px !important;
+    border: 1px solid hsl(var(--fd-border)) !important;
+}
+
+/* Better link hover effects */
+article a:not(.not-prose a) {
+    text-decoration: underline;
+    text-decoration-color: hsl(var(--fd-primary) / 0.3);
+    text-underline-offset: 3px;
+    transition: all 0.2s;
+}
+
+article a:not(.not-prose a):hover {
+    text-decoration-color: hsl(var(--fd-primary));
+}
+
+/* Enhanced tables */
+article table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Sidebar active/hover states */
+[data-active="true"] {
+    color: var(--color-fd-primary) !important;
+    background-color: color-mix(in oklab, var(--color-fd-primary) 10%, transparent) !important;
+}
+
+/* Sidebar hover state */
+.fd-sidebar a:hover:not([data-active="true"]) {
+    background-color: color-mix(in oklab, var(--color-fd-foreground) 5%, transparent);
 }
 

@@ -1,6 +1,8 @@
 {
   "pages": [
-    "index",
+    "get-started",
+    "what-is-devora",
+    "authentication",
     "---API Management---",
     "api-keys",
     "api-references"

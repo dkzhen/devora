@@ -44,6 +44,14 @@ export default function AppLibraryPage() {
 
     const router = useRouter();
 
+    // Function to capitalize first letter of each word
+    const capitalizeWords = (str) => {
+        if (!str) return '';
+        return str.split(' ').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        ).join(' ');
+    };
+
     useEffect(() => {
         const init = async () => {
             let userRole = null;
@@ -114,6 +122,25 @@ export default function AppLibraryPage() {
 
     const handleSaveConfig = async (e) => {
         if (e) e.preventDefault();
+        
+        // Validasi input tidak boleh kosong
+        if (!config.TELEGRAM_STORAGE_CHAT_ID || !config.TELEGRAM_STORAGE_TOPIC_APK || !config.TELEGRAM_STORAGE_TOPIC_IMAGES) {
+            showToast('Please fill in all required fields (Chat ID, APK Topic, Image Topic)');
+            return;
+        }
+
+        // Validasi format Chat ID (harus dimulai dengan -)
+        if (!config.TELEGRAM_STORAGE_CHAT_ID.startsWith('-')) {
+            showToast('Chat ID must start with "-" (e.g., -100xxxxxxxxxx)');
+            return;
+        }
+
+        // Validasi Topic ID harus angka
+        if (isNaN(config.TELEGRAM_STORAGE_TOPIC_APK) || isNaN(config.TELEGRAM_STORAGE_TOPIC_IMAGES)) {
+            showToast('Topic IDs must be valid numbers');
+            return;
+        }
+
         setSaving(true);
         try {
             const res = await fetch('/api/telegram/storage-config', {
@@ -254,6 +281,32 @@ export default function AppLibraryPage() {
                 
             />
 
+            {/* Warning Banner if Bot Token Missing (ULTRA only) */}
+            {isUltra && botTokenMissing && (
+                <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="shrink-0 w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center mt-0.5">
+                        <svg className="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-bold text-amber-200 mb-1">Bot Token Required</h4>
+                        <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                            Please configure <span className="font-mono text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded">BOT_TOKEN_TELEGRAM</span> in Global Configuration before setting up storage parameters.
+                        </p>
+                        <Link href="/config">
+                            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-200 text-xs font-bold rounded-lg transition-colors">
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Go to Global Config
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+            )}
+
             {/* Main Action Bar: Search + Buttons */}
             <div className="flex flex-col md:flex-row gap-4 item-center">
                 {/* Search box with Dawn style */}
@@ -275,29 +328,36 @@ export default function AppLibraryPage() {
                 {/* Tombol Add & Settings */}
                 {isUltra && (
                     <div className="flex gap-2 shrink-0">
+                        <Link href="/app-library/add">
+                            <button
+                                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]"
+                                aria-label="Add New App"
+                                title="Add new app"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+                                <span className="hidden sm:inline">Add Release</span>
+                            </button>
+                        </Link>
                         <button
                             onClick={() => {
-                                if (!configComplete) {
-                                    setBotTokenMissing(false);
-                                    setShowConfig(true);
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    showToast('Please complete storage configuration first.');
-                                } else {
-                                    setShowAddAppModal(true);
+                                if (botTokenMissing) {
+                                    showToast('Please configure BOT_TOKEN_TELEGRAM in Global Config first.');
+                                    return;
                                 }
+                                setShowConfig(!showConfig);
                             }}
-                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${!configComplete ? 'bg-[#FEBD8B]/5 border-[#FEBD8B]/30 text-[#FEBD8B] hover:bg-[#FEBD8B]/10 shadow-[0_0_15px_rgba(254,189,139,0.1)]' : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'}`}
-                            aria-label="Add New App"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-                            <span className="hidden sm:inline">Add Release</span>
-                        </button>
-                        <button
-                            onClick={() => setShowConfig(!showConfig)}
-                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${showConfig ? 'bg-[#749F8B] border-[#749F8B]/50 text-white shadow-[0_0_20px_rgba(116,159,139,0.4)]' : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'}`}
+                            disabled={botTokenMissing}
+                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border ${
+                                botTokenMissing 
+                                    ? 'bg-slate-800/50 border-slate-700/50 text-slate-600 cursor-not-allowed opacity-50'
+                                    : showConfig 
+                                        ? 'bg-[#749F8B] border-[#749F8B]/50 text-white shadow-[0_0_20px_rgba(116,159,139,0.4)]' 
+                                        : 'bg-[#749F8B]/5 border-[#749F8B]/30 text-[#749F8B] hover:bg-[#749F8B]/10 shadow-[0_0_15px_rgba(116,159,139,0.1)]'
+                            }`}
                             aria-label="Storage Settings"
+                            title={botTokenMissing ? 'Bot Token required' : 'Storage configuration'}
                         >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             <span className="hidden sm:inline">{showConfig ? 'Active' : 'Configs'}</span>
                         </button>
                     </div>
@@ -432,58 +492,109 @@ export default function AppLibraryPage() {
                             )}
                         </div>
                     )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 transition-colors">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredApps.map((app) => (
                             <div
                                 key={app.id}
                                 onClick={() => router.push(`/app-library/${app.id}`)}
-                                className="relative group overflow-hidden rounded-2xl border border-[#FEBD8B]/30 bg-linear-to-br from-[#1A082E] via-[#2D1B3E] to-[#110a17] hover:border-[#FEBD8B]/70 transition-all duration-300 p-5 flex flex-col gap-3 neon-card cursor-pointer"
+                                className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 border border-purple-500/20 rounded-2xl overflow-hidden hover:border-purple-400/50 cursor-pointer"
                             >
-                                <div className="flex items-center gap-4 mb-2">
-                                    <div className="w-16 h-16 rounded-xl overflow-hidden border border-[#FEBD8B]/30 bg-[#1A082E] flex items-center justify-center">
-                                        {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
-                                            <LoadingImage
-                                                src={`/api/telegram/image/${app.versions[0].imageUrl}`}
-                                                alt={app.name}
-                                                className="w-full h-full object-cover rounded-xl"
-                                            />
-                                        ) : app.iconStatic && app.iconStatic !== '📦' ? (
-                                            <LoadingImage
-                                                src={app.iconStatic}
-                                                alt={app.name}
-                                                className="w-full h-full object-cover rounded-xl"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-[#FEBD8B]/40 font-black text-2xl">?</div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-base font-bold text-[#FDF2D9] group-hover:text-[#FEBD8B] transition-colors truncate">{app.name}</span>
-                                            <span className="text-xs px-2 py-0.5 rounded bg-[#FEBD8B]/10 text-[#FEBD8B] border border-[#FEBD8B]/20 font-mono uppercase tracking-widest">{app.category}</span>
+                                <div className="p-6 flex flex-col h-full">
+                                    {/* Header with icon and category badge */}
+                                    <div className="flex items-start gap-4 mb-4">
+                                        <div className="shrink-0">
+                                            <div className="w-16 h-16 rounded-xl overflow-hidden border border-purple-400/30 bg-slate-800/80 flex items-center justify-center shadow-lg">
+                                                {app.versions && app.versions.length > 0 && app.versions[0].imageUrl ? (
+                                                    <LoadingImage
+                                                        src={`/api/telegram/image/${app.versions[0].imageUrl}`}
+                                                        alt={app.name}
+                                                        className="w-full h-full object-cover"
+                                                        fallback={
+                                                            <svg className="w-10 h-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="3" y="3" width="18" height="18" rx="1" transform="translate(24) rotate(90)" fill="#2ca9bc" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                                <line x1="13.11" y1="7" x2="7.56" y2="17" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                                                                <path d="M10.89,7l5.55,10M7,15H17" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                                                            </svg>
+                                                        }
+                                                    />
+                                                ) : app.iconStatic && app.iconStatic !== '📦' ? (
+                                                    <LoadingImage
+                                                        src={app.iconStatic}
+                                                        alt={app.name}
+                                                        className="w-full h-full object-cover"
+                                                        fallback={
+                                                            <svg className="w-10 h-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="3" y="3" width="18" height="18" rx="1" transform="translate(24) rotate(90)" fill="rgba(168, 85, 247, 0.15)" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                <line x1="13.11" y1="7" x2="7.56" y2="17" stroke="rgba(168, 85, 247, 0.6)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                                                <path d="M10.89,7l5.55,10M7,15H17" fill="none" stroke="rgba(168, 85, 247, 0.6)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                                            </svg>
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <svg className="w-10 h-10" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="3" y="3" width="18" height="18" rx="1" transform="translate(24) rotate(90)" fill="rgba(168, 85, 247, 0.15)" stroke="rgba(168, 85, 247, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <line x1="13.11" y1="7" x2="7.56" y2="17" stroke="rgba(168, 85, 247, 0.6)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                                        <path d="M10.89,7l5.55,10M7,15H17" fill="none" stroke="rgba(168, 85, 247, 0.6)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                                    </svg>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-[#FEBD8B]/70 font-mono">v{app.versions && app.versions.length > 0 ? app.versions[0].version : '1.0.0'}{app.androidVersion && (<span className='ml-1'>({app.androidVersion})</span>)}</div>
-                                        <div className="text-xs text-[#749F8B]/50 mt-1 line-clamp-2">{app.description}</div>
+                                        
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-start justify-between gap-2 mb-2">
+                                                <h3 className="text-base font-bold text-slate-100 line-clamp-1 leading-tight">
+                                                    {capitalizeWords(app.name)}
+                                                </h3>
+                                                <button
+                                                    onClick={e => { e.stopPropagation(); handleCopyLink(e, app.id); }}
+                                                    className="shrink-0 p-1.5 text-slate-500 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg"
+                                                    title="Copy Link"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                                                </button>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-wider">
+                                                    <span className="w-1 h-1 rounded-full bg-purple-400" />
+                                                    {app.category}
+                                                </span>
+                                                <span className="text-[11px] text-slate-500 font-mono">
+                                                    v{app.versions && app.versions.length > 0 ? app.versions[0].version : '1.0.0'}
+                                                </span>
+                                            </div>
+                                            
+                                            {app.developer && (
+                                                <div className="flex items-center gap-1.5 text-[10px] text-slate-600 font-medium">
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                                    {app.developer}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={e => { e.stopPropagation(); handleCopyLink(e, app.id); }}
-                                        className="shrink-0 p-2 text-[#749F8B] hover:text-[#FEBD8B] hover:bg-[#FEBD8B]/10 rounded-xl transition-colors"
-                                        title="Copy Link"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                                    </button>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-sm text-[#FDF2D9]/80 line-clamp-2 leading-relaxed mb-4 font-mono">{app.description}</p>
-                                </div>
-                                <div className="pt-4 border-t border-[#FEBD8B]/10 flex items-center justify-between mt-auto">
-                                    <div className="flex items-center gap-2 text-xs text-[#749F8B]/80 font-mono">
-                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
-                                        Latest: <span className="font-semibold text-[#FEBD8B]">{app.versions && app.versions.length > 0 ? app.versions[0].version : 'v1.0.0'}</span>
-                                    </div>
-                                    <div className="text-xs font-semibold text-[#FEBD8B] flex items-center gap-1 transition-colors">
-                                        Details
-                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                    
+                                    {/* Description */}
+                                    <p className="text-sm text-slate-400 leading-relaxed line-clamp-2 mb-4 flex-1">
+                                        {app.description || 'No description available.'}
+                                    </p>
+                                    
+                                    {/* Footer */}
+                                    <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                                        <div className="flex items-center gap-4 text-[11px]">
+                                            <div className="flex items-center gap-1.5 text-slate-500">
+                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                <span className="font-medium">{app.downloadCount || 0}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 text-slate-500">
+                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                <span className="font-medium">{app.viewCount || 0}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-purple-400">
+                                            <span>View Details</span>
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,97 @@
+---
+title: Get Started
+description: Getting Started with Devora
+icon: Rocket
+---
+
+import { MailIcon, KeyIcon, CodeIcon } from "lucide-react";
+
+---
+
+# Get Started
+
+Devora is a unified platform to organize, automate, and manage tools and connected services in one place.
+
+Get started in just a few steps:
+
+<Steps>
+### 1. Create an Account
+
+Sign up to access your Devora dashboard and get your API credentials.
+
+[Create account →](https://devora.my.id/register)
+
+### 2. Get Your API Key
+
+Navigate to the API Keys section in your dashboard to generate your authentication token.
+
+[Manage API Keys →](/docs/api-keys)
+
+### 3. Make Your First Request
+
+Use your API key to start making requests to any of our endpoints.
+
+```bash
+curl -X GET https://devora.my.id/api/v1/temp-mail/accounts \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+</Steps>
+
+## 📚 Explore Our APIs
+
+<Cards>
+  <Card
+    icon={<MailIcon />}
+    title="Temp Mail API"
+    description="Create and manage temporary email addresses for testing and privacy."
+    href="/docs/api-references/temp-mail"
+  />
+  <Card
+    icon={<KeyIcon />}
+    title="API Keys"
+    description="Learn how to authenticate and secure your API requests."
+    href="/docs/api-keys"
+  />
+  <Card
+    icon={<CodeIcon />}
+    title="API References"
+    description="Complete documentation for all available endpoints."
+    href="/docs/api-references"
+  />
+</Cards>
+
+## ⚡ Why Devora?
+
+<div className="grid gap-4 sm:grid-cols-3 my-6">
+  <div className="rounded-lg border bg-card p-4">
+    <div className="text-2xl mb-2">🚀</div>
+    <h3 className="font-semibold mb-1">Fast & Reliable</h3>
+    <p className="text-sm text-muted-foreground">
+      High-performance infrastructure with 99.9% uptime.
+    </p>
+  </div>
+  <div className="rounded-lg border bg-card p-4">
+    <div className="text-2xl mb-2">🔒</div>
+    <h3 className="font-semibold mb-1">Secure by Default</h3>
+    <p className="text-sm text-muted-foreground">
+      Enterprise-grade security with encrypted data.
+    </p>
+  </div>
+  <div className="rounded-lg border bg-card p-4">
+    <div className="text-2xl mb-2">📖</div>
+    <h3 className="font-semibold mb-1">Well Documented</h3>
+    <p className="text-sm text-muted-foreground">
+      Clear docs with code examples in multiple languages.
+    </p>
+  </div>
+</div>
+
+<Callout type="info" title="Need Help?">
+  Join our community or reach out to support if you have any questions. We're
+  here to help you succeed!
+</Callout>
+
+---
+
+Happy building with Devora! 🚀

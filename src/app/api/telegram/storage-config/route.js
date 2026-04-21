@@ -69,8 +69,29 @@ export async function POST(request) {
     try {
         const body = await request.json();
 
+        // Validasi: Chat ID, APK Topic, dan Image Topic wajib diisi
+        if (!body.TELEGRAM_STORAGE_CHAT_ID || !body.TELEGRAM_STORAGE_TOPIC_APK || !body.TELEGRAM_STORAGE_TOPIC_IMAGES) {
+            return NextResponse.json({ 
+                error: 'Chat ID, APK Topic ID, and Image Topic ID are required' 
+            }, { status: 400 });
+        }
+
+        // Validasi: Chat ID harus dimulai dengan "-"
+        if (!String(body.TELEGRAM_STORAGE_CHAT_ID).startsWith('-')) {
+            return NextResponse.json({ 
+                error: 'Chat ID must start with "-" (e.g., -100xxxxxxxxxx)' 
+            }, { status: 400 });
+        }
+
+        // Validasi: Topic IDs harus berupa angka
+        if (isNaN(body.TELEGRAM_STORAGE_TOPIC_APK) || isNaN(body.TELEGRAM_STORAGE_TOPIC_IMAGES)) {
+            return NextResponse.json({ 
+                error: 'Topic IDs must be valid numbers' 
+            }, { status: 400 });
+        }
+
         const updates = STORAGE_KEYS.map(key => {
-            if (body[key] !== undefined) {
+            if (body[key] !== undefined && body[key] !== '') {
                 return prisma.globalConfig.upsert({
                     where: { key },
                     update: { value: encrypt(String(body[key])) },

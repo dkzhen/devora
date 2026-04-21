@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LockedFeatureScreen from '@/components/LockedFeatureScreen';
+import { HeroHeader } from '@/components/HeroHeader';
+
 
 // Syntax Highlighter from Endpoints
 function JsonHighlight({ value }) {

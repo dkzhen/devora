@@ -62,6 +62,18 @@ const THEME = {
         text: 'text-orange-300',
         pulseBg: 'bg-orange-400',
         icon: <AlertCircle className="w-4 h-4" />
+    },
+    teal: {
+        bg: 'from-[#0a1412] to-[#060a09]',
+        border: 'border-[#749F8B]/20',
+        glow: 'shadow-[0_0_20px_rgba(116,159,139,0.06)]',
+        accentLine: 'via-[#749F8B]/50',
+        bracketStrong: 'border-[#749F8B]/40',
+        bracketWeak: 'border-[#749F8B]/15',
+        iconBg: 'bg-[#749F8B]/10 border-[#749F8B]/20 text-[#749F8B]',
+        text: 'text-[#749F8B]',
+        pulseBg: 'bg-[#749F8B]',
+        icon: <Zap className="w-4 h-4" />
     }
 };
 

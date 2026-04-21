@@ -3,27 +3,30 @@ title: Accounts
 description: Manage temporary email accounts.
 ---
 
-
 Manage your temporary email accounts with these endpoints.
 
 ### ➕ Create Account
 
 `POST /api/v1/temp-mail/accounts`
 
-Creates a new temporary email account. If `address` or `password` are omitted, they are **auto-generated** for you.
+Creates a new temporary email account. Supports two providers: **Mail.tm** (default) and **MoeMail**.
 
 **Request Body (optional):**
+
 ```json
 {
-  "address": "myemail@example.com",
-  "password": "mypassword"
+  "provider": "mail.tm", // or "moemail" (default: "mail.tm")
+  "address": "myemail@example.com", // optional, auto-generated if omitted
+  "password": "mypassword" // optional, auto-generated if omitted (not used for MoeMail)
 }
 ```
 
-**Response `201`:**
+**Response `201` (Mail.tm):**
+
 ```json
 {
   "success": true,
+  "provider": "mail.tm",
   "account": {
     "id": "...",
     "address": "devora_ab12cd34@example.com",
@@ -34,20 +37,43 @@ Creates a new temporary email account. If `address` or `password` are omitted, t
 }
 ```
 
+**Response `201` (MoeMail):**
+
+```json
+{
+  "success": true,
+  "provider": "moemail",
+  "account": {
+    "id": "...",
+    "address": "abc123@zenra.my.id",
+    "createdAt": "2026-03-28T12:00:00.000Z"
+  }
+}
+```
+
+**Provider Comparison:**
+
+| Feature              | Mail.tm   | MoeMail                |
+| -------------------- | --------- | ---------------------- |
+| Password Required    | ✅ Yes    | ❌ No                  |
+| Token Authentication | ✅ Yes    | ❌ No                  |
+| Custom Address       | ✅ Yes    | ❌ No (auto-generated) |
+| Domain               | Various   | @zenra.my.id           |
+| Message Retention    | Permanent | Temporary              |
+
 ---
 
-### 📋 List Accounts
+### � List Accounts
 
 `GET /api/v1/temp-mail/accounts`
 
 Returns all temporary email accounts tied to your API Key's user account.
 
 **Response `200`:**
+
 ```json
 {
-  "accounts": [
-    { "id": "...", "address": "...", "createdAt": "..." }
-  ]
+  "accounts": [{ "id": "...", "address": "...", "createdAt": "..." }]
 }
 ```
 
@@ -61,7 +87,7 @@ Returns the full detail of a specific account including the token for inbox acce
 
 ---
 
-### 🗑️ Delete Account
+### �🗑️ Delete Account
 
 `DELETE /api/v1/temp-mail/accounts/{id}`
 

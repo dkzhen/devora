@@ -5,6 +5,8 @@ import { randomBytes } from 'crypto';
 import prisma from '@/lib/db';
 
 const API_BASE = 'https://api.mail.tm';
+const MOEMAIL_API_BASE = 'https://moemail-api.danistimikwp.workers.dev';
+const MOEMAIL_AUTH = 'Bearer moemail_zhen_2026';
 
 export async function POST(req) {
     // 1. Verify API Key
@@ -19,55 +21,33 @@ export async function POST(req) {
     trackApiHit(req);
 
     try {
-        let { address, password } = await req.json().catch(() => ({}));
+        let { address, password, provider } = await req.json().catch(() => ({}));
+        
+        // Default to mail.tm if not specified
+        if (!provider) provider = 'mail.tm';
 
-        // Auto-generate if missing
-        if (!address) {
-            const domainRes = await fetch(`${API_BASE}/domains?page=1`);
-            const domainData = await domainRes.json();
-            const domains = Array.isArray(domainData) ? domainData : (domainData['hydra:member'] || []);
-            if (domains.length === 0) throw new Error('No domains available');
-            const domain = domains[0].domain;
-            const randomPrefix = randomBytes(4).toString('hex');
-            address = `devora_${randomPrefix}@${domain}`;
-        }
-
-        if (!password) {
-            password = randomBytes(8).toString('hex');
-        }
-
-        const res = await fetch(`${API_BASE}/accounts`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Accept-Encoding': 'identity'
-            },
-            body: JSON.stringify({ address, password })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-            // Get token immediately
-            const tokenRes = await fetch(`${API_BASE}/token`, {
+        if (provider === 'moemail') {
+            // MoeMail flow
+            const res = await fetch(`${MOEMAIL_API_BASE}/generate`, {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Accept-Encoding': 'identity'
-                },
-                body: JSON.stringify({ address, password })
+                    'Authorization': MOEMAIL_AUTH,
+                    'Content-Type': 'application/json'
+                }
             });
-            const tokenData = await tokenRes.json();
-            const token = tokenData.token;
+
+            if (!res.ok) {
+                throw new Error('MoeMail API error');
+            }
+
+            const data = await res.json();
 
             // Save to DB
             const account = await prisma.tempMailAccount.create({
                 data: {
                     id: data.id,
-                    address: address,
-                    password: password,
-                    token: token,
+                    address: data.email,
+                    password: '', // MoeMail doesn't use password
                     userId: auth.user.id
                 }
             });
@@ -84,12 +64,11 @@ export async function POST(req) {
             await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', 201);
             return new Response(JSON.stringify({
                 success: true,
+                provider: 'moemail',
                 account: {
                     id: account.id,
                     address: account.address,
-                    password: account.password,
-                    createdAt: account.createdAt,
-                    token: account.token
+                    createdAt: account.createdAt
                 }
             }), {
                 status: 201,
@@ -98,16 +77,97 @@ export async function POST(req) {
                     'Content-Encoding': 'identity'
                 }
             });
-        }
-
-        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', res.status);
-        return new Response(JSON.stringify(data), {
-            status: res.status,
-            headers: { 
-                'Content-Type': 'application/json; charset=utf-8',
-                'Content-Encoding': 'identity'
+        } else {
+            // Mail.tm flow (original)
+            // Auto-generate if missing
+            if (!address) {
+                const domainRes = await fetch(`${API_BASE}/domains?page=1`);
+                const domainData = await domainRes.json();
+                const domains = Array.isArray(domainData) ? domainData : (domainData['hydra:member'] || []);
+                if (domains.length === 0) throw new Error('No domains available');
+                const domain = domains[0].domain;
+                const randomPrefix = randomBytes(4).toString('hex');
+                address = `devora_${randomPrefix}@${domain}`;
             }
-        });
+
+            if (!password) {
+                password = randomBytes(8).toString('hex');
+            }
+
+            const res = await fetch(`${API_BASE}/accounts`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Accept-Encoding': 'identity'
+                },
+                body: JSON.stringify({ address, password })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                // Get token immediately
+                const tokenRes = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Accept-Encoding': 'identity'
+                    },
+                    body: JSON.stringify({ address, password })
+                });
+                const tokenData = await tokenRes.json();
+                const token = tokenData.token;
+
+                // Save to DB
+                const account = await prisma.tempMailAccount.create({
+                    data: {
+                        id: data.id,
+                        address: address,
+                        password: password,
+                        token: token,
+                        userId: auth.user.id
+                    }
+                });
+
+                // Increment generated emails count
+                try {
+                    await prisma.tempMailStats.upsert({
+                        where: { id: 1 },
+                        update: { emailsGenerated: { increment: 1 } },
+                        create: { id: 1, emailsGenerated: 1 }
+                    });
+                } catch (statsErr) { console.error("v1 Stats update err:", statsErr); }
+
+                await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', 201);
+                return new Response(JSON.stringify({
+                    success: true,
+                    provider: 'mail.tm',
+                    account: {
+                        id: account.id,
+                        address: account.address,
+                        password: account.password,
+                        createdAt: account.createdAt,
+                        token: account.token
+                    }
+                }), {
+                    status: 201,
+                    headers: { 
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'Content-Encoding': 'identity'
+                    }
+                });
+            }
+
+            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/temp-mail/accounts', 'POST', res.status);
+            return new Response(JSON.stringify(data), {
+                status: res.status,
+                headers: { 
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Content-Encoding': 'identity'
+                }
+            });
+        }
     } catch (error) {
         console.error('v1 Accounts API Error:', error);
         await recordApiKeyUsage(apiKeyId, '/api/v1/temp-mail/accounts', 'POST', 500);
