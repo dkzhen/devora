@@ -10,13 +10,18 @@ const MOEMAIL_AUTH = 'Bearer moemail_zhen_2026';
 export async function POST(req) {
     trackApiHit(req);
     try {
+        // Get domain from request body (optional)
+        const body = await req.json().catch(() => ({}));
+        const { domain } = body;
+
         // Generate email from MoeMail API
         const res = await fetch(`${MOEMAIL_API_BASE}/generate`, {
             method: 'POST',
             headers: {
                 'Authorization': MOEMAIL_AUTH,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: domain ? JSON.stringify({ domain }) : undefined
         });
 
         if (!res.ok) {

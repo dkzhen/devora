@@ -1,0 +1,108 @@
+---
+title: Domains
+description: Get available MoeMail domains for temporary email generation
+---
+
+## Get Available Domains
+
+Retrieve the list of available domains for MoeMail temporary email generation.
+
+### Endpoint
+
+```
+GET /api/v1/temp-mail/domains
+```
+
+### Headers
+
+| Header      | Type   | Required | Description                     |
+| ----------- | ------ | -------- | ------------------------------- |
+| `X-API-Key` | string | Yes      | Your API key for authentication |
+
+### Response
+
+#### Success Response (200 OK)
+
+```json
+{
+  "success": true,
+  "domains": ["zenra.my.id", "kineta.my.id"]
+}
+```
+
+#### Error Response (401 Unauthorized)
+
+```json
+{
+  "error": "Invalid or missing API key"
+}
+```
+
+#### Error Response (500 Internal Server Error)
+
+```json
+{
+  "success": false,
+  "error": "Failed to fetch domains"
+}
+```
+
+### Example Usage
+
+#### cURL
+
+```bash
+curl -X GET https://your-domain.com/api/v1/temp-mail/domains \
+  -H "X-API-Key: your_api_key_here"
+```
+
+#### JavaScript (Fetch)
+
+```javascript
+const response = await fetch(
+  "https://your-domain.com/api/v1/temp-mail/domains",
+  {
+    method: "GET",
+    headers: {
+      "X-API-Key": "your_api_key_here",
+    },
+  },
+);
+
+const data = await response.json();
+console.log(data.domains); // ["zenra.my.id", "kineta.my.id"]
+```
+
+#### Python
+
+```python
+import requests
+
+headers = {
+    'X-API-Key': 'your_api_key_here'
+}
+
+response = requests.get(
+    'https://your-domain.com/api/v1/temp-mail/domains',
+    headers=headers
+)
+
+data = response.json()
+print(data['domains'])  # ['zenra.my.id', 'kineta.my.id']
+```
+
+### Use Case
+
+Use this endpoint to:
+
+- Get the current list of available MoeMail domains
+- Display domain options to users
+- Validate domain selection before creating accounts
+- Build dynamic domain selectors in your application
+
+### Notes
+
+- This endpoint only returns MoeMail domains
+- Mail.tm domains are fetched separately via the Mail.tm API
+- The list of domains may change over time
+- Requires valid API key authentication

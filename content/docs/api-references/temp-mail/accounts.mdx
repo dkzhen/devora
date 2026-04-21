@@ -17,7 +17,8 @@ Creates a new temporary email account. Supports two providers: **Mail.tm** (defa
 {
   "provider": "mail.tm", // or "moemail" (default: "mail.tm")
   "address": "myemail@example.com", // optional, auto-generated if omitted
-  "password": "mypassword" // optional, auto-generated if omitted (not used for MoeMail)
+  "password": "mypassword", // optional, auto-generated if omitted (not used for MoeMail)
+  "domain": "zenra.my.id" // optional, only for MoeMail provider (e.g., "zenra.my.id", "kineta.my.id")
 }
 ```
 
@@ -53,13 +54,27 @@ Creates a new temporary email account. Supports two providers: **Mail.tm** (defa
 
 **Provider Comparison:**
 
-| Feature              | Mail.tm   | MoeMail                |
-| -------------------- | --------- | ---------------------- |
-| Password Required    | ✅ Yes    | ❌ No                  |
-| Token Authentication | ✅ Yes    | ❌ No                  |
-| Custom Address       | ✅ Yes    | ❌ No (auto-generated) |
-| Domain               | Various   | @zenra.my.id           |
-| Message Retention    | Permanent | Temporary              |
+| Feature              | Mail.tm   | MoeMail                            |
+| -------------------- | --------- | ---------------------------------- |
+| Password Required    | ✅ Yes    | ❌ No                              |
+| Token Authentication | ✅ Yes    | ❌ No                              |
+| Custom Address       | ✅ Yes    | ❌ No (auto-generated)             |
+| Domain               | Various   | Multiple (.my.id domains)          |
+| Domain Selection     | ❌ No     | ✅ Yes (zenra.my.id, kineta.my.id) |
+| Message Retention    | Permanent | Temporary                          |
+
+**MoeMail Domain Selection:**
+
+To get available domains, use the [Domains endpoint](/api-references/temp-mail/domains). If no domain is specified, a random domain will be assigned.
+
+**Example with specific domain:**
+
+```json
+{
+  "provider": "moemail",
+  "domain": "kineta.my.id"
+}
+```
 
 ---
 

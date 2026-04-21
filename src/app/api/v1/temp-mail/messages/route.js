@@ -64,7 +64,7 @@ export async function GET(req) {
                                     fromName: msg.fromName || (msg.from ? msg.from.split('@')[0] : null),
                                     fromAddress: msg.fromAddress || msg.from || null,
                                     subject: msg.subject || null,
-                                    intro: msg.body ? msg.body.substring(0, 100) : (msg.subject || null),
+                                    intro: msg.body ? msg.body.substring(0, 100) : (msg.subject || 'Click to view message'),
                                     seen: msg.seen || false,
                                     createdAt: msg.createdAt ? new Date(msg.createdAt) : (msg.receivedAt ? new Date(msg.receivedAt) : new Date()),
                                     accountId: accountId

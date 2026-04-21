@@ -4,6 +4,13 @@ export const PROVIDERS = {
   MOEMAIL: 'moemail'
 };
 
+// MoeMail Available Domains
+export const MOEMAIL_DOMAINS = [
+  { value: '', label: 'Random (Auto)' },
+  { value: 'zenra.my.id', label: 'zenra.my.id' },
+  { value: 'kineta.my.id', label: 'kineta.my.id' }
+];
+
 // API Endpoints
 export const API_ENDPOINTS = {
   MAIL_TM: {
@@ -17,7 +24,8 @@ export const API_ENDPOINTS = {
     BASE: 'https://moemail-api.danistimikwp.workers.dev',
     GENERATE: '/generate',
     INBOX: '/inbox',
-    MESSAGE: '/message'
+    MESSAGE: '/message',
+    DOMAINS: '/domains'
   },
   INTERNAL: {
     DOMAINS: '/api/temp-mail/domains',
@@ -71,7 +79,7 @@ export const PROVIDER_CONFIG = {
     requiresPassword: false,
     requiresToken: false,
     supportsCustomAddress: false,
-    domain: '@zenra.my.id',
+    domain: 'Multiple domains',
     retention: 'Temporary'
   }
 };
@@ -130,7 +138,8 @@ export const isProviderMailTm = (provider) => provider === PROVIDERS.MAIL_TM;
 
 export const detectProvider = (address) => {
   if (!address) return PROVIDERS.MAIL_TM;
-  return address.includes('zenra.my.id') || address.includes('moemail') 
+  // MoeMail uses .my.id domains (zenra.my.id, kineta.my.id, etc.)
+  return address.includes('.my.id') || address.includes('moemail') 
     ? PROVIDERS.MOEMAIL 
     : PROVIDERS.MAIL_TM;
 };

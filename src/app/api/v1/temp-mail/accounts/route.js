@@ -21,7 +21,7 @@ export async function POST(req) {
     trackApiHit(req);
 
     try {
-        let { address, password, provider } = await req.json().catch(() => ({}));
+        let { address, password, provider, domain } = await req.json().catch(() => ({}));
         
         // Default to mail.tm if not specified
         if (!provider) provider = 'mail.tm';
@@ -33,7 +33,8 @@ export async function POST(req) {
                 headers: {
                     'Authorization': MOEMAIL_AUTH,
                     'Content-Type': 'application/json'
-                }
+                },
+                body: domain ? JSON.stringify({ domain }) : undefined
             });
 
             if (!res.ok) {

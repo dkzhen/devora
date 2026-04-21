@@ -9,6 +9,7 @@ import {
     API_ENDPOINTS,
     POLLING_CONFIG,
     MESSAGES,
+    MOEMAIL_DOMAINS,
     detectProvider,
     formatDate as formatDateUtil,
     isProviderMoemail,
@@ -32,6 +33,8 @@ export default function TempMail() {
     const [user, setUser] = useState(null);
     const [provider, setProvider] = useState(PROVIDERS.MAIL_TM);
     const [historySearch, setHistorySearch] = useState('');
+    const [moemailDomain, setMoemailDomain] = useState('zenra.my.id');
+    const [availableDomains, setAvailableDomains] = useState([]);
 
     const intervalRef = useRef(null);
 
@@ -177,7 +180,11 @@ export default function TempMail() {
 
         try {
             if (isProviderMoemail(provider)) {
-                const res = await fetch(API_ENDPOINTS.INTERNAL.MOEMAIL_GENERATE, { method: 'POST' });
+                const res = await fetch(API_ENDPOINTS.INTERNAL.MOEMAIL_GENERATE, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: moemailDomain ? JSON.stringify({ domain: moemailDomain }) : undefined
+                });
                 if (!res.ok) throw new Error(MESSAGES.ERROR.GENERATE_FAILED);
                 const data = await res.json();
                 
@@ -299,7 +306,7 @@ export default function TempMail() {
                             address: msg.fromAddress || msg.from || '' 
                         },
                         subject: msg.subject || '(No Subject)',
-                        intro: msg.body?.substring(0, 100) || msg.subject || '',
+                        intro: msg.body?.substring(0, 100) || msg.subject || 'Click to view message content',
                         createdAt: msg.createdAt || msg.receivedAt,
                         seen: false
                     }));
@@ -330,8 +337,8 @@ export default function TempMail() {
                 if (res.ok) {
                     const data = await res.json();
                     setMessageContent({
-                        html: data.bodyHtml ? [data.bodyHtml] : (data.html ? [data.html] : null),
-                        text: data.bodyText || data.body || "",
+                        html: data.html && data.html.trim() ? [data.html] : null,
+                        text: data.text || "",
                         from: { 
                             name: data.fromName || (data.from ? data.from.split('@')[0] : 'Unknown'), 
                             address: data.fromAddress || data.from || '' 
@@ -467,6 +474,38 @@ export default function TempMail() {
                             </button>
                         </div>
                     </div>
+
+                    {/* MoeMail Domain Selector */}
+                    {provider === 'moemail' && (
+                        <div className="bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl p-4 shadow-lg">
+                            <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-3 ml-1">Select Domain</div>
+                            <div className="relative">
+                                <select
+                                    value={moemailDomain}
+                                    onChange={(e) => setMoemailDomain(e.target.value)}
+                                    className="w-full bg-gradient-to-br from-[#03040a] to-[#0a0e1a] border border-white/10 hover:border-[#A1C2BD]/30 rounded-xl px-4 py-3 text-sm text-slate-200 font-medium focus:outline-none focus:border-[#A1C2BD]/50 focus:ring-2 focus:ring-[#A1C2BD]/20 transition-all appearance-none cursor-pointer shadow-inner"
+                                    style={{
+                                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23A1C2BD'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'right 0.75rem center',
+                                        backgroundSize: '1.25rem'
+                                    }}
+                                >
+                                    <option value="zenra.my.id" className="bg-[#0a0e1a] text-slate-200">zenra.my.id</option>
+                                    <option value="kineta.my.id" className="bg-[#0a0e1a] text-slate-200">kineta.my.id</option>
+                                </select>
+                                <div className="absolute inset-0 rounded-xl pointer-events-none bg-gradient-to-r from-[#A1C2BD]/0 via-[#A1C2BD]/5 to-[#A1C2BD]/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            {moemailDomain && (
+                                <div className="mt-2 flex items-center gap-2 text-xs text-[#A1C2BD]/80 bg-[#A1C2BD]/5 px-3 py-2 rounded-lg border border-[#A1C2BD]/10">
+                                    <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="font-medium">Selected: {moemailDomain}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* Header Card */}
                     <div className="bg-[#0a0e1a]/95 border border-[#A1C2BD]/20 rounded-2xl p-6 relative overflow-hidden group shadow-lg">
@@ -788,7 +827,7 @@ export default function TempMail() {
                                             <div className="flex items-center gap-2">
                                                 <button 
                                                     onClick={() => {
-                                                        const p = item.address.includes('zenra.my.id') || item.address.includes('moemail') ? 'moemail' : 'mail.tm';
+                                                        const p = detectProvider(item.address);
                                                         setProvider(p);
                                                         localStorage.setItem('temp_mail_provider', p);
                                                         switchAccount(item);
