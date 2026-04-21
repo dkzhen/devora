@@ -36,7 +36,7 @@ export default function LoginPage() {
                 localStorage.setItem('auth_token', data.token);
                 localStorage.setItem('user_info', JSON.stringify(data.user));
             }
-            window.location.href = '/';
+            window.location.href = '/dashboard';
         } catch (err) {
             setError(err.message);
         } finally {
