@@ -1,7 +1,7 @@
 // Test concurrent requests to v1/ai endpoint
 const API_KEY = 'devora_0bcfdb2c767d01e464e189dcf791d12695dce19c'; // Replace with your API key
 const BASE_URL = 'http://localhost:3000';
-const MODEL_ID = 'devora-claude-sonnet-4'; // Replace with your model
+const MODEL_ID = 'devora-claude-sonnet-4.5'; // Replace with your model
 
 async function makeRequest(requestId) {
     const startTime = Date.now();

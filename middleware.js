@@ -11,34 +11,9 @@ const roleRestrictedPages = {
     // 'analytics': 'PRO',
 };
 
-// Cache for maintenance configs (1 minute TTL)
-let maintenanceCache = { data: null, timestamp: 0 };
-const CACHE_TTL = 60000; // 1 minute
-
-async function getMaintenanceConfigs() {
-    const now = Date.now();
-    
-    // Return cached data if still valid
-    if (maintenanceCache.data && (now - maintenanceCache.timestamp) < CACHE_TTL) {
-        return maintenanceCache.data;
-    }
-
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/maintenance`, {
-            cache: 'no-store',
-        });
-        
-        if (response.ok) {
-            const configs = await response.json();
-            maintenanceCache = { data: configs, timestamp: now };
-            return configs;
-        }
-    } catch (error) {
-        console.error('Failed to fetch maintenance configs:', error);
-    }
-    
-    return maintenanceCache.data || [];
-}
+// Note: Maintenance check moved to client-side or API routes
+// Edge Runtime middleware cannot fetch internal APIs reliably
+// Maintenance configs should be checked in page components instead
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
@@ -94,45 +69,9 @@ export async function middleware(request) {
         }
     }
 
-    // ✅ Check maintenance mode for feature pages
-    if (featurePath) {
-        const maintenanceConfigs = await getMaintenanceConfigs();
-        const config = maintenanceConfigs.find(c => c.feature === featurePath);
-        
-        if (config && config.enabled) {
-            // Check if user is ULTRA admin (they can bypass maintenance)
-            const token = request.cookies.get('auth_token')?.value;
-            let isUltra = false;
-            
-            if (token) {
-                try {
-                    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-                    const { payload } = await jwtVerify(token, secret);
-                    
-                    // Fetch user role (you might want to include this in JWT payload for better performance)
-                    const userResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/me`, {
-                        headers: { Cookie: `auth_token=${token}` },
-                        cache: 'no-store',
-                    });
-                    
-                    if (userResponse.ok) {
-                        const userData = await userResponse.json();
-                        isUltra = userData.user?.role === 'ULTRA';
-                    }
-                } catch (error) {
-                    // Token invalid or expired
-                }
-            }
-            
-            // Redirect to maintenance page if not ULTRA admin
-            if (!isUltra) {
-                const maintenanceUrl = new URL('/maintenance', request.url);
-                maintenanceUrl.searchParams.set('feature', config.feature);
-                maintenanceUrl.searchParams.set('message', encodeURIComponent(config.message || 'This feature is currently under maintenance.'));
-                return NextResponse.redirect(maintenanceUrl);
-            }
-        }
-    }
+    // ✅ Maintenance mode check removed from middleware
+    // Maintenance checks should be done in page components or API routes
+    // Edge Runtime cannot reliably fetch internal APIs
 
     // ✅ Allow public pages
     if (
