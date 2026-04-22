@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { HeroHeader, LoadingState } from '@/components/HeroHeader';
+import { getAvailablePresets } from '@/constants/ai-proxy.constants';
 
 export default function AiProvidersPage() {
     const [search, setSearch] = useState('');
@@ -14,7 +15,8 @@ export default function AiProvidersPage() {
     const [statusFilter, setStatusFilter] = useState('all'); // all | active | suspend
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingModel, setEditingModel] = useState(null);
-    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', baseUrl: '' });
+    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
+    const proxyPresets = getAvailablePresets();
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -179,7 +181,7 @@ export default function AiProvidersPage() {
 
             toast.success('Model added successfully');
             setShowAddModal(false);
-            setFormData({ id: '', name: '', ownedBy: '', baseUrl: '' });
+            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
         } catch (err) {
             toast.error(err.message);
         }
@@ -211,7 +213,7 @@ export default function AiProvidersPage() {
 
             toast.success('Model updated successfully');
             setEditingModel(null);
-            setFormData({ id: '', name: '', ownedBy: '' });
+            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
         } catch (err) {
             toast.error(err.message);
         }
@@ -243,7 +245,7 @@ export default function AiProvidersPage() {
             id: model.id,
             name: model.name,
             ownedBy: model.owned_by,
-            baseUrl: model.baseUrl || ''
+            proxyPreset: model.proxyPreset || 'DEFAULT'
         });
     };
 
@@ -657,15 +659,22 @@ export default function AiProvidersPage() {
 
                             <div>
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
-                                    Base URL <span className="text-slate-500">(Optional)</span>
+                                    Proxy Server
                                 </label>
-                                <input
-                                    type="text"
-                                    value={formData.baseUrl}
-                                    onChange={e => setFormData({ ...formData, baseUrl: e.target.value })}
-                                    placeholder="e.g., https://api.openai.com/v1"
-                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all"
-                                />
+                                <select
+                                    value={formData.proxyPreset}
+                                    onChange={e => setFormData({ ...formData, proxyPreset: e.target.value })}
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-purple-400/50 transition-all"
+                                >
+                                    {proxyPresets.map(preset => (
+                                        <option key={preset.value} value={preset.value}>
+                                            {preset.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className="text-[8px] text-slate-400 mt-1.5 font-mono">
+                                    Configure proxy URLs in environment variables
+                                </p>
                             </div>
                         </div>
 
@@ -674,7 +683,7 @@ export default function AiProvidersPage() {
                                 onClick={() => {
                                     setShowAddModal(false);
                                     setEditingModel(null);
-                                    setFormData({ id: '', name: '', ownedBy: '', baseUrl: '' });
+                                    setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
                                 }}
                                 className="flex-1 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 rounded-lg text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-all"
                             >

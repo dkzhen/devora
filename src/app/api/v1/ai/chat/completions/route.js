@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server';
 import { verifyApiKey, recordApiKeyUsage } from '@/lib/auth';
 import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
+import { getProxyConfig } from '@/constants/ai-proxy.constants';
 
 export async function POST(req) {
     // 1. Verify API Key (OpenAI Header style: Authorization: Bearer devora_...)
+
     const auth = await verifyApiKey(req);
     if (!auth.success) {
         return NextResponse.json({ 
@@ -40,12 +42,24 @@ export async function POST(req) {
             include: { allowedEmails: true }
         });
 
-        // Default settings if not found in DB
+        // 3a. STRICT MODE: NON-ULTRA users can only use models in database
+        if (!modelConfig && auth.user.role !== 'ULTRA') {
+            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 404);
+            return NextResponse.json({ 
+                error: { 
+                    message: `Model '${modelId}' not found or not available. Please check available models at /api/v1/ai/models`, 
+                    type: 'invalid_request_error', 
+                    code: 'model_not_found' 
+                } 
+            }, { status: 404 });
+        }
+
+        // Default settings if not found in DB (for ULTRA users)
         const status = modelConfig?.status || 'active';
         const isRestricted = modelConfig?.isRestricted || false;
         const allowedEmails = modelConfig?.allowedEmails.map(a => a.email) || [];
 
-        // 3a. Check for Global Suspension/Hidden (ULTRA bypass enabled)
+        // 3b. Check for Global Suspension/Hidden (ULTRA bypass enabled)
         if ((status === 'suspend' || status === 'hidden') && auth.user.role !== 'ULTRA') {
             const errorMessage = status === 'suspend' 
                 ? `Model '${modelId}' is currently suspended.` 
@@ -61,7 +75,7 @@ export async function POST(req) {
             }, { status: 403 });
         }
 
-        // 3b. Check for Email-based Restriction (Whitelist) (ULTRA bypass enabled)
+        // 3c. Check for Email-based Restriction (Whitelist) (ULTRA bypass enabled)
         if (isRestricted && !allowedEmails.includes(auth.user.email) && auth.user.role !== 'ULTRA') {
             await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403);
             return NextResponse.json({ 
@@ -73,7 +87,7 @@ export async function POST(req) {
             }, { status: 403 });
         }
 
-        // 3c. Check for Email-prefixed ID (Private Models) (ULTRA bypass enabled)
+        // 3d. Check for Email-prefixed ID (Private Models) (ULTRA bypass enabled)
         if (modelId.includes('/') && auth.user.role !== 'ULTRA') {
             const prefix = modelId.split('/')[0];
             const isEmail = prefix.includes('@');
@@ -89,13 +103,23 @@ export async function POST(req) {
             }
         }
 
-        // 4. Proxy Request to Upstream VPS
-        const aiProxyBase = process.env.AI_PROXY_URL || 'http://localhost:8317';
-        const upstreamRes = await fetch(`${aiProxyBase}/v1/chat/completions`, {
+        // 4. Proxy Request to Upstream (Use preset config from database)
+        const proxyPreset = modelConfig?.proxyPreset || 'DEFAULT';
+        const proxyConfig = getProxyConfig(proxyPreset);
+        
+        // If model has custom baseUrl, use it (backward compatibility)
+        const finalUrl = modelConfig?.baseUrl || proxyConfig.url;
+        const cleanBaseUrl = finalUrl.replace(/\/$/, '');
+        
+        // Check if URL already has /v1, if not add it
+        const hasV1 = cleanBaseUrl.includes('/v1');
+        const endpoint = hasV1 ? `${cleanBaseUrl}/chat/completions` : `${cleanBaseUrl}/v1/chat/completions`;
+        
+        const upstreamRes = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer Bandulan113', // Your VPS token
+                'Authorization': `Bearer ${proxyConfig.token}`,
                 'Accept': 'application/json',
             },
             body: JSON.stringify(body),
@@ -130,17 +154,60 @@ export async function POST(req) {
         }
 
         // 6. Handle Standard JSON Response
-        const data = await upstreamRes.json().catch(() => ({ message: 'Invalid response from upstream' }));
-        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', upstreamRes.status);
+        if (!upstreamRes.ok) {
+            // Log actual error for debugging (server-side only)
+            const errorText = await upstreamRes.text().catch(() => 'Unknown error');
+            console.error('Upstream Error:', {
+                status: upstreamRes.status,
+                statusText: upstreamRes.statusText,
+                body: errorText
+            });
+
+            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', upstreamRes.status);
+
+            // Return generic error without exposing upstream details
+            const errorMessages = {
+                400: 'Invalid request. Please check your request parameters.',
+                401: 'Authentication failed. The model provider rejected the request.',
+                403: 'Access forbidden. You may not have permission to use this model.',
+                404: 'Model endpoint not found on the upstream provider.',
+                429: 'Rate limit exceeded. Please try again later.',
+                500: 'The model provider encountered an internal error.',
+                502: 'Bad gateway. Unable to connect to the model provider.',
+                503: 'Service temporarily unavailable. Please try again later.',
+                504: 'Gateway timeout. The model provider took too long to respond.'
+            };
+
+            const message = errorMessages[upstreamRes.status] || 'An error occurred while processing your request.';
+
+            return NextResponse.json({ 
+                error: { 
+                    message,
+                    type: 'upstream_error', 
+                    code: upstreamRes.status
+                } 
+            }, { status: upstreamRes.status });
+        }
+
+        const data = await upstreamRes.json().catch(() => ({ 
+            error: { 
+                message: 'Invalid response format from upstream provider.',
+                type: 'parse_error'
+            }
+        }));
         
-        return NextResponse.json(data, { status: upstreamRes.status });
+        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200);
+        return NextResponse.json(data);
 
     } catch (error) {
+        // Log actual error for debugging (server-side only)
         console.error('LLM Proxy Error:', error);
         await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 500);
+        
+        // Return generic error without exposing internal details
         return NextResponse.json({ 
             error: { 
-                message: 'Internal reverse proxy error.', 
+                message: 'An unexpected error occurred. Please try again later.', 
                 type: 'server_error', 
                 code: 500 
             } 

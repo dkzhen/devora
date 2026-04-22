@@ -420,6 +420,7 @@ model AiModel {
   isRestricted  Boolean         @default(false) @map("is_restricted")
   createdAt     DateTime        @default(now()) @map("created_at")
   baseUrl       String?         @map("base_url") @db.Text
+  proxyPreset   String?         @default("DEFAULT") @map("proxy_preset")
   allowedEmails AiModelAccess[]
 
   @@map("ai_models")

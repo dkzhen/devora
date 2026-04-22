@@ -16,6 +16,7 @@ export async function GET() {
             status: model.status,
             isRestricted: model.isRestricted,
             baseUrl: model.baseUrl,
+            proxyPreset: model.proxyPreset,
             allowedEmails: model.allowedEmails.map(a => a.email)
         }));
 
@@ -29,7 +30,7 @@ export async function GET() {
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { id, name, ownedBy, created, baseUrl } = body;
+        const { id, name, ownedBy, created, baseUrl, proxyPreset } = body;
 
         if (!id || !name || !ownedBy) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -49,7 +50,8 @@ export async function POST(request) {
                 created: created || Math.floor(Date.now() / 1000),
                 status: 'active',
                 isRestricted: false,
-                baseUrl: baseUrl || null
+                baseUrl: baseUrl || null,
+                proxyPreset: proxyPreset || 'DEFAULT'
             }
         });
 
@@ -83,7 +85,7 @@ export async function DELETE(request) {
 export async function PUT(request) {
     try {
         const body = await request.json();
-        const { id, name, ownedBy, created, baseUrl } = body;
+        const { id, name, ownedBy, created, baseUrl, proxyPreset } = body;
 
         if (!id) {
             return NextResponse.json({ error: 'Model ID required' }, { status: 400 });
@@ -95,7 +97,8 @@ export async function PUT(request) {
                 ...(name && { name }),
                 ...(ownedBy && { ownedBy }),
                 ...(created !== undefined && { created }),
-                ...(baseUrl !== undefined && { baseUrl: baseUrl || null })
+                ...(baseUrl !== undefined && { baseUrl: baseUrl || null }),
+                ...(proxyPreset !== undefined && { proxyPreset })
             }
         });
 

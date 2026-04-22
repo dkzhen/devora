@@ -244,16 +244,6 @@ export default function Sidebar() {
                     icon: <svg className="w-4.5 h-4.5" fill="currentColor" viewBox="0 0 48 48"><g> <g> <g> <path d="M24,48v-8c-8.836,0-16-7.164-16-16c0-8.837,7.164-16,16-16V0h-5.021v4.661 c-2.212,0.573-4.284,1.494-6.129,2.735L9.857,4.402l-5.656,5.657l3.042,3.042c-1.163,1.784-2.036,3.766-2.583,5.883H0v10.032h4.66 c0.56,2.164,1.458,4.192,2.66,6.008l-3.118,3.119l5.656,5.655l3.119-3.118c1.819,1.205,3.853,2.104,6.023,2.664V48H24z" /> <path d="M24,29c-2.762,0-5-2.238-5-5c0-2.761,2.238-5,5-5v-4c-4.971,0-9,4.029-9,9c0,4.971,4.029,9,9,9V29z" /> <path d="M36.218,48V37.129C43.188,33.699,48,26.547,48,18.253C48,10.436,43.729,3.629,37.402,0v17.741 l-10.447,9.161V48H36.218z" /> </g> </g> </g></svg>
                 },
                 {
-                    name: 'API Key',
-                    href: '/api-key',
-                    icon: (
-                        <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                        </svg>
-                    )
-                },
-
-                {
                     name: 'Endpoints',
                     href: '/endpoints',
                     icon: <svg className="w-4.5 h-4.5" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" fillRule="evenodd" d="M.5 2.75a2.25 2.25 0 114.28.97l1.345 1.344.284-.284a2.25 2.25 0 013.182 0l.284.284 1.344-1.344a2.25 2.25 0 111.06 1.06l-1.343 1.345.284.284a2.25 2.25 0 010 3.182l-.284-.284 1.344 1.344a2.25 2.25 0 11-1.06 1.06l-1.345-1.343-.284.284a2.25 2.25 0 01-3.182 0l-.284-.284-1.344 1.344a2.25 2.25 0 11-1.06-1.06l1.343-1.345-.284-.284a2.25 2.25 0 010-3.182l.284-.284L3.72 4.781A2.25 2.25 0 01.5 2.75zM2.75 2a.75.75 0 100 1.5.75.75 0 000-1.5zm0 10.5a.75.75 0 100 1.5.75.75 0 000-1.5zm9.75.75a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM13.25 2a.75.75 0 100 1.5.75.75 0 000-1.5zM7.47 5.841a.75.75 0 011.06 0L10.16 7.47a.75.75 0 010 1.06L8.53 10.16a.75.75 0 01-1.06 0L5.84 8.53a.75.75 0 010-1.06L7.47 5.84z" clipRule="evenodd"></path></svg>
@@ -429,6 +419,23 @@ export default function Sidebar() {
                     </svg>
                     Docs
                 </Link>
+
+                {/* API Key - Only for logged in users */}
+                {user && (
+                    <Link
+                        href="/api-key"
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-[11px] font-mono font-bold tracking-wide ${pathname === '/api-key'
+                            ? 'bg-emerald-500/15 text-emerald-200 border border-emerald-500/20'
+                            : 'text-slate-500 hover:bg-white/5 border border-transparent hover:text-slate-300'
+                            }`}
+                    >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg>
+                        API Key
+                    </Link>
+                )}
 
                 {/* Settings - PRO/ULTRA only */}
                 {(user?.role === 'PRO' || user?.role === 'ULTRA') && (
