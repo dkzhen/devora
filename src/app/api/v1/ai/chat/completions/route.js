@@ -23,7 +23,6 @@ export async function OPTIONS(req) {
 
 export async function POST(req) {
     // 1. Verify API Key (OpenAI Header style: Authorization: Bearer devora_...)
-
     const auth = await verifyApiKey(req);
     if (!auth.success) {
         return NextResponse.json({ 
@@ -35,15 +34,15 @@ export async function POST(req) {
         }, { status: 401, headers: corsHeaders });
     }
 
-    // 2. Track hit in global stats (Devora Statistics)
-    trackApiHit(req, '/api/v1/ai/chat/completions');
-
+    // 2. Parse body early and validate
+    let body, modelId;
     try {
-        const body = await req.json();
-        const modelId = body.model;
-
+        body = await req.json();
+        modelId = body.model;
+        
         if (!modelId) {
-            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 400);
+            // Fire and forget - don't await
+            recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 400);
             return NextResponse.json({ 
                 error: { 
                     message: 'Missing model parameter in request body.', 
@@ -52,6 +51,21 @@ export async function POST(req) {
                 } 
             }, { status: 400, headers: corsHeaders });
         }
+    } catch (parseError) {
+        recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 400);
+        return NextResponse.json({ 
+            error: { 
+                message: 'Invalid JSON in request body.', 
+                type: 'invalid_request_error', 
+                code: 400 
+            } 
+        }, { status: 400, headers: corsHeaders });
+    }
+
+    // 3. Track hit in global stats (fire and forget)
+    trackApiHit(req, '/api/v1/ai/chat/completions');
+
+    try {
 
         // 3. Enforcement Logic: Check model status and whitelist in our Database
         // Try cache first to reduce database load
@@ -72,7 +86,7 @@ export async function POST(req) {
 
         // 3a. STRICT MODE: NON-ULTRA users can only use models in database
         if (!modelConfig && auth.user.role !== 'ULTRA') {
-            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 404);
+            recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 404); // Fire and forget
             return NextResponse.json({ 
                 error: { 
                     message: `Model '${modelId}' not found or not available. Please check available models at /api/v1/ai/models`, 
@@ -85,18 +99,14 @@ export async function POST(req) {
         // Default settings if not found in DB (for ULTRA users)
         const status = modelConfig?.status || 'active';
         const isRestricted = modelConfig?.isRestricted || false;
-        const allowedEmails = modelConfig?.allowedEmails.map(a => a.email) || [];
+        const allowedEmails = modelConfig?.allowedEmails?.map(a => a.email) || [];
 
         // 3b. Check for Global Suspension/Hidden (ULTRA bypass enabled)
         if ((status === 'suspend' || status === 'hidden') && auth.user.role !== 'ULTRA') {
-            const errorMessage = status === 'suspend' 
-                ? `Model '${modelId}' is currently suspended.` 
-                : `Model '${modelId}' not found or unavailable.`;
-
-            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403);
+            recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403); // Fire and forget
             return NextResponse.json({ 
                 error: { 
-                    message: errorMessage, 
+                    message: status === 'suspend' ? `Model '${modelId}' is currently suspended.` : `Model '${modelId}' not found or unavailable.`,
                     type: 'access_denied', 
                     code: 403 
                 } 
@@ -105,7 +115,7 @@ export async function POST(req) {
 
         // 3c. Check for Email-based Restriction (Whitelist) (ULTRA bypass enabled)
         if (isRestricted && !allowedEmails.includes(auth.user.email) && auth.user.role !== 'ULTRA') {
-            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403);
+            recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403); // Fire and forget
             return NextResponse.json({ 
                 error: { 
                     message: `Access to model '${modelId}' is restricted to authorized users.`, 
@@ -118,9 +128,8 @@ export async function POST(req) {
         // 3d. Check for Email-prefixed ID (Private Models) (ULTRA bypass enabled)
         if (modelId.includes('/') && auth.user.role !== 'ULTRA') {
             const prefix = modelId.split('/')[0];
-            const isEmail = prefix.includes('@');
-            if (isEmail && auth.user.email !== prefix) {
-                await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403);
+            if (prefix.includes('@') && auth.user.email !== prefix) {
+                recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403); // Fire and forget
                 return NextResponse.json({ 
                     error: { 
                         message: `Access to model '${modelId}' is limited to its owner.`, 
@@ -228,11 +237,15 @@ export async function POST(req) {
         if (!upstreamRes.ok) {
             // Log actual error for debugging (server-side only)
             const errorText = await upstreamRes.text().catch(() => 'Unknown error');
-            console.error('Upstream Error:', {
-                status: upstreamRes.status,
-                statusText: upstreamRes.statusText,
-                body: errorText
-            });
+            
+            // Only log non-rate-limit errors to reduce spam
+            if (upstreamRes.status !== 429 && upstreamRes.status !== 500) {
+                console.error('Upstream Error:', {
+                    status: upstreamRes.status,
+                    statusText: upstreamRes.statusText,
+                    model: modelId
+                });
+            }
 
             // Detect rate limit from error message
             const isRateLimit = errorText.toLowerCase().includes('rate_limit') || 
