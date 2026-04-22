@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 import prisma from '@/lib/db';
+import modelCache from '@/lib/model-cache';
 
 export async function POST(req) {
     const auth = await verifyAuth(req);
@@ -48,6 +49,9 @@ export async function POST(req) {
                 ] : [])
             ]);
         }
+
+        // Invalidate cache after status/access update
+        modelCache.invalidate(modelId);
 
         return NextResponse.json({ success: true, model });
     } catch (error) {

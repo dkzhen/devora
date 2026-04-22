@@ -3,6 +3,7 @@ import { verifyApiKey, recordApiKeyUsage } from '@/lib/auth';
 import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
 import { getProxyConfig } from '@/constants/ai-proxy.constants';
+import modelCache from '@/lib/model-cache';
 
 export async function POST(req) {
     // 1. Verify API Key (OpenAI Header style: Authorization: Bearer devora_...)
@@ -37,10 +38,21 @@ export async function POST(req) {
         }
 
         // 3. Enforcement Logic: Check model status and whitelist in our Database
-        const modelConfig = await prisma.aiModel.findUnique({
-            where: { id: modelId },
-            include: { allowedEmails: true }
-        });
+        // Try cache first to reduce database load
+        let modelConfig = modelCache.get(modelId);
+        
+        if (!modelConfig) {
+            // Cache miss - fetch from database
+            modelConfig = await prisma.aiModel.findUnique({
+                where: { id: modelId },
+                include: { allowedEmails: true }
+            });
+            
+            // Cache the result (even if null for ULTRA users)
+            if (modelConfig) {
+                modelCache.set(modelId, modelConfig);
+            }
+        }
 
         // 3a. STRICT MODE: NON-ULTRA users can only use models in database
         if (!modelConfig && auth.user.role !== 'ULTRA') {
@@ -115,15 +127,37 @@ export async function POST(req) {
         const hasV1 = cleanBaseUrl.includes('/v1');
         const endpoint = hasV1 ? `${cleanBaseUrl}/chat/completions` : `${cleanBaseUrl}/v1/chat/completions`;
         
-        const upstreamRes = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${proxyConfig.token}`,
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify(body),
-        });
+        // Add timeout to prevent hanging requests (60 seconds)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        
+        try {
+            var upstreamRes = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${proxyConfig.token}`,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(body),
+                signal: controller.signal
+            });
+        } catch (fetchError) {
+            clearTimeout(timeoutId);
+            if (fetchError.name === 'AbortError') {
+                await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 504);
+                return NextResponse.json({ 
+                    error: { 
+                        message: 'Request timeout. The model provider took too long to respond.',
+                        type: 'timeout_error', 
+                        code: 504
+                    } 
+                }, { status: 504 });
+            }
+            throw fetchError;
+        } finally {
+            clearTimeout(timeoutId);
+        }
 
         // 5. Handle Streaming Response
         if (body.stream && upstreamRes.ok) {
@@ -163,7 +197,19 @@ export async function POST(req) {
                 body: errorText
             });
 
-            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', upstreamRes.status);
+            // Detect rate limit from error message
+            const isRateLimit = errorText.toLowerCase().includes('rate_limit') || 
+                               errorText.toLowerCase().includes('rate limit') ||
+                               errorText.toLowerCase().includes('cooldown') ||
+                               errorText.toLowerCase().includes('too many requests');
+
+            // Determine final status code
+            let finalStatus = upstreamRes.status;
+            if (isRateLimit && upstreamRes.status === 500) {
+                finalStatus = 429; // Convert 500 to 429 if it's rate limit
+            }
+
+            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', finalStatus);
 
             // Return generic error without exposing upstream details
             const errorMessages = {
@@ -171,22 +217,22 @@ export async function POST(req) {
                 401: 'Authentication failed. The model provider rejected the request.',
                 403: 'Access forbidden. You may not have permission to use this model.',
                 404: 'Model endpoint not found on the upstream provider.',
-                429: 'Rate limit exceeded. Please try again later.',
+                429: 'Rate limit exceeded. The model is currently in cooldown. Please try again later.',
                 500: 'The model provider encountered an internal error.',
                 502: 'Bad gateway. Unable to connect to the model provider.',
                 503: 'Service temporarily unavailable. Please try again later.',
                 504: 'Gateway timeout. The model provider took too long to respond.'
             };
 
-            const message = errorMessages[upstreamRes.status] || 'An error occurred while processing your request.';
+            const message = errorMessages[finalStatus] || 'An error occurred while processing your request.';
 
             return NextResponse.json({ 
                 error: { 
                     message,
-                    type: 'upstream_error', 
-                    code: upstreamRes.status
+                    type: isRateLimit ? 'rate_limit_error' : 'upstream_error', 
+                    code: finalStatus
                 } 
-            }, { status: upstreamRes.status });
+            }, { status: finalStatus });
         }
 
         const data = await upstreamRes.json().catch(() => ({ 

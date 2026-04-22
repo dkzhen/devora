@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import modelCache from '@/lib/model-cache';
 
 export async function GET() {
     try {
@@ -55,6 +56,9 @@ export async function POST(request) {
             }
         });
 
+        // Invalidate cache for this model
+        modelCache.set(id, model);
+
         return NextResponse.json({ success: true, data: model });
     } catch (error) {
         console.error('Create Model Error:', error);
@@ -74,6 +78,9 @@ export async function DELETE(request) {
         await prisma.aiModel.delete({
             where: { id: modelId }
         });
+
+        // Invalidate cache for deleted model
+        modelCache.invalidate(modelId);
 
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -101,6 +108,9 @@ export async function PUT(request) {
                 ...(proxyPreset !== undefined && { proxyPreset })
             }
         });
+
+        // Update cache with new data
+        modelCache.invalidate(id);
 
         return NextResponse.json({ success: true, data: model });
     } catch (error) {
