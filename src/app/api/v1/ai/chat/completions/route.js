@@ -235,16 +235,11 @@ export async function POST(req) {
 
         // 6. Handle Standard JSON Response
         if (!upstreamRes.ok) {
-            // Log actual error for debugging (server-side only)
             const errorText = await upstreamRes.text().catch(() => 'Unknown error');
             
-            // Only log non-rate-limit errors to reduce spam
-            if (upstreamRes.status !== 429 && upstreamRes.status !== 500) {
-                console.error('Upstream Error:', {
-                    status: upstreamRes.status,
-                    statusText: upstreamRes.statusText,
-                    model: modelId
-                });
+            // Only log critical errors (not 429, 500, 502, 503)
+            if (![429, 500, 502, 503].includes(upstreamRes.status)) {
+                console.error(`[${upstreamRes.status}] ${modelId}`);
             }
 
             // Detect rate limit from error message
