@@ -29,13 +29,20 @@ export async function GET(request) {
         // Get total requests and tokens
         const totalRequests = await prisma.apiKeyUsage.count();
         
-        const totalTokenStats = await prisma.apiKeyUsage.aggregate({
-            _sum: {
-                promptTokens: true,
-                completionTokens: true,
-                totalTokens: true
-            }
-        });
+        let totalTokenStats = { _sum: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
+        let myTokenStats = { _sum: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
+        
+        try {
+            totalTokenStats = await prisma.apiKeyUsage.aggregate({
+                _sum: {
+                    promptTokens: true,
+                    completionTokens: true,
+                    totalTokens: true
+                }
+            });
+        } catch (tokenError) {
+            console.warn('Token fields not available yet:', tokenError.message);
+        }
 
         // Get current user's requests and tokens
         const myRequests = await prisma.apiKeyUsage.count({
@@ -46,18 +53,22 @@ export async function GET(request) {
             }
         });
         
-        const myTokenStats = await prisma.apiKeyUsage.aggregate({
-            where: {
-                apiKey: {
-                    userId: auth.user.id
+        try {
+            myTokenStats = await prisma.apiKeyUsage.aggregate({
+                where: {
+                    apiKey: {
+                        userId: auth.user.id
+                    }
+                },
+                _sum: {
+                    promptTokens: true,
+                    completionTokens: true,
+                    totalTokens: true
                 }
-            },
-            _sum: {
-                promptTokens: true,
-                completionTokens: true,
-                totalTokens: true
-            }
-        });
+            });
+        } catch (tokenError) {
+            console.warn('Token fields not available for user:', tokenError.message);
+        }
 
         // Get usage breakdown by user
         const users = await prisma.user.findMany({
@@ -86,18 +97,24 @@ export async function GET(request) {
 
         // Get token stats for each user
         const userTokenStats = await Promise.all(users.map(async (user) => {
-            const tokens = await prisma.apiKeyUsage.aggregate({
-                where: {
-                    apiKey: {
-                        userId: user.id
+            let tokens = { _sum: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
+            
+            try {
+                tokens = await prisma.apiKeyUsage.aggregate({
+                    where: {
+                        apiKey: {
+                            userId: user.id
+                        }
+                    },
+                    _sum: {
+                        promptTokens: true,
+                        completionTokens: true,
+                        totalTokens: true
                     }
-                },
-                _sum: {
-                    promptTokens: true,
-                    completionTokens: true,
-                    totalTokens: true
-                }
-            });
+                });
+            } catch (tokenError) {
+                // Token fields not available, use defaults
+            }
             
             return {
                 userId: user.id,
