@@ -61,29 +61,33 @@ export async function verifyApiKey(request) {
     }
 }
 
-export async function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = null, model = null) {
-    try {
-        const data = {
-            apiKeyId,
-            endpoint,
-            method,
-            status
-        };
-        
-        // Add model if provided
-        if (model) {
-            data.model = model;
+export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = null, model = null) {
+    // Fire and forget - don't block the main request
+    setImmediate(async () => {
+        try {
+            const data = {
+                apiKeyId,
+                endpoint,
+                method,
+                status
+            };
+            
+            // Add model if provided
+            if (model) {
+                data.model = model;
+            }
+            
+            // Add token data if provided
+            if (tokens) {
+                data.promptTokens = tokens.prompt || 0;
+                data.completionTokens = tokens.completion || 0;
+                data.totalTokens = tokens.total || 0;
+            }
+            
+            await prisma.apiKeyUsage.create({ data });
+        } catch (err) {
+            // Silently fail - don't spam logs
+            // Usage tracking is non-critical
         }
-        
-        // Add token data if provided
-        if (tokens) {
-            data.promptTokens = tokens.prompt || 0;
-            data.completionTokens = tokens.completion || 0;
-            data.totalTokens = tokens.total || 0;
-        }
-        
-        await prisma.apiKeyUsage.create({ data });
-    } catch (err) {
-        console.error('Failed to record API Key usage:', err);
-    }
+    });
 }

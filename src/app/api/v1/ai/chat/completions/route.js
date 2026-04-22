@@ -190,7 +190,7 @@ export async function POST(req) {
         } catch (fetchError) {
             clearTimeout(timeoutId);
             if (fetchError.name === 'AbortError') {
-                await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 504);
+                recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 504);
                 return NextResponse.json({ 
                     error: { 
                         message: 'Request timeout. The model provider took too long to respond.',
@@ -216,7 +216,7 @@ export async function POST(req) {
                             controller.enqueue(value);
                         }
                         controller.close();
-                        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200);
+                        recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200);
                     } catch (err) {
                         controller.error(err);
                     }
@@ -254,7 +254,7 @@ export async function POST(req) {
                 finalStatus = 429; // Convert 500 to 429 if it's rate limit
             }
 
-            await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', finalStatus);
+            recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', finalStatus);
 
             // Return generic error without exposing upstream details
             const errorMessages = {
@@ -320,13 +320,13 @@ export async function POST(req) {
             }
         }
         
-        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200, tokens, modelId);
+        recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200, tokens, modelId);
         return NextResponse.json(data, { headers: corsHeaders });
 
     } catch (error) {
         // Log actual error for debugging (server-side only)
         console.error('LLM Proxy Error:', error);
-        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 500);
+        recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 500);
         
         // Return generic error without exposing internal details
         return NextResponse.json({ 
