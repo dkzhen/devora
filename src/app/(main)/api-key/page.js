@@ -14,6 +14,8 @@ export default function ApiKeyPage() {
     const [toast, setToast] = useState(null);
     const [userRole, setUserRole] = useState(null);
     const [showStats, setShowStats] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         const init = async () => {
@@ -248,54 +250,84 @@ export default function ApiKeyPage() {
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">No API activity recorded yet</p>
                                 </div>
                             ) : (
-                                <div className="bg-[#0a0f1a]/40 border border-white/5 rounded-xl overflow-hidden shadow-2xl">
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left border-collapse">
-                                            <thead>
-                                                <tr className="bg-white/5 border-b border-white/5">
-                                                    <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Time</th>
-                                                    <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Key</th>
-                                                    <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Method</th>
-                                                    <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Endpoint</th>
-                                                    <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644] text-right">Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-white/5">
-                                                {usageHistory.map((hit) => (
-                                                    <tr key={hit.id} className="hover:bg-white/2 transition-colors group">
-                                                        <td className="px-5 py-3 font-mono text-[10px] text-slate-400">
-                                                            {new Date(hit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                                                            <span className="block text-[8px] text-slate-600 mt-0.5">{new Date(hit.createdAt).toLocaleDateString()}</span>
-                                                        </td>
-                                                        <td className="px-5 py-3 font-bold text-[10px] text-white">
-                                                            {hit.apiKey?.name || 'Deleted Key'}
-                                                        </td>
-                                                        <td className="px-5 py-3">
-                                                            <span className={`px-1.5 py-0.5 rounded-[4px] text-[8px] font-black uppercase tracking-wider ${
-                                                                hit.method === 'POST' ? 'bg-amber-500/10 text-amber-500' : 
-                                                                hit.method === 'GET' ? 'bg-emerald-500/10 text-emerald-500' : 
-                                                                'bg-blue-500/10 text-blue-500'
-                                                            }`}>
-                                                                {hit.method}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-5 py-3 font-mono text-[10px] text-slate-500 group-hover:text-slate-300">
-                                                            {hit.endpoint}
-                                                        </td>
-                                                        <td className="px-5 py-3 text-right">
-                                                            <span className={`font-mono text-[10px] font-bold ${
-                                                                hit.status >= 200 && hit.status < 300 ? 'text-[#5cb644]' : 
-                                                                hit.status >= 400 ? 'text-red-500' : 'text-slate-400'
-                                                            }`}>
-                                                                {hit.status}
-                                                            </span>
-                                                        </td>
+                                <>
+                                    <div className="bg-[#0a0f1a]/40 border border-white/5 rounded-xl overflow-hidden shadow-2xl">
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-left border-collapse">
+                                                <thead>
+                                                    <tr className="bg-white/5 border-b border-white/5">
+                                                        <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Time</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Key</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Method</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644]">Endpoint</th>
+                                                        <th className="px-5 py-3 text-[9px] font-black uppercase tracking-[0.2em] text-[#5cb644] text-right">Status</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody className="divide-y divide-white/5">
+                                                    {usageHistory.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((hit) => (
+                                                        <tr key={hit.id} className="hover:bg-white/2 transition-colors group">
+                                                            <td className="px-5 py-3 font-mono text-[10px] text-slate-400">
+                                                                {new Date(hit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                                <span className="block text-[8px] text-slate-600 mt-0.5">{new Date(hit.createdAt).toLocaleDateString()}</span>
+                                                            </td>
+                                                            <td className="px-5 py-3 font-bold text-[10px] text-white">
+                                                                {hit.apiKey?.name || 'Deleted Key'}
+                                                            </td>
+                                                            <td className="px-5 py-3">
+                                                                <span className={`px-1.5 py-0.5 rounded-[4px] text-[8px] font-black uppercase tracking-wider ${
+                                                                    hit.method === 'POST' ? 'bg-amber-500/10 text-amber-500' : 
+                                                                    hit.method === 'GET' ? 'bg-emerald-500/10 text-emerald-500' : 
+                                                                    'bg-blue-500/10 text-blue-500'
+                                                                }`}>
+                                                                    {hit.method}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-5 py-3 font-mono text-[10px] text-slate-500 group-hover:text-slate-300">
+                                                                {hit.endpoint}
+                                                            </td>
+                                                            <td className="px-5 py-3 text-right">
+                                                                <span className={`font-mono text-[10px] font-bold ${
+                                                                    hit.status >= 200 && hit.status < 300 ? 'text-[#5cb644]' : 
+                                                                    hit.status >= 400 ? 'text-red-500' : 'text-slate-400'
+                                                                }`}>
+                                                                    {hit.status}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
+                                    
+                                    {/* Pagination Controls */}
+                                    {usageHistory.length > itemsPerPage && (
+                                        <div className="flex items-center justify-between mt-4 px-2">
+                                            <p className="text-[10px] text-slate-500 font-mono">
+                                                Showing {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, usageHistory.length)} of {usageHistory.length}
+                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                                    disabled={currentPage === 1}
+                                                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[10px] font-bold transition-all"
+                                                >
+                                                    Previous
+                                                </button>
+                                                <span className="text-[10px] font-mono text-slate-400">
+                                                    Page {currentPage} of {Math.ceil(usageHistory.length / itemsPerPage)}
+                                                </span>
+                                                <button
+                                                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(usageHistory.length / itemsPerPage), p + 1))}
+                                                    disabled={currentPage >= Math.ceil(usageHistory.length / itemsPerPage)}
+                                                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[10px] font-bold transition-all"
+                                                >
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -600,20 +632,20 @@ function StatisticsModal({ onClose, showToast }) {
     };
 
     return (
-        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-            <div className="bg-[#04080f]/95 border border-[#007fc3]/20 rounded-2xl max-w-4xl w-full shadow-2xl my-8">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto">
+            <div className="bg-[#04080f]/95 border border-[#007fc3]/20 rounded-2xl max-w-4xl w-full shadow-2xl my-4 sm:my-8 max-h-[95vh] flex flex-col">
                 {/* Header */}
-                <div className="relative px-6 py-5 border-b border-white/5" style={{ background: 'linear-gradient(135deg,#020810 0%,#071408 50%,#1a0d05 100%)' }}>
+                <div className="relative px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 shrink-0" style={{ background: 'linear-gradient(135deg,#020810 0%,#071408 50%,#1a0d05 100%)' }}>
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-[#007fc3]/20 border border-[#007fc3]/30 flex items-center justify-center">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#007fc3]/20 border border-[#007fc3]/30 flex items-center justify-center">
                                 <svg className="w-5 h-5 text-[#007fc3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-white tracking-wide">API Usage Statistics</h3>
-                                <p className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">ULTRA Admin Panel</p>
+                                <h3 className="text-sm sm:text-lg font-black text-white tracking-wide">API Usage Statistics</h3>
+                                <p className="text-[9px] sm:text-[10px] text-slate-500 font-mono uppercase tracking-wider hidden sm:block">ULTRA Admin Panel</p>
                             </div>
                         </div>
                         <button onClick={onClose} className="p-2 text-slate-500 hover:text-white transition-colors">
@@ -625,7 +657,7 @@ function StatisticsModal({ onClose, showToast }) {
                 </div>
 
                 {/* Body */}
-                <div className="p-6 max-h-[70vh] overflow-y-auto">
+                <div className="p-3 sm:p-6 overflow-y-auto flex-1">
                     {loading ? (
                         <div className="py-12 text-center">
                             <div className="inline-block w-8 h-8 border-2 border-[#007fc3]/30 border-t-[#007fc3] rounded-full animate-spin" />
@@ -634,57 +666,78 @@ function StatisticsModal({ onClose, showToast }) {
                     ) : stats ? (
                         <div className="space-y-6">
                             {/* Overview Stats */}
-                            <div className="grid grid-cols-4 gap-3">
-                                <div className="bg-[#f36222]/5 border border-[#f36222]/20 rounded-xl p-4">
-                                    <p className="text-[9px] font-black uppercase tracking-wider text-[#f36222]/60 mb-1">Total Users</p>
-                                    <p className="text-2xl font-black text-[#f36222]">{stats.totalUsers}</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                                <div className="bg-[#f36222]/5 border border-[#f36222]/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#f36222]/60 mb-1">Total Users</p>
+                                    <p className="text-xl sm:text-2xl font-black text-[#f36222]">{stats.totalUsers}</p>
                                 </div>
-                                <div className="bg-[#5cb644]/5 border border-[#5cb644]/20 rounded-xl p-4">
-                                    <p className="text-[9px] font-black uppercase tracking-wider text-[#5cb644]/60 mb-1">Total Keys</p>
-                                    <p className="text-2xl font-black text-[#5cb644]">{stats.totalKeys}</p>
+                                <div className="bg-[#5cb644]/5 border border-[#5cb644]/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]/60 mb-1">Total Keys</p>
+                                    <p className="text-xl sm:text-2xl font-black text-[#5cb644]">{stats.totalKeys}</p>
                                 </div>
-                                <div className="bg-[#007fc3]/5 border border-[#007fc3]/20 rounded-xl p-4">
-                                    <p className="text-[9px] font-black uppercase tracking-wider text-[#007fc3]/60 mb-1">Total Requests</p>
-                                    <p className="text-2xl font-black text-[#007fc3]">{stats.totalRequests}</p>
+                                <div className="bg-[#007fc3]/5 border border-[#007fc3]/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#007fc3]/60 mb-1">Total Requests</p>
+                                    <p className="text-xl sm:text-2xl font-black text-[#007fc3]">{stats.totalRequests}</p>
                                 </div>
-                                <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4">
-                                    <p className="text-[9px] font-black uppercase tracking-wider text-purple-500/60 mb-1">My Requests</p>
-                                    <p className="text-2xl font-black text-purple-500">{stats.myRequests}</p>
+                                <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-purple-500/60 mb-1">My Requests</p>
+                                    <p className="text-xl sm:text-2xl font-black text-purple-500">{stats.myRequests}</p>
+                                </div>
+                            </div>
+
+                            {/* Token Stats */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                                <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-500/60 mb-1">Total Tokens</p>
+                                    <p className="text-lg sm:text-xl font-black text-amber-500">{stats.totalTokens.toLocaleString()}</p>
+                                </div>
+                                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-emerald-500/60 mb-1">Prompt Tokens</p>
+                                    <p className="text-lg sm:text-xl font-black text-emerald-500">{stats.totalPromptTokens.toLocaleString()}</p>
+                                </div>
+                                <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-cyan-500/60 mb-1">Completion Tokens</p>
+                                    <p className="text-lg sm:text-xl font-black text-cyan-500">{stats.totalCompletionTokens.toLocaleString()}</p>
+                                </div>
+                                <div className="bg-pink-500/5 border border-pink-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-pink-500/60 mb-1">My Tokens</p>
+                                    <p className="text-lg sm:text-xl font-black text-pink-500">{stats.myTokens.toLocaleString()}</p>
                                 </div>
                             </div>
 
                             {/* User Usage Breakdown */}
                             <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <h4 className="text-xs font-black uppercase tracking-wider text-[#5cb644]">Usage by User</h4>
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#5cb644]">Usage by User</h4>
                                     <button
                                         onClick={handleClearUsage}
                                         disabled={clearing}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all disabled:opacity-50"
+                                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-all disabled:opacity-50"
                                     >
-                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
-                                        {clearing ? 'Clearing...' : 'Clear All Usage'}
+                                        {clearing ? 'Clearing...' : 'Clear All'}
                                     </button>
                                 </div>
-                                <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl overflow-hidden">
-                                    <table className="w-full text-left border-collapse">
+                                <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
+                                    <table className="w-full text-left border-collapse min-w-[500px]">
                                         <thead>
                                             <tr className="bg-white/5 border-b border-white/5">
-                                                <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">User</th>
-                                                <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Email</th>
-                                                <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Role</th>
-                                                <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Keys</th>
-                                                <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Requests</th>
+                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">User</th>
+                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Email</th>
+                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Role</th>
+                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Keys</th>
+                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Requests</th>
+                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Tokens</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
                                             {stats.userBreakdown.map((user) => (
                                                 <tr key={user.userId} className="hover:bg-white/2 transition-colors">
-                                                    <td className="px-4 py-3 text-sm text-white font-bold">{user.name || 'Unknown'}</td>
-                                                    <td className="px-4 py-3 text-xs text-slate-400 font-mono">{user.email}</td>
-                                                    <td className="px-4 py-3">
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-white font-bold">{user.name || 'Unknown'}</td>
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-slate-400 font-mono">{user.email}</td>
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3">
                                                         <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
                                                             user.role === 'ULTRA' ? 'bg-purple-500/10 text-purple-500' :
                                                             user.role === 'PRO' ? 'bg-blue-500/10 text-blue-500' :
@@ -694,8 +747,9 @@ function StatisticsModal({ onClose, showToast }) {
                                                             {user.role}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-3 text-right font-mono text-sm text-[#5cb644]">{user.keyCount}</td>
-                                                    <td className="px-4 py-3 text-right font-mono text-sm text-[#007fc3] font-bold">{user.requestCount}</td>
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#5cb644]">{user.keyCount}</td>
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#007fc3] font-bold">{user.requestCount}</td>
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-amber-500 font-bold">{user.totalTokens.toLocaleString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -705,33 +759,34 @@ function StatisticsModal({ onClose, showToast }) {
 
                             {/* My Full Usage History */}
                             <div>
-                                <h4 className="text-xs font-black uppercase tracking-wider text-[#f36222] mb-3">My Complete Usage History</h4>
+                                <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#f36222] mb-3">My Complete Usage History</h4>
                                 {stats.myHistory.length === 0 ? (
                                     <div className="bg-[#0a0f1a]/40 border border-white/5 rounded-xl py-8 text-center">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">No usage history</p>
                                     </div>
                                 ) : (
-                                    <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl overflow-hidden max-h-96 overflow-y-auto">
-                                        <table className="w-full text-left border-collapse">
-                                            <thead className="sticky top-0 bg-[#0a0f1a]">
-                                                <tr className="bg-white/5 border-b border-white/5">
-                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Time</th>
-                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Key</th>
-                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Method</th>
-                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Endpoint</th>
-                                                    <th className="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Status</th>
+                                    <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
+                                        <div className="max-h-64 sm:max-h-96 overflow-y-auto">
+                                            <table className="w-full text-left border-collapse min-w-[600px]">
+                                                <thead className="sticky top-0 bg-[#0a0f1a] z-10">
+                                                    <tr className="bg-white/5 border-b border-white/5">
+                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Time</th>
+                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Key</th>
+                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Method</th>
+                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Endpoint</th>
+                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Status</th>
                                                 </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-white/5">
-                                                {stats.myHistory.map((hit) => (
-                                                    <tr key={hit.id} className="hover:bg-white/2 transition-colors">
-                                                        <td className="px-4 py-3 font-mono text-[10px] text-slate-400">
-                                                            {new Date(hit.createdAt).toLocaleString()}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-[10px] text-white font-bold">
-                                                            {hit.apiKey?.name || 'Deleted'}
-                                                        </td>
-                                                        <td className="px-4 py-3">
+                                                </thead>
+                                                <tbody className="divide-y divide-white/5">
+                                                    {stats.myHistory.map((hit) => (
+                                                        <tr key={hit.id} className="hover:bg-white/2 transition-colors">
+                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 font-mono text-[9px] sm:text-[10px] text-slate-400 whitespace-nowrap">
+                                                                {new Date(hit.createdAt).toLocaleString()}
+                                                            </td>
+                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-[9px] sm:text-[10px] text-white font-bold">
+                                                                {hit.apiKey?.name || 'Deleted'}
+                                                            </td>
+                                                            <td className="px-3 sm:px-4 py-2 sm:py-3">
                                                             <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
                                                                 hit.method === 'POST' ? 'bg-amber-500/10 text-amber-500' : 
                                                                 hit.method === 'GET' ? 'bg-emerald-500/10 text-emerald-500' : 
@@ -739,20 +794,21 @@ function StatisticsModal({ onClose, showToast }) {
                                                             }`}>
                                                                 {hit.method}
                                                             </span>
-                                                        </td>
-                                                        <td className="px-4 py-3 font-mono text-[10px] text-slate-500">{hit.endpoint}</td>
-                                                        <td className="px-4 py-3 text-right">
+                                                            </td>
+                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 font-mono text-[9px] sm:text-[10px] text-slate-500">{hit.endpoint}</td>
+                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-right">
                                                             <span className={`font-mono text-[10px] font-bold ${
                                                                 hit.status >= 200 && hit.status < 300 ? 'text-[#5cb644]' : 
                                                                 hit.status >= 400 ? 'text-red-500' : 'text-slate-400'
                                                             }`}>
                                                                 {hit.status}
                                                             </span>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -765,7 +821,7 @@ function StatisticsModal({ onClose, showToast }) {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-white/5 flex justify-end">
+                <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/5 flex justify-end shrink-0">
                     <button
                         onClick={onClose}
                         className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"

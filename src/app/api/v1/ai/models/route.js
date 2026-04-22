@@ -2,6 +2,22 @@ import { NextResponse } from 'next/server';
 import { trackApiHit } from '@/lib/monitoring';
 import prisma from '@/lib/db';
 
+// CORS headers for cross-origin requests
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
+};
+
+// Handle OPTIONS preflight request
+export async function OPTIONS(req) {
+    return NextResponse.json({}, { 
+        status: 200,
+        headers: corsHeaders
+    });
+}
+
 export async function GET(req) {
     // 1. Track hit in global stats (no auth required)
     trackApiHit(req, '/api/v1/ai/models');
@@ -47,7 +63,7 @@ export async function GET(req) {
         return NextResponse.json({
             object: "list",
             data: formattedModels
-        });
+        }, { headers: corsHeaders });
 
     } catch (error) {
         console.error('Models List Error:', error);
@@ -57,6 +73,6 @@ export async function GET(req) {
                 type: 'server_error', 
                 code: 500 
             } 
-        }, { status: 500 });
+        }, { status: 500, headers: corsHeaders });
     }
 }

@@ -385,15 +385,20 @@ model ApiKey {
 }
 
 model ApiKeyUsage {
-  id        String   @id @default(uuid())
-  apiKeyId  String   @map("api_key_id")
-  endpoint  String
-  method    String
-  status    Int
-  createdAt DateTime @default(now()) @map("created_at")
-  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  id               String   @id @default(uuid())
+  apiKeyId         String   @map("api_key_id")
+  endpoint         String
+  method           String
+  status           Int
+  model            String?
+  promptTokens     Int?     @default(0) @map("prompt_tokens")
+  completionTokens Int?     @default(0) @map("completion_tokens")
+  totalTokens      Int?     @default(0) @map("total_tokens")
+  createdAt        DateTime @default(now()) @map("created_at")
+  apiKey           ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
 
   @@index([apiKeyId])
+  @@index([model])
   @@map("api_key_usages")
 }
 

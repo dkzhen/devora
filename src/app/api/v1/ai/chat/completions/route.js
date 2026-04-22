@@ -5,6 +5,22 @@ import prisma from '@/lib/db';
 import { getProxyConfig } from '@/constants/ai-proxy.constants';
 import modelCache from '@/lib/model-cache';
 
+// CORS headers for cross-origin requests (OpenClaw, etc)
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept, User-Agent',
+    'Access-Control-Max-Age': '86400',
+};
+
+// Handle OPTIONS preflight request
+export async function OPTIONS(req) {
+    return NextResponse.json({}, { 
+        status: 200,
+        headers: corsHeaders
+    });
+}
+
 export async function POST(req) {
     // 1. Verify API Key (OpenAI Header style: Authorization: Bearer devora_...)
 
@@ -16,7 +32,7 @@ export async function POST(req) {
                 type: 'invalid_request_error', 
                 code: 'invalid_api_key' 
             } 
-        }, { status: 401 });
+        }, { status: 401, headers: corsHeaders });
     }
 
     // 2. Track hit in global stats (Devora Statistics)
@@ -34,7 +50,7 @@ export async function POST(req) {
                     type: 'invalid_request_error', 
                     code: 400 
                 } 
-            }, { status: 400 });
+            }, { status: 400, headers: corsHeaders });
         }
 
         // 3. Enforcement Logic: Check model status and whitelist in our Database
@@ -63,7 +79,7 @@ export async function POST(req) {
                     type: 'invalid_request_error', 
                     code: 'model_not_found' 
                 } 
-            }, { status: 404 });
+            }, { status: 404, headers: corsHeaders });
         }
 
         // Default settings if not found in DB (for ULTRA users)
@@ -84,7 +100,7 @@ export async function POST(req) {
                     type: 'access_denied', 
                     code: 403 
                 } 
-            }, { status: 403 });
+            }, { status: 403, headers: corsHeaders });
         }
 
         // 3c. Check for Email-based Restriction (Whitelist) (ULTRA bypass enabled)
@@ -96,7 +112,7 @@ export async function POST(req) {
                     type: 'access_denied', 
                     code: 403 
                 } 
-            }, { status: 403 });
+            }, { status: 403, headers: corsHeaders });
         }
 
         // 3d. Check for Email-prefixed ID (Private Models) (ULTRA bypass enabled)
@@ -111,7 +127,7 @@ export async function POST(req) {
                         type: 'access_denied', 
                         code: 403 
                     } 
-                }, { status: 403 });
+                }, { status: 403, headers: corsHeaders });
             }
         }
 
@@ -127,6 +143,26 @@ export async function POST(req) {
         const hasV1 = cleanBaseUrl.includes('/v1');
         const endpoint = hasV1 ? `${cleanBaseUrl}/chat/completions` : `${cleanBaseUrl}/v1/chat/completions`;
         
+        // Sanitize request body - only send valid OpenAI API fields
+        const sanitizedBody = {
+            model: body.model,
+            messages: body.messages,
+            ...(body.temperature !== undefined && { temperature: body.temperature }),
+            ...(body.top_p !== undefined && { top_p: body.top_p }),
+            ...(body.n !== undefined && { n: body.n }),
+            ...(body.stream !== undefined && { stream: body.stream }),
+            ...(body.stop !== undefined && { stop: body.stop }),
+            ...(body.max_tokens !== undefined && { max_tokens: body.max_tokens }),
+            ...(body.presence_penalty !== undefined && { presence_penalty: body.presence_penalty }),
+            ...(body.frequency_penalty !== undefined && { frequency_penalty: body.frequency_penalty }),
+            ...(body.logit_bias !== undefined && { logit_bias: body.logit_bias }),
+            ...(body.user !== undefined && { user: body.user }),
+            ...(body.response_format !== undefined && { response_format: body.response_format }),
+            ...(body.seed !== undefined && { seed: body.seed }),
+            ...(body.tools !== undefined && { tools: body.tools }),
+            ...(body.tool_choice !== undefined && { tool_choice: body.tool_choice }),
+        };
+        
         // Add timeout to prevent hanging requests (60 seconds)
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -139,7 +175,7 @@ export async function POST(req) {
                     'Authorization': `Bearer ${proxyConfig.token}`,
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify(body),
+                body: JSON.stringify(sanitizedBody),
                 signal: controller.signal
             });
         } catch (fetchError) {
@@ -152,7 +188,7 @@ export async function POST(req) {
                         type: 'timeout_error', 
                         code: 504
                     } 
-                }, { status: 504 });
+                }, { status: 504, headers: corsHeaders });
             }
             throw fetchError;
         } finally {
@@ -183,6 +219,7 @@ export async function POST(req) {
                     'Content-Type': 'text/event-stream',
                     'Cache-Control': 'no-cache',
                     'Connection': 'keep-alive',
+                    ...corsHeaders
                 }
             });
         }
@@ -232,7 +269,7 @@ export async function POST(req) {
                     type: isRateLimit ? 'rate_limit_error' : 'upstream_error', 
                     code: finalStatus
                 } 
-            }, { status: finalStatus });
+            }, { status: finalStatus, headers: corsHeaders });
         }
 
         const data = await upstreamRes.json().catch(() => ({ 
@@ -242,8 +279,41 @@ export async function POST(req) {
             }
         }));
         
-        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200);
-        return NextResponse.json(data);
+        // Extract token usage from response
+        let tokens = null;
+        if (data && data.usage) {
+            tokens = {
+                prompt: data.usage.prompt_tokens || 0,
+                completion: data.usage.completion_tokens || 0,
+                total: data.usage.total_tokens || 0
+            };
+        }
+        
+        // Sanitize response to ensure OpenAI compatibility
+        if (data && !data.error) {
+            // Ensure id is a string (some providers return number or null)
+            if (data.id !== undefined && data.id !== null && typeof data.id !== 'string') {
+                data.id = String(data.id);
+            }
+            
+            // Ensure model is a string
+            if (data.model !== undefined && data.model !== null && typeof data.model !== 'string') {
+                data.model = String(data.model);
+            }
+            
+            // Ensure choices array exists and has proper structure
+            if (data.choices && Array.isArray(data.choices)) {
+                data.choices = data.choices.map(choice => ({
+                    ...choice,
+                    index: typeof choice.index === 'number' ? choice.index : 0,
+                    message: choice.message || choice.delta || {},
+                    finish_reason: choice.finish_reason || null
+                }));
+            }
+        }
+        
+        await recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 200, tokens, modelId);
+        return NextResponse.json(data, { headers: corsHeaders });
 
     } catch (error) {
         // Log actual error for debugging (server-side only)
@@ -257,6 +327,6 @@ export async function POST(req) {
                 type: 'server_error', 
                 code: 500 
             } 
-        }, { status: 500 });
+        }, { status: 500, headers: corsHeaders });
     }
 }
