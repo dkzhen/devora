@@ -590,6 +590,8 @@ function StatisticsModal({ onClose, showToast }) {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState(null);
     const [clearing, setClearing] = useState(false);
+    const [userPage, setUserPage] = useState(1);
+    const usersPerPage = 10;
 
     useEffect(() => {
         fetchStats();
@@ -632,8 +634,8 @@ function StatisticsModal({ onClose, showToast }) {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto">
-            <div className="bg-[#04080f]/95 border border-[#007fc3]/20 rounded-2xl max-w-4xl w-full shadow-2xl my-4 sm:my-8 max-h-[95vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto py-8">
+            <div className="bg-[#04080f]/95 border border-[#007fc3]/20 rounded-2xl max-w-4xl w-full shadow-2xl my-auto max-h-[90vh] sm:max-h-[85vh] flex flex-col">
                 {/* Header */}
                 <div className="relative px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 shrink-0" style={{ background: 'linear-gradient(135deg,#020810 0%,#071408 50%,#1a0d05 100%)' }}>
                     <div className="flex items-center justify-between">
@@ -716,7 +718,9 @@ function StatisticsModal({ onClose, showToast }) {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
-                                            {stats.userBreakdown.map((user) => (
+                                            {stats.userBreakdown
+                                                .slice((userPage - 1) * usersPerPage, userPage * usersPerPage)
+                                                .map((user) => (
                                                 <tr key={user.userId} className="hover:bg-white/2 transition-colors">
                                                     <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-white font-bold">{user.name || 'Unknown'}</td>
                                                     <td className="px-3 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-slate-400 font-mono">{user.email}</td>
@@ -737,6 +741,34 @@ function StatisticsModal({ onClose, showToast }) {
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                {/* User Pagination */}
+                                {stats.userBreakdown.length > usersPerPage && (
+                                    <div className="flex items-center justify-between mt-3 px-2">
+                                        <p className="text-[9px] sm:text-[10px] text-slate-500 font-mono">
+                                            Showing {((userPage - 1) * usersPerPage) + 1}-{Math.min(userPage * usersPerPage, stats.userBreakdown.length)} of {stats.userBreakdown.length}
+                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => setUserPage(p => Math.max(1, p - 1))}
+                                                disabled={userPage === 1}
+                                                className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all"
+                                            >
+                                                Prev
+                                            </button>
+                                            <span className="text-[9px] sm:text-[10px] font-mono text-slate-400">
+                                                {userPage}/{Math.ceil(stats.userBreakdown.length / usersPerPage)}
+                                            </span>
+                                            <button
+                                                onClick={() => setUserPage(p => Math.min(Math.ceil(stats.userBreakdown.length / usersPerPage), p + 1))}
+                                                disabled={userPage >= Math.ceil(stats.userBreakdown.length / usersPerPage)}
+                                                className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* My Full Usage History */}
