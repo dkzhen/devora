@@ -65,6 +65,14 @@ export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = n
     // Fire and forget - don't block the main request
     setImmediate(async () => {
         try {
+            // Get the userId from the apiKey
+            const apiKey = await prisma.apiKey.findUnique({
+                where: { id: apiKeyId },
+                select: { userId: true }
+            });
+            
+            if (!apiKey) return;
+            
             const data = {
                 apiKeyId,
                 endpoint,
@@ -84,7 +92,54 @@ export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = n
                 data.totalTokens = tokens.total || 0;
             }
             
+            // Create the usage record
             await prisma.apiKeyUsage.create({ data });
+            
+            // Update cumulative stats for the user
+            await prisma.userApiStats.upsert({
+                where: { userId: apiKey.userId },
+                create: {
+                    userId: apiKey.userId,
+                    totalRequests: 1
+                },
+                update: {
+                    totalRequests: { increment: 1 }
+                }
+            });
+            
+            // Enforce 50-record limit per user - delete oldest records if over limit
+            const userUsageCount = await prisma.apiKeyUsage.count({
+                where: {
+                    apiKey: {
+                        userId: apiKey.userId
+                    }
+                }
+            });
+            
+            if (userUsageCount > 50) {
+                // Get the oldest records to delete
+                const recordsToDelete = await prisma.apiKeyUsage.findMany({
+                    where: {
+                        apiKey: {
+                            userId: apiKey.userId
+                        }
+                    },
+                    orderBy: {
+                        createdAt: 'asc'
+                    },
+                    take: userUsageCount - 50,
+                    select: { id: true }
+                });
+                
+                // Delete the oldest records
+                await prisma.apiKeyUsage.deleteMany({
+                    where: {
+                        id: {
+                            in: recordsToDelete.map(r => r.id)
+                        }
+                    }
+                });
+            }
         } catch (err) {
             // Silently fail - don't spam logs
             // Usage tracking is non-critical

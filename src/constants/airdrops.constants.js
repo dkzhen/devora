@@ -39,6 +39,85 @@ export const TASK_CATEGORIES = {
   STAKING: 'staking',
 };
 
+// Task Type Options (for airdrop projects)
+export const TASK_TYPE = {
+  SOCIAL: 'Social',
+  TESTNET: 'Testnet',
+  MAINNET: 'Mainnet',
+  QUIZ: 'Quiz',
+  TRADING: 'Trading',
+  STAKING: 'Staking',
+  WAITLIST: 'Waitlist',
+  MIXED: 'Mixed',
+};
+
+export const TASK_TYPE_OPTIONS = [
+  { value: TASK_TYPE.SOCIAL, label: 'Social' },
+  { value: TASK_TYPE.TESTNET, label: 'Testnet' },
+  { value: TASK_TYPE.MAINNET, label: 'Mainnet' },
+  { value: TASK_TYPE.QUIZ, label: 'Quiz' },
+  { value: TASK_TYPE.TRADING, label: 'Trading' },
+  { value: TASK_TYPE.STAKING, label: 'Staking' },
+  { value: TASK_TYPE.WAITLIST, label: 'Waitlist' },
+  { value: TASK_TYPE.MIXED, label: 'Mixed' },
+];
+
+// Reward Type Options
+export const REWARD_TYPE = {
+  AIRDROP: 'Airdrop',
+  POINTS: 'Points',
+  WAITLIST: 'Waitlist',
+  NFT: 'NFT',
+  TOKEN: 'Token',
+  WHITELIST: 'Whitelist',
+  UNKNOWN: 'Unknown',
+};
+
+export const REWARD_TYPE_OPTIONS = [
+  { value: REWARD_TYPE.AIRDROP, label: 'Airdrop' },
+  { value: REWARD_TYPE.POINTS, label: 'Points' },
+  { value: REWARD_TYPE.WAITLIST, label: 'Waitlist' },
+  { value: REWARD_TYPE.NFT, label: 'NFT' },
+  { value: REWARD_TYPE.TOKEN, label: 'Token' },
+  { value: REWARD_TYPE.WHITELIST, label: 'Whitelist' },
+  { value: REWARD_TYPE.UNKNOWN, label: 'Unknown' },
+];
+
+// Project Type Options
+export const PROJECT_TYPE = {
+  DEFI: 'DeFi',
+  INFRA: 'Infra',
+  AI: 'AI',
+  GAMING: 'Gaming',
+  NFT: 'NFT',
+  SOCIAL: 'Social',
+  ZK: 'ZK',
+  LAYER1: 'Layer 1',
+  LAYER2: 'Layer 2',
+  BRIDGE: 'Bridge',
+  DEX: 'DEX',
+  LENDING: 'Lending',
+  WALLET: 'Wallet',
+  OTHER: 'Other',
+};
+
+export const PROJECT_TYPE_OPTIONS = [
+  { value: PROJECT_TYPE.DEFI, label: 'DeFi' },
+  { value: PROJECT_TYPE.INFRA, label: 'Infra' },
+  { value: PROJECT_TYPE.AI, label: 'AI' },
+  { value: PROJECT_TYPE.GAMING, label: 'Gaming' },
+  { value: PROJECT_TYPE.NFT, label: 'NFT' },
+  { value: PROJECT_TYPE.SOCIAL, label: 'Social' },
+  { value: PROJECT_TYPE.ZK, label: 'ZK' },
+  { value: PROJECT_TYPE.LAYER1, label: 'Layer 1' },
+  { value: PROJECT_TYPE.LAYER2, label: 'Layer 2' },
+  { value: PROJECT_TYPE.BRIDGE, label: 'Bridge' },
+  { value: PROJECT_TYPE.DEX, label: 'DEX' },
+  { value: PROJECT_TYPE.LENDING, label: 'Lending' },
+  { value: PROJECT_TYPE.WALLET, label: 'Wallet' },
+  { value: PROJECT_TYPE.OTHER, label: 'Other' },
+];
+
 // Currency Types
 export const CURRENCY_TYPES = {
   USD: '$',

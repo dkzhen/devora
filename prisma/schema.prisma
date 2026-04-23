@@ -87,6 +87,7 @@ model User {
   tempMailAccounts    TempMailAccount[]
   airdropTasks        UserAirdropTask[]
   naraWallets         NaraWallet[]
+  apiStats            UserApiStats?
 
   @@map("users")
 }
@@ -400,6 +401,17 @@ model ApiKeyUsage {
   @@index([apiKeyId])
   @@index([model])
   @@map("api_key_usages")
+}
+
+model UserApiStats {
+  id            String   @id @default(uuid())
+  userId        String   @unique @map("user_id")
+  totalRequests Int      @default(0) @map("total_requests")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_api_stats")
 }
 
 model LlmConsole {

@@ -142,20 +142,29 @@ export async function PUT(request) {
 
         if (!id) {
             recordApiKeyUsage(apiKeyId, '/api/v1/airdrops', 'PUT', 400);
-            return NextResponse.json({ error: 'Airdrop ID is required' }, { status: 400 });
+            return NextResponse.json({ 
+                error: 'Airdrop ID is required',
+                details: 'Please provide the "id" field in the request body'
+            }, { status: 400 });
         }
 
         const airdrop = await prisma.airdrop.findUnique({ where: { id } });
         
         if (!airdrop) {
             recordApiKeyUsage(apiKeyId, '/api/v1/airdrops', 'PUT', 404);
-            return NextResponse.json({ error: 'Airdrop not found' }, { status: 404 });
+            return NextResponse.json({ 
+                error: 'Airdrop not found',
+                details: `No airdrop found with ID: ${id}`
+            }, { status: 404 });
         }
 
         // Permission check: User must own the project or be ULTRA
         if (user.role !== 'ULTRA' && airdrop.userId !== user.id) {
             recordApiKeyUsage(apiKeyId, '/api/v1/airdrops', 'PUT', 403);
-            return NextResponse.json({ error: 'Unauthorized. You can only update your own projects.' }, { status: 403 });
+            return NextResponse.json({ 
+                error: 'Unauthorized',
+                details: 'You can only update your own projects.'
+            }, { status: 403 });
         }
 
         // Prepare update data
@@ -186,6 +195,16 @@ export async function PUT(request) {
             dataToUpdate.statusDate = new Date();
         }
 
+        // Check if there's actually data to update
+        if (Object.keys(dataToUpdate).length === 0) {
+            recordApiKeyUsage(apiKeyId, '/api/v1/airdrops', 'PUT', 400);
+            return NextResponse.json({ 
+                error: 'No valid fields to update',
+                details: 'Please provide at least one field to update',
+                allowedFields
+            }, { status: 400 });
+        }
+
         const updatedAirdrop = await prisma.airdrop.update({
             where: { id },
             data: dataToUpdate
@@ -195,8 +214,21 @@ export async function PUT(request) {
         return NextResponse.json(updatedAirdrop, { status: 200 });
     } catch (error) {
         console.error('API v1 Update Airdrop Error:', error);
+        console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            code: error.code,
+            meta: error.meta
+        });
+        
         recordApiKeyUsage(apiKeyId, '/api/v1/airdrops', 'PUT', 500);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        
+        // Return more detailed error for debugging
+        return NextResponse.json({ 
+            error: 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'An error occurred while updating the airdrop',
+            errorType: error.name
+        }, { status: 500 });
     }
 }
 

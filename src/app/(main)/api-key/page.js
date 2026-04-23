@@ -677,31 +677,11 @@ function StatisticsModal({ onClose, showToast }) {
                                 </div>
                                 <div className="bg-[#007fc3]/5 border border-[#007fc3]/20 rounded-xl p-3 sm:p-4">
                                     <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#007fc3]/60 mb-1">Total Requests</p>
-                                    <p className="text-xl sm:text-2xl font-black text-[#007fc3]">{stats.totalRequests}</p>
+                                    <p className="text-xl sm:text-2xl font-black text-[#007fc3]">{stats.totalRequests.toLocaleString()}</p>
                                 </div>
                                 <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-3 sm:p-4">
                                     <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-purple-500/60 mb-1">My Requests</p>
-                                    <p className="text-xl sm:text-2xl font-black text-purple-500">{stats.myRequests}</p>
-                                </div>
-                            </div>
-
-                            {/* Token Stats */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                                <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-500/60 mb-1">Total Tokens</p>
-                                    <p className="text-lg sm:text-xl font-black text-amber-500">{stats.totalTokens.toLocaleString()}</p>
-                                </div>
-                                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-emerald-500/60 mb-1">Prompt Tokens</p>
-                                    <p className="text-lg sm:text-xl font-black text-emerald-500">{stats.totalPromptTokens.toLocaleString()}</p>
-                                </div>
-                                <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-cyan-500/60 mb-1">Completion Tokens</p>
-                                    <p className="text-lg sm:text-xl font-black text-cyan-500">{stats.totalCompletionTokens.toLocaleString()}</p>
-                                </div>
-                                <div className="bg-pink-500/5 border border-pink-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-pink-500/60 mb-1">My Tokens</p>
-                                    <p className="text-lg sm:text-xl font-black text-pink-500">{stats.myTokens.toLocaleString()}</p>
+                                    <p className="text-xl sm:text-2xl font-black text-purple-500">{stats.myRequests.toLocaleString()}</p>
                                 </div>
                             </div>
 
@@ -729,7 +709,6 @@ function StatisticsModal({ onClose, showToast }) {
                                                 <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Role</th>
                                                 <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Keys</th>
                                                 <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Requests</th>
-                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Tokens</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
@@ -748,8 +727,7 @@ function StatisticsModal({ onClose, showToast }) {
                                                         </span>
                                                     </td>
                                                     <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#5cb644]">{user.keyCount}</td>
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#007fc3] font-bold">{user.requestCount}</td>
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-amber-500 font-bold">{user.totalTokens.toLocaleString()}</td>
+                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#007fc3] font-bold">{user.requestCount.toLocaleString()}</td>
                                                 </tr>
                                             ))}
                                         </tbody>

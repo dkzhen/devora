@@ -78,24 +78,24 @@ Create a new airdrop project in the system.
 
 #### Request Body
 
-| Field         | Type    | Description                                                          |
-| :------------ | :------ | :------------------------------------------------------------------- |
-| `name`        | String  | **Required**. Name of the project.                                   |
-| `icon`        | String  | URL to project icon/logo.                                            |
-| `description` | String  | Project description and instructions.                                |
-| `status`      | String  | Initial status (New, Potential, Confirmed, etc.). Defaults to `New`. |
-| `cost`        | String  | Estimated cost (e.g., "$0", "Rp. 50.000").                           |
-| `time`        | String  | Estimated time (e.g., "10 minutes").                                 |
-| `raise`       | String  | Total funding raised (e.g., "$11B").                                 |
-| `score`       | String  | Project score or rating.                                             |
-| `symbol`      | String  | Token symbol.                                                        |
-| `rewardDate`  | String  | Expected reward date.                                                |
-| `rewardType`  | String  | Type of reward (Airdrop, Points, etc.).                              |
-| `taskType`    | String  | Type of tasks involved.                                              |
-| `stage`       | String  | Project stage.                                                       |
-| `projectType` | String  | Category (e.g., "Infra", "DeFi").                                    |
-| `links`       | Array   | Objects containing `{ "name": "web", "url": "..." }`.                |
-| `isPublic`    | Boolean | Make project public (ULTRA users only).                              |
+| Field         | Type    | Description                                                             |
+| :------------ | :------ | :---------------------------------------------------------------------- |
+| `name`        | String  | **Required**. Name of the project.                                      |
+| `icon`        | String  | URL to project icon/logo.                                               |
+| `description` | String  | Project description and instructions.                                   |
+| `status`      | String  | Initial status. Defaults to `New`. See [Status Values](#status-values). |
+| `cost`        | String  | Estimated cost (e.g., "$0", "Rp. 50.000").                              |
+| `time`        | String  | Estimated time (e.g., "10 minutes").                                    |
+| `raise`       | String  | Total funding raised (e.g., "$11B").                                    |
+| `score`       | String  | Project score or rating.                                                |
+| `symbol`      | String  | Token symbol.                                                           |
+| `rewardDate`  | String  | Expected reward date.                                                   |
+| `rewardType`  | String  | Type of reward. See [Reward Type Values](#reward-type-values).          |
+| `taskType`    | String  | Type of tasks involved. See [Task Type Values](#task-type-values).      |
+| `stage`       | String  | Project stage.                                                          |
+| `projectType` | String  | Category. See [Project Type Values](#project-type-values).              |
+| `links`       | Array   | Objects containing `{ "name": "web", "url": "..." }`.                   |
+| `isPublic`    | Boolean | Make project public (ULTRA users only).                                 |
 
 #### Example cURL
 
@@ -374,9 +374,82 @@ curl -X DELETE "https://devora.my.id/api/v1/airdrops/project-id-here/tasks?taskI
 
 ## Error Codes
 
-| Status  | Message      | Description                                       |
-| :------ | :----------- | :------------------------------------------------ |
-| **401** | Unauthorized | Invalid or missing API Key.                       |
-| **403** | Forbidden    | You are trying to modify a project you don't own. |
-| **404** | Not Found    | The project ID provided does not exist.           |
-| **400** | Bad Request  | Missing required fields (e.g., name, title).      |
+| Status  | Message               | Description                                       |
+| :------ | :-------------------- | :------------------------------------------------ |
+| **401** | Unauthorized          | Invalid or missing API Key.                       |
+| **403** | Forbidden             | You are trying to modify a project you don't own. |
+| **404** | Not Found             | The project ID provided does not exist.           |
+| **400** | Bad Request           | Missing required fields (e.g., name, title).      |
+| **500** | Internal Server Error | Server-side error occurred.                       |
+
+---
+
+## Field Value References
+
+### Status Values
+
+Recommended values for the `status` field (you can use any string, but these are standardized):
+
+| Value                | Description                             |
+| :------------------- | :-------------------------------------- |
+| `New`                | Newly discovered project (default)      |
+| `Potential`          | Potential airdrop opportunity           |
+| `Confirmed`          | Confirmed airdrop                       |
+| `Verification Check` | Under verification or eligibility check |
+| `Ended`              | Airdrop has ended                       |
+
+> [!NOTE]
+> The `status` field accepts any string value. The values above are used by the Devora dashboard for consistency and filtering. You can use custom values like "Registered", "In Progress", etc., but they won't have predefined UI styling.
+
+### Task Type Values
+
+Recommended values for the `taskType` field (accepts any string):
+
+| Value      | Description                                 |
+| :--------- | :------------------------------------------ |
+| `Social`   | Social media tasks (Twitter, Discord, etc.) |
+| `Testnet`  | Testnet interaction tasks                   |
+| `Mainnet`  | Mainnet interaction tasks                   |
+| `Quiz`     | Quiz or knowledge-based tasks               |
+| `Trading`  | Trading or swap tasks                       |
+| `Staking`  | Staking or liquidity provision tasks        |
+| `Waitlist` | Waitlist registration only                  |
+| `Mixed`    | Multiple types of tasks                     |
+
+### Reward Type Values
+
+Recommended values for the `rewardType` field (accepts any string):
+
+| Value       | Description                          |
+| :---------- | :----------------------------------- |
+| `Airdrop`   | Token airdrop reward                 |
+| `Points`    | Points-based reward system           |
+| `Waitlist`  | Waitlist spot (no guaranteed reward) |
+| `NFT`       | NFT reward                           |
+| `Token`     | Direct token distribution            |
+| `Whitelist` | Whitelist access                     |
+| `Unknown`   | Reward type not yet determined       |
+
+### Project Type Values
+
+Recommended values for the `projectType` field (accepts any string):
+
+| Value     | Description                  |
+| :-------- | :--------------------------- |
+| `DeFi`    | Decentralized Finance        |
+| `Infra`   | Infrastructure / Protocol    |
+| `AI`      | Artificial Intelligence      |
+| `Gaming`  | Gaming / GameFi              |
+| `NFT`     | NFT Platform / Marketplace   |
+| `Social`  | Social Network / SocialFi    |
+| `ZK`      | Zero-Knowledge Technology    |
+| `Layer 1` | Layer 1 Blockchain           |
+| `Layer 2` | Layer 2 Scaling Solution     |
+| `Bridge`  | Cross-chain Bridge           |
+| `DEX`     | Decentralized Exchange       |
+| `Lending` | Lending / Borrowing Protocol |
+| `Wallet`  | Wallet / Account Abstraction |
+| `Other`   | Other categories             |
+
+> [!TIP]
+> You can use any string value for these fields, but using the standardized values above ensures consistency and better filtering capabilities.

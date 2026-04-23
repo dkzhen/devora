@@ -7,10 +7,6 @@ import AirdropStatisticsCard from '@/components/AirdropStatisticsCard';
 import TempMailStatisticsCard from '@/components/TempMailStatisticsCard';
 import TempMailActivityCard from '@/components/TempMailActivityCard';
 import TempMailProviderChart from '@/components/TempMailProviderChart';
-import TokenUsageCard from '@/components/TokenUsageCard';
-import AiTokenUsageCard from '@/components/AiTokenUsageCard';
-import GmailActivityCard from '@/components/GmailActivityCard';
-import DriveInsightsCard from '@/components/DriveInsightsCard';
 import AppLibraryStatsCard from '@/components/AppLibraryStatsCard';
 import AppStorageCard from '@/components/AppStorageCard';
 import MostUpdatedAppsCard from '@/components/MostUpdatedAppsCard';
@@ -31,7 +27,6 @@ export default function Dashboard() {
     const [stats, setStats] = useState(null);
     const [appLibraryStats, setAppLibraryStats] = useState(null);
     const [allAirdrops, setAllAirdrops] = useState([]);
-    const [aiTokenStats, setAiTokenStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const kpiColor = getKPICardColor();
@@ -40,11 +35,10 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const [monitoringRes, appLibraryRes, airdropsRes, aiTokenRes] = await Promise.all([
+                const [monitoringRes, appLibraryRes, airdropsRes] = await Promise.all([
                     fetch(API_ENDPOINTS.MONITORING),
                     fetch(API_ENDPOINTS.APP_STATISTICS),
-                    fetch('/api/airdrops'),
-                    fetch('/api/dashboard/token-stats')
+                    fetch('/api/airdrops')
                 ]);
 
                 if (monitoringRes.ok) {
@@ -62,11 +56,6 @@ export default function Dashboard() {
                 if (airdropsRes.ok) {
                     const airdropsData = await airdropsRes.json();
                     setAllAirdrops(airdropsData);
-                }
-
-                if (aiTokenRes.ok) {
-                    const tokenData = await aiTokenRes.json();
-                    setAiTokenStats(tokenData);
                 }
             } catch (error) {
                 console.error('Failed to fetch stats', error);
@@ -134,25 +123,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Row 3 — AI Token Usage Section */}
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1 h-6 bg-gradient-to-b from-amber-500 via-amber-600 to-yellow-600 rounded-full" />
-                            <h2 className="text-sm font-bold text-white uppercase tracking-wide">
-                                AI Token Usage
-                            </h2>
-                        </div>
-                        <AiTokenUsageCard data={aiTokenStats || {}} />
-                    </div>
-
-                    {/* Row 4 — Feature Preview Sections */}
-                    <div className={GRID_LAYOUTS.FEATURE_PREVIEW}>
-                        <TokenUsageCard data={stats?.tokenUsage || []} color={featureColor} />
-                        <GmailActivityCard data={stats?.gmailActivity || []} color={featureColor} />
-                        <DriveInsightsCard data={stats?.driveInsights} />
-                    </div>
-
-                    {/* Row 4 — Airdrop Projects Section */}
+                    {/* Row 3 — Airdrop Projects Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <div className="w-1 h-6 bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700 rounded-full" />
@@ -166,7 +137,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Row 5 — App Library Statistics */}
+                    {/* Row 4 — App Library Statistics */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <div className={`w-1 h-6 bg-gradient-to-b ${DASHBOARD_SECTIONS.APP_LIBRARY.gradient} rounded-full`} />

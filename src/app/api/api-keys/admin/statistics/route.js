@@ -26,49 +26,19 @@ export async function GET(request) {
         // Get total API keys
         const totalKeys = await prisma.apiKey.count();
 
-        // Get total requests and tokens
-        const totalRequests = await prisma.apiKeyUsage.count();
-        
-        let totalTokenStats = { _sum: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
-        let myTokenStats = { _sum: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
-        
-        try {
-            totalTokenStats = await prisma.apiKeyUsage.aggregate({
-                _sum: {
-                    promptTokens: true,
-                    completionTokens: true,
-                    totalTokens: true
-                }
-            });
-        } catch (tokenError) {
-            console.warn('Token fields not available yet:', tokenError.message);
-        }
-
-        // Get current user's requests and tokens
-        const myRequests = await prisma.apiKeyUsage.count({
-            where: {
-                apiKey: {
-                    userId: auth.user.id
-                }
+        // Get total requests from cumulative stats
+        const totalStatsAgg = await prisma.userApiStats.aggregate({
+            _sum: {
+                totalRequests: true
             }
         });
-        
-        try {
-            myTokenStats = await prisma.apiKeyUsage.aggregate({
-                where: {
-                    apiKey: {
-                        userId: auth.user.id
-                    }
-                },
-                _sum: {
-                    promptTokens: true,
-                    completionTokens: true,
-                    totalTokens: true
-                }
-            });
-        } catch (tokenError) {
-            console.warn('Token fields not available for user:', tokenError.message);
-        }
+        const totalRequests = totalStatsAgg._sum.totalRequests || 0;
+
+        // Get current user's cumulative requests
+        const myStats = await prisma.userApiStats.findUnique({
+            where: { userId: auth.user.id }
+        });
+        const myRequests = myStats?.totalRequests || 0;
 
         // Get usage breakdown by user
         const users = await prisma.user.findMany({
@@ -95,43 +65,31 @@ export async function GET(request) {
             }
         });
 
-        // Get token stats for each user
-        const userTokenStats = await Promise.all(users.map(async (user) => {
-            let tokens = { _sum: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } };
-            
-            try {
-                tokens = await prisma.apiKeyUsage.aggregate({
-                    where: {
-                        apiKey: {
-                            userId: user.id
-                        }
-                    },
-                    _sum: {
-                        promptTokens: true,
-                        completionTokens: true,
-                        totalTokens: true
-                    }
-                });
-            } catch (tokenError) {
-                // Token fields not available, use defaults
+        // Get cumulative stats for each user
+        const userStatsMap = await prisma.userApiStats.findMany({
+            where: {
+                userId: {
+                    in: users.map(u => u.id)
+                }
             }
-            
-            return {
-                userId: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                keyCount: user.apiKeys.length,
-                requestCount: user.apiKeys.reduce((sum, key) => sum + key._count.usages, 0),
-                totalTokens: tokens._sum.totalTokens || 0,
-                promptTokens: tokens._sum.promptTokens || 0,
-                completionTokens: tokens._sum.completionTokens || 0
-            };
+        });
+        
+        const statsLookup = Object.fromEntries(
+            userStatsMap.map(s => [s.userId, s.totalRequests])
+        );
+        
+        const userTokenStats = users.map(user => ({
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            keyCount: user.apiKeys.length,
+            requestCount: statsLookup[user.id] || 0
         }));
         
         const userBreakdown = userTokenStats.sort((a, b) => b.requestCount - a.requestCount);
 
-        // Get current user's complete usage history
+        // Get current user's complete usage history (limited to 50 records)
         const myHistory = await prisma.apiKeyUsage.findMany({
             where: {
                 apiKey: {
@@ -147,7 +105,8 @@ export async function GET(request) {
             },
             orderBy: {
                 createdAt: 'desc'
-            }
+            },
+            take: 50
         });
 
         return NextResponse.json({
@@ -155,12 +114,6 @@ export async function GET(request) {
             totalKeys,
             totalRequests,
             myRequests,
-            totalTokens: totalTokenStats._sum.totalTokens || 0,
-            totalPromptTokens: totalTokenStats._sum.promptTokens || 0,
-            totalCompletionTokens: totalTokenStats._sum.completionTokens || 0,
-            myTokens: myTokenStats._sum.totalTokens || 0,
-            myPromptTokens: myTokenStats._sum.promptTokens || 0,
-            myCompletionTokens: myTokenStats._sum.completionTokens || 0,
             userBreakdown,
             myHistory
         });
