@@ -46,7 +46,7 @@ export async function POST(request, { params }) {
         }
 
         // Upsert task progress
-        const progress = await prisma.taskProgress.upsert({
+        const progress = await prisma.userAirdropTask.upsert({
             where: {
                 userId_taskId: {
                     userId: user.id,
@@ -113,7 +113,7 @@ export async function GET(request, { params }) {
         }
 
         // Get task progress
-        const progress = await prisma.taskProgress.findUnique({
+        const progress = await prisma.userAirdropTask.findUnique({
             where: {
                 userId_taskId: {
                     userId: user.id,
