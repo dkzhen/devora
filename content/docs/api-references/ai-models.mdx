@@ -4,17 +4,66 @@ description: OpenAI-compatible reverse proxy for multiple AI models.
 icon: Bot
 ---
 
-Devora provides an OpenAI-compatible reverse proxy that allows you to access multiple AI models from different providers (OpenAI, Gemini, Groq, etc.) through a single unified endpoint.
+Devora provides an **OpenAI-compatible reverse proxy** that lets you access multiple AI models from different providers through a single unified endpoint.
+
+---
+
+## How It Works
+
+When you send a chat request, Devora acts as a proxy between you and the upstream AI provider:
+
+```
+┌─────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  You    │────▶│  Devora Proxy    │────▶│  AI Provider    │
+│ (Client)│     │  /api/v1/ai      │     │  (OpenAI, etc.) │
+└─────────┘     └──────────────────┘     └─────────────────┘
+```
+
+Devora handles authentication, model validation, routing, and streaming — you just use the standard OpenAI API format.
+
+---
+
+## Getting Started
+
+### 1. Get an API Key
+
+Before using the LLM API, you need a Devora API key:
+
+- **Dashboard**: Go to [API Key Management](/api-key) to create or copy your key.
+- **Docs**: See the [API Keys documentation](../api-keys) for how to create, revoke, and manage keys.
+
+Your API key must be included in every request as a Bearer token:
+
+```http
+Authorization: Bearer devora_your_api_key
+```
+
+### 2. Choose a Model
+
+Models are managed inside Devora by administrators. The list below is **auto-fetched live** from our database — if an admin adds a new model, it appears here automatically.
+
+<ModelTable />
+
+> **Where do models come from?**  
+> Admins add models via the [AI Providers dashboard](/ai-providers). Each model has an ID, name, provider (`owned_by`), and optional routing config (`baseUrl`). The table above pulls directly from [`/api/v1/ai/models`](/api/v1/ai/models).
+
+### 3. Send a Request
+
+Use the base URL below with any OpenAI-compatible client or SDK.
+
+---
 
 ## Base Configuration
 
-To use Devora AI models with any OpenAI-compatible client, use the following configuration:
-
-- **Base URL**: `https://devora.my.id/api/v1/ai`
-- **Endpoint**: `/chat/completions`
+| Setting             | Value                            |
+| :------------------ | :------------------------------- |
+| **Base URL**        | `https://devora.my.id/api/v1/ai` |
+| **Chat Endpoint**   | `/chat/completions`              |
+| **Models Endpoint** | `/models`                        |
+| **Auth Header**     | `Authorization: Bearer <token>`  |
 
 > [!TIP]
-> When using the OpenAI SDK, set the `base_url` to `https://devora.my.id/api/v1/ai`. The SDK will automatically append `/chat/completions` to your requests.
+> When using the OpenAI SDK, set `base_url` to `https://devora.my.id/api/v1/ai`. The SDK automatically appends `/chat/completions`.
 
 ---
 
@@ -26,26 +75,73 @@ All requests require an API Key in the `Authorization` header:
 Authorization: Bearer devora_your_api_key
 ```
 
+If your key is missing, expired, or invalid, the API returns:
+
+```json
+{
+  "error": {
+    "message": "Invalid API Key",
+    "type": "invalid_request_error",
+    "code": "invalid_api_key"
+  }
+}
+```
+
 ---
 
 ## Model Identifiers
 
-You can use any model ID listed in the [AI Providers Dashboard](/ai-providers). 
+Use the exact `id` from the table above (for example, `gpt-4o`, `gemini-1.5-pro`, etc.) as the `model` parameter in your request body.
 
 ### Private Models
-Models with an email prefix (e.g., `user@example.com/gpt-4o`) are **private**. They are only accessible by:
+
+Models with an email prefix (for example, `user@example.com/gpt-4o`) are **private**. They are only accessible by:
+
 - The owner of that email address.
 - Users with the **ULTRA** role.
 
 ### Model Statuses
+
 Models can be in different states which affect their availability:
 
-| Status | Behavior | Visibility |
-| :--- | :--- | :--- |
-| **ACTIVE** | Full access to all authorized users. | Public |
-| **SUSPENDED** | Returns `403 Forbidden`. Temporarily disabled. | Public |
-| **RESTRICTED** | Only accessible by whitelisted emails. | Public |
-| **HIDDEN** | Returns `403 Forbidden`. Only visible to Admins. | Internal |
+| Status         | Behavior                                         | Visibility |
+| :------------- | :----------------------------------------------- | :--------- |
+| **ACTIVE**     | Full access to all authorized users.             | Public     |
+| **SUSPENDED**  | Returns `403 Forbidden`. Temporarily disabled.   | Public     |
+| **RESTRICTED** | Only accessible by whitelisted emails.           | Public     |
+| **HIDDEN**     | Returns `403 Forbidden`. Only visible to Admins. | Internal   |
+
+---
+
+## Request Format
+
+The chat endpoint accepts a standard OpenAI-compatible JSON body:
+
+```json
+{
+  "model": "gpt-4o",
+  "messages": [
+    { "role": "system", "content": "You are a helpful assistant." },
+    { "role": "user", "content": "Hello!" }
+  ],
+  "stream": false,
+  "temperature": 0.7,
+  "max_tokens": 2048
+}
+```
+
+### Supported Parameters
+
+| Parameter           | Type      | Description                                                  |
+| :------------------ | :-------- | :----------------------------------------------------------- |
+| `model`             | `string`  | **Required.** Model ID from the list above.                  |
+| `messages`          | `array`   | **Required.** Conversation messages (`role`, `content`).     |
+| `stream`            | `boolean` | Optional. Set `true` for Server-Sent Events (SSE) streaming. |
+| `temperature`       | `number`  | Optional. Sampling temperature (0–2).                        |
+| `max_tokens`        | `integer` | Optional. Maximum tokens to generate.                        |
+| `top_p`             | `number`  | Optional. Nucleus sampling.                                  |
+| `presence_penalty`  | `number`  | Optional. Penalty for new topics.                            |
+| `frequency_penalty` | `number`  | Optional. Penalty for repetition.                            |
 
 ---
 
@@ -83,3 +179,79 @@ curl https://devora.my.id/api/v1/ai/chat/completions \
     "stream": false
   }'
 ```
+
+### JavaScript / TypeScript
+
+```typescript
+const res = await fetch("https://devora.my.id/api/v1/ai/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer devora_your_api_key",
+  },
+  body: JSON.stringify({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: "Hello!" }],
+    stream: false,
+  }),
+});
+
+const data = await res.json();
+console.log(data.choices[0].message.content);
+```
+
+---
+
+## Streaming Responses
+
+Set `stream: true` to receive tokens in real-time via Server-Sent Events (SSE). This is ideal for chat interfaces.
+
+**Headers returned:**
+
+```
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+```
+
+---
+
+## Error Handling
+
+Devora returns standard HTTP status codes and OpenAI-compatible error objects:
+
+| Status | Meaning         | When It Happens                            |
+| :----- | :-------------- | :----------------------------------------- |
+| `400`  | Bad Request     | Invalid JSON or missing `model` parameter. |
+| `401`  | Unauthorized    | Missing or invalid API key.                |
+| `403`  | Forbidden       | Model is suspended, hidden, or restricted. |
+| `404`  | Not Found       | Model ID does not exist in the database.   |
+| `429`  | Rate Limit      | Upstream provider is in cooldown.          |
+| `502`  | Bad Gateway     | Cannot connect to the AI provider.         |
+| `504`  | Gateway Timeout | Provider took too long to respond.         |
+
+### Example Error Response
+
+```json
+{
+  "error": {
+    "message": "Model 'gpt-4o' is currently suspended.",
+    "type": "access_denied",
+    "code": 403
+  }
+}
+```
+
+---
+
+## Related Resources
+
+- [API Keys documentation](../api-keys) — How to create and manage your Devora API key.
+- [AI Providers dashboard](/ai-providers) — Where admins add, edit, and configure models.
+- [List Models endpoint](/api/v1/ai/models) — Public JSON endpoint returning all available models.
+- [Internal routing docs](/docs/ai-provider-routing) — How Devora routes requests to upstream providers.
+
+---
+
+> [!NOTE]
+> The model table above is rendered by a React component (`<ModelTable />`) that fetches [`/api/v1/ai/models`](/api/v1/ai/models) on page load. As soon as an admin adds or removes a model in the dashboard, the table updates automatically — no manual doc edits required.

@@ -5,6 +5,7 @@ import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 import { Callout } from '@/components/docs/Callout';
 import { ApiCard } from '@/components/docs/ApiCard';
 import { Cards, Card } from '@/components/docs/Cards';
+import { ModelTable } from '@/components/docs/ModelTable';
 
 /**
  * @param {import('mdx/types').MDXComponents} [components]
@@ -23,6 +24,7 @@ export function getMDXComponents(components) {
         ApiCard,
         Cards,
         Card,
+        ModelTable,
         ...components,
     };
 }
