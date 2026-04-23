@@ -15,7 +15,7 @@ export default function AiProvidersPage() {
     const [statusFilter, setStatusFilter] = useState('all'); // all | active | suspend
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingModel, setEditingModel] = useState(null);
-    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
+    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '', contextLength: '' });
     const proxyPresets = getAvailablePresets();
 
     useEffect(() => {
@@ -176,12 +176,15 @@ export default function AiProvidersPage() {
                 created: data.created,
                 status: data.status,
                 isRestricted: data.isRestricted,
-                allowedEmails: []
+                allowedEmails: [],
+                baseUrl: data.baseUrl || null,
+                proxyPreset: data.proxyPreset || 'DEFAULT',
+                contextLength: data.contextLength || 128000
             }]);
 
             toast.success('Model added successfully');
             setShowAddModal(false);
-            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
+            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '', contextLength: '' });
         } catch (err) {
             toast.error(err.message);
         }
@@ -207,13 +210,13 @@ export default function AiProvidersPage() {
 
             setModels(prev => prev.map(m => 
                 m.id === formData.id 
-                    ? { ...m, name: formData.name, owned_by: formData.ownedBy, baseUrl: formData.baseUrl || null, proxyPreset: formData.proxyPreset || 'DEFAULT' }
+                    ? { ...m, name: formData.name, owned_by: formData.ownedBy, baseUrl: formData.baseUrl || null, proxyPreset: formData.proxyPreset || 'DEFAULT', contextLength: parseInt(formData.contextLength) || 128000 }
                     : m
             ));
 
             toast.success('Model updated successfully');
             setEditingModel(null);
-            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
+            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '', contextLength: '' });
         } catch (err) {
             toast.error(err.message);
         }
@@ -246,7 +249,8 @@ export default function AiProvidersPage() {
             name: model.name,
             ownedBy: model.owned_by,
             proxyPreset: model.proxyPreset || 'DEFAULT',
-            baseUrl: model.baseUrl || ''
+            baseUrl: model.baseUrl || '',
+            contextLength: model.contextLength ? String(model.contextLength) : ''
         });
     };
 
@@ -517,10 +521,15 @@ export default function AiProvidersPage() {
                                                             </span>
                                                         </div>
                                                     )}
-                                                    <div className="flex gap-1.5">
+                                                    <div className="flex gap-1.5 flex-wrap">
                                                         <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${getStatusStyle(model.status)}`}>
                                                             {model.status}
                                                         </span>
+                                                        {model.contextLength && (
+                                                            <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-emerald-400/30 text-emerald-300 bg-emerald-500/10">
+                                                                {(model.contextLength).toLocaleString()} TOK
+                                                            </span>
+                                                        )}
                                                         {model.isRestricted && (
                                                             <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-blue-400/30 text-blue-300 bg-blue-500/10">
                                                                 RESTRICTED
@@ -683,6 +692,22 @@ export default function AiProvidersPage() {
 
                             <div>
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
+                                    Context Length
+                                </label>
+                                <input
+                                    type="number"
+                                    value={formData.contextLength}
+                                    onChange={e => setFormData({ ...formData, contextLength: e.target.value })}
+                                    placeholder="e.g., 128000"
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all"
+                                />
+                                <p className="text-[8px] text-slate-400 mt-1.5 font-mono">
+                                    Maximum context window in tokens. Default: 128000
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
                                     Proxy Server
                                 </label>
                                 <select
@@ -707,7 +732,7 @@ export default function AiProvidersPage() {
                                 onClick={() => {
                                     setShowAddModal(false);
                                     setEditingModel(null);
-                                    setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
+                                    setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '', contextLength: '' });
                                 }}
                                 className="flex-1 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 rounded-lg text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-all"
                             >

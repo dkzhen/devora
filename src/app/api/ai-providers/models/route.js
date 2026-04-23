@@ -18,6 +18,7 @@ export async function GET() {
             isRestricted: model.isRestricted,
             baseUrl: model.baseUrl,
             proxyPreset: model.proxyPreset,
+            contextLength: model.contextLength,
             allowedEmails: model.allowedEmails.map(a => a.email)
         }));
 
@@ -31,7 +32,7 @@ export async function GET() {
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { id, name, ownedBy, created, baseUrl, proxyPreset } = body;
+        const { id, name, ownedBy, created, baseUrl, proxyPreset, contextLength } = body;
 
         if (!id || !name || !ownedBy) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -52,7 +53,8 @@ export async function POST(request) {
                 status: 'active',
                 isRestricted: false,
                 baseUrl: baseUrl || null,
-                proxyPreset: proxyPreset || 'DEFAULT'
+                proxyPreset: proxyPreset || 'DEFAULT',
+                contextLength: contextLength !== undefined ? parseInt(contextLength) || 128000 : 128000
             }
         });
 
@@ -92,7 +94,7 @@ export async function DELETE(request) {
 export async function PUT(request) {
     try {
         const body = await request.json();
-        const { id, name, ownedBy, created, baseUrl, proxyPreset } = body;
+        const { id, name, ownedBy, created, baseUrl, proxyPreset, contextLength } = body;
 
         if (!id) {
             return NextResponse.json({ error: 'Model ID required' }, { status: 400 });
@@ -105,7 +107,8 @@ export async function PUT(request) {
                 ...(ownedBy && { ownedBy }),
                 ...(created !== undefined && { created }),
                 ...(baseUrl !== undefined && { baseUrl: baseUrl || null }),
-                ...(proxyPreset !== undefined && { proxyPreset })
+                ...(proxyPreset !== undefined && { proxyPreset }),
+                ...(contextLength !== undefined && { contextLength: parseInt(contextLength) || 128000 })
             }
         });
 

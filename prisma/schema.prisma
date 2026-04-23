@@ -438,6 +438,7 @@ model AiModel {
   createdAt     DateTime        @default(now()) @map("created_at")
   baseUrl       String?         @map("base_url") @db.Text
   proxyPreset   String?         @default("DEFAULT") @map("proxy_preset")
+  contextLength Int?            @default(128000) @map("context_length")
   allowedEmails AiModelAccess[]
 
   @@map("ai_models")

@@ -51,8 +51,7 @@ export async function GET(req) {
             created: model.created || Math.floor(new Date(model.createdAt).getTime() / 1000),
             object: "model",
             owned_by: model.ownedBy,
-            // Context length placeholder (can be extended in schema later)
-            context_length: 128000,
+            context_length: model.contextLength || 128000,
             // Pricing placeholder (can be extended in schema later)
             pricing: {
                 prompt: "0",

@@ -61,14 +61,14 @@
     "recharts": "^3.7.0"
   },
   "devDependencies": {
-    "@prisma/client": "^5.10.2",
+    "@prisma/client": "^5.22.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
     "autoprefixer": "^10.4.24",
     "eslint": "^10.0.0",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8.5.6",
-    "prisma": "^5.10.2",
+    "prisma": "^5.22.0",
     "tailwindcss": "^4.1.18"
   }
 }
