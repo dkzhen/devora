@@ -186,17 +186,6 @@ model UserAirdropTask {
   @@map("user_airdrop_tasks")
 }
 
-model SuggestedProject {
-  id          String   @id @default(uuid())
-  name        String
-  link        String
-  description String?  @db.Text
-  sender      String   @default("Anonymous")
-  createdAt   DateTime @default(now()) @map("created_at")
-
-  @@map("suggested_projects")
-}
-
 model ApiEndpointStats {
   id        String   @id @default(uuid())
   method    String

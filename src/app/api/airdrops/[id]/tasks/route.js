@@ -28,12 +28,22 @@ export async function GET(request, { params }) {
             orderBy: { createdAt: 'asc' }
         });
         
-        // Filter out private steps if the user is not the task creator
+        // Parse steps JSON and filter out private steps if the user is not the task creator
         tasks = tasks.map(task => {
             const isCreator = user && task.userId === user.id;
-            let steps = Array.isArray(task.steps) ? task.steps : [];
+            // Parse steps from JSON string if needed
+            let steps = [];
+            if (task.steps) {
+                try {
+                    steps = typeof task.steps === 'string' ? JSON.parse(task.steps) : task.steps;
+                } catch (e) {
+                    console.error('Failed to parse steps:', e);
+                    steps = [];
+                }
+            }
             
-            steps = steps.filter(step => step.isPrivate !== true || isCreator);
+            // Filter out private steps
+            steps = Array.isArray(steps) ? steps.filter(step => step.isPrivate !== true || isCreator) : [];
             
             return {
                 ...task,

@@ -131,7 +131,6 @@ export default function AirdropsPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingProject, setEditingProject] = useState(null);
-    const [selectedSuggestion, setSelectedSuggestion] = useState(null);
     const [currencyType, setCurrencyType] = useState('$');
     const [toast, setToast] = useState(null);
 
@@ -203,7 +202,6 @@ export default function AirdropsPage() {
 
                 setShowAddModal(false);
                 setEditingProject(null);
-                setSelectedSuggestion(null);
             } else {
                 showToast(`Failed to ${editingProject ? 'edit' : 'add'} project`, 'error');
             }
@@ -731,9 +729,9 @@ export default function AirdropsPage() {
                     <div className="bg-[#0a0312] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl p-6 md:p-8 custom-scrollbar">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-2xl font-bold text-white">
-                                {editingProject ? 'Edit Project' : (selectedSuggestion ? 'Audit Suggested Project' : 'Add New Project')}
+                                {editingProject ? 'Edit Project' : 'Add New Project'}
                             </h2>
-                            <button onClick={() => { setShowAddModal(false); setSelectedSuggestion(null); setEditingProject(null); }} className="text-slate-400 hover:text-slate-600">
+                            <button onClick={() => { setShowAddModal(false); setEditingProject(null); }} className="text-slate-400 hover:text-slate-600">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
@@ -741,7 +739,7 @@ export default function AirdropsPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-300 mb-2">Project Name *</label>
-                                    <input required name="name" type="text" defaultValue={editingProject?.name || selectedSuggestion?.name || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="e.g. Optimism" />
+                                    <input required name="name" type="text" defaultValue={editingProject?.name || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="e.g. Optimism" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-300 mb-2">Icon URL</label>
@@ -835,14 +833,14 @@ export default function AirdropsPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
-                                <textarea name="description" rows={3} defaultValue={editingProject?.description || selectedSuggestion?.description || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="Instructions or details about the project..." />
+                                <textarea name="description" rows={3} defaultValue={editingProject?.description || ''} className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#F25278]" placeholder="Instructions or details about the project..." />
                             </div>
                             <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
-                                <button type="button" onClick={() => { setShowAddModal(false); setSelectedSuggestion(null); setEditingProject(null); }} className="px-5 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-gray-800 transition-colors">
+                                <button type="button" onClick={() => { setShowAddModal(false); setEditingProject(null); }} className="px-5 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-gray-800 transition-colors">
                                     Cancel
                                 </button>
                                 <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 bg-[#F25278] hover:bg-[#F25278]/90 active:scale-95 text-white rounded-xl font-medium shadow-lg shadow-[#F25278]/20 transition-all disabled:opacity-50 flex items-center gap-2">
-                                    {isSubmitting ? (editingProject ? 'Saving...' : (selectedSuggestion ? 'Auditing...' : 'Creating...')) : (editingProject ? 'Save Changes' : (selectedSuggestion ? 'Audit Project' : 'Create Project'))}
+                                    {isSubmitting ? (editingProject ? 'Saving...' : 'Creating...') : (editingProject ? 'Save Changes' : 'Create Project')}
                                 </button>
                             </div>
                         </form>

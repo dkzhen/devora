@@ -426,6 +426,72 @@ curl -X DELETE "https://devora.my.id/api/v1/airdrops/123e4567-e89b-12d3-a456-426
 
 ---
 
+### Mark Task as Completed
+
+Mark a task as completed or incomplete for the current user.
+
+- **Endpoint**: `POST /api/v1/airdrops/{id}/tasks/{taskId}/complete`
+- **Method**: `POST`
+
+#### Request Body
+
+| Field       | Type    | Required | Description                                    |
+| :---------- | :------ | :------- | :--------------------------------------------- |
+| `completed` | Boolean | Yes      | `true` to mark as completed, `false` otherwise |
+
+#### Example Request
+
+```bash
+curl -X POST "https://devora.my.id/api/v1/airdrops/123e4567-e89b-12d3-a456-426614174000/tasks/task-uuid-here/complete" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer devora_your_api_key" \
+  -d '{
+    "completed": true
+  }'
+```
+
+#### Response `200`
+
+```json
+{
+  "taskId": "task-uuid-here",
+  "completed": true,
+  "completedAt": "2026-04-23T09:45:00.000Z",
+  "message": "Task marked as completed"
+}
+```
+
+---
+
+### Get Task Completion Status
+
+Check if a task is completed for the current user.
+
+- **Endpoint**: `GET /api/v1/airdrops/{id}/tasks/{taskId}/complete`
+- **Method**: `GET`
+
+#### Example Request
+
+```bash
+curl "https://devora.my.id/api/v1/airdrops/123e4567-e89b-12d3-a456-426614174000/tasks/task-uuid-here/complete" \
+  -H "Authorization: Bearer devora_your_api_key"
+```
+
+#### Response `200`
+
+```json
+{
+  "taskId": "task-uuid-here",
+  "completed": true,
+  "completedAt": "2026-04-23T09:45:00.000Z"
+}
+```
+
+> [!NOTE]
+> If the task has not been completed yet, `completed` will be `false` and `completedAt` will be `null`.
+
+---
+
 ## Field Value References
 
 ### Status Values

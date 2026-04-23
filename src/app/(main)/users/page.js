@@ -17,7 +17,7 @@ export default function UsersPage() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [toast, setToast] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const usersPerPage = 5;
+    const usersPerPage = 20;
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
@@ -179,6 +179,48 @@ export default function UsersPage() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    // Generate pagination numbers with ellipsis
+    const getPaginationNumbers = () => {
+        const pages = [];
+        const maxVisible = 5; // Maximum visible page numbers
+        
+        if (totalPages <= maxVisible + 2) {
+            // Show all pages if total is small
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            // Always show first page
+            pages.push(1);
+            
+            if (currentPage <= 3) {
+                // Near start
+                for (let i = 2; i <= Math.min(maxVisible, totalPages - 1); i++) {
+                    pages.push(i);
+                }
+                pages.push('...');
+                pages.push(totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                // Near end
+                pages.push('...');
+                for (let i = totalPages - (maxVisible - 1); i < totalPages; i++) {
+                    pages.push(i);
+                }
+                pages.push(totalPages);
+            } else {
+                // Middle
+                pages.push('...');
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    pages.push(i);
+                }
+                pages.push('...');
+                pages.push(totalPages);
+            }
+        }
+        
+        return pages;
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
@@ -202,12 +244,10 @@ export default function UsersPage() {
                 breadcrumbs={[
                     {
                         label: "Dashboard",
-                        href: "/",
-                        icon: <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                        href: "/"
                     },
                     {
-                        label: "Users",
-                        icon: <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.6)] animate-pulse mr-1" />
+                        label: "Users"
                     }
                 ]}
                 title="System"
@@ -299,36 +339,45 @@ export default function UsersPage() {
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
-                        <div className="text-xs text-slate-400">
-                            Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, users.length)} of {users.length} users
+                {users.length > 0 && (
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-white/10">
+                        <div className="text-xs text-slate-400 text-center sm:text-left">
+                            <span className="hidden sm:inline">Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, users.length)} of {users.length} users</span>
+                            <span className="sm:hidden">{indexOfFirstUser + 1}-{Math.min(indexOfLastUser, users.length)} of {users.length}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                            <button
-                                onClick={() => paginate(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
-                            >
-                                Prev
-                            </button>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                        {totalPages > 1 && (
+                            <div className="flex items-center gap-1 flex-wrap justify-center">
                                 <button
-                                    key={number}
-                                    onClick={() => paginate(number)}
-                                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border ${currentPage === number ? 'bg-purple-600 text-white border-purple-500' : 'text-slate-300 bg-white/5 hover:bg-white/10 border-white/10'}`}
+                                    onClick={() => paginate(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
                                 >
-                                    {number}
+                                    Prev
                                 </button>
-                            ))}
-                            <button
-                                onClick={() => paginate(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
-                            >
-                                Next
-                            </button>
-                        </div>
+                                {getPaginationNumbers().map((number, index) => (
+                                    number === '...' ? (
+                                        <span key={`ellipsis-${index}`} className="px-2 py-1.5 text-xs text-slate-400">
+                                            ...
+                                        </span>
+                                    ) : (
+                                        <button
+                                            key={number}
+                                            onClick={() => paginate(number)}
+                                            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border ${currentPage === number ? 'bg-purple-600 text-white border-purple-500' : 'text-slate-300 bg-white/5 hover:bg-white/10 border-white/10'}`}
+                                        >
+                                            {number}
+                                        </button>
+                                    )
+                                ))}
+                                <button
+                                    onClick={() => paginate(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
