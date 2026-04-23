@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { HeroHeader } from '@/components/HeroHeader';
+import StatCard from '@/components/StatCard';
+import { Users, Shield } from 'lucide-react';
 
 export default function UsersPage() {
     const router = useRouter();
@@ -14,6 +16,8 @@ export default function UsersPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [toast, setToast] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 5;
 
     const showToast = (message, type = 'success') => {
         setToast({ message, type });
@@ -87,6 +91,7 @@ export default function UsersPage() {
                 setUsers([newUser, ...users]);
                 showToast('User created successfully');
                 setShowUserModal(false);
+                setCurrentPage(1);
             } else {
                 const data = await res.json();
                 showToast(data.error || 'Failed to create user', 'error');
@@ -137,8 +142,14 @@ export default function UsersPage() {
         try {
             const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                setUsers(users.filter(u => u.id !== id));
+                const updatedUsers = users.filter(u => u.id !== id);
+                setUsers(updatedUsers);
                 showToast('User deleted successfully');
+                // Adjust page if needed
+                const newTotalPages = Math.ceil(updatedUsers.length / usersPerPage);
+                if (currentPage > newTotalPages && newTotalPages > 0) {
+                    setCurrentPage(newTotalPages);
+                }
             } else {
                 const data = await res.json();
                 showToast(data.error || 'Failed to delete user', 'error');
@@ -155,6 +166,18 @@ export default function UsersPage() {
         INSIDER: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/10',
         MEMBER: 'bg-gray-500/10 text-slate-400 border-gray-500/20',
     };
+
+    // Statistics
+    const totalUsers = users.length;
+    const totalRoles = new Set(users.map(u => u.role)).size;
+
+    // Pagination
+    const totalPages = Math.ceil(users.length / usersPerPage);
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     if (loading) {
         return (
@@ -190,7 +213,18 @@ export default function UsersPage() {
                 title="System"
                 badge="Users"
                 description="Manage system access and roles securely from a centralized dashboard."
-                actionContent={
+            />
+
+            {/* Statistics */}
+            <div className="grid grid-cols-2 gap-3">
+                <StatCard title="Total Users" value={totalUsers} color="blue" icon={<Users className="w-5 h-5" />} />
+                <StatCard title="Total Roles" value={totalRoles} color="purple" icon={<Shield className="w-5 h-5" />} />
+            </div>
+
+            {/* Users List */}
+            <div className="bg-gray-900/50 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
+                <div className="flex items-center justify-between p-4 border-b border-white/10">
+                    <h3 className="text-sm font-bold text-white">Users List</h3>
                     <button
                         onClick={() => setShowUserModal(true)}
                         className="shrink-0 flex items-center gap-2 px-3 py-2 md:px-5 md:py-2.5 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-sm font-semibold shadow-xl shadow-purple-700/30 transition-all active:scale-95 border border-white/10"
@@ -199,11 +233,7 @@ export default function UsersPage() {
                         <span className="md:hidden">Add</span>
                         <span className="hidden md:inline">Create User</span>
                     </button>
-                }
-            />
-
-            {/* Users List */}
-            <div className="bg-gray-900/50 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
+                </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[700px]">
                         <thead>
@@ -216,7 +246,7 @@ export default function UsersPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {users.map((user) => (
+                            {currentUsers.map((user) => (
                                 <tr key={user.id} className="hover:bg-white/5 transition-colors group">
                                     <td className="py-3 px-4">
                                         <div className="flex items-center gap-3">
@@ -257,7 +287,7 @@ export default function UsersPage() {
                                     </td>
                                 </tr>
                             ))}
-                            {users.length === 0 && (
+                            {currentUsers.length === 0 && (
                                 <tr>
                                     <td colSpan="5" className="py-8 text-center text-slate-500 text-sm">
                                         No users found.
@@ -267,6 +297,40 @@ export default function UsersPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
+                        <div className="text-xs text-slate-400">
+                            Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, users.length)} of {users.length} users
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
+                            >
+                                Prev
+                            </button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                                <button
+                                    key={number}
+                                    onClick={() => paginate(number)}
+                                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border ${currentPage === number ? 'bg-purple-600 text-white border-purple-500' : 'text-slate-300 bg-white/5 hover:bg-white/10 border-white/10'}`}
+                                >
+                                    {number}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed border border-white/10"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Create User Modal */}
