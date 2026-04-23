@@ -39,6 +39,14 @@ Devora provides developers with a comprehensive API platform that simplifies int
 
 Devora enables you to build a wide range of applications:
 
+### AI-Powered Applications
+
+Access multiple LLM providers (OpenAI, Gemini, Groq, etc.) through a single OpenAI-compatible reverse proxy endpoint. No need to manage multiple API keys or base URLs.
+
+### Airdrop Hunting & Project Tracking
+
+Register new projects, add tasks, and track your airdrop hunting workflow with status timelines, category filters, and task management.
+
 ### Temporary Email Services
 
 Create and manage temporary email addresses for testing, privacy protection, and user verification workflows.
@@ -51,52 +59,33 @@ Centralized API key management with role-based access control, usage tracking, a
 
 Automate repetitive tasks and integrate multiple services with our powerful API endpoints.
 
-### Testing & Development
-
-Perfect for testing email flows, user registration, and notification systems without using real email addresses.
-
-## Why Choose Devora?
-
-<div className="grid gap-4 sm:grid-cols-2 my-6">
-  <div className="rounded-lg border bg-card p-4">
-    <h3 className="font-semibold mb-2">🎯 Developer-First</h3>
-    <p className="text-sm text-muted-foreground">
-      Built by developers, for developers. Clean APIs, excellent documentation,
-      and responsive support.
-    </p>
-  </div>
-  <div className="rounded-lg border bg-card p-4">
-    <h3 className="font-semibold mb-2">💰 Flexible Pricing</h3>
-    <p className="text-sm text-muted-foreground">
-      Start free and scale as you grow. Pay only for what you use with
-      transparent pricing.
-    </p>
-  </div>
-  <div className="rounded-lg border bg-card p-4">
-    <h3 className="font-semibold mb-2">🌍 Global Infrastructure</h3>
-    <p className="text-sm text-muted-foreground">
-      Distributed servers worldwide ensure low latency and high availability for
-      your users.
-    </p>
-  </div>
-  <div className="rounded-lg border bg-card p-4">
-    <h3 className="font-semibold mb-2">🔧 Easy to Use</h3>
-    <p className="text-sm text-muted-foreground">
-      Simple REST APIs with clear documentation. Get started in minutes with our
-      quick start guide.
-    </p>
-  </div>
-</div>
-
 ## Core Services
+
+### AI Models API
+
+Our flagship LLM proxy provides access to multiple AI models from different providers through a single unified endpoint:
+
+- **OpenAI-compatible format** — drop-in replacement for OpenAI SDK
+- **Multi-provider routing** — OpenAI, Gemini, Groq, and more
+- **Streaming support** — real-time token streaming via SSE
+- **Model status tracking** — know which models are active, suspended, or restricted
+
+### Airdrop API
+
+Programmatically manage airdrop projects and tasks:
+
+- Register and track projects with status timelines
+- Add step-by-step tasks with images and links
+- Filter by status, category, and visibility
+- Public project sharing (ULTRA users)
 
 ### Temp Mail API
 
-Our flagship service provides temporary email addresses for testing and privacy. Features include:
+Fully managed temporary email service:
 
-- Instant email generation
-- Real-time inbox monitoring
-- Automatic cleanup
+- Instant email generation (Mail.tm & MoeMail)
+- Real-time inbox monitoring with auto-refresh
+- Message persistence in database
 - Multiple domain support
 
 ### API Key Management
@@ -105,17 +94,7 @@ Secure and efficient API key management system with:
 
 - Role-based access control
 - Usage analytics and monitoring
-- Rate limiting and quotas
 - Team collaboration features
-
-### Documentation Hub
-
-Comprehensive documentation platform featuring:
-
-- Interactive API references
-- Code examples in multiple languages
-- Step-by-step tutorials
-- Community support
 
 ## Getting Started
 
@@ -142,31 +121,6 @@ Start making API calls and integrate Devora into your application.
 
 </Steps>
 
-## Use Cases
-
-<Callout type="info" title="Popular Use Cases">
-  Devora is used by thousands of developers for testing, automation, privacy
-  protection, and building production applications.
-</Callout>
-
-**Testing & QA**
-
-- Test email workflows without spam
-- Verify user registration flows
-- Automate testing pipelines
-
-**Privacy & Security**
-
-- Protect user privacy
-- Temporary account creation
-- Anonymous communication
-
-**Development**
-
-- Rapid prototyping
-- Integration testing
-- Demo applications
-
 ## Community & Support
 
 Join our growing community of developers:
@@ -178,8 +132,7 @@ Join our growing community of developers:
 
 <Callout type="tip" title="Need Help?">
   Our support team is here to help. Contact us at
-  [support@devora.my.id](mailto:support@devora.my.id) or check our
-  [FAQ](/docs/faq).
+  [support@devora.my.id](mailto:support@devora.my.id).
 </Callout>
 
 ---

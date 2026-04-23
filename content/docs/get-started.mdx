@@ -4,13 +4,15 @@ description: Getting Started with Devora
 icon: Rocket
 ---
 
-import { MailIcon, KeyIcon, CodeIcon } from "lucide-react";
+import { MailIcon, KeyIcon, CodeIcon, BotIcon, LayersIcon } from "lucide-react";
 
 ---
 
 # Get Started
 
 Devora is a unified platform to organize, automate, and manage tools and connected services in one place.
+
+## Quick Start
 
 Get started in just a few steps:
 
@@ -23,7 +25,7 @@ Sign up to access your Devora dashboard and get your API credentials.
 
 ### 2. Get Your API Key
 
-Navigate to the API Keys section in your dashboard to generate your authentication token.
+Navigate to the **API Key** section in your dashboard to generate your authentication token.
 
 [Manage API Keys →](/docs/api-keys)
 
@@ -38,9 +40,23 @@ curl -X GET https://devora.my.id/api/v1/temp-mail/accounts \
 
 </Steps>
 
-## 📚 Explore Our APIs
+---
+
+## Explore Our APIs
 
 <Cards>
+  <Card
+    icon={<BotIcon />}
+    title="AI Models API"
+    description="OpenAI-compatible reverse proxy for multiple LLM providers."
+    href="/docs/api-references/ai-models"
+  />
+  <Card
+    icon={<LayersIcon />}
+    title="Airdrop API"
+    description="Manage airdrop projects, tasks, and hunting workflows."
+    href="/docs/api-references/airdrop-v1"
+  />
   <Card
     icon={<MailIcon />}
     title="Temp Mail API"
@@ -55,13 +71,15 @@ curl -X GET https://devora.my.id/api/v1/temp-mail/accounts \
   />
   <Card
     icon={<CodeIcon />}
-    title="API References"
+    title="All API References"
     description="Complete documentation for all available endpoints."
     href="/docs/api-references"
   />
 </Cards>
 
-## ⚡ Why Devora?
+---
+
+## Why Devora?
 
 <div className="grid gap-4 sm:grid-cols-3 my-6">
   <div className="rounded-lg border bg-card p-4">
@@ -75,7 +93,7 @@ curl -X GET https://devora.my.id/api/v1/temp-mail/accounts \
     <div className="text-2xl mb-2">🔒</div>
     <h3 className="font-semibold mb-1">Secure by Default</h3>
     <p className="text-sm text-muted-foreground">
-      Enterprise-grade security with encrypted data.
+      Enterprise-grade security with encrypted data and secure authentication.
     </p>
   </div>
   <div className="rounded-lg border bg-card p-4">
@@ -88,8 +106,8 @@ curl -X GET https://devora.my.id/api/v1/temp-mail/accounts \
 </div>
 
 <Callout type="info" title="Need Help?">
-  Join our community or reach out to support if you have any questions. We're
-  here to help you succeed!
+  Reach out to support if you have any questions. We're here to help you
+  succeed!
 </Callout>
 
 ---

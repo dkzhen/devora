@@ -1,12 +1,14 @@
 ---
 title: API References
-description: General information for Devora APIs, including base URL and authentication.
+description: General information for Devora APIs, including base URL, authentication, versioning, and available endpoints.
 icon: BookOpen
 ---
 
-Welcome to the Devora API documentation. All Devora APIs are RESTful and follow the same authentication pattern.
+Welcome to the Devora API documentation. All Devora APIs are RESTful, versioned, and follow the same authentication pattern.
 
-## BASE URL
+---
+
+## Base URL
 
 The production API is accessible at:
 
@@ -15,7 +17,7 @@ https://devora.my.id
 ```
 
 > [!NOTE]
-> All endpoints are versioned. Currently, we are using **v1**.
+> All endpoints are versioned under `/api/v1/`. Internal dashboard APIs use `/api/` without versioning.
 
 ---
 
@@ -23,7 +25,7 @@ https://devora.my.id
 
 All endpoints require an API Key in the `Authorization` header as a **Bearer Token**.
 
-You can manage your API Keys in the [API Key Management](./api-keys) section.
+You can manage your API Keys in the [API Key Management](/docs/api-keys) section.
 
 ### Example Header
 
@@ -33,3 +35,81 @@ Authorization: Bearer devora_your_key_here
 
 ---
 
+## Available APIs
+
+Devora provides the following API services:
+
+| API           | Description                                                | Endpoint Prefix     |
+| :------------ | :--------------------------------------------------------- | :------------------ |
+| **AI Models** | OpenAI-compatible reverse proxy for multiple LLM providers | `/api/v1/ai`        |
+| **Airdrop**   | Manage airdrop projects, tasks, and hunting workflows      | `/api/v1/airdrops`  |
+| **Temp Mail** | Create and manage temporary email accounts                 | `/api/v1/temp-mail` |
+
+---
+
+## Versioning
+
+Devora uses URI versioning. The current version is **v1**.
+
+```
+/api/v1/ai/models
+/api/v1/airdrops
+/api/v1/temp-mail/accounts
+```
+
+Breaking changes will be introduced in a new version (e.g., `v2`) with advance notice.
+
+---
+
+## Response Format
+
+All responses are returned as JSON. Successful responses include the requested data, while errors include a standard error object.
+
+### Success Response
+
+```json
+{
+  "id": "abc123",
+  "name": "Example"
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": "Invalid API Key",
+  "type": "invalid_request_error",
+  "code": "invalid_api_key"
+}
+```
+
+---
+
+## HTTP Status Codes
+
+| Status | Meaning               | Description                                 |
+| :----- | :-------------------- | :------------------------------------------ |
+| `200`  | OK                    | Request succeeded                           |
+| `201`  | Created               | Resource created successfully               |
+| `400`  | Bad Request           | Invalid JSON or missing required parameters |
+| `401`  | Unauthorized          | Missing or invalid API key                  |
+| `403`  | Forbidden             | Insufficient permissions                    |
+| `404`  | Not Found             | Resource not found                          |
+| `500`  | Internal Server Error | Server-side error occurred                  |
+
+---
+
+## Explore
+
+<Cards>
+  <Card title="AI Models" href="/docs/api-references/ai-models">
+    OpenAI-compatible LLM proxy with multi-provider support.
+  </Card>
+  <Card title="Airdrop API" href="/docs/api-references/airdrop-v1">
+    Manage airdrop projects, tasks, and hunting workflows.
+  </Card>
+  <Card title="Temp Mail API" href="/docs/api-references/temp-mail">
+    Create and manage temporary email accounts.
+  </Card>
+</Cards>
