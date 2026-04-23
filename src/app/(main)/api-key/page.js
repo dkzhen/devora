@@ -666,7 +666,7 @@ function StatisticsModal({ onClose, showToast }) {
                     ) : stats ? (
                         <div className="space-y-6">
                             {/* Overview Stats */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
                                 <div className="bg-[#f36222]/5 border border-[#f36222]/20 rounded-xl p-3 sm:p-4">
                                     <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#f36222]/60 mb-1">Total Users</p>
                                     <p className="text-xl sm:text-2xl font-black text-[#f36222]">{stats.totalUsers}</p>
@@ -679,9 +679,13 @@ function StatisticsModal({ onClose, showToast }) {
                                     <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#007fc3]/60 mb-1">Total Requests</p>
                                     <p className="text-xl sm:text-2xl font-black text-[#007fc3]">{stats.totalRequests.toLocaleString()}</p>
                                 </div>
-                                <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-purple-500/60 mb-1">My Requests</p>
-                                    <p className="text-xl sm:text-2xl font-black text-purple-500">{stats.myRequests.toLocaleString()}</p>
+                                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-emerald-500/60 mb-1">Total Success</p>
+                                    <p className="text-xl sm:text-2xl font-black text-emerald-500">{stats.totalSuccess}</p>
+                                </div>
+                                <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 sm:p-4">
+                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-red-500/60 mb-1">Total Failed</p>
+                                    <p className="text-xl sm:text-2xl font-black text-red-500">{stats.totalFailed}</p>
                                 </div>
                             </div>
 

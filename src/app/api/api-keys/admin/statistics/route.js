@@ -34,11 +34,25 @@ export async function GET(request) {
         });
         const totalRequests = totalStatsAgg._sum.totalRequests || 0;
 
-        // Get current user's cumulative requests
-        const myStats = await prisma.userApiStats.findUnique({
-            where: { userId: auth.user.id }
+        // Get current user's complete usage history (limited to 50 records) for stats calculation
+        const recentUsage = await prisma.apiKeyUsage.findMany({
+            where: {
+                apiKey: {
+                    userId: auth.user.id
+                }
+            },
+            select: {
+                status: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            },
+            take: 50
         });
-        const myRequests = myStats?.totalRequests || 0;
+
+        // Calculate success and failed from snapshot
+        const totalSuccess = recentUsage.filter(u => u.status >= 200 && u.status < 400).length;
+        const totalFailed = recentUsage.filter(u => u.status >= 400).length;
 
         // Get usage breakdown by user
         const users = await prisma.user.findMany({
@@ -113,7 +127,8 @@ export async function GET(request) {
             totalUsers,
             totalKeys,
             totalRequests,
-            myRequests,
+            totalSuccess,
+            totalFailed,
             userBreakdown,
             myHistory
         });
