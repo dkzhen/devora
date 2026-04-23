@@ -15,7 +15,7 @@ export default function AiProvidersPage() {
     const [statusFilter, setStatusFilter] = useState('all'); // all | active | suspend
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingModel, setEditingModel] = useState(null);
-    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
+    const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
     const proxyPresets = getAvailablePresets();
 
     useEffect(() => {
@@ -181,7 +181,7 @@ export default function AiProvidersPage() {
 
             toast.success('Model added successfully');
             setShowAddModal(false);
-            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
+            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
         } catch (err) {
             toast.error(err.message);
         }
@@ -207,13 +207,13 @@ export default function AiProvidersPage() {
 
             setModels(prev => prev.map(m => 
                 m.id === formData.id 
-                    ? { ...m, name: formData.name, owned_by: formData.ownedBy }
+                    ? { ...m, name: formData.name, owned_by: formData.ownedBy, baseUrl: formData.baseUrl || null, proxyPreset: formData.proxyPreset || 'DEFAULT' }
                     : m
             ));
 
             toast.success('Model updated successfully');
             setEditingModel(null);
-            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
+            setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
         } catch (err) {
             toast.error(err.message);
         }
@@ -245,7 +245,8 @@ export default function AiProvidersPage() {
             id: model.id,
             name: model.name,
             ownedBy: model.owned_by,
-            proxyPreset: model.proxyPreset || 'DEFAULT'
+            proxyPreset: model.proxyPreset || 'DEFAULT',
+            baseUrl: model.baseUrl || ''
         });
     };
 
@@ -509,6 +510,13 @@ export default function AiProvidersPage() {
                                                     <code className="text-[11px] font-mono text-blue-300 group-hover:text-blue-200 transition-colors break-all leading-relaxed">
                                                         {model.id}
                                                     </code>
+                                                    {model.baseUrl && (
+                                                        <div className="mt-1">
+                                                            <span className="text-[7px] font-mono text-slate-400 bg-slate-700/30 px-1.5 py-0.5 rounded-xs truncate max-w-[200px] inline-block">
+                                                                {model.baseUrl}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     <div className="flex gap-1.5">
                                                         <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${getStatusStyle(model.status)}`}>
                                                             {model.status}
@@ -659,6 +667,22 @@ export default function AiProvidersPage() {
 
                             <div>
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
+                                    Base URL (Optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.baseUrl}
+                                    onChange={e => setFormData({ ...formData, baseUrl: e.target.value })}
+                                    placeholder="e.g., https://api.openai.com/v1"
+                                    className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-400/50 transition-all"
+                                />
+                                <p className="text-[8px] text-slate-400 mt-1.5 font-mono">
+                                    Custom endpoint for this model. Leave empty to use proxy preset URL.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-300 mb-2 block">
                                     Proxy Server
                                 </label>
                                 <select
@@ -683,7 +707,7 @@ export default function AiProvidersPage() {
                                 onClick={() => {
                                     setShowAddModal(false);
                                     setEditingModel(null);
-                                    setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT' });
+                                    setFormData({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '' });
                                 }}
                                 className="flex-1 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 rounded-lg text-slate-300 text-[10px] font-bold uppercase tracking-widest transition-all"
                             >
