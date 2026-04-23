@@ -1,20 +1,194 @@
 ---
 title: Temp Mail
-description: Full reference for the Devora Temp Mail API v1 endpoints.
+description: Full reference for the Devora Temp Mail API — create temporary email accounts, fetch messages, and manage inboxes programmatically.
+icon: Mail
 ---
 
-The Temp Mail API allows you to create and manage temporary email accounts programmatically using your API Key.
-
-## Overview
-
-The Temp Mail API provides a fully managed temporary email service. You can create accounts, list messages, and view email content programmatically.
-
-For authentication details and the base URL, please visit the [API References](../api-references) page.
+The Temp Mail API allows you to create and manage temporary email accounts programmatically. It supports two providers: **Mail.tm** (default) and **MoeMail**. All endpoints are authenticated via session cookies (`auth_token`) or your Devora API Key.
 
 ---
 
-## 🚀 Quick Start
+## How It Works
 
-1. **Create an account** using the `/accounts` endpoint.
-2. **Access the inbox** using the returned token.
-3. **Manage messages** and attachments securely.
+```
+┌──────────┐     ┌──────────────┐     ┌──────────────────┐
+│  Client  │────▶│ Devora Proxy │────▶│ Mail.tm / MoeMail│
+│          │◄────│ /api/temp-*  │◄────│                  │
+└──────────┘     └──────────────┘     └──────────────────┘
+```
+
+1. **Create an account** via `/api/temp-mail/accounts` or `/api/moemail/generate`
+2. **Fetch messages** via `/api/temp-mail/messages` or `/api/moemail/inbox`
+3. **Read full message** via `/api/moemail/message` or internal `/api/temp-mail/messages/{id}`
+
+---
+
+## Providers
+
+Devora supports two temporary email providers with different feature sets:
+
+| Feature               | Mail.tm                  | MoeMail                  |
+| :-------------------- | :----------------------- | :----------------------- |
+| **Authentication**    | Session cookie           | Session cookie           |
+| **Password**          | ✅ Required              | ❌ Not required          |
+| **Token**             | ✅ Required for messages | ❌ Not required          |
+| **Custom Address**    | ✅ Yes                   | ❌ Auto-generated        |
+| **Domain Selection**  | ❌ Auto-assigned         | ✅ Choose from available |
+| **Message Retention** | Permanent (stored in DB) | Temporary                |
+| **DB Persistence**    | ✅ Full                  | ❌ Inbox only            |
+
+> [!NOTE]
+> The UI defaults to **Mail.tm** but allows switching to **MoeMail** at any time. MoeMail domains are fetched dynamically from `/api/temp-mail/domains`.
+
+---
+
+## Authentication
+
+Internal endpoints use the `auth_token` session cookie automatically. For external API access, include your Devora API Key:
+
+```http
+Authorization: Bearer devora_your_api_key
+```
+
+---
+
+## Base URL
+
+```
+https://devora.my.id/api/temp-mail
+```
+
+---
+
+## Endpoints Overview
+
+| Endpoint            | Method   | Description                           |
+| :------------------ | :------- | :------------------------------------ |
+| `/accounts`         | `POST`   | Create a Mail.tm account              |
+| `/accounts`         | `DELETE` | Delete an account                     |
+| `/accounts/history` | `GET`    | List all accounts created by the user |
+| `/messages`         | `GET`    | Fetch messages for an account         |
+| `/messages/{id}`    | `GET`    | Read full message content             |
+| `/domains`          | `GET`    | List available MoeMail domains        |
+| `/moemail/generate` | `POST`   | Generate a MoeMail address            |
+| `/moemail/inbox`    | `GET`    | Fetch MoeMail inbox                   |
+| `/moemail/message`  | `GET`    | Read full MoeMail message             |
+
+---
+
+## Quick Start
+
+### 1. Create a Mail.tm Account
+
+```bash
+curl -X POST https://devora.my.id/api/temp-mail/accounts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "address": "mytest@example.com",
+    "password": "securepassword123"
+  }'
+```
+
+**Response `201`:**
+
+```json
+{
+  "id": "acb123...",
+  "address": "mytest@example.com",
+  "token": "eyJhbGciOi...",
+  "createdAt": "2026-04-23T12:00:00.000Z"
+}
+```
+
+> [!IMPORTANT]
+> Save the `token` — it is required to fetch messages for Mail.tm accounts.
+
+### 2. Generate a MoeMail Account
+
+```bash
+curl -X POST https://devora.my.id/api/moemail/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "domain": "zenra.my.id"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "address": "abc123@zenra.my.id",
+  "id": "abc123"
+}
+```
+
+### 3. Fetch Messages
+
+**Mail.tm:**
+
+```bash
+curl -X GET "https://devora.my.id/api/temp-mail/messages?accountId=acb123" \
+  -H "Authorization: Bearer eyJhbGciOi..."
+```
+
+**MoeMail:**
+
+```bash
+curl -X GET "https://devora.my.id/api/moemail/inbox?address=abc123@zenra.my.id"
+```
+
+### 4. Read Full Message
+
+**Mail.tm:**
+
+```bash
+curl -X GET "https://devora.my.id/api/temp-mail/messages/msg_123abc" \
+  -H "Authorization: Bearer eyJhbGciOi..."
+```
+
+**MoeMail:**
+
+```bash
+curl -X GET "https://devora.my.id/api/moemail/message?id=msg_123&address=abc123@zenra.my.id"
+```
+
+---
+
+## Database Persistence
+
+Mail.tm accounts and messages are persisted in Devora's database:
+
+- **`TempMailAccount`** — stores account ID, address, password, token, and user linkage
+- **`TempMailMessage`** — stores message metadata (from, subject, intro, seen status, createdAt)
+- **`TempMailStats`** — tracks global statistics (`emailsGenerated`, `messagesReceived`)
+
+> [!TIP]
+> Even if Mail.tm is unreachable, Devora falls back to the database to display cached messages.
+
+---
+
+## Error Handling
+
+| Status | Meaning               | When It Happens                             |
+| :----- | :-------------------- | :------------------------------------------ |
+| `400`  | Bad Request           | Missing required fields (address, password) |
+| `401`  | Unauthorized          | Missing or invalid auth token / API key     |
+| `404`  | Not Found             | Account or message ID does not exist        |
+| `500`  | Internal Server Error | Upstream provider error or DB failure       |
+
+---
+
+## UI Sync
+
+The Temp Mail dashboard in Devora provides:
+
+- **Account Generator** — one-click email creation with provider selection
+- **Inbox Viewer** — real-time message list with auto-refresh (5s polling)
+- **Message Reader** — full HTML/text content viewer
+- **Account History** — all previously created accounts with search
+- **Domain Selector** — dynamic MoeMail domain picker
+- **Statistics** — emails generated and messages received counters
+
+> [!NOTE]
+> The dashboard auto-syncs messages when `autoSync` is enabled. Messages are also stored locally via `localStorage` for the active session.
