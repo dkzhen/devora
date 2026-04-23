@@ -83,6 +83,17 @@ export async function POST(request, { params }) {
             return NextResponse.json({ error: 'Title and category are required' }, { status: 400 });
         }
 
+        // Process and stringify steps
+        let processedSteps = [];
+        if (Array.isArray(steps) && steps.length > 0) {
+            processedSteps = steps.map(s => ({
+                text: s.text || '',
+                image: s.image || null,
+                link: s.link || null,
+                isPrivate: !!s.isPrivate
+            }));
+        }
+
         const task = await prisma.airdropTask.create({
             data: {
                 airdropId: id,
@@ -92,16 +103,17 @@ export async function POST(request, { params }) {
                 category,
                 deadline: deadline ? new Date(deadline) : null,
                 status: status || 'Open',
-                steps: Array.isArray(steps) ? steps.map(s => ({
-                    ...s,
-                    image: s.image || null,
-                    link: s.link || null,
-                    isPrivate: !!s.isPrivate
-                })) : []
+                steps: JSON.stringify(processedSteps)
             }
         });
 
-        return NextResponse.json(task, { status: 201 });
+        // Return task with parsed steps for consistency
+        const taskWithParsedSteps = {
+            ...task,
+            steps: processedSteps
+        };
+
+        return NextResponse.json(taskWithParsedSteps, { status: 201 });
     } catch (error) {
         console.error('Error creating task:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
