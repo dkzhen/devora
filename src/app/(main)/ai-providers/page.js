@@ -16,6 +16,7 @@ export default function AiProvidersPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingModel, setEditingModel] = useState(null);
     const [formData, setFormData] = useState({ id: '', name: '', ownedBy: '', proxyPreset: 'DEFAULT', baseUrl: '', contextLength: '' });
+    const [healthStatus, setHealthStatus] = useState({ status: 'idle', color: 'gray', errorRate: 0 });
     const proxyPresets = getAvailablePresets();
 
     useEffect(() => {
@@ -46,8 +47,23 @@ export default function AiProvidersPage() {
             }
         };
 
+        const fetchHealth = async () => {
+            try {
+                const res = await fetch('/api/ai-providers/health');
+                if (res.ok) {
+                    const data = await res.json();
+                    setHealthStatus(data);
+                }
+            } catch (err) { /* silent */ }
+        };
+
         fetchUser();
         fetchModels();
+        fetchHealth();
+        
+        // Poll health every 30 seconds
+        const healthInterval = setInterval(fetchHealth, 30000);
+        return () => clearInterval(healthInterval);
     }, []);
 
     const copyToClipboard = (text) => {
@@ -379,7 +395,14 @@ export default function AiProvidersPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                         <h3 className="text-[9px] sm:text-[10px] font-bold text-slate-200 uppercase tracking-[0.2em]">Core Endpoint</h3>
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+                                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                                            healthStatus.color === 'emerald' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]' :
+                                            healthStatus.color === 'green' ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' :
+                                            healthStatus.color === 'yellow' ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.5)]' :
+                                            healthStatus.color === 'orange' ? 'bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.5)]' :
+                                            healthStatus.color === 'red' ? 'bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.5)]' :
+                                            'bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.5)]'
+                                        }`} />
                                     </div>
                                     <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
                                         <code className="text-[9px] sm:text-[10px] font-mono text-slate-200 bg-slate-700/50 border border-slate-600/50 px-2 py-0.5 rounded-xs truncate sm:whitespace-normal break-all">{baseUrl}</code>
@@ -394,9 +417,21 @@ export default function AiProvidersPage() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm border text-emerald-300 border-emerald-400/30 bg-emerald-400/10">
-                                    CORE ACTIVE
+                                <span className={`text-[8px] sm:text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm border ${
+                                    healthStatus.color === 'emerald' ? 'text-emerald-300 border-emerald-400/30 bg-emerald-400/10' :
+                                    healthStatus.color === 'green' ? 'text-green-300 border-green-400/30 bg-green-400/10' :
+                                    healthStatus.color === 'yellow' ? 'text-yellow-300 border-yellow-400/30 bg-yellow-400/10' :
+                                    healthStatus.color === 'orange' ? 'text-orange-300 border-orange-400/30 bg-orange-400/10' :
+                                    healthStatus.color === 'red' ? 'text-red-300 border-red-400/30 bg-red-400/10' :
+                                    'text-slate-300 border-slate-400/30 bg-slate-400/10'
+                                }`}>
+                                    {healthStatus.status.toUpperCase()}
                                 </span>
+                                {healthStatus.errorRate > 0 && (
+                                    <span className="text-[7px] text-slate-400 font-mono">
+                                        {healthStatus.errorRate}% ERR
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
