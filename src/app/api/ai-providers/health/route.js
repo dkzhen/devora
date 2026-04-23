@@ -11,9 +11,7 @@ export async function GET() {
                 createdAt: {
                     gte: oneHourAgo
                 },
-                endpoint: {
-                    startsWith: '/api/v1/ai'
-                }
+                endpoint: '/api/v1/ai/chat/completions'
             },
             select: {
                 status: true
