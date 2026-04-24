@@ -1,15 +1,34 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { signIn } from 'next-auth/react';
+import Turnstile from 'react-turnstile';
+import toast, { Toaster } from 'react-hot-toast';
+import { useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [stats, setStats] = useState({ airdrops: 0, gmails: 0, apiHits: 0 });
+    const [turnstileToken, setTurnstileToken] = useState('');
+    const searchParams = useSearchParams();
 
     useEffect(() => {
+        // Check for OAuth errors in URL
+        const error = searchParams.get('error');
+        const registered = searchParams.get('registered');
+        
+        if (error === 'AccessDenied') {
+            toast.error('Google sign-in was cancelled or denied');
+        } else if (error === 'OAuthCallback') {
+            toast.error('OAuth authentication failed. Please try again.');
+        } else if (registered === 'true') {
+            toast.success('Registration successful! Please sign in.');
+        }
+
         fetch('/api/public-stats')
             .then(res => res.json())
             .then(data => {
@@ -18,17 +37,23 @@ export default function LoginPage() {
                 }
             })
             .catch(console.error);
-    }, []);
+    }, [searchParams]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!turnstileToken) {
+            setError('Please complete the captcha verification');
+            return;
+        }
+
         setLoading(true);
         setError('');
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ ...formData, turnstileToken })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Login failed');
@@ -44,8 +69,42 @@ export default function LoginPage() {
         }
     };
 
+    const handleGoogleLogin = async () => {
+        setGoogleLoading(true);
+        try {
+            await signIn('google', { callbackUrl: '/api/auth/oauth-callback' });
+        } catch (error) {
+            setError('Google login failed');
+            setGoogleLoading(false);
+        }
+    };
+
     return (
-        <div className="fixed inset-0 z-[200] flex bg-[#080d1a] overflow-auto">
+        <>
+            <Toaster 
+                position="top-center"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#1e293b',
+                        color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                    },
+                    success: {
+                        iconTheme: {
+                            primary: '#10b981',
+                            secondary: '#fff',
+                        },
+                    },
+                    error: {
+                        iconTheme: {
+                            primary: '#ef4444',
+                            secondary: '#fff',
+                        },
+                    },
+                }}
+            />
+            <div className="fixed inset-0 z-[200] flex bg-[#080d1a] overflow-auto">
             {/* Background orbs */}
             <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-600/8 blur-3xl pointer-events-none" />
             <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-indigo-600/8 blur-3xl pointer-events-none" />
@@ -108,12 +167,22 @@ export default function LoginPage() {
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
                                 >
                                     {showPassword ? (
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
                                     ) : (
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                     )}
                                 </button>
                             </div>
+                        </div>
+
+                        {/* Turnstile Captcha */}
+                        <div className="w-full">
+                            <Turnstile
+                                sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                                onVerify={(token) => setTurnstileToken(token)}
+                                theme="dark"
+                                size="flexible"
+                            />
                         </div>
 
                         <div className="flex justify-end">
@@ -142,22 +211,32 @@ export default function LoginPage() {
                         </div>
 
                         {/* OAuth */}
-                        <div className="flex gap-3 justify-center">
-                            <button disabled type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all opacity-50 cursor-not-allowed">
-                                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                                    <path d="M23.766 12.2764C23.766 11.4607 23.6999 10.6406 23.5588 9.83807H12.24V14.4591H18.7217C18.4528 15.9494 17.5885 17.2678 16.323 18.1056V21.1039H20.19C22.4608 19.0139 23.766 15.9274 23.766 12.2764Z" fill="#4285F4" />
-                                    <path d="M12.24 24.0008C15.4766 24.0008 18.2059 22.9382 20.1945 21.1039L16.3275 18.1055C15.2517 18.8375 13.8627 19.252 12.2445 19.252C9.11388 19.252 6.45946 17.1399 5.50705 14.3003H1.5166V17.3912C3.55371 21.4434 7.7029 24.0008 12.24 24.0008Z" fill="#34A853" />
-                                    <path d="M5.50253 14.3003C5.00236 12.8099 5.00236 11.1961 5.50253 9.70575V6.61481H1.51649C-0.185514 10.0056 -0.185514 14.0004 1.51649 17.3912L5.50253 14.3003Z" fill="#FBBC05" />
-                                    <path d="M12.24 4.74966C13.9509 4.7232 15.6044 5.36697 16.8434 6.54867L20.2695 3.12262C18.1001 1.0855 15.2208 -0.034466 12.24 0.000808666C7.7029 0.000808666 3.55371 2.55822 1.5166 6.61481L5.50264 9.70575C6.45064 6.86173 9.10947 4.74966 12.24 4.74966Z" fill="#EA4335" />
-                                </svg>
-                            </button>
-                            <button disabled type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all opacity-50 cursor-not-allowed">
-                                <svg className="w-5 h-5 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-                            </button>
-                            <button disabled type="button" className="flex-1 h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 hover:border-white/15 transition-all opacity-50 cursor-not-allowed">
-                                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.1 1.88-2.61 5.79 1.07 7.22-.67 1.72-1.6 3.42-3.12 3.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.54 4.33-3.74 4.25z" /></svg>
-                            </button>
-                        </div>
+                        <button 
+                            type="button" 
+                            onClick={handleGoogleLogin}
+                            disabled={googleLoading}
+                            className="w-full h-12 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center gap-3 hover:bg-white/8 hover:border-white/15 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                            {googleLoading ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    </svg>
+                                    <span className="text-white text-sm font-medium">Connecting...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                                        <path d="M23.766 12.2764C23.766 11.4607 23.6999 10.6406 23.5588 9.83807H12.24V14.4591H18.7217C18.4528 15.9494 17.5885 17.2678 16.323 18.1056V21.1039H20.19C22.4608 19.0139 23.766 15.9274 23.766 12.2764Z" fill="#4285F4" />
+                                        <path d="M12.24 24.0008C15.4766 24.0008 18.2059 22.9382 20.1945 21.1039L16.3275 18.1055C15.2517 18.8375 13.8627 19.252 12.2445 19.252C9.11388 19.252 6.45946 17.1399 5.50705 14.3003H1.5166V17.3912C3.55371 21.4434 7.7029 24.0008 12.24 24.0008Z" fill="#34A853" />
+                                        <path d="M5.50253 14.3003C5.00236 12.8099 5.00236 11.1961 5.50253 9.70575V6.61481H1.51649C-0.185514 10.0056 -0.185514 14.0004 1.51649 17.3912L5.50253 14.3003Z" fill="#FBBC05" />
+                                        <path d="M12.24 4.74966C13.9509 4.7232 15.6044 5.36697 16.8434 6.54867L20.2695 3.12262C18.1001 1.0855 15.2208 -0.034466 12.24 0.000808666C7.7029 0.000808666 3.55371 2.55822 1.5166 6.61481L5.50264 9.70575C6.45064 6.86173 9.10947 4.74966 12.24 4.74966Z" fill="#EA4335" />
+                                    </svg>
+                                    <span className="text-white text-sm font-medium">Continue with Google</span>
+                                </>
+                            )}
+                        </button>
                     </form>
 
                     <p className="text-center text-sm text-slate-600">
@@ -254,5 +333,6 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+        </>
     );
 }

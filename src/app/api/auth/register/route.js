@@ -3,14 +3,21 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { verifyTurnstile } from '@/lib/turnstile';
 
 export async function POST(request) {
     trackApiHit(request);
     try {
-        const { name, email, password } = await request.json();
+        const { name, email, password, turnstileToken } = await request.json();
 
         if (!name || !email || !password) {
             return NextResponse.json({ error: 'Name, email, and password are required' }, { status: 400 });
+        }
+
+        // 0. Verify Turnstile (Captcha)
+        const turnstileResult = await verifyTurnstile(turnstileToken);
+        if (!turnstileResult.success) {
+            return NextResponse.json({ error: turnstileResult.error || 'Captcha verification failed' }, { status: 400 });
         }
 
         // 1. Check if user already exists

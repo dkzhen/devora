@@ -65,7 +65,7 @@ model DriveFile {
 model User {
   id                  String            @id @default(uuid())
   email               String            @unique
-  password            String
+  password            String?
   name                String?
   role                Role              @default(MEMBER)
   googleClientId      String?           @map("google_client_id") @db.Text
