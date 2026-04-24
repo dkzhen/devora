@@ -26,33 +26,17 @@ export async function GET(request) {
         // Get total API keys
         const totalKeys = await prisma.apiKey.count();
 
-        // Get total requests from cumulative stats
+        // Get total requests, success, and failed from cumulative stats (ALL USERS)
         const totalStatsAgg = await prisma.userApiStats.aggregate({
             _sum: {
-                totalRequests: true
+                totalRequests: true,
+                totalSuccess: true,
+                totalFailed: true
             }
         });
         const totalRequests = totalStatsAgg._sum.totalRequests || 0;
-
-        // Get current user's complete usage history (limited to 50 records) for stats calculation
-        const recentUsage = await prisma.apiKeyUsage.findMany({
-            where: {
-                apiKey: {
-                    userId: auth.user.id
-                }
-            },
-            select: {
-                status: true
-            },
-            orderBy: {
-                createdAt: 'desc'
-            },
-            take: 50
-        });
-
-        // Calculate success and failed from snapshot
-        const totalSuccess = recentUsage.filter(u => u.status >= 200 && u.status < 400).length;
-        const totalFailed = recentUsage.filter(u => u.status >= 400).length;
+        const totalSuccess = totalStatsAgg._sum.totalSuccess || 0;
+        const totalFailed = totalStatsAgg._sum.totalFailed || 0;
 
         // Get usage breakdown by user
         const users = await prisma.user.findMany({

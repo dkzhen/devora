@@ -95,15 +95,23 @@ export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = n
             // Create the usage record
             await prisma.apiKeyUsage.create({ data });
             
+            // Determine if request was success or failed
+            const isSuccess = status >= 200 && status < 400;
+            const isFailed = status >= 400;
+            
             // Update cumulative stats for the user
             await prisma.userApiStats.upsert({
                 where: { userId: apiKey.userId },
                 create: {
                     userId: apiKey.userId,
-                    totalRequests: 1
+                    totalRequests: 1,
+                    totalSuccess: isSuccess ? 1 : 0,
+                    totalFailed: isFailed ? 1 : 0
                 },
                 update: {
-                    totalRequests: { increment: 1 }
+                    totalRequests: { increment: 1 },
+                    totalSuccess: { increment: isSuccess ? 1 : 0 },
+                    totalFailed: { increment: isFailed ? 1 : 0 }
                 }
             });
             

@@ -396,6 +396,8 @@ model UserApiStats {
   id            String   @id @default(uuid())
   userId        String   @unique @map("user_id")
   totalRequests Int      @default(0) @map("total_requests")
+  totalSuccess  Int      @default(0) @map("total_success")
+  totalFailed   Int      @default(0) @map("total_failed")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
