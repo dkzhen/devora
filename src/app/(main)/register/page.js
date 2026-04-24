@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
 import Turnstile from 'react-turnstile';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSearchParams } from 'next/navigation';
 
-export default function RegisterPage() {
+function RegisterForm() {
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
     const [error, setError] = useState('');
@@ -335,5 +335,13 @@ export default function RegisterPage() {
             </div>
         </div>
         </>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="fixed inset-0 bg-[#080d1a] flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+            <RegisterForm />
+        </Suspense>
     );
 }

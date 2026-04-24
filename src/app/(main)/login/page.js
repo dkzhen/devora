@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
 import Turnstile from 'react-turnstile';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
     const [error, setError] = useState('');
@@ -334,5 +334,13 @@ export default function LoginPage() {
             </div>
         </div>
         </>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="fixed inset-0 bg-[#080d1a] flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+            <LoginForm />
+        </Suspense>
     );
 }
