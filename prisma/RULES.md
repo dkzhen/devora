@@ -8,6 +8,9 @@
 - **DO NOT** create new models without explicit user request
 - **DO NOT** change field types, constraints, or relationships
 - **ALWAYS** ask user first before making ANY schema changes
+- **ONLY edit `prisma/schema.prisma` after explicit approval**; the user must run migrations themselves
+- **NEVER run Prisma migration commands** such as `prisma migrate dev`, `prisma migrate deploy`, `npm run db:update`, or any command that creates/applies migrations
+- **NEVER create, edit, delete, move, or rename anything inside `prisma/migrations/`**
 
 ### 2. **Before Making Schema Changes - CHECKLIST**
 
@@ -20,18 +23,22 @@
 ### 3. **Migration Best Practices**
 
 ```bash
-# CORRECT workflow:
+# CORRECT workflow for agents:
 1. Modify prisma/schema.prisma (only after approval)
-2. Run: npm run db:update  (or prisma migrate dev)
-3. NEVER use: npx prisma db push
-4. NEVER use: npx prisma migrate reset (unless explicitly requested)
+2. Tell the user to run the migration locally themselves
+3. NEVER run: npm run db:update, prisma migrate dev, prisma migrate deploy, or any migration command
+4. NEVER use: npx prisma db push
+5. NEVER use: npx prisma migrate reset
+6. NEVER CRUD files inside prisma/migrations/
 ```
 
 ### 4. **Common Mistakes to AVOID**
 
 ❌ Adding fields to User model when GlobalConfig exists
 ❌ Running `prisma migrate reset` without backup
+❌ Running any Prisma migration command as the agent
 ❌ Using `db push` instead of proper migrations
+❌ Creating/editing/deleting files inside `prisma/migrations/`
 ❌ Creating new models when existing ones can be used
 ❌ Modifying schema without understanding data impact
 
@@ -72,13 +79,15 @@ If you must change schema:
    - Impact on existing data
    - Migration strategy
 
-2. **Create migration properly:**
+2. **Tell the user to create/apply migration themselves:**
 
    ```bash
    npm run db:update
    # or
    npx prisma migrate dev --name descriptive_name
    ```
+
+   Agents must not run these commands. Provide them as instructions only.
 
 3. **Update related code:**
    - API routes that use the model
@@ -99,6 +108,8 @@ If migration causes issues:
 # Instead, create a new migration to revert changes
 npx prisma migrate dev --name revert_previous_change
 ```
+
+Agents must not run this command. The user must handle rollback migrations themselves.
 
 ### 8. **Documentation Requirements**
 

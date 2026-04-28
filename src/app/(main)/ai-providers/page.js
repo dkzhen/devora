@@ -107,12 +107,14 @@ export default function AiProvidersPage() {
 
     const handleWhitelistUpdate = async (modelId, emails) => {
         // Assume emails is an array
-        setModels(prev => prev.map(m => m.id === modelId ? { ...m, allowedEmails: emails } : m));
+        const normalizedEmails = emails.map(email => email.trim().toLowerCase()).filter(Boolean);
+        const shouldRestrict = normalizedEmails.length > 0;
+        setModels(prev => prev.map(m => m.id === modelId ? { ...m, allowedEmails: normalizedEmails, isRestricted: shouldRestrict } : m));
         try {
             const res = await fetch('/api/ai-providers/models/status', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ modelId, allowedEmails: emails })
+                body: JSON.stringify({ modelId, allowedEmails: normalizedEmails, isRestricted: shouldRestrict })
             });
             if (!res.ok) throw new Error('Failed to update whitelist');
             toast.success('Whitelist updated', {
@@ -316,6 +318,34 @@ export default function AiProvidersPage() {
             case 'suspend': return 'text-amber-400 border-amber-400/30 bg-amber-400/10';
             case 'hidden': return 'text-slate-400 border-slate-600/30 bg-slate-700/20 opacity-70';
             default: return 'text-emerald-300 border-emerald-400/30 bg-emerald-400/10';
+        }
+    };
+
+    const formatContextLength = (value) => {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue) || numericValue <= 0) return null;
+
+        if (numericValue >= 1000000) {
+            const formatted = numericValue / 1000000;
+            return `${Number.isInteger(formatted) ? formatted : formatted.toFixed(1)}M`;
+        }
+
+        if (numericValue >= 1000) {
+            const formatted = numericValue / 1000;
+            return `${Number.isInteger(formatted) ? formatted : Math.round(formatted)}K`;
+        }
+
+        return `${numericValue}`;
+    };
+
+    const getProviderBadge = (model) => {
+        switch (model.proxyPreset) {
+            case 'ROUTER':
+                return { label: '9ROUTER', className: 'border-cyan-400/30 text-cyan-300 bg-cyan-500/10' };
+            case 'CPA':
+                return { label: 'CPA', className: 'border-fuchsia-400/30 text-fuchsia-300 bg-fuchsia-500/10' };
+            default:
+                return { label: 'DEFAULT', className: 'border-slate-400/30 text-slate-300 bg-slate-500/10' };
         }
     };
 
@@ -542,7 +572,11 @@ export default function AiProvidersPage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                    {ownerModels.map(model => (
+                                    {ownerModels.map(model => {
+                                        const contextBadge = formatContextLength(model.contextLength);
+                                        const providerBadge = getProviderBadge(model);
+
+                                        return (
                                         <div key={model.id} className={`p-4 border border-slate-600/40 bg-slate-800/40 hover:bg-slate-700/40 transition-all rounded-xl group flex flex-col justify-between min-h-[120px] ${model.status === 'hidden' ? 'ring-1 ring-slate-600/40 opacity-50' : 'shadow-lg shadow-black/20'}`}>
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex flex-col gap-1.5">
@@ -560,19 +594,19 @@ export default function AiProvidersPage() {
                                                         <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${getStatusStyle(model.status)}`}>
                                                             {model.status}
                                                         </span>
-                                                        {model.contextLength && (
+                                                         {providerBadge && (
+                                                             <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${providerBadge.className}`}>
+                                                                 {providerBadge.label}
+                                                             </span>
+                                                         )}
+                                                         {contextBadge && (
                                                             <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-emerald-400/30 text-emerald-300 bg-emerald-500/10">
-                                                                {(model.contextLength).toLocaleString()} TOK
+                                                                 {contextBadge}
                                                             </span>
                                                         )}
                                                         {model.isRestricted && (
                                                             <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-blue-400/30 text-blue-300 bg-blue-500/10">
                                                                 RESTRICTED
-                                                            </span>
-                                                        )}
-                                                        {user?.role === 'ULTRA' && (
-                                                            <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border border-purple-400/30 text-purple-300 bg-purple-500/10">
-                                                                ADMIN_VISIBLE
                                                             </span>
                                                         )}
                                                     </div>
@@ -652,7 +686,8 @@ export default function AiProvidersPage() {
                                                 </span>
                                             </div>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ))}

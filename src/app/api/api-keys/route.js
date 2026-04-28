@@ -4,6 +4,8 @@ import prisma from '@/lib/db';
 import { randomBytes } from 'crypto';
 import { trackApiHit } from '@/lib/monitoring';
 
+const NON_ULTRA_API_KEY_LIMIT = 3;
+
 export async function GET(request) {
     trackApiHit(request);
     try {
@@ -13,7 +15,7 @@ export async function GET(request) {
         const apiKeys = await prisma.apiKey.findMany({
             where: { userId: auth.user.id },
             orderBy: { createdAt: 'desc' },
-            select: { id: true, name: true, key: true, createdAt: true, updatedAt: true },
+            select: { id: true, name: true, key: true, accessMode: true, createdAt: true, updatedAt: true },
         });
 
         return NextResponse.json({ apiKeys });
@@ -29,9 +31,25 @@ export async function POST(request) {
         const auth = await verifyAuth(request);
         if (!auth.success) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        const { name } = await request.json();
+        const { name, accessMode } = await request.json();
         if (!name || !name.trim()) {
             return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+        }
+
+        const normalizedAccessMode = accessMode === 'STANDARD' ? 'STANDARD' : 'FULL';
+        const keyAccessMode = auth.user.role === 'ULTRA' ? normalizedAccessMode : 'STANDARD';
+
+        if (auth.user.role !== 'ULTRA') {
+            const existingKeyCount = await prisma.apiKey.count({
+                where: { userId: auth.user.id },
+            });
+
+            if (existingKeyCount >= NON_ULTRA_API_KEY_LIMIT) {
+                return NextResponse.json(
+                    { error: `Non-ULTRA users can only create up to ${NON_ULTRA_API_KEY_LIMIT} API keys.` },
+                    { status: 403 }
+                );
+            }
         }
 
         // Generate: devora_ + 32 random hex chars
@@ -43,6 +61,7 @@ export async function POST(request) {
                 userId: auth.user.id,
                 name: name.trim(),
                 key: apiKey,
+                accessMode: keyAccessMode,
             },
         });
 

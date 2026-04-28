@@ -54,7 +54,12 @@ export async function verifyApiKey(request) {
             return { success: false, error: 'Invalid API Key' };
         }
 
-        return { success: true, user: apiKey.user, apiKeyId: apiKey.id };
+        const effectiveUser = {
+            ...apiKey.user,
+            role: apiKey.accessMode === 'STANDARD' && apiKey.user.role === 'ULTRA' ? 'PRO' : apiKey.user.role
+        };
+
+        return { success: true, user: effectiveUser, apiKeyId: apiKey.id, apiKey };
     } catch (error) {
         console.error('verifyApiKey Error:', error);
         return { success: false, error: 'Internal server error' };

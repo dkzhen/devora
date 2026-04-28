@@ -13,7 +13,7 @@ export async function GET(req, { params }) {
     trackApiHit(req);
 
     try {
-        const account = await prisma.tempMailAccount.findUnique({
+        const account = await prisma.tempMailAccount.findFirst({
             where: { id: id, userId: auth.user.id },
             select: { id: true, address: true, createdAt: true, password: true, token: true }
         });
@@ -47,9 +47,9 @@ export async function DELETE(req, { params }) {
     trackApiHit(req);
 
     try {
-        const account = await prisma.tempMailAccount.findUnique({
+        const account = await prisma.tempMailAccount.findFirst({
             where: { id: id, userId: auth.user.id },
-            select: { token: true }
+            select: { token: true, address: true }
         });
 
         if (!account) {
@@ -59,16 +59,18 @@ export async function DELETE(req, { params }) {
             });
         }
 
-        // 1. Delete from Mail.tm
-        try {
-            await fetch(`${API_BASE}/accounts/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${account.token}`,
-                    'Accept': 'application/ld+json'
-                }
-            });
-        } catch (e) { console.error("Mail.tm delete fail:", e); }
+        // 1. Delete from Mail.tm when token is available. MoeMail has no delete API here.
+        if (account.token) {
+            try {
+                await fetch(`${API_BASE}/accounts/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${account.token}`,
+                        'Accept': 'application/ld+json'
+                    }
+                });
+            } catch (e) { console.error("Mail.tm delete fail:", e); }
+        }
 
         // 2. Delete from DB
         await prisma.tempMailAccount.delete({ where: { id: id } });

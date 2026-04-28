@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { HeroHeader, LoadingState } from '@/components/HeroHeader';
 
+const NON_ULTRA_API_KEY_LIMIT = 3;
+
 export default function ApiKeyPage() {
     const [loading, setLoading] = useState(true);
     const [isAuthorized, setIsAuthorized] = useState(false);
@@ -16,6 +18,16 @@ export default function ApiKeyPage() {
     const [showStats, setShowStats] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const isUltra = userRole === 'ULTRA';
+    const hasReachedKeyLimit = !isUltra && apiKeys.length >= NON_ULTRA_API_KEY_LIMIT;
+
+    const openCreateModal = () => {
+        if (hasReachedKeyLimit) {
+            showToast(`Your role has reached the ${NON_ULTRA_API_KEY_LIMIT} API key limit.`, 'error');
+            return;
+        }
+        setShowCreate(true);
+    };
 
     useEffect(() => {
         const init = async () => {
@@ -117,19 +129,6 @@ export default function ApiKeyPage() {
                         { label: 'API Keys' }
                     ]}
                     className="shrink-0"
-                    actionContent={
-                        isAuthorized && !loading && (
-                            <button
-                                onClick={() => setShowCreate(true)}
-                                className="flex items-center gap-2 px-5 py-2.5 bg-[#f36222]/10 hover:bg-[#f36222]/20 text-[#f36222] border border-[#f36222]/30 hover:border-[#f36222]/60 rounded-lg text-xs font-black uppercase tracking-widest transition-all active:scale-95"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                                </svg>
-                                New Key
-                            </button>
-                        )
-                    }
                 />
 
                 {/* Content */}
@@ -140,12 +139,25 @@ export default function ApiKeyPage() {
                     </div>
                 ) : (
                     <div className="space-y-4">
+                        <div className="flex justify-end">
+                            <button
+                                onClick={openCreateModal}
+                                disabled={hasReachedKeyLimit}
+                                className="flex items-center gap-2 px-5 py-2.5 bg-[#f36222]/10 hover:bg-[#f36222]/20 text-[#f36222] border border-[#f36222]/30 hover:border-[#f36222]/60 rounded-lg text-xs font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#f36222]/10 disabled:hover:border-[#f36222]/30"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                                </svg>
+                                New Key
+                            </button>
+                        </div>
+
                         {/* Stats Bar */}
                         <div className="grid grid-cols-3 gap-3">
                             {[
                                 { label: 'Total Keys', value: apiKeys.length, color: '#f36222' },
                                 { label: 'Active', value: apiKeys.length, color: '#5cb644' },
-                                { label: 'Prefix', value: 'devora_', color: '#007fc3' },
+                                { label: isUltra ? 'Prefix' : 'Limit', value: isUltra ? 'devora_' : `${apiKeys.length}/${NON_ULTRA_API_KEY_LIMIT}`, color: '#007fc3' },
                             ].map((stat) => (
                                 <div key={stat.label} className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl px-4 py-3 flex flex-col gap-1">
                                     <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">{stat.label}</span>
@@ -171,8 +183,9 @@ export default function ApiKeyPage() {
                                     Create your first API key to start using authenticated Devora endpoints.
                                 </p>
                                 <button
-                                    onClick={() => setShowCreate(true)}
-                                    className="inline-flex items-center gap-2 px-7 py-3 bg-linear-to-r from-[#f36222] via-[#5cb644] to-[#007fc3] text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-95 shadow-[0_0_20px_rgba(92,182,68,0.3)]"
+                                    onClick={openCreateModal}
+                                    disabled={hasReachedKeyLimit}
+                                    className="inline-flex items-center gap-2 px-7 py-3 bg-linear-to-r from-[#f36222] via-[#5cb644] to-[#007fc3] text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-95 shadow-[0_0_20px_rgba(92,182,68,0.3)] disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -196,14 +209,20 @@ export default function ApiKeyPage() {
                                 ))}
 
                                 <button
-                                    onClick={() => setShowCreate(true)}
-                                    className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-[#5cb644]/20 hover:border-[#5cb644]/50 rounded-xl text-xs font-black text-[#5cb644]/50 hover:text-[#5cb644] uppercase tracking-widest transition-all"
+                                    onClick={openCreateModal}
+                                    disabled={hasReachedKeyLimit}
+                                    className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-[#5cb644]/20 hover:border-[#5cb644]/50 rounded-xl text-xs font-black text-[#5cb644]/50 hover:text-[#5cb644] uppercase tracking-widest transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#5cb644]/20 disabled:hover:text-[#5cb644]/50"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
                                     </svg>
-                                    Add Another Key
+                                    {hasReachedKeyLimit ? 'Limit Reached (3 Keys)' : 'Add Another Key'}
                                 </button>
+                                {hasReachedKeyLimit && (
+                                    <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                        Your role has reached the {NON_ULTRA_API_KEY_LIMIT} API key limit.
+                                    </p>
+                                )}
                             </div>
                         )}
 
@@ -338,6 +357,7 @@ export default function ApiKeyPage() {
             {showCreate && (
                 <CreateKeyModal
                     onClose={() => setShowCreate(false)}
+                    userRole={userRole}
                     onCreate={(newKey) => {
                         setApiKeys(prev => [newKey, ...prev]);
                         showToast('API Key created successfully!');
@@ -403,10 +423,12 @@ function ApiKeyCard({ apiKey, idx, copiedId, onCopy, onRevoke, maskKey, formatDa
                         </div>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <span className="px-2 py-0.5 bg-[#5cb644]/10 border border-[#5cb644]/20 rounded text-[8px] font-black text-[#5cb644] uppercase tracking-wider">Active</span>
+                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${apiKey.accessMode === 'STANDARD' ? 'bg-[#007fc3]/10 border-[#007fc3]/20 text-[#007fc3]' : 'bg-[#f36222]/10 border-[#f36222]/20 text-[#f36222]'}`}>
+                            {apiKey.accessMode === 'STANDARD' ? 'Standard' : 'Full Access'}
+                        </span>
                         <button
                             onClick={onRevoke}
-                            className="p-1.5 rounded text-slate-600 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all opacity-0 group-hover:opacity-100"
+                            className="p-1.5 rounded text-red-400 bg-red-500/10 border border-red-500/20 transition-all hover:bg-red-500/15 hover:border-red-500/40"
                             title="Revoke key"
                         >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -445,8 +467,9 @@ function ApiKeyCard({ apiKey, idx, copiedId, onCopy, onRevoke, maskKey, formatDa
 }
 
 /* ── Create Modal ── */
-function CreateKeyModal({ onClose, onCreate }) {
+function CreateKeyModal({ onClose, onCreate, userRole }) {
     const [name, setName] = useState('');
+    const [accessMode, setAccessMode] = useState('FULL');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [created, setCreated] = useState(null);
@@ -460,7 +483,7 @@ function CreateKeyModal({ onClose, onCreate }) {
             const res = await fetch('/api/api-keys', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name }),
+                body: JSON.stringify({ name, accessMode }),
             });
             const data = await res.json();
             if (res.ok) {
@@ -545,6 +568,29 @@ function CreateKeyModal({ onClose, onCreate }) {
                                 />
                                 <p className="text-[10px] text-slate-600 mt-1.5">The generated key will have the prefix <span className="text-[#f36222] font-mono">devora_</span></p>
                             </div>
+                            {userRole === 'ULTRA' && (
+                                <div>
+                                    <label className="block text-xs font-black text-[#5cb644] uppercase tracking-widest mb-2">Access Mode</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setAccessMode('STANDARD')}
+                                            className={`p-3 rounded-lg border text-left ${accessMode === 'STANDARD' ? 'bg-[#007fc3]/10 border-[#007fc3]/40 text-[#007fc3]' : 'bg-black/20 border-white/10 text-slate-500 hover:border-white/20'}`}
+                                        >
+                                            <span className="block text-[10px] font-black uppercase tracking-widest">Standard</span>
+                                            <span className="block text-[9px] mt-1 leading-relaxed text-slate-500">Ikut restriction/status model seperti user non-ULTRA.</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setAccessMode('FULL')}
+                                            className={`p-3 rounded-lg border text-left ${accessMode === 'FULL' ? 'bg-[#f36222]/10 border-[#f36222]/40 text-[#f36222]' : 'bg-black/20 border-white/10 text-slate-500 hover:border-white/20'}`}
+                                        >
+                                            <span className="block text-[10px] font-black uppercase tracking-widest">Full Access</span>
+                                            <span className="block text-[9px] mt-1 leading-relaxed text-slate-500">Tetap memakai akses ULTRA penuh.</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                             <div className="flex gap-3 pt-1">
                                 <button type="button" onClick={onClose} disabled={loading} className="flex-1 py-2.5 text-xs font-bold text-slate-500 hover:text-white border border-white/10 hover:border-white/20 rounded-lg transition-all">
                                     Cancel

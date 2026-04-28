@@ -78,7 +78,7 @@ To get available domains, use the [Domains endpoint](/api-references/temp-mail/d
 
 ---
 
-### � List Accounts
+### List Accounts
 
 `GET /api/v1/temp-mail/accounts`
 
@@ -98,12 +98,24 @@ Returns all temporary email accounts tied to your API Key's user account.
 
 `GET /api/v1/temp-mail/accounts/{id}`
 
-Returns the full detail of a specific account including the token for inbox access.
+Returns the full detail of a specific account. Mail.tm accounts include a token for inbox access; MoeMail accounts do not require a token.
+
+**Response `200`:**
+
+```json
+{
+  "id": "...",
+  "address": "abc123@zenra.my.id",
+  "password": "",
+  "token": null,
+  "createdAt": "2026-03-28T12:00:00.000Z"
+}
+```
 
 ---
 
-### �🗑️ Delete Account
+### Delete Account
 
 `DELETE /api/v1/temp-mail/accounts/{id}`
 
-Deletes the account from both the Devora database and the upstream mail provider.
+Deletes the account from the Devora database. Mail.tm accounts are also deleted from the upstream provider when a token is available; MoeMail accounts are removed from Devora history only.

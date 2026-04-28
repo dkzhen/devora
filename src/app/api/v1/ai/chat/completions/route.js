@@ -99,7 +99,8 @@ export async function POST(req) {
         // Default settings if not found in DB (for ULTRA users)
         const status = modelConfig?.status || 'active';
         const isRestricted = modelConfig?.isRestricted || false;
-        const allowedEmails = modelConfig?.allowedEmails?.map(a => a.email) || [];
+        const requestEmail = auth.user.email?.trim().toLowerCase();
+        const allowedEmails = modelConfig?.allowedEmails?.map(a => a.email.trim().toLowerCase()) || [];
 
         // 3b. Check for Global Suspension/Hidden (ULTRA bypass enabled)
         if ((status === 'suspend' || status === 'hidden') && auth.user.role !== 'ULTRA') {
@@ -114,7 +115,7 @@ export async function POST(req) {
         }
 
         // 3c. Check for Email-based Restriction (Whitelist) (ULTRA bypass enabled)
-        if (isRestricted && !allowedEmails.includes(auth.user.email) && auth.user.role !== 'ULTRA') {
+        if (isRestricted && !allowedEmails.includes(requestEmail) && auth.user.role !== 'ULTRA') {
             recordApiKeyUsage(auth.apiKeyId, '/api/v1/ai/chat/completions', 'POST', 403); // Fire and forget
             return NextResponse.json({ 
                 error: { 

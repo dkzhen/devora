@@ -4,7 +4,7 @@ description: Full reference for the Devora Temp Mail API — create temporary em
 icon: Mail
 ---
 
-The Temp Mail API allows you to create and manage temporary email accounts programmatically. It supports two providers: **Mail.tm** (default) and **MoeMail**. All endpoints are authenticated via session cookies (`auth_token`) or your Devora API Key.
+The Temp Mail API allows you to create and manage temporary email accounts programmatically. It supports two providers: **Mail.tm** (default) and **MoeMail**. Public v1 endpoints are authenticated with your Devora API Key.
 
 ---
 
@@ -17,9 +17,9 @@ The Temp Mail API allows you to create and manage temporary email accounts progr
 └──────────┘     └──────────────┘     └──────────────────┘
 ```
 
-1. **Create an account** via `/api/temp-mail/accounts` or `/api/moemail/generate`
-2. **Fetch messages** via `/api/temp-mail/messages` or `/api/moemail/inbox`
-3. **Read full message** via `/api/moemail/message` or internal `/api/temp-mail/messages/{id}`
+1. **Create an account** via `POST /api/v1/temp-mail/accounts`
+2. **Fetch messages** via `GET /api/v1/temp-mail/accounts/{accountId}/messages`
+3. **Read full message** via `GET /api/v1/temp-mail/accounts/{accountId}/messages/{messageId}`
 
 ---
 
@@ -35,7 +35,8 @@ Devora supports two temporary email providers with different feature sets:
 | **Custom Address**    | ✅ Yes                   | ❌ Auto-generated        |
 | **Domain Selection**  | ❌ Auto-assigned         | ✅ Choose from available |
 | **Message Retention** | Permanent (stored in DB) | Temporary                |
-| **DB Persistence**    | ✅ Full                  | ❌ Inbox only            |
+| **DB Persistence**    | ✅ Full                  | ✅ Account + metadata    |
+| **Full HTML Detail**  | ✅ Yes                   | ✅ Yes via v1 detail     |
 
 > [!NOTE]
 > The UI defaults to **Mail.tm** but allows switching to **MoeMail** at any time. MoeMail domains are fetched dynamically from `/api/temp-mail/domains`.
@@ -44,10 +45,10 @@ Devora supports two temporary email providers with different feature sets:
 
 ## Authentication
 
-Internal endpoints use the `auth_token` session cookie automatically. For external API access, include your Devora API Key:
+For external API access, include your Devora API Key:
 
 ```http
-Authorization: Bearer devora_your_api_key
+X-API-Key: your_api_key_here
 ```
 
 ---
@@ -55,24 +56,25 @@ Authorization: Bearer devora_your_api_key
 ## Base URL
 
 ```
-https://devora.my.id/api/temp-mail
+https://devora.my.id/api/v1/temp-mail
 ```
 
 ---
 
 ## Endpoints Overview
 
-| Endpoint            | Method   | Description                           |
-| :------------------ | :------- | :------------------------------------ |
-| `/accounts`         | `POST`   | Create a Mail.tm account              |
-| `/accounts`         | `DELETE` | Delete an account                     |
-| `/accounts/history` | `GET`    | List all accounts created by the user |
-| `/messages`         | `GET`    | Fetch messages for an account         |
-| `/messages/{id}`    | `GET`    | Read full message content             |
-| `/domains`          | `GET`    | List available MoeMail domains        |
-| `/moemail/generate` | `POST`   | Generate a MoeMail address            |
-| `/moemail/inbox`    | `GET`    | Fetch MoeMail inbox                   |
-| `/moemail/message`  | `GET`    | Read full MoeMail message             |
+| Endpoint                                     | Method   | Description                                       |
+| :------------------------------------------- | :------- | :------------------------------------------------ |
+| `/domains`                                   | `GET`    | List available domains                            |
+| `/accounts`                                  | `GET`    | List accounts owned by the API key user           |
+| `/accounts`                                  | `POST`   | Create Mail.tm or MoeMail account                 |
+| `/accounts/{accountId}`                      | `GET`    | Get account detail                                |
+| `/accounts/{accountId}`                      | `DELETE` | Delete account from Devora                        |
+| `/messages`                                  | `GET`    | Query-style inbox metadata endpoint               |
+| `/accounts/{accountId}/messages`             | `GET`    | Account-scoped inbox metadata endpoint            |
+| `/accounts/{accountId}/messages/{messageId}` | `GET`    | Read full message content, including MoeMail HTML |
+| `/token`                                     | `POST`   | Generate Mail.tm token                            |
+| `/image`                                     | `GET`    | Proxy Mail.tm inline images                       |
 
 ---
 
@@ -81,7 +83,8 @@ https://devora.my.id/api/temp-mail
 ### 1. Create a Mail.tm Account
 
 ```bash
-curl -X POST https://devora.my.id/api/temp-mail/accounts \
+curl -X POST https://devora.my.id/api/v1/temp-mail/accounts \
+  -H "X-API-Key: your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
     "address": "mytest@example.com",
@@ -106,9 +109,11 @@ curl -X POST https://devora.my.id/api/temp-mail/accounts \
 ### 2. Generate a MoeMail Account
 
 ```bash
-curl -X POST https://devora.my.id/api/moemail/generate \
+curl -X POST https://devora.my.id/api/v1/temp-mail/accounts \
+  -H "X-API-Key: your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
+    "provider": "moemail",
     "domain": "zenra.my.id"
   }'
 ```
@@ -118,39 +123,44 @@ curl -X POST https://devora.my.id/api/moemail/generate \
 ```json
 {
   "success": true,
-  "address": "abc123@zenra.my.id",
-  "id": "abc123"
+  "provider": "moemail",
+  "account": {
+    "id": "abc123",
+    "address": "abc123@zenra.my.id",
+    "createdAt": "2026-04-23T12:00:00.000Z"
+  }
 }
 ```
 
 ### 3. Fetch Messages
 
-**Mail.tm:**
+This endpoint returns inbox metadata only for both Mail.tm and MoeMail. Use one of the returned message IDs for the next step.
 
 ```bash
-curl -X GET "https://devora.my.id/api/temp-mail/messages?accountId=acb123" \
-  -H "Authorization: Bearer eyJhbGciOi..."
-```
-
-**MoeMail:**
-
-```bash
-curl -X GET "https://devora.my.id/api/moemail/inbox?address=abc123@zenra.my.id"
+curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages" \
+  -H "X-API-Key: your_api_key_here"
 ```
 
 ### 4. Read Full Message
 
-**Mail.tm:**
-
 ```bash
-curl -X GET "https://devora.my.id/api/temp-mail/messages/msg_123abc" \
-  -H "Authorization: Bearer eyJhbGciOi..."
+curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages/MESSAGE_ID" \
+  -H "X-API-Key: your_api_key_here"
 ```
 
-**MoeMail:**
+For MoeMail, this returns full `html` and `text` content, matching the Temp Mail UI message reader.
 
-```bash
-curl -X GET "https://devora.my.id/api/moemail/message?id=msg_123&address=abc123@zenra.my.id"
+```json
+{
+  "id": "MESSAGE_ID",
+  "from": {
+    "name": "Sender",
+    "address": "sender@example.com"
+  },
+  "subject": "Verification Code",
+  "text": "Your code is 123456",
+  "html": ["<p>Your code is <strong>123456</strong></p>"]
+}
 ```
 
 ---

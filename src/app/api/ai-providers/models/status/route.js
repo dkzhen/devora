@@ -29,6 +29,11 @@ export async function POST(req) {
         }
 
         const { modelId, status, isRestricted, allowedEmails } = await req.json();
+        const normalizedAllowedEmails = Array.isArray(allowedEmails)
+            ? Array.from(new Set(allowedEmails
+                .map(email => email.trim().toLowerCase())
+                .filter(Boolean)))
+            : null;
 
         if (!modelId) {
             return NextResponse.json({ error: 'Invalid model ID' }, { status: 400 });
@@ -38,6 +43,7 @@ export async function POST(req) {
         const updateData = {};
         if (status) updateData.status = status;
         if (typeof isRestricted === 'boolean') updateData.isRestricted = isRestricted;
+        if (normalizedAllowedEmails) updateData.isRestricted = normalizedAllowedEmails.length > 0;
 
         const model = await prisma.aiModel.update({
             where: { id: modelId },
@@ -45,17 +51,16 @@ export async function POST(req) {
         });
 
         // 2. Sync Whitelisted Emails (if provided)
-        if (Array.isArray(allowedEmails)) {
+        if (normalizedAllowedEmails) {
             // Transactional update for safety
             await prisma.$transaction([
                 prisma.aiModelAccess.deleteMany({ where: { modelId } }),
-                ...(allowedEmails.length > 0 ? [
+                ...(normalizedAllowedEmails.length > 0 ? [
                     prisma.aiModelAccess.createMany({
-                        data: Array.from(new Set(allowedEmails)) // Unique emails only
-                            .map(email => ({
-                                modelId,
-                                email: email.trim().toLowerCase()
-                            }))
+                        data: normalizedAllowedEmails.map(email => ({
+                            modelId,
+                            email
+                        }))
                     })
                 ] : [])
             ]);

@@ -5,7 +5,7 @@ description: Fetch messages from temporary email inbox
 
 ## Get Messages
 
-Retrieve messages from a temporary email account inbox. Supports both Mail.tm and MoeMail providers.
+Retrieve message metadata from a temporary email account inbox. Supports both Mail.tm and MoeMail providers.
 
 ### Endpoint
 
@@ -23,10 +23,13 @@ X-API-Key: your_api_key_here
 
 ### Query Parameters
 
-| Parameter   | Type   | Required | Description                                                |
-| ----------- | ------ | -------- | ---------------------------------------------------------- |
-| `accountId` | string | Yes      | The temporary email account ID                             |
-| `provider`  | string | No       | Provider type: `mail.tm` or `moemail` (default: `mail.tm`) |
+| Parameter   | Type   | Required | Description                                                                       |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------------- |
+| `accountId` | string | No       | The temporary email account ID. Required if `email` is not provided               |
+| `email`     | string | No       | Account email address. Can be used instead of `accountId` for DB-tracked accounts |
+| `provider`  | string | No       | Provider type: `mail.tm` or `moemail` (default: `mail.tm`)                        |
+| `messageId` | string | No       | Message ID to fetch full detail from this query-style endpoint                    |
+| `msgId`     | string | No       | Alias of `messageId`                                                              |
 
 ### Response
 
@@ -35,6 +38,11 @@ X-API-Key: your_api_key_here
 ```json
 {
   "success": true,
+  "account": {
+    "id": "account_123abc",
+    "address": "devora@example.com",
+    "token": "eyJhbGciOi..."
+  },
   "messages": [
     {
       "id": "msg_123abc",
@@ -54,11 +62,11 @@ X-API-Key: your_api_key_here
 
 #### Error Responses
 
-**400 Bad Request** - Missing accountId
+**400 Bad Request** - Missing accountId/email
 
 ```json
 {
-  "error": "accountId required"
+  "error": "accountId or email required"
 }
 ```
 
@@ -93,6 +101,47 @@ X-API-Key: your_api_key_here
 ```bash
 curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?accountId=abc123&provider=mail.tm" \
   -H "X-API-Key: your_api_key_here"
+```
+
+#### cURL by Email
+
+```bash
+curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?email=abc123@zenra.my.id&provider=moemail" \
+  -H "X-API-Key: your_api_key_here"
+```
+
+#### cURL Detail by Email + Message ID
+
+```bash
+curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?email=abc123@zenra.my.id&provider=moemail&messageId=msg_123abc" \
+  -H "X-API-Key: your_api_key_here"
+```
+
+#### POST Body Lookup
+
+Use this when your client only stores the email address and not the generated account ID.
+
+```bash
+curl -X POST "https://your-domain.com/api/v1/temp-mail/messages" \
+  -H "X-API-Key: your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "abc123@zenra.my.id",
+    "provider": "moemail"
+  }'
+```
+
+To fetch one full message detail with the same body style:
+
+```bash
+curl -X POST "https://your-domain.com/api/v1/temp-mail/messages" \
+  -H "X-API-Key: your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "abc123@zenra.my.id",
+    "provider": "moemail",
+    "messageId": "msg_123abc"
+  }'
 ```
 
 #### JavaScript (Fetch)
@@ -142,3 +191,114 @@ print(f"Received {data['count']} messages")
 - For Mail.tm accounts, the token is retrieved from the database
 - MoeMail accounts don't require tokens
 - Messages are returned in the order received from the provider
+- `email` lookup only works for accounts stored in Devora database under the API key owner. If the email is not found in DB, the API returns `404`.
+
+---
+
+## Get Account Messages
+
+Retrieve messages for an account using the account-scoped endpoint. This endpoint auto-detects Mail.tm or MoeMail from the stored account.
+
+### Endpoint
+
+```
+GET /api/v1/temp-mail/accounts/{accountId}/messages
+```
+
+### Response
+
+Returns an array of message metadata from the provider.
+
+```json
+[
+  {
+    "id": "msg_123abc",
+    "from": "sender@example.com",
+    "subject": "Welcome Email",
+    "createdAt": "2026-04-20T12:00:00.000Z"
+  }
+]
+```
+
+### Example Usage
+
+```bash
+curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages" \
+  -H "X-API-Key: your_api_key_here"
+```
+
+Use this endpoint to get `messageId` values before requesting full message content.
+
+---
+
+## Get Message Detail
+
+Retrieve full message content, including HTML/text body. Supports both Mail.tm and MoeMail providers.
+
+This is the endpoint to use when you need the same full message body displayed in the Temp Mail UI.
+
+### Endpoint
+
+```
+GET /api/v1/temp-mail/accounts/{accountId}/messages/{messageId}
+```
+
+### Response
+
+#### Mail.tm / MoeMail Detail Response (200 OK)
+
+```json
+{
+  "id": "msg_123abc",
+  "from": {
+    "name": "Sender Name",
+    "address": "sender@example.com"
+  },
+  "subject": "Welcome Email",
+  "text": "Plain text content...",
+  "html": ["<p>HTML content...</p>"],
+  "createdAt": "2026-04-20T12:00:00.000Z"
+}
+```
+
+#### MoeMail HTML Response Example
+
+MoeMail may return `html` from the upstream provider as a string. Devora normalizes it into an array so clients can handle Mail.tm and MoeMail with the same shape.
+
+```json
+{
+  "id": "moe_msg_123",
+  "from": {
+    "name": "Devora",
+    "address": "noreply@example.com"
+  },
+  "subject": "Verify your account",
+  "text": "Your verification code is 123456",
+  "html": [
+    "<div><h1>Verify your account</h1><p>Your verification code is <strong>123456</strong></p></div>"
+  ],
+  "createdAt": "2026-04-20T12:00:00.000Z"
+}
+```
+
+### Example Usage
+
+```bash
+curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages/MESSAGE_ID" \
+  -H "X-API-Key: your_api_key_here"
+```
+
+### Recommended Flow
+
+1. Create a MoeMail account with `POST /api/v1/temp-mail/accounts` and body `{ "provider": "moemail" }`.
+2. Fetch inbox metadata with `GET /api/v1/temp-mail/accounts/{accountId}/messages`.
+3. Pick a message `id` from the inbox response.
+4. Fetch full HTML/text content with `GET /api/v1/temp-mail/accounts/{accountId}/messages/{messageId}`.
+
+### Notes
+
+- Mail.tm detail is fetched with the stored account token.
+- MoeMail detail is fetched through the MoeMail provider API and normalized so `html` is returned as an array, matching the UI format.
+- Account ownership is verified against the API key user before fetching provider data.
+- The query-style endpoint `GET /api/v1/temp-mail/messages` can return inbox metadata or full detail when `messageId`/`msgId` is provided.
+- `POST /api/v1/temp-mail/messages` accepts the same lookup fields in JSON body: `accountId`, `email`, `provider`, and optional `messageId`/`msgId`.
