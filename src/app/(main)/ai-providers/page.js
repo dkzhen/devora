@@ -594,7 +594,7 @@ export default function AiProvidersPage() {
                                                         <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${getStatusStyle(model.status)}`}>
                                                             {model.status}
                                                         </span>
-                                                         {providerBadge && (
+                                                         {user?.role === 'ULTRA' && providerBadge && providerBadge.label !== 'DEFAULT' && (
                                                              <span className={`text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-xs border ${providerBadge.className}`}>
                                                                  {providerBadge.label}
                                                              </span>

@@ -18,7 +18,12 @@ export async function GET(request) {
             select: { id: true, name: true, key: true, accessMode: true, createdAt: true, updatedAt: true },
         });
 
-        return NextResponse.json({ apiKeys });
+        const normalizedApiKeys = apiKeys.map(apiKey => ({
+            ...apiKey,
+            accessMode: auth.user.role === 'ULTRA' ? apiKey.accessMode : 'STANDARD',
+        }));
+
+        return NextResponse.json({ apiKeys: normalizedApiKeys });
     } catch (err) {
         console.error('GET /api/api-keys error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

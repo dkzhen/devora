@@ -199,6 +199,7 @@ export default function ApiKeyPage() {
                                     <ApiKeyCard
                                         key={k.id}
                                         apiKey={k}
+                                        userRole={userRole}
                                         idx={idx}
                                         copiedId={copiedId}
                                         onCopy={handleCopy}
@@ -397,7 +398,7 @@ export default function ApiKeyPage() {
 }
 
 /* ── API Key Card ── */
-function ApiKeyCard({ apiKey, idx, copiedId, onCopy, onRevoke, maskKey, formatDate }) {
+function ApiKeyCard({ apiKey, userRole, idx, copiedId, onCopy, onRevoke, maskKey, formatDate }) {
     const [revealed, setRevealed] = useState(false);
     const gradients = [
         'from-[#f36222]/10 to-[#5cb644]/5',
@@ -407,6 +408,7 @@ function ApiKeyCard({ apiKey, idx, copiedId, onCopy, onRevoke, maskKey, formatDa
     const borderColors = ['border-[#f36222]/20', 'border-[#5cb644]/20', 'border-[#007fc3]/20'];
     const dotColors = ['bg-[#f36222]', 'bg-[#5cb644]', 'bg-[#007fc3]'];
     const g = idx % 3;
+    const effectiveAccessMode = userRole === 'ULTRA' && apiKey.accessMode === 'FULL' ? 'FULL' : 'STANDARD';
 
     return (
         <div className={`relative overflow-hidden rounded-xl border ${borderColors[g]} bg-linear-to-r ${gradients[g]} p-4 group transition-all hover:shadow-[0_0_20px_rgba(92,182,68,0.1)]`}>
@@ -423,8 +425,8 @@ function ApiKeyCard({ apiKey, idx, copiedId, onCopy, onRevoke, maskKey, formatDa
                         </div>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${apiKey.accessMode === 'STANDARD' ? 'bg-[#007fc3]/10 border-[#007fc3]/20 text-[#007fc3]' : 'bg-[#f36222]/10 border-[#f36222]/20 text-[#f36222]'}`}>
-                            {apiKey.accessMode === 'STANDARD' ? 'Standard' : 'Full Access'}
+                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${effectiveAccessMode === 'STANDARD' ? 'bg-[#007fc3]/10 border-[#007fc3]/20 text-[#007fc3]' : 'bg-[#f36222]/10 border-[#f36222]/20 text-[#f36222]'}`}>
+                            {effectiveAccessMode === 'STANDARD' ? 'Standard' : 'Full Access'}
                         </span>
                         <button
                             onClick={onRevoke}
@@ -469,7 +471,7 @@ function ApiKeyCard({ apiKey, idx, copiedId, onCopy, onRevoke, maskKey, formatDa
 /* ── Create Modal ── */
 function CreateKeyModal({ onClose, onCreate, userRole }) {
     const [name, setName] = useState('');
-    const [accessMode, setAccessMode] = useState('FULL');
+    const [accessMode, setAccessMode] = useState(userRole === 'ULTRA' ? 'FULL' : 'STANDARD');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [created, setCreated] = useState(null);
@@ -483,7 +485,7 @@ function CreateKeyModal({ onClose, onCreate, userRole }) {
             const res = await fetch('/api/api-keys', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, accessMode }),
+                body: JSON.stringify({ name, accessMode: userRole === 'ULTRA' ? accessMode : 'STANDARD' }),
             });
             const data = await res.json();
             if (res.ok) {
