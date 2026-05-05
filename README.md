@@ -1,66 +1,102 @@
-# Gmail Account Manager
+# Devora - Developer Operations & Resource Aggregator
 
-Modern dashboard management akun Gmail berbasis OAuth untuk menyimpan refresh token dan melakukan maintenance API read-only agar akun tetap aktif.
+Modern all-in-one developer platform untuk mengelola berbagai layanan dan tools dalam satu dashboard yang powerful dan user-friendly.
 
-## Fitur
+## 🚀 Features
 
-- ✅ **OAuth Google Authentication** - Login dengan akun Gmail
-- ✅ **Gmail Stats** - Monitor total messages & threads untuk setiap akun
-- ✅ **Account Management** - Tambah, hapus, dan kelola multiple akun Gmail
-- ✅ **Auto Maintenance** - Cron job untuk menjaga akun tetap aktif (setiap 3 bulan)
-- ✅ **API Status Check** - Validasi status akun melalui Gmail API
-- ✅ **Modern UI** - Interface futuristik dark theme dengan animasi smooth
-- ✅ **Responsive Design** - Mobile-first, perfect di semua device
-- ✅ **Real-time Updates** - Refresh individual atau all accounts
-- ✅ **JSON Storage** - Data tersimpan dalam file JSON lokal
+### Core Features
 
-## Tech Stack
+- ✅ **Multi-User System** - Role-based access control (MEMBER, INSIDER, PRO, ULTRA)
+- ✅ **API Key Management** - Generate dan kelola API keys dengan rate limiting
+- ✅ **AI Model Proxy** - Unified interface untuk berbagai AI providers
+- ✅ **Temp Mail Service** - Temporary email management
+- ✅ **Gmail Integration** - Gmail account monitoring dan management
+- ✅ **Google Drive Explorer** - Browse dan manage Google Drive files
+- ✅ **Airdrop Tracker** - Track crypto airdrops dan tasks
+- ✅ **Quick Vault** - Secure storage untuk credentials dan notes
+- ✅ **App Library** - APK management dan distribution
 
-- **Backend**: Node.js + Express
-- **Frontend**: HTML + CSS + Vanilla JavaScript (No Framework!)
-- **Authentication**: Passport.js + Google OAuth 2.0
-- **API**: Gmail API (googleapis)
-- **Storage**: File JSON (tanpa database)
-- **Styling**: Pure CSS dengan CSS Variables
+### Advanced Features
 
-## Setup Instructions
+- 🔐 **Rate Limiting** - Per-user rate limits (RPM, RPD, Max Tokens)
+- 📊 **Usage Analytics** - Comprehensive API usage statistics
+- 🎯 **Admin Dashboard** - ULTRA users get full system insights
+- 🔄 **Real-time Updates** - Live data refresh dan monitoring
+- 📱 **Responsive Design** - Mobile-first, works on all devices
+- 🎨 **Modern UI** - Dark theme dengan gradient effects
 
-### 1. Clone dan Install Dependencies
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Database**: MySQL dengan Prisma ORM
+- **Authentication**: Custom JWT-based auth
+- **Styling**: Tailwind CSS
+- **Documentation**: Fumadocs
+- **APIs**: Gmail API, Google Drive API, Various AI APIs
+
+## 📋 Prerequisites
+
+- Node.js 18+
+- MySQL 8+
+- npm atau yarn
+
+## 🔧 Installation
+
+### 1. Clone Repository
 
 ```bash
-git clone <repository-url>
-cd google-api
+git clone https://github.com/yourusername/devora.git
+cd devora
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Google Cloud Console Setup
+### 3. Environment Setup
 
-1. Buka [Google Cloud Console](https://console.cloud.google.com/)
-2. Buat project baru atau pilih project yang sudah ada
-3. Aktifkan **Gmail API**:
-   - Pergi ke "APIs & Services" > "Library"
-   - Cari "Gmail API" dan klik "Enable"
-4. Buat OAuth 2.0 Credentials:
-   - Pergi ke "APIs & Services" > "Credentials"
-   - Klik "Create Credentials" > "OAuth 2.0 Client IDs"
-   - Application type: "Web application"
-   - Name: "Gmail Account Manager" (atau nama lain)
-   - **Authorized redirect URIs**: `http://localhost:3000/auth/google/callback`
-   - Klik "Create"
-5. Copy **Client ID** dan **Client Secret**
+Copy `.env.example` ke `.env` dan isi dengan credentials Anda:
 
-### 3. Environment Variables
-
-Buat file `.env` di root project:
-
-```env
-CLIENT_ID=your_google_client_id_here
-CLIENT_SECRET=your_google_client_secret_here
-SESSION_SECRET=your_session_secret_here
-PORT=3000
+```bash
+cp .env.example .env
 ```
 
-### 4. Jalankan Aplikasi
+**Required Environment Variables:**
+
+```env
+# Database
+DATABASE_URL="mysql://user:password@localhost:3306/devora"
+
+# AI Proxy Configuration (Optional - untuk AI features)
+AI_PROXY_URL=http://localhost:8317
+AI_PROXY_TOKEN=your_token_here
+
+# Additional proxy presets (Optional)
+ROUTER_PROXY_URL=http://your-router-proxy:port
+ROUTER_PROXY_TOKEN=your_router_token
+
+CPA_PROXY_URL=http://your-cpa-proxy:port
+CPA_PROXY_TOKEN=your_cpa_token
+```
+
+### 4. Database Setup
+
+```bash
+# Generate Prisma Client
+npx prisma generate
+
+# Run migrations
+npm run db:update
+# atau
+npx prisma migrate dev
+
+# (Optional) Seed database
+npx prisma db seed
+```
+
+### 5. Run Development Server
 
 ```bash
 npm run dev
@@ -68,317 +104,193 @@ npm run dev
 
 Aplikasi akan berjalan di `http://localhost:3000`
 
-## Struktur Project
+## 📁 Project Structure
 
 ```
-/
-├── server.js              # Main server file dengan API endpoints
-├── package.json           # Dependencies
-├── accounts.json          # Data storage (auto-created)
-├── .env                   # Environment variables
-└── public/
-    ├── index.html        # Homepage (static HTML)
-    ├── app.js            # Client-side JavaScript
-    └── style.css         # Modern CSS styling
+devora/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── (main)/       # Main application pages
+│   │   ├── (docs)/       # Documentation pages
+│   │   ├── (landing)/    # Landing page
+│   │   └── api/          # API routes
+│   ├── components/       # React components
+│   ├── lib/              # Utility functions
+│   └── constants/        # Constants dan configurations
+├── prisma/
+│   ├── schema.prisma     # Database schema
+│   └── migrations/       # Database migrations
+├── content/
+│   └── docs/             # Documentation content (MDX)
+├── public/               # Static assets
+└── tests/                # Test files
 ```
 
-## API Endpoints
+## 🔑 API Key Management
 
-### Server Routes
+### Generating API Keys
 
-- `GET /` - Serve static homepage
-- `GET /api/accounts` - Get all accounts (JSON)
-- `GET /auth/google` - Initiate Google OAuth
-- `GET /auth/google/callback` - OAuth callback
+1. Login ke dashboard
+2. Navigate ke `/api-key`
+3. Click "New Key" button
+4. Berikan nama untuk key Anda
+5. (ULTRA users) Pilih access mode: Standard atau Full Access
 
-### API Endpoints
+### Using API Keys
 
-- `POST /check-account` - Check account status via Gmail API
-- `POST /remove-account` - Remove account from storage
-
-## Google OAuth Scopes
-
-Aplikasi ini menggunakan scope minimal yang diperlukan:
-
-- `profile` - Akses profil user
-- `email` - Akses email user
-- `https://www.googleapis.com/auth/gmail.readonly` - Read-only akses Gmail
-
-## Gmail Stats
-
-Untuk setiap akun, aplikasi menampilkan:
-
-- **Total Messages** - Jumlah total email dalam inbox
-- **Total Threads** - Jumlah total conversation threads
-- **Last Check** - Waktu terakhir pengecekan status
-- **Status** - Active/Invalid
-
-## Cron Job Schedule
-
-- **Schedule**: Setiap 3 bulan (0 0 1 _/3 _)
-- **Action**: Hit Gmail API untuk semua akun terdaftar
-- **Purpose**: Menjaga refresh token tetap aktif dan akun tidak expire
-- **Testing**: Ubah schedule menjadi `* * * * *` untuk test setiap menit
-
-## Data Structure
-
-Format data dalam `accounts.json`:
-
-```json
-[
-  {
-    "email": "user@gmail.com",
-    "name": "User Name",
-    "refresh_token": "1//04xxx...",
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "last_check": "2024-01-15T10:30:00.000Z",
-    "status": "active",
-    "total_messages": 15420,
-    "total_threads": 3251
-  }
-]
-```
-
-## Status Values
-
-- `active` - Akun aktif dan refresh token valid
-- `invalid` - API call gagal, kemungkinan token expired
-
-## UI Features
-
-### Modern Design
-
-- 🎨 Dark theme futuristik
-- 🌈 Gradient effects & smooth animations
-- 📱 Mobile-first responsive
-- ⚡ Fast & lightweight (no framework)
-- 🎯 Clean & minimalist
-
-### Interactive Elements
-
-- ➕ Add account button dengan OAuth flow
-- 🔄 Refresh all accounts
-- ✅ Check individual account
-- 🗑️ Remove account dengan confirmation
-- 📊 Real-time stats update
-- 🔔 Toast notifications
-
-## Security Notes
-
-- Refresh token disimpan di file JSON lokal
-- Session menggunakan secret key (set via environment variable)
-- Tidak ada database eksternal yang perlu diamankan
-- Scope API minimal (read-only Gmail)
-- Client-side menggunakan vanilla JS tanpa external dependencies
-
-## Troubleshooting
-
-### Error: "No refresh token received"
-
-- Pastikan `accessType: "offline"` dan `prompt: "consent"` di setup OAuth
-- User harus memberikan consent ulang untuk mendapatkan refresh token
-
-### Error: "Invalid credentials"
-
-- Periksa CLIENT_ID dan CLIENT_SECRET di file .env
-- Pastikan redirect URI di Google Cloud Console sesuai: `http://localhost:3000/auth/google/callback`
-
-### Error: "API call failed"
-
-- Periksa apakah Gmail API sudah diaktifkan di Google Cloud Console
-- Cek apakah refresh token masih valid (mungkin expired)
-
-### UI tidak muncul dengan benar
-
-- Clear browser cache
-- Pastikan semua file static ada di folder /public
-- Check console browser untuk error JavaScript
-
-## Development
-
-Untuk development dengan auto-reload:
+Include API key di request header:
 
 ```bash
-npm run dev
+curl -H "Authorization: Bearer devora_your_api_key_here" \
+  https://your-domain.com/api/v1/endpoint
 ```
 
-Menggunakan nodemon untuk restart otomatis saat file berubah.
+### Rate Limits
 
-## Production Notes
+Default rate limits per role:
 
-Untuk production deployment:
+- **MEMBER**: 25 RPM, 1000 RPD
+- **INSIDER**: 50 RPM, 2000 RPD
+- **PRO**: 100 RPM, 5000 RPD
+- **ULTRA**: Unlimited
 
-- Ganti `http://localhost:3000` dengan domain production di:
-  - Google Cloud Console redirect URI
-  - `callbackURL` di server.js
-- Set environment variables di server production
-- Gunakan process manager seperti PM2
-- Setup HTTPS/SSL certificate
-- Pertimbangkan rate limiting untuk API endpoints
+ULTRA users dapat mengkonfigurasi rate limits untuk semua roles via dashboard.
 
-## Performance
+## 📊 Features Overview
 
-- ⚡ Zero external CSS/JS frameworks
-- 🚀 Pure vanilla JavaScript untuk maximum performance
-- 📦 Minimal bundle size
-- 🎯 Efficient API calls dengan caching
-- 💨 Fast page load (<100ms)
+### 1. AI Model Management
+
+- Manage multiple AI model providers
+- Configure model status dan restrictions
+- Track token usage per model
+- Role-based model access control
+
+### 2. Temp Mail Service
+
+- Create temporary email accounts
+- Receive dan read messages
+- Multiple provider support
+- Auto-cleanup old messages
+
+### 3. Gmail Center
+
+- Connect multiple Gmail accounts via OAuth
+- Monitor inbox statistics
+- Auto-activity untuk keep accounts active
+- Drive file explorer integration
+
+### 4. Airdrop Tracker
+
+- Track crypto airdrops
+- Manage tasks dan progress
+- Public/private airdrop listings
+- Task completion tracking
+
+### 5. Quick Vault
+
+- Secure credential storage
+- Categorized items (API Keys, Passwords, Notes, etc.)
+- Encrypted storage
+- Quick access interface
+
+## 🔒 Security
+
+### Best Practices
+
+1. **Environment Variables**: Jangan commit file `.env` ke repository
+2. **API Keys**: Rotate API keys secara berkala
+3. **Database**: Gunakan strong passwords dan restrict access
+4. **HTTPS**: Selalu gunakan HTTPS di production
+5. **Rate Limiting**: Configure rate limits sesuai kebutuhan
+
+### Files to Keep Private
+
+Pastikan files berikut ada di `.gitignore`:
+
+- `.env`
+- `.env.local`
+- `.env.*.local`
+- `prisma/seed.js` (jika berisi data sensitif)
+- `/config` directory
+
+## 🚀 Deployment
+
+### Production Checklist
+
+- [ ] Set semua environment variables di production
+- [ ] Run database migrations
+- [ ] Configure HTTPS/SSL
+- [ ] Set up proper CORS policies
+- [ ] Enable rate limiting
+- [ ] Configure backup strategy
+- [ ] Set up monitoring dan logging
+- [ ] Review security settings
+
+### Recommended Platforms
+
+- **Vercel** - Recommended untuk Next.js
+- **Railway** - Good untuk full-stack apps
+- **DigitalOcean** - VPS option
+- **AWS/GCP** - Enterprise scale
+
+## 📖 Documentation
+
+Full documentation tersedia di `/docs` route setelah aplikasi running, atau visit:
+
+- API References
+- Feature Guides
+- Setup Instructions
+- Troubleshooting
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Database Connection Error**
+
+```bash
+# Check DATABASE_URL format
+# Ensure MySQL is running
+# Verify credentials
+```
+
+**Prisma Client Error**
+
+```bash
+# Regenerate Prisma Client
+npx prisma generate
+```
+
+**Build Errors**
+
+```bash
+# Clear Next.js cache
+rm -rf .next
+npm run build
+```
+
+## 📞 Support
+
+- 📧 Email: support@devora.com
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/devora/issues)
+- 📖 Docs: [Documentation](http://localhost:3000/docs)
 
 ---
 
-**Author**: Your Name  
 **Version**: 2.0.0  
-**Last Updated**: February 2026
-
-## Setup Instructions
-
-### 1. Clone dan Install Dependencies
-
-```bash
-git clone <repository-url>
-cd google-api
-npm install
-```
-
-### 2. Google Cloud Console Setup
-
-1. Buka [Google Cloud Console](https://console.cloud.google.com/)
-2. Buat project baru atau pilih project yang sudah ada
-3. Aktifkan **Google Drive API**:
-   - Pergi ke "APIs & Services" > "Library"
-   - Cari "Google Drive API" dan klik "Enable"
-4. Buat OAuth 2.0 Credentials:
-   - Pergi ke "APIs & Services" > "Credentials"
-   - Klik "Create Credentials" > "OAuth 2.0 Client IDs"
-   - Application type: "Web application"
-   - Name: "Google Account Dashboard" (atau nama lain)
-   - **Authorized redirect URIs**: `http://localhost:3000/auth/google/callback`
-   - Klik "Create"
-5. Copy **Client ID** dan **Client Secret**
-
-### 3. Environment Variables
-
-Buat file `.env` di root project:
-
-```env
-CLIENT_ID=your_google_client_id_here
-CLIENT_SECRET=your_google_client_secret_here
-SESSION_SECRET=your_session_secret_here
-PORT=3000
-```
-
-### 4. Jalankan Aplikasi
-
-```bash
-npm run dev
-```
-
-Aplikasi akan berjalan di `http://localhost:3000`
-
-## Struktur Project
-
-```
-/
-├── server.js              # Main server file
-├── package.json           # Dependencies
-├── accounts.json          # Data storage
-├── .env                   # Environment variables
-├── views/
-│   ├── index.ejs         # Homepage template
-│   └── error.ejs         # Error page template
-└── public/
-    └── style.css         # CSS styling
-```
-
-## API Endpoints
-
-- `GET /` - Homepage (dashboard)
-- `GET /auth/google` - Initiate Google OAuth
-- `GET /auth/google/callback` - OAuth callback
-- `POST /check-account` - Check account status via API
-- `POST /remove-account` - Remove account from storage
-
-## Google OAuth Scopes
-
-Aplikasi ini menggunakan scope minimal yang diperlukan:
-
-- `profile` - Akses profil user
-- `email` - Akses email user
-- `https://www.googleapis.com/auth/drive.metadata.readonly` - Read-only akses metadata Google Drive
-
-## Cron Job Schedule
-
-- **Schedule**: Setiap 3 bulan (0 0 1 _/3 _)
-- **Action**: Hit Google Drive API untuk semua akun terdaftar
-- **Purpose**: Menjaga refresh token tetap aktif dan akun tidak expire
-
-## Data Structure
-
-Format data dalam `accounts.json`:
-
-```json
-[
-  {
-    "email": "user@gmail.com",
-    "name": "User Name",
-    "refresh_token": "1//04xxx...",
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "last_check": "2024-01-15T10:30:00.000Z",
-    "status": "active"
-  }
-]
-```
-
-## Status Values
-
-- `active` - Akun aktif dan refresh token valid
-- `invalid` - API call gagal, kemungkinan token expired
-
-## Security Notes
-
-- Refresh token disimpan di file JSON lokal
-- Session menggunakan secret key (set via environment variable)
-- Tidak ada database eksternal yang perlu diamankan
-- Scope API minimal (read-only)
-
-## Troubleshooting
-
-### Error: "No refresh token received"
-
-- Pastikan `accessType: "offline"` dan `prompt: "consent"` di setup OAuth
-- User harus memberikan consent ulang untuk mendapatkan refresh token
-
-### Error: "Invalid credentials"
-
-- Periksa CLIENT_ID dan CLIENT_SECRET di file .env
-- Pastikan redirect URI di Google Cloud Console sesuai: `http://localhost:3000/auth/google/callback`
-
-### Error: "API call failed"
-
-- Periksa apakah Google Drive API sudah diaktifkan di Google Cloud Console
-- Cek apakah refresh token masih valid (mungkin expired)
-
-## Development
-
-Untuk development dengan auto-reload:
-
-```bash
-npm run dev
-```
-
-Menggunakan nodemon untuk restart otomatis saat file berubah.
-
-## Production Notes
-
-Untuk production deployment:
-
-- Ganti `http://localhost:3000` dengan domain production di:
-  - Google Cloud Console redirect URI
-  - `callbackURL` di server.js
-- Set environment variables di server production
-- Pertimbangkan menggunakan database yang lebih robust untuk production scale
-
----
-
-**Author**: GitHub Copilot  
-**Version**: 1.0.0
+**Last Updated**: May 2026  
+**Built with**: ❤️ by the Devora Team
