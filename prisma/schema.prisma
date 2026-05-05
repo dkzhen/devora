@@ -70,6 +70,9 @@ model User {
   role                Role              @default(MEMBER)
   googleClientId      String?           @map("google_client_id") @db.Text
   googleClientSecret  String?           @map("google_client_secret") @db.Text
+  rateLimitRpm        Int?              @map("rate_limit_rpm")
+  rateLimitRpd        Int?              @map("rate_limit_rpd")
+  rateLimitMaxTokens  BigInt?           @map("rate_limit_max_tokens")
   createdAt           DateTime          @default(now()) @map("created_at")
   updatedAt           DateTime          @updatedAt @map("updated_at")
   httpClientData      String?           @map("http_client_data") @db.LongText
@@ -394,14 +397,17 @@ model ApiKeyUsage {
 }
 
 model UserApiStats {
-  id            String   @id @default(uuid())
-  userId        String   @unique @map("user_id")
-  totalRequests Int      @default(0) @map("total_requests")
-  totalSuccess  Int      @default(0) @map("total_success")
-  totalFailed   Int      @default(0) @map("total_failed")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String   @id @default(uuid())
+  userId                String   @unique @map("user_id")
+  totalRequests         Int      @default(0) @map("total_requests")
+  totalSuccess          Int      @default(0) @map("total_success")
+  totalFailed           Int      @default(0) @map("total_failed")
+  totalPromptTokens     BigInt   @default(0) @map("total_prompt_tokens")
+  totalCompletionTokens BigInt   @default(0) @map("total_completion_tokens")
+  totalTokens           BigInt   @default(0) @map("total_tokens")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_api_stats")
 }

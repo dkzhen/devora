@@ -12,12 +12,19 @@ export default function ApiKeyPage() {
     const [showCreate, setShowCreate] = useState(false);
     const [keyToDelete, setKeyToDelete] = useState(null);
     const [usageHistory, setUsageHistory] = useState([]);
+    const [tokenStats, setTokenStats] = useState(null);
     const [copiedId, setCopiedId] = useState(null);
     const [toast, setToast] = useState(null);
     const [userRole, setUserRole] = useState(null);
-    const [showStats, setShowStats] = useState(false);
+    const [adminStats, setAdminStats] = useState(null);
+    const [adminStatsLoading, setAdminStatsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [adminPage, setAdminPage] = useState(1);
+    const [expandedHitId, setExpandedHitId] = useState(null);
+    const [showRoleLimitsModal, setShowRoleLimitsModal] = useState(false);
+    const [roleLimits, setRoleLimits] = useState(null);
     const itemsPerPage = 10;
+    const adminItemsPerPage = 10;
     const isUltra = userRole === 'ULTRA';
     const hasReachedKeyLimit = !isUltra && apiKeys.length >= NON_ULTRA_API_KEY_LIMIT;
 
@@ -37,7 +44,9 @@ export default function ApiKeyPage() {
                 const user = JSON.parse(userInfo);
                 setUserRole(user.role);
                 setIsAuthorized(true);
-                await Promise.all([fetchKeys(), fetchUsageHistory()]);
+                const promises = [fetchKeys(), fetchUsageHistory()];
+                if (user.role === 'ULTRA') promises.push(fetchAdminStats());
+                await Promise.all(promises);
             } catch { setLoading(false); }
         };
         init();
@@ -59,8 +68,21 @@ export default function ApiKeyPage() {
             if (res.ok) {
                 const data = await res.json();
                 setUsageHistory(data.history || []);
+                setTokenStats(data.tokenStats || null);
             }
         } catch { }
+    };
+
+    const fetchAdminStats = async () => {
+        setAdminStatsLoading(true);
+        try {
+            const res = await fetch('/api/api-keys/admin/statistics');
+            if (res.ok) {
+                const data = await res.json();
+                setAdminStats(data);
+            }
+        } catch { }
+        finally { setAdminStatsLoading(false); }
     };
 
     const showToast = (msg, type = 'success') => {
@@ -90,6 +112,14 @@ export default function ApiKeyPage() {
 
     const formatDate = (d) => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     const maskKey = (key) => key.slice(0, 14) + '•'.repeat(20) + key.slice(-4);
+    
+    const formatNumber = (num) => {
+        if (num >= 1_000_000_000_000) return (num / 1_000_000_000_000).toFixed(1) + 'T';
+        if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1) + 'B';
+        if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
+        if (num >= 1_000) return (num / 1_000).toFixed(1) + 'K';
+        return num.toString();
+    };
 
     if (!loading && !isAuthorized) {
         return (
@@ -194,6 +224,20 @@ export default function ApiKeyPage() {
                                 </button>
                             </div>
                         ) : (
+                            <div className="space-y-4">
+                            {/* ULTRA Only: Role Limits Configuration Button */}
+                            {isUltra && (
+                                <button
+                                    onClick={() => setShowRoleLimitsModal(true)}
+                                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-cyan-500/10 border border-purple-500/30 hover:border-purple-500/50 rounded-xl text-xs font-black text-purple-400 hover:text-purple-300 uppercase tracking-widest transition-all"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                    </svg>
+                                    Configure Rate Limits Per Role
+                                </button>
+                            )}
+
                             <div className="space-y-3">
                                 {apiKeys.map((k, idx) => (
                                     <ApiKeyCard
@@ -208,23 +252,24 @@ export default function ApiKeyPage() {
                                         formatDate={formatDate}
                                     />
                                 ))}
-
-                                <button
-                                    onClick={openCreateModal}
-                                    disabled={hasReachedKeyLimit}
-                                    className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-[#5cb644]/20 hover:border-[#5cb644]/50 rounded-xl text-xs font-black text-[#5cb644]/50 hover:text-[#5cb644] uppercase tracking-widest transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#5cb644]/20 disabled:hover:text-[#5cb644]/50"
-                                >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    {hasReachedKeyLimit ? 'Limit Reached (3 Keys)' : 'Add Another Key'}
-                                </button>
-                                {hasReachedKeyLimit && (
-                                    <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                                        Your role has reached the {NON_ULTRA_API_KEY_LIMIT} API key limit.
-                                    </p>
-                                )}
                             </div>
+
+                            <button
+                                onClick={openCreateModal}
+                                disabled={hasReachedKeyLimit}
+                                className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-[#5cb644]/20 hover:border-[#5cb644]/50 rounded-xl text-xs font-black text-[#5cb644]/50 hover:text-[#5cb644] uppercase tracking-widest transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[#5cb644]/20 disabled:hover:text-[#5cb644]/50"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                                </svg>
+                                {hasReachedKeyLimit ? 'Limit Reached (3 Keys)' : 'Add Another Key'}
+                            </button>
+                            {hasReachedKeyLimit && (
+                                <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                    Your role has reached the {NON_ULTRA_API_KEY_LIMIT} API key limit.
+                                </p>
+                            )}
+                        </div>
                         )}
 
                         {/* Usage info banner */}
@@ -240,6 +285,275 @@ export default function ApiKeyPage() {
                             </div>
                         </div>
 
+                        {/* Statistics Section */}
+                        {tokenStats && (
+                            <div className="pt-6">
+                                <div className="flex items-center gap-2 mb-4 px-2">
+                                    <div className="w-1 h-4 bg-purple-500 rounded-full" />
+                                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-purple-500">Statistics</h3>
+                                </div>
+                                
+                                {/* Token Usage Card */}
+                                <div className="bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-cyan-500/5 border border-purple-500/20 rounded-xl p-5 shadow-lg">
+                                <div className="space-y-3">
+                                    {/* Token Usage */}
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[9px] font-black uppercase tracking-wider text-purple-400/60 mb-1">Prompt Tokens</p>
+                                            <p className="text-xl font-black text-purple-400 font-mono">{tokenStats.totalPromptTokens.toLocaleString()}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[9px] font-black uppercase tracking-wider text-blue-400/60 mb-1">Completion</p>
+                                            <p className="text-xl font-black text-blue-400 font-mono">{tokenStats.totalCompletionTokens.toLocaleString()}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[9px] font-black uppercase tracking-wider text-cyan-400/60 mb-1">Total Tokens</p>
+                                            <p className="text-xl font-black text-cyan-400 font-mono">{tokenStats.totalTokens.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Rate Limits */}
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400/60 mb-1">Max RPM</p>
+                                            <p className="text-xl font-black text-emerald-400 font-mono">
+                                                {userRole === 'ULTRA' ? '∞' : (tokenStats.rateLimitRpm || 25)}
+                                            </p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[9px] font-black uppercase tracking-wider text-amber-400/60 mb-1">Max RPD</p>
+                                            <p className="text-xl font-black text-amber-400 font-mono">
+                                                {userRole === 'ULTRA' ? '∞' : (tokenStats.rateLimitRpd || '1K')}
+                                            </p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[9px] font-black uppercase tracking-wider text-rose-400/60 mb-1">Max Tokens</p>
+                                            <p className="text-xl font-black text-rose-400 font-mono">
+                                                {userRole === 'ULTRA' ? '∞' : (tokenStats.rateLimitMaxTokens ? tokenStats.rateLimitMaxTokens.toLocaleString() : '∞')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        )}
+
+                        {/* Admin Statistics (ULTRA Only) */}
+                        {isUltra && adminStats && (
+                            <div className="pt-6">
+                                <div className="flex items-center justify-between mb-4 px-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1 h-4 bg-[#007fc3] rounded-full" />
+                                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[#007fc3]">Admin Statistics</h3>
+                                    </div>
+                                    <button 
+                                        onClick={fetchAdminStats} 
+                                        disabled={adminStatsLoading}
+                                        className="p-1.5 text-slate-500 hover:text-white transition-colors disabled:opacity-50"
+                                    >
+                                        <svg className={`w-4 h-4 ${adminStatsLoading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                
+                                <div className="bg-gradient-to-br from-[#007fc3]/5 via-purple-500/5 to-[#007fc3]/5 border border-[#007fc3]/20 rounded-xl p-5 shadow-lg">
+                                    {/* Overview Stats */}
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-[#f36222]/60 mb-1">Total Users</p>
+                                            <p className="text-2xl font-black text-[#f36222] font-mono">{adminStats.totalUsers}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-[#5cb644]/60 mb-1">Total Keys</p>
+                                            <p className="text-2xl font-black text-[#5cb644] font-mono">{adminStats.totalKeys}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-purple-400/60 mb-1">Total Tokens</p>
+                                            <p className="text-2xl font-black text-purple-400 font-mono">{formatNumber(adminStats.totalTokens)}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-[#007fc3]/60 mb-1">Total Requests</p>
+                                            <p className="text-2xl font-black text-[#007fc3] font-mono">{formatNumber(adminStats.totalRequests)}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-emerald-400/60 mb-1">Success</p>
+                                            <p className="text-2xl font-black text-emerald-400 font-mono">{formatNumber(adminStats.totalSuccess)}</p>
+                                        </div>
+                                        <div className="bg-black/20 border border-white/10 rounded-lg p-3">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-red-400/60 mb-1">Failed</p>
+                                            <p className="text-2xl font-black text-red-400 font-mono">{formatNumber(adminStats.totalFailed)}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* User Breakdown Table */}
+                                    {adminStats.userBreakdown && adminStats.userBreakdown.length > 0 && (
+                                        <div className="mt-4">
+                                            <h4 className="text-[10px] font-black uppercase tracking-wider text-[#5cb644] mb-2">Usage by User</h4>
+                                            <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-lg overflow-hidden overflow-x-auto">
+                                                <table className="w-full text-left border-collapse min-w-[500px]">
+                                                    <thead>
+                                                        <tr className="bg-white/5 border-b border-white/5">
+                                                            <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644]">User</th>
+                                                            <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644]">Role</th>
+                                                            <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644] text-right">Keys</th>
+                                                            <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644] text-right">Requests</th>
+                                                            <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644] text-right">Total Token</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-white/5">
+                                                        {adminStats.userBreakdown.slice((adminPage - 1) * adminItemsPerPage, adminPage * adminItemsPerPage).map((user) => (
+                                                            <tr key={user.userId} className="hover:bg-white/2 transition-colors">
+                                                                <td className="px-3 py-2 text-xs text-white font-bold">{user.name || 'Unknown'}</td>
+                                                                <td className="px-3 py-2">
+                                                                    <span className={`px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wider ${
+                                                                        user.role === 'ULTRA' ? 'bg-purple-500/10 text-purple-500' :
+                                                                        user.role === 'PRO' ? 'bg-blue-500/10 text-blue-500' :
+                                                                        user.role === 'INSIDER' ? 'bg-amber-500/10 text-amber-500' :
+                                                                        'bg-slate-500/10 text-slate-500'
+                                                                    }`}>
+                                                                        {user.role}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-3 py-2 text-right font-mono text-xs text-[#5cb644]">{user.keyCount}</td>
+                                                                <td className="px-3 py-2 text-right font-mono text-xs text-[#007fc3] font-bold">{formatNumber(user.requestCount)}</td>
+                                                                <td className="px-3 py-2 text-right font-mono text-xs text-purple-400 font-bold">{formatNumber(user.tokenCount)}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                            {/* Pagination */}
+                                            {adminStats.userBreakdown.length > adminItemsPerPage && (
+                                                <div className="flex items-center justify-between mt-3 px-2">
+                                                    <p className="text-[9px] text-slate-500 font-mono">
+                                                        Showing {((adminPage - 1) * adminItemsPerPage) + 1}-{Math.min(adminPage * adminItemsPerPage, adminStats.userBreakdown.length)} of {adminStats.userBreakdown.length}
+                                                    </p>
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            onClick={() => setAdminPage(p => Math.max(1, p - 1))}
+                                                            disabled={adminPage === 1}
+                                                            className="px-2 py-1 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[9px] font-bold transition-all"
+                                                        >
+                                                            Prev
+                                                        </button>
+                                                        <span className="text-[9px] font-mono text-slate-400">
+                                                            {adminPage}/{Math.ceil(adminStats.userBreakdown.length / adminItemsPerPage)}
+                                                        </span>
+                                                        <button
+                                                            onClick={() => setAdminPage(p => Math.min(Math.ceil(adminStats.userBreakdown.length / adminItemsPerPage), p + 1))}
+                                                            disabled={adminPage >= Math.ceil(adminStats.userBreakdown.length / adminItemsPerPage)}
+                                                            className="px-2 py-1 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[9px] font-bold transition-all"
+                                                        >
+                                                            Next
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Recent API Hits (All Users) */}
+                                    {adminStats.recentHits && adminStats.recentHits.length > 0 && (
+                                        <div className="mt-4">
+                                            <h4 className="text-[10px] font-black uppercase tracking-wider text-[#f36222] mb-2">Recent API Hits (All Users)</h4>
+                                            <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-lg overflow-hidden">
+                                                <div className="overflow-x-auto">
+                                                    <table className="w-full text-left border-collapse min-w-[600px]">
+                                                        <thead>
+                                                            <tr className="bg-white/5 border-b border-white/5">
+                                                                <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644]">Time</th>
+                                                                <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644]">User</th>
+                                                                <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644]">Method</th>
+                                                                <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644]">Endpoint</th>
+                                                                <th className="px-3 py-2 text-[8px] font-black uppercase tracking-wider text-[#5cb644] text-right">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-white/5">
+                                                            {adminStats.recentHits.map((hit) => (
+                                                                <>
+                                                                    <tr 
+                                                                        key={hit.id} 
+                                                                        onClick={() => setExpandedHitId(expandedHitId === hit.id ? null : hit.id)}
+                                                                        className="hover:bg-white/2 transition-colors cursor-pointer"
+                                                                    >
+                                                                        <td className="px-3 py-2 font-mono text-[10px] text-slate-400">
+                                                                            {new Date(hit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                                            <span className="block text-[8px] text-slate-600 mt-0.5">{new Date(hit.createdAt).toLocaleDateString()}</span>
+                                                                        </td>
+                                                                        <td className="px-3 py-2 text-[10px]">
+                                                                            <p className="text-white font-bold">{hit.apiKey?.user?.name || 'Unknown'}</p>
+                                                                        </td>
+                                                                        <td className="px-3 py-2">
+                                                                            <span className={`px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wider ${
+                                                                                hit.method === 'POST' ? 'bg-amber-500/10 text-amber-500' : 
+                                                                                hit.method === 'GET' ? 'bg-emerald-500/10 text-emerald-500' : 
+                                                                                'bg-blue-500/10 text-blue-500'
+                                                                            }`}>
+                                                                                {hit.method}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td className="px-3 py-2 font-mono text-[10px] text-slate-500">{hit.endpoint}</td>
+                                                                        <td className="px-3 py-2 text-right">
+                                                                            <div className="flex items-center justify-end gap-2">
+                                                                                <span className={`font-mono text-[10px] font-bold ${
+                                                                                    hit.status >= 200 && hit.status < 300 ? 'text-[#5cb644]' : 
+                                                                                    hit.status >= 400 ? 'text-red-500' : 'text-slate-400'
+                                                                                }`}>
+                                                                                    {hit.status}
+                                                                                </span>
+                                                                                <svg className={`w-3 h-3 text-slate-500 transition-transform ${expandedHitId === hit.id ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                                                </svg>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {expandedHitId === hit.id && (
+                                                                        <tr className="bg-black/20">
+                                                                            <td colSpan="5" className="px-3 py-3">
+                                                                                <div className="space-y-2">
+                                                                                    <div className="flex items-start gap-2">
+                                                                                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 min-w-[80px]">Response:</span>
+                                                                                        <span className={`text-[10px] font-mono ${
+                                                                                            hit.status >= 200 && hit.status < 300 ? 'text-[#5cb644]' : 
+                                                                                            hit.status >= 400 ? 'text-red-400' : 'text-slate-400'
+                                                                                        }`}>
+                                                                                            {hit.status} {hit.status >= 200 && hit.status < 300 ? 'Success' : 
+                                                                                             hit.status === 400 ? 'Bad Request' :
+                                                                                             hit.status === 401 ? 'Unauthorized' :
+                                                                                             hit.status === 403 ? 'Forbidden' :
+                                                                                             hit.status === 404 ? 'Not Found' :
+                                                                                             hit.status === 429 ? 'Too Many Requests' :
+                                                                                             hit.status >= 500 ? 'Server Error' : 'Unknown'}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    {hit.responseMessage && (
+                                                                                        <div className="flex items-start gap-2">
+                                                                                            <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 min-w-[80px]">Message:</span>
+                                                                                            <span className="text-[10px] text-slate-300">{hit.responseMessage}</span>
+                                                                                        </div>
+                                                                                    )}
+                                                                                    <div className="flex items-start gap-2">
+                                                                                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 min-w-[80px]">API Key:</span>
+                                                                                        <span className="text-[10px] text-slate-400 font-mono">{hit.apiKey?.name || 'Deleted'}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    )}
+                                                                </>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Usage History Section */}
                         <div className="pt-6">
                             <div className="flex items-center justify-between mb-4 px-2">
@@ -247,22 +561,9 @@ export default function ApiKeyPage() {
                                     <div className="w-1 h-4 bg-[#f36222] rounded-full" />
                                     <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[#f36222]">Usage History</h3>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    {userRole === 'ULTRA' && (
-                                        <button 
-                                            onClick={() => setShowStats(true)}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#007fc3]/10 hover:bg-[#007fc3]/20 text-[#007fc3] border border-[#007fc3]/30 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all"
-                                        >
-                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                            </svg>
-                                            Statistics
-                                        </button>
-                                    )}
-                                    <button onClick={fetchUsageHistory} className="p-1.5 text-slate-500 hover:text-white transition-colors">
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                    </button>
-                                </div>
+                                <button onClick={fetchUsageHistory} className="p-1.5 text-slate-500 hover:text-white transition-colors">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                </button>
                             </div>
                             
                             {usageHistory.length === 0 ? (
@@ -366,19 +667,19 @@ export default function ApiKeyPage() {
                 />
             )}
 
+            {/* Role Limits Modal */}
+            {showRoleLimitsModal && (
+                <RoleLimitsModal
+                    onClose={() => setShowRoleLimitsModal(false)}
+                    showToast={showToast}
+                />
+            )}
+
             {/* Revoke Confirm Modal */}
             {keyToDelete && (
                 <RevokeModal
                     onClose={() => setKeyToDelete(null)}
                     onConfirm={() => handleDelete(keyToDelete)}
-                />
-            )}
-
-            {/* Statistics Modal */}
-            {showStats && (
-                <StatisticsModal
-                    onClose={() => setShowStats(false)}
-                    showToast={showToast}
                 />
             )}
 
@@ -609,6 +910,195 @@ function CreateKeyModal({ onClose, onCreate, userRole }) {
     );
 }
 
+/* ── Role Limits Modal ── */
+function RoleLimitsModal({ onClose, showToast }) {
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [roleLimits, setRoleLimits] = useState({
+        MEMBER: { rpm: 25, rpd: 1000, maxTokens: null },
+        INSIDER: { rpm: 50, rpd: 2000, maxTokens: null },
+        PRO: { rpm: 100, rpd: 5000, maxTokens: null },
+        ULTRA: { rpm: null, rpd: null, maxTokens: null },
+    });
+
+    useEffect(() => {
+        fetchRoleLimits();
+    }, []);
+
+    const fetchRoleLimits = async () => {
+        try {
+            const res = await fetch('/api/api-keys/role-limits');
+            if (res.ok) {
+                const data = await res.json();
+                setRoleLimits(data.roleLimits);
+            }
+        } catch (err) {
+            console.error('Failed to fetch role limits:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            const res = await fetch('/api/api-keys/role-limits', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ roleLimits }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                showToast('Role limits updated successfully!');
+                onClose();
+            } else {
+                showToast(data.error || 'Failed to update role limits', 'error');
+            }
+        } catch {
+            showToast('Network error', 'error');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const updateLimit = (role, field, value) => {
+        setRoleLimits(prev => ({
+            ...prev,
+            [role]: {
+                ...prev[role],
+                [field]: value === '' || value === null ? null : parseInt(value, 10),
+            },
+        }));
+    };
+
+    const roles = [
+        { key: 'MEMBER', label: 'Member', color: 'slate' },
+        { key: 'INSIDER', label: 'Insider', color: 'amber' },
+        { key: 'PRO', label: 'Pro', color: 'blue' },
+        { key: 'ULTRA', label: 'Ultra', color: 'purple' },
+    ];
+
+    return (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div className="bg-[#04080f] border border-purple-500/20 rounded-2xl max-w-3xl w-full shadow-2xl my-8">
+                {/* Header */}
+                <div className="relative px-6 py-5 border-b border-white/5 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-cyan-500/10">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-base font-black text-white tracking-wide">Configure Rate Limits Per Role</h3>
+                                <p className="text-[10px] text-slate-500">Set RPM, RPD, and Max Tokens for each user role</p>
+                            </div>
+                        </div>
+                        <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-6">
+                    {loading ? (
+                        <div className="py-12 text-center">
+                            <div className="inline-block w-8 h-8 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" />
+                            <p className="text-sm text-slate-500 mt-3">Loading role limits...</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {roles.map(({ key, label, color }) => (
+                                <div key={key} className="bg-black/20 border border-white/10 rounded-xl p-4">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-${color}-500/10 text-${color}-500`}>
+                                            {label}
+                                        </span>
+                                        {key === 'ULTRA' && (
+                                            <span className="text-[9px] text-slate-500">(Unlimited by default)</span>
+                                        )}
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <label className="block text-[9px] font-black uppercase tracking-wider text-emerald-400/60 mb-1.5">
+                                                RPM (Requests/Min)
+                                            </label>
+                                            <input
+                                                type="number"
+                                                value={roleLimits[key].rpm === null ? '' : roleLimits[key].rpm}
+                                                onChange={(e) => updateLimit(key, 'rpm', e.target.value)}
+                                                placeholder="Unlimited"
+                                                className="w-full bg-black/30 border border-white/10 focus:border-emerald-400/40 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none transition-all font-mono"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[9px] font-black uppercase tracking-wider text-amber-400/60 mb-1.5">
+                                                RPD (Requests/Day)
+                                            </label>
+                                            <input
+                                                type="number"
+                                                value={roleLimits[key].rpd === null ? '' : roleLimits[key].rpd}
+                                                onChange={(e) => updateLimit(key, 'rpd', e.target.value)}
+                                                placeholder="Unlimited"
+                                                className="w-full bg-black/30 border border-white/10 focus:border-amber-400/40 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none transition-all font-mono"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[9px] font-black uppercase tracking-wider text-rose-400/60 mb-1.5">
+                                                Max Tokens
+                                            </label>
+                                            <input
+                                                type="number"
+                                                value={roleLimits[key].maxTokens === null ? '' : roleLimits[key].maxTokens}
+                                                onChange={(e) => updateLimit(key, 'maxTokens', e.target.value)}
+                                                placeholder="Unlimited"
+                                                className="w-full bg-black/30 border border-white/10 focus:border-rose-400/40 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none transition-all font-mono"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                            <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl px-4 py-3 flex gap-3 items-start">
+                                <svg className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <div>
+                                    <p className="text-[10px] font-bold text-blue-400 mb-0.5">Note</p>
+                                    <p className="text-[9px] text-slate-400 leading-relaxed">
+                                        Leave fields empty for unlimited access. These limits apply to all users with the respective role. Changes take effect immediately.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    onClick={onClose}
+                                    disabled={saving}
+                                    className="flex-1 py-2.5 text-xs font-bold text-slate-500 hover:text-white border border-white/10 hover:border-white/20 rounded-lg transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSave}
+                                    disabled={saving}
+                                    className="flex-1 py-2.5 text-xs font-black text-white bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 rounded-lg hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 uppercase tracking-widest"
+                                >
+                                    {saving ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 /* ── Revoke Modal ── */
 function RevokeModal({ onClose, onConfirm }) {
     const [loading, setLoading] = useState(false);
@@ -626,269 +1116,6 @@ function RevokeModal({ onClose, onConfirm }) {
                     <button onClick={onClose} disabled={loading} className="flex-1 py-2.5 text-xs font-bold text-slate-500 border border-white/10 hover:border-white/20 rounded-lg transition-all">Cancel</button>
                     <button onClick={handleConfirm} disabled={loading} className="flex-1 py-2.5 text-xs font-black text-white bg-red-600 hover:bg-red-500 rounded-lg transition-all disabled:opacity-50">
                         {loading ? 'Revoking...' : 'Yes, Revoke'}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-/* ── Statistics Modal (ULTRA Only) ── */
-function StatisticsModal({ onClose, showToast }) {
-    const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState(null);
-    const [clearing, setClearing] = useState(false);
-    const [userPage, setUserPage] = useState(1);
-    const usersPerPage = 10;
-
-    useEffect(() => {
-        fetchStats();
-    }, []);
-
-    const fetchStats = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch('/api/api-keys/admin/statistics');
-            if (res.ok) {
-                const data = await res.json();
-                setStats(data);
-            } else {
-                showToast('Failed to load statistics', 'error');
-            }
-        } catch {
-            showToast('Network error', 'error');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleClearUsage = async () => {
-        if (!confirm('Are you sure you want to clear all usage history? This action cannot be undone.')) return;
-        
-        setClearing(true);
-        try {
-            const res = await fetch('/api/api-keys/admin/clear-usage', { method: 'DELETE' });
-            if (res.ok) {
-                showToast('Usage history cleared successfully');
-                await fetchStats();
-            } else {
-                showToast('Failed to clear usage history', 'error');
-            }
-        } catch {
-            showToast('Network error', 'error');
-        } finally {
-            setClearing(false);
-        }
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto py-8">
-            <div className="bg-[#04080f]/95 border border-[#007fc3]/20 rounded-2xl max-w-4xl w-full shadow-2xl my-auto max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-                {/* Header */}
-                <div className="relative px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 shrink-0" style={{ background: 'linear-gradient(135deg,#020810 0%,#071408 50%,#1a0d05 100%)' }}>
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#007fc3]/20 border border-[#007fc3]/30 flex items-center justify-center">
-                                <svg className="w-5 h-5 text-[#007fc3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 className="text-sm sm:text-lg font-black text-white tracking-wide">API Usage Statistics</h3>
-                                <p className="text-[9px] sm:text-[10px] text-slate-500 font-mono uppercase tracking-wider hidden sm:block">ULTRA Admin Panel</p>
-                            </div>
-                        </div>
-                        <button onClick={onClose} className="p-2 text-slate-500 hover:text-white transition-colors">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-3 sm:p-6 overflow-y-auto flex-1">
-                    {loading ? (
-                        <div className="py-12 text-center">
-                            <div className="inline-block w-8 h-8 border-2 border-[#007fc3]/30 border-t-[#007fc3] rounded-full animate-spin" />
-                            <p className="text-slate-500 text-xs mt-3">Loading statistics...</p>
-                        </div>
-                    ) : stats ? (
-                        <div className="space-y-6">
-                            {/* Overview Stats */}
-                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
-                                <div className="bg-[#f36222]/5 border border-[#f36222]/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#f36222]/60 mb-1">Total Users</p>
-                                    <p className="text-xl sm:text-2xl font-black text-[#f36222]">{stats.totalUsers}</p>
-                                </div>
-                                <div className="bg-[#5cb644]/5 border border-[#5cb644]/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]/60 mb-1">Total Keys</p>
-                                    <p className="text-xl sm:text-2xl font-black text-[#5cb644]">{stats.totalKeys}</p>
-                                </div>
-                                <div className="bg-[#007fc3]/5 border border-[#007fc3]/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#007fc3]/60 mb-1">Total Requests</p>
-                                    <p className="text-xl sm:text-2xl font-black text-[#007fc3]">{stats.totalRequests.toLocaleString()}</p>
-                                </div>
-                                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-emerald-500/60 mb-1">Total Success</p>
-                                    <p className="text-xl sm:text-2xl font-black text-emerald-500">{stats.totalSuccess}</p>
-                                </div>
-                                <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 sm:p-4">
-                                    <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-red-500/60 mb-1">Total Failed</p>
-                                    <p className="text-xl sm:text-2xl font-black text-red-500">{stats.totalFailed}</p>
-                                </div>
-                            </div>
-
-                            {/* User Usage Breakdown */}
-                            <div>
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                                    <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#5cb644]">Usage by User</h4>
-                                    <button
-                                        onClick={handleClearUsage}
-                                        disabled={clearing}
-                                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-all disabled:opacity-50"
-                                    >
-                                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                        {clearing ? 'Clearing...' : 'Clear All'}
-                                    </button>
-                                </div>
-                                <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
-                                    <table className="w-full text-left border-collapse min-w-[500px]">
-                                        <thead>
-                                            <tr className="bg-white/5 border-b border-white/5">
-                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">User</th>
-                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Email</th>
-                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Role</th>
-                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Keys</th>
-                                                <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Requests</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-white/5">
-                                            {stats.userBreakdown
-                                                .slice((userPage - 1) * usersPerPage, userPage * usersPerPage)
-                                                .map((user) => (
-                                                <tr key={user.userId} className="hover:bg-white/2 transition-colors">
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-white font-bold">{user.name || 'Unknown'}</td>
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-slate-400 font-mono">{user.email}</td>
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3">
-                                                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
-                                                            user.role === 'ULTRA' ? 'bg-purple-500/10 text-purple-500' :
-                                                            user.role === 'PRO' ? 'bg-blue-500/10 text-blue-500' :
-                                                            user.role === 'INSIDER' ? 'bg-amber-500/10 text-amber-500' :
-                                                            'bg-slate-500/10 text-slate-500'
-                                                        }`}>
-                                                            {user.role}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#5cb644]">{user.keyCount}</td>
-                                                    <td className="px-3 sm:px-4 py-2 sm:py-3 text-right font-mono text-xs sm:text-sm text-[#007fc3] font-bold">{user.requestCount.toLocaleString()}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                {/* User Pagination */}
-                                {stats.userBreakdown.length > usersPerPage && (
-                                    <div className="flex items-center justify-between mt-3 px-2">
-                                        <p className="text-[9px] sm:text-[10px] text-slate-500 font-mono">
-                                            Showing {((userPage - 1) * usersPerPage) + 1}-{Math.min(userPage * usersPerPage, stats.userBreakdown.length)} of {stats.userBreakdown.length}
-                                        </p>
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={() => setUserPage(p => Math.max(1, p - 1))}
-                                                disabled={userPage === 1}
-                                                className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all"
-                                            >
-                                                Prev
-                                            </button>
-                                            <span className="text-[9px] sm:text-[10px] font-mono text-slate-400">
-                                                {userPage}/{Math.ceil(stats.userBreakdown.length / usersPerPage)}
-                                            </span>
-                                            <button
-                                                onClick={() => setUserPage(p => Math.min(Math.ceil(stats.userBreakdown.length / usersPerPage), p + 1))}
-                                                disabled={userPage >= Math.ceil(stats.userBreakdown.length / usersPerPage)}
-                                                className="px-2 sm:px-3 py-1 sm:py-1.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white border border-white/10 rounded-lg text-[9px] sm:text-[10px] font-bold transition-all"
-                                            >
-                                                Next
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* My Full Usage History */}
-                            <div>
-                                <h4 className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#f36222] mb-3">My Complete Usage History</h4>
-                                {stats.myHistory.length === 0 ? (
-                                    <div className="bg-[#0a0f1a]/40 border border-white/5 rounded-xl py-8 text-center">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">No usage history</p>
-                                    </div>
-                                ) : (
-                                    <div className="bg-[#0a0f1a]/60 border border-white/5 rounded-xl overflow-hidden overflow-x-auto">
-                                        <div className="max-h-64 sm:max-h-96 overflow-y-auto">
-                                            <table className="w-full text-left border-collapse min-w-[600px]">
-                                                <thead className="sticky top-0 bg-[#0a0f1a] z-10">
-                                                    <tr className="bg-white/5 border-b border-white/5">
-                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Time</th>
-                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Key</th>
-                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Method</th>
-                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644]">Endpoint</th>
-                                                        <th className="px-3 sm:px-4 py-2 sm:py-3 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#5cb644] text-right">Status</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody className="divide-y divide-white/5">
-                                                    {stats.myHistory.map((hit) => (
-                                                        <tr key={hit.id} className="hover:bg-white/2 transition-colors">
-                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 font-mono text-[9px] sm:text-[10px] text-slate-400 whitespace-nowrap">
-                                                                {new Date(hit.createdAt).toLocaleString()}
-                                                            </td>
-                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-[9px] sm:text-[10px] text-white font-bold">
-                                                                {hit.apiKey?.name || 'Deleted'}
-                                                            </td>
-                                                            <td className="px-3 sm:px-4 py-2 sm:py-3">
-                                                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
-                                                                hit.method === 'POST' ? 'bg-amber-500/10 text-amber-500' : 
-                                                                hit.method === 'GET' ? 'bg-emerald-500/10 text-emerald-500' : 
-                                                                'bg-blue-500/10 text-blue-500'
-                                                            }`}>
-                                                                {hit.method}
-                                                            </span>
-                                                            </td>
-                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 font-mono text-[9px] sm:text-[10px] text-slate-500">{hit.endpoint}</td>
-                                                            <td className="px-3 sm:px-4 py-2 sm:py-3 text-right">
-                                                            <span className={`font-mono text-[10px] font-bold ${
-                                                                hit.status >= 200 && hit.status < 300 ? 'text-[#5cb644]' : 
-                                                                hit.status >= 400 ? 'text-red-500' : 'text-slate-400'
-                                                            }`}>
-                                                                {hit.status}
-                                                            </span>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="py-12 text-center">
-                            <p className="text-slate-500 text-sm">Failed to load statistics</p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Footer */}
-                <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/5 flex justify-end shrink-0">
-                    <button
-                        onClick={onClose}
-                        className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
-                    >
-                        Close
                     </button>
                 </div>
             </div>

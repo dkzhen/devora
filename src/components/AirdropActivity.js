@@ -41,9 +41,9 @@ export default function AirdropActivity({ data = [], total = 0, color = 'blue' }
     const theme = THEME[color] || THEME.blue;
 
     return (
-        <div className={`relative overflow-hidden rounded-lg bg-linear-to-b ${theme.bg} border ${theme.border} p-6 flex flex-col h-full group ${theme.glow}`}>
+        <div className={`relative overflow-hidden rounded-lg bg-linear-to-b ${theme.bg} border ${theme.border} p-6 flex flex-col h-full ${theme.glow}`}>
             {/* Top neon accent */}
-            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity`} />
+            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${theme.accentLine} to-transparent pointer-events-none opacity-50`} />
             
             {/* Corner brackets */}
             <span className={`absolute top-2 left-2 w-3.5 h-3.5 border-t border-l ${theme.bracketStrong} pointer-events-none`} />
@@ -51,14 +51,11 @@ export default function AirdropActivity({ data = [], total = 0, color = 'blue' }
             <span className={`absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l ${theme.bracketWeak} pointer-events-none`} />
             <span className={`absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r ${theme.bracketWeak} pointer-events-none`} />
 
-            {/* Gloss effect */}
-            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
             {/* Header */}
             <div className={`relative z-10 flex items-center justify-between mb-6 border-b ${theme.headerBorder} pb-4`}>
                 <div className="flex items-center gap-3">
                     <div className={`p-1.5 rounded-md ${theme.headerIcon}`}>
-                        <img src="/icons/dashbooard/airdrop.png" alt="Airdrop" className="w-4 h-4 object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity" />
+                        <img src="/icons/dashbooard/airdrop.png" alt="Airdrop" className="w-4 h-4 object-contain brightness-0 invert opacity-80" />
                     </div>
                     <div>
                         <h3 className="text-xs font-black text-white tracking-widest uppercase">Top Airdrop Projects</h3>

@@ -101,18 +101,15 @@ export default function AirdropStatisticsCard({ data = [] }) {
     ];
 
     return (
-        <div className={`relative overflow-hidden rounded-lg bg-linear-to-b ${THEME.bg} border ${THEME.border} p-6 flex flex-col h-full group ${THEME.glow}`}>
+        <div className={`relative overflow-hidden rounded-lg bg-linear-to-b ${THEME.bg} border ${THEME.border} p-6 flex flex-col h-full ${THEME.glow}`}>
             {/* Top neon accent */}
-            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${THEME.accentLine} to-transparent pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity`} />
+            <div className={`absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent ${THEME.accentLine} to-transparent pointer-events-none opacity-60`} />
             
             {/* Corner brackets */}
             <span className={`absolute top-2 left-2 w-3.5 h-3.5 border-t border-l ${THEME.bracketStrong} pointer-events-none`} />
             <span className={`absolute top-2 right-2 w-3.5 h-3.5 border-t border-r ${THEME.bracketStrong} pointer-events-none`} />
             <span className={`absolute bottom-2 left-2 w-3.5 h-3.5 border-b border-l ${THEME.bracketWeak} pointer-events-none`} />
             <span className={`absolute bottom-2 right-2 w-3.5 h-3.5 border-b border-r ${THEME.bracketWeak} pointer-events-none`} />
-
-            {/* Gloss effect */}
-            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
             {/* Header */}
             <div className={`relative z-10 flex items-center justify-between mb-6 border-b ${THEME.headerBorder} pb-4`}>
@@ -137,7 +134,7 @@ export default function AirdropStatisticsCard({ data = [] }) {
                     return (
                         <div
                             key={index}
-                            className={`relative p-4 rounded-lg border ${stat.borderColor} ${stat.bgColor} backdrop-blur-sm group/stat hover:scale-[1.02] transition-transform`}
+                            className={`relative p-4 rounded-lg border ${stat.borderColor} ${stat.bgColor} backdrop-blur-sm`}
                         >
                             {/* Icon */}
                             <div className={`w-8 h-8 rounded-lg ${stat.bgColor} border ${stat.borderColor} flex items-center justify-center mb-3`}>
@@ -172,9 +169,6 @@ export default function AirdropStatisticsCard({ data = [] }) {
                                     {stat.subtext}
                                 </p>
                             )}
-
-                            {/* Glow effect on hover */}
-                            <div className={`absolute inset-0 ${stat.bgColor} opacity-0 group-hover/stat:opacity-50 transition-opacity rounded-lg pointer-events-none`} />
                         </div>
                     );
                 })}

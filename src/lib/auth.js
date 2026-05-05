@@ -105,22 +105,34 @@ export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = n
             const isFailed = status >= 400;
             
             // Update cumulative stats for the user
+            const updateData = {
+                totalRequests: { increment: 1 },
+                totalSuccess: { increment: isSuccess ? 1 : 0 },
+                totalFailed: { increment: isFailed ? 1 : 0 }
+            };
+            
+            // Add token increments if tokens are provided
+            if (tokens) {
+                updateData.totalPromptTokens = { increment: tokens.prompt || 0 };
+                updateData.totalCompletionTokens = { increment: tokens.completion || 0 };
+                updateData.totalTokens = { increment: tokens.total || 0 };
+            }
+            
             await prisma.userApiStats.upsert({
                 where: { userId: apiKey.userId },
                 create: {
                     userId: apiKey.userId,
                     totalRequests: 1,
                     totalSuccess: isSuccess ? 1 : 0,
-                    totalFailed: isFailed ? 1 : 0
+                    totalFailed: isFailed ? 1 : 0,
+                    totalPromptTokens: tokens?.prompt || 0,
+                    totalCompletionTokens: tokens?.completion || 0,
+                    totalTokens: tokens?.total || 0
                 },
-                update: {
-                    totalRequests: { increment: 1 },
-                    totalSuccess: { increment: isSuccess ? 1 : 0 },
-                    totalFailed: { increment: isFailed ? 1 : 0 }
-                }
+                update: updateData
             });
             
-            // Enforce 50-record limit per user - delete oldest records if over limit
+            // Enforce 10-record limit per user - delete oldest records if over limit
             const userUsageCount = await prisma.apiKeyUsage.count({
                 where: {
                     apiKey: {
@@ -129,7 +141,7 @@ export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = n
                 }
             });
             
-            if (userUsageCount > 50) {
+            if (userUsageCount > 10) {
                 // Get the oldest records to delete
                 const recordsToDelete = await prisma.apiKeyUsage.findMany({
                     where: {
@@ -140,7 +152,7 @@ export function recordApiKeyUsage(apiKeyId, endpoint, method, status, tokens = n
                     orderBy: {
                         createdAt: 'asc'
                     },
-                    take: userUsageCount - 50,
+                    take: userUsageCount - 10,
                     select: { id: true }
                 });
                 

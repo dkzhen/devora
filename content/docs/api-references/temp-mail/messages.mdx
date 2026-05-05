@@ -18,7 +18,7 @@ GET /api/v1/temp-mail/messages
 Requires API Key in header:
 
 ```
-X-API-Key: your_api_key_here
+Authorization: Bearer your_api_key_here
 ```
 
 ### Query Parameters
@@ -100,21 +100,21 @@ X-API-Key: your_api_key_here
 
 ```bash
 curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?accountId=abc123&provider=mail.tm" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 #### cURL by Email
 
 ```bash
 curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?email=abc123@zenra.my.id&provider=moemail" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 #### cURL Detail by Email + Message ID
 
 ```bash
 curl -X GET "https://your-domain.com/api/v1/temp-mail/messages?email=abc123@zenra.my.id&provider=moemail&messageId=msg_123abc" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 #### POST Body Lookup
@@ -123,7 +123,7 @@ Use this when your client only stores the email address and not the generated ac
 
 ```bash
 curl -X POST "https://your-domain.com/api/v1/temp-mail/messages" \
-  -H "X-API-Key: your_api_key_here" \
+  -H "Authorization: Bearer your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "abc123@zenra.my.id",
@@ -135,7 +135,7 @@ To fetch one full message detail with the same body style:
 
 ```bash
 curl -X POST "https://your-domain.com/api/v1/temp-mail/messages" \
-  -H "X-API-Key: your_api_key_here" \
+  -H "Authorization: Bearer your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "abc123@zenra.my.id",
@@ -151,7 +151,7 @@ const response = await fetch(
   "/api/v1/temp-mail/messages?accountId=abc123&provider=moemail",
   {
     headers: {
-      "X-API-Key": "your_api_key_here",
+      Authorization: "Bearer your_api_key_here",
     },
   },
 );
@@ -166,7 +166,7 @@ console.log(`Received ${data.count} messages`);
 import requests
 
 headers = {
-    'X-API-Key': 'your_api_key_here'
+    'Authorization': 'Bearer your_api_key_here'
 }
 
 params = {
@@ -224,7 +224,7 @@ Returns an array of message metadata from the provider.
 
 ```bash
 curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 Use this endpoint to get `messageId` values before requesting full message content.
@@ -285,7 +285,7 @@ MoeMail may return `html` from the upstream provider as a string. Devora normali
 
 ```bash
 curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages/MESSAGE_ID" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 ### Recommended Flow

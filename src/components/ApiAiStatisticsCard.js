@@ -1,68 +1,71 @@
 'use client';
 
-import { Mail, Users, Inbox, TrendingUp, ExternalLink } from 'lucide-react';
+import { Activity, Zap, TrendingUp, Clock, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 const THEME = {
     bg: 'from-[#0a0e1a] to-[#07090f]',
-    border: 'border-cyan-500/20',
-    glow: 'shadow-[0_0_20px_rgba(6,182,212,0.08)]',
-    accentLine: 'via-cyan-500/60',
-    bracketStrong: 'border-cyan-500/50',
-    bracketWeak: 'border-cyan-500/15',
-    headerIcon: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-400',
-    headerBorder: 'border-cyan-500/10',
-    subtext: 'text-cyan-400/70',
-    linkBtn: 'border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]',
+    border: 'border-emerald-500/20',
+    glow: 'shadow-[0_0_20px_rgba(16,185,129,0.08)]',
+    accentLine: 'via-emerald-500/60',
+    bracketStrong: 'border-emerald-500/50',
+    bracketWeak: 'border-emerald-500/15',
+    headerIcon: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400',
+    headerBorder: 'border-emerald-500/10',
+    subtext: 'text-emerald-400/70',
+    linkBtn: 'border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]',
 };
 
-export default function TempMailStatisticsCard({ emailsGenerated = 0, messagesReceived = 0, activeAccounts = 0 }) {
-    // Calculate statistics
-    const avgMessagesPerEmail = emailsGenerated > 0 
-        ? (messagesReceived / emailsGenerated).toFixed(1) 
-        : '0.0';
-    
-    // Calculate engagement rate (emails with at least 1 message)
-    const engagementRate = emailsGenerated > 0 && messagesReceived > 0
-        ? Math.min(100, Math.round((messagesReceived / emailsGenerated) * 100))
-        : 0;
+export default function ApiAiStatisticsCard({ 
+    totalRequests = 0, 
+    totalTokens = 0, 
+    activeKeys = 0,
+    avgResponseTime = 0 
+}) {
+    // Format numbers
+    const formatNumber = (num) => {
+        if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`;
+        if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+        if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+        return num.toString();
+    };
 
     const stats = [
         {
-            icon: Mail,
-            label: 'Emails Generated',
-            value: emailsGenerated,
-            subtext: 'Total addresses created',
-            color: 'text-cyan-400',
-            bgColor: 'bg-cyan-500/10',
-            borderColor: 'border-cyan-500/20',
-        },
-        {
-            icon: Inbox,
-            label: 'Messages Received',
-            value: messagesReceived,
-            subtext: 'Across all inboxes',
-            color: 'text-blue-400',
-            bgColor: 'bg-blue-500/10',
-            borderColor: 'border-blue-500/20',
-        },
-        {
-            icon: Users,
-            label: 'Active Accounts',
-            value: activeAccounts,
-            subtext: 'Currently in use',
+            icon: Activity,
+            label: 'Total Requests',
+            value: formatNumber(totalRequests),
+            subtext: 'API calls made',
             color: 'text-emerald-400',
             bgColor: 'bg-emerald-500/10',
             borderColor: 'border-emerald-500/20',
         },
         {
+            icon: Zap,
+            label: 'AI Tokens Used',
+            value: formatNumber(totalTokens),
+            subtext: 'Across all models',
+            color: 'text-blue-400',
+            bgColor: 'bg-blue-500/10',
+            borderColor: 'border-blue-500/20',
+        },
+        {
             icon: TrendingUp,
-            label: 'Avg. Messages',
-            value: avgMessagesPerEmail,
-            subtext: 'Per email address',
+            label: 'Active API Keys',
+            value: activeKeys,
+            subtext: 'Currently in use',
             color: 'text-purple-400',
             bgColor: 'bg-purple-500/10',
             borderColor: 'border-purple-500/20',
+        },
+        {
+            icon: Clock,
+            label: 'Avg Response',
+            value: `${avgResponseTime}ms`,
+            subtext: 'API latency',
+            color: 'text-cyan-400',
+            bgColor: 'bg-cyan-500/10',
+            borderColor: 'border-cyan-500/20',
         },
     ];
 
@@ -81,14 +84,14 @@ export default function TempMailStatisticsCard({ emailsGenerated = 0, messagesRe
             <div className={`relative z-10 flex items-center justify-between mb-6 border-b ${THEME.headerBorder} pb-4`}>
                 <div className="flex items-center gap-3">
                     <div className={`p-1.5 rounded-md ${THEME.headerIcon}`}>
-                        <Mail className="w-4 h-4" />
+                        <Activity className="w-4 h-4" />
                     </div>
                     <div>
-                        <h3 className="text-xs font-black text-white tracking-widest uppercase">Temp Mail Analytics</h3>
+                        <h3 className="text-xs font-black text-white tracking-widest uppercase">API & AI Analytics</h3>
                         <p className={`text-[10px] font-bold ${THEME.subtext} uppercase tracking-widest mt-0.5`}>Usage Statistics</p>
                     </div>
                 </div>
-                <Link href="/temp-mail" className={`p-1.5 rounded-md border ${THEME.linkBtn}`} title="View Temp Mail">
+                <Link href="/api-key" className={`p-1.5 rounded-md border ${THEME.linkBtn}`} title="View API Keys">
                     <ExternalLink className="w-4 h-4" />
                 </Link>
             </div>
@@ -130,34 +133,27 @@ export default function TempMailStatisticsCard({ emailsGenerated = 0, messagesRe
                 })}
             </div>
 
-            {/* Engagement Rate */}
-            <div className="relative z-10 mt-4 pt-4 border-t border-cyan-500/10">
+            {/* Footer */}
+            <div className="relative z-10 mt-4 pt-4 border-t border-emerald-500/10">
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                            Engagement Rate
+                            System Status
                         </p>
                         <div className="flex items-center gap-2">
-                            <div className="w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div 
-                                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
-                                    style={{ width: `${engagementRate}%` }}
-                                />
-                            </div>
-                            <span className="text-sm font-black text-cyan-400">
-                                {engagementRate}%
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+                            <span className="text-sm font-black text-emerald-400">
+                                Operational
                             </span>
                         </div>
                     </div>
                     <div className="text-right">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                            Provider
+                            Uptime
                         </p>
-                        <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-white">Mail.tm</span>
-                            <span className="text-slate-600">•</span>
-                            <span className="text-xs font-bold text-white">MoeMail</span>
-                        </div>
+                        <span className="text-sm font-black text-white">
+                            99.9%
+                        </span>
                     </div>
                 </div>
             </div>

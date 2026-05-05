@@ -54,7 +54,7 @@ CREATE TABLE `drive_files` (
 CREATE TABLE `users` (
     `id` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NULL,
     `name` VARCHAR(191) NULL,
     `role` ENUM('MEMBER', 'INSIDER', 'PRO', 'ULTRA') NOT NULL DEFAULT 'MEMBER',
     `google_client_id` TEXT NULL,
@@ -155,18 +155,6 @@ CREATE TABLE `user_airdrop_tasks` (
 
     INDEX `user_airdrop_tasks_task_id_fkey`(`task_id`),
     UNIQUE INDEX `user_airdrop_tasks_user_id_task_id_key`(`user_id`, `task_id`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `suggested_projects` (
-    `id` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
-    `link` VARCHAR(191) NOT NULL,
-    `description` TEXT NULL,
-    `sender` VARCHAR(191) NOT NULL DEFAULT 'Anonymous',
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -276,6 +264,7 @@ CREATE TABLE `app_versions` (
     `release_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `android_version` VARCHAR(191) NULL,
+    `file_size` BIGINT NULL,
 
     INDEX `app_versions_app_id_fkey`(`app_id`),
     PRIMARY KEY (`id`)
@@ -357,6 +346,7 @@ CREATE TABLE `api_keys` (
     `user_id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `key` VARCHAR(191) NOT NULL,
+    `access_mode` VARCHAR(191) NOT NULL DEFAULT 'FULL',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -372,9 +362,28 @@ CREATE TABLE `api_key_usages` (
     `endpoint` VARCHAR(191) NOT NULL,
     `method` VARCHAR(191) NOT NULL,
     `status` INTEGER NOT NULL,
+    `model` VARCHAR(191) NULL,
+    `prompt_tokens` INTEGER NULL DEFAULT 0,
+    `completion_tokens` INTEGER NULL DEFAULT 0,
+    `total_tokens` INTEGER NULL DEFAULT 0,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     INDEX `api_key_usages_api_key_id_idx`(`api_key_id`),
+    INDEX `api_key_usages_model_idx`(`model`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `user_api_stats` (
+    `id` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(191) NOT NULL,
+    `total_requests` INTEGER NOT NULL DEFAULT 0,
+    `total_success` INTEGER NOT NULL DEFAULT 0,
+    `total_failed` INTEGER NOT NULL DEFAULT 0,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `user_api_stats_user_id_key`(`user_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -395,9 +404,16 @@ CREATE TABLE `llm_consoles` (
 -- CreateTable
 CREATE TABLE `ai_models` (
     `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `owned_by` VARCHAR(191) NOT NULL,
+    `created` INTEGER NULL,
     `status` VARCHAR(191) NOT NULL DEFAULT 'active',
     `updated_at` DATETIME(3) NOT NULL,
     `is_restricted` BOOLEAN NOT NULL DEFAULT false,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `base_url` TEXT NULL,
+    `proxy_preset` VARCHAR(191) NULL DEFAULT 'DEFAULT',
+    `context_length` INTEGER NULL DEFAULT 128000,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -471,6 +487,9 @@ ALTER TABLE `api_keys` ADD CONSTRAINT `api_keys_user_id_fkey` FOREIGN KEY (`user
 
 -- AddForeignKey
 ALTER TABLE `api_key_usages` ADD CONSTRAINT `api_key_usages_api_key_id_fkey` FOREIGN KEY (`api_key_id`) REFERENCES `api_keys`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_api_stats` ADD CONSTRAINT `user_api_stats_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `llm_consoles` ADD CONSTRAINT `llm_consoles_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

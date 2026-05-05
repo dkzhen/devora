@@ -15,9 +15,9 @@ GET /api/v1/temp-mail/domains
 
 ### Headers
 
-| Header      | Type   | Required | Description                     |
-| ----------- | ------ | -------- | ------------------------------- |
-| `X-API-Key` | string | Yes      | Your API key for authentication |
+| Header          | Type   | Required | Description                     |
+| --------------- | ------ | -------- | ------------------------------- |
+| `Authorization` | string | Yes      | Bearer token for authentication |
 
 ### Response
 
@@ -53,7 +53,7 @@ GET /api/v1/temp-mail/domains
 
 ```bash
 curl -X GET https://your-domain.com/api/v1/temp-mail/domains \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 #### JavaScript (Fetch)
@@ -64,7 +64,7 @@ const response = await fetch(
   {
     method: "GET",
     headers: {
-      "X-API-Key": "your_api_key_here",
+      Authorization: "Bearer your_api_key_here",
     },
   },
 );
@@ -79,7 +79,7 @@ console.log(data.domains); // ["zenra.my.id", "kineta.my.id"]
 import requests
 
 headers = {
-    'X-API-Key': 'your_api_key_here'
+    'Authorization': 'Bearer your_api_key_here'
 }
 
 response = requests.get(

@@ -613,50 +613,59 @@ export default function AiProvidersPage() {
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     {user?.role === 'ULTRA' ? (
-                                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <>
                                                             <button
-                                                                onClick={() => handleStatusChange(model.id, 'active')}
-                                                                className={`p-1 rounded-sm bg-emerald-500/10 border ${model.status === 'active' ? 'border-emerald-500/50 text-emerald-400' : 'border-white/10 text-slate-600 hover:text-emerald-400'}`}
-                                                                title="Set Active"
+                                                                onClick={() => copyToClipboard(model.id)}
+                                                                className="text-slate-400 hover:text-purple-300 transition-colors p-1"
+                                                                title="Copy Model ID"
                                                             >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
                                                             </button>
-                                                            <button
-                                                                onClick={() => handleRestrictionToggle(model.id, model.isRestricted)}
-                                                                className={`p-1 rounded-sm bg-blue-500/10 border ${model.isRestricted ? 'border-blue-500/50 text-blue-400' : 'border-white/10 text-slate-600 hover:text-blue-400'}`}
-                                                                title="Toggle Access Restriction"
-                                                            >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleStatusChange(model.id, 'suspend')}
-                                                                className={`p-1 rounded-sm bg-amber-500/10 border ${model.status === 'suspend' ? 'border-amber-500/50 text-amber-400' : 'border-white/10 text-slate-600 hover:text-amber-400'}`}
-                                                                title="Set Suspended"
-                                                            >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleStatusChange(model.id, 'hidden')}
-                                                                className={`p-1 rounded-sm bg-red-500/10 border ${model.status === 'hidden' ? 'border-red-500/50 text-red-400' : 'border-white/10 text-slate-600 hover:text-red-400'}`}
-                                                                title="Hide Model"
-                                                            >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => openEditModal(model)}
-                                                                className="p-1 rounded-sm bg-blue-500/10 border border-white/10 text-slate-600 hover:text-blue-400"
-                                                                title="Edit Model"
-                                                            >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleDeleteModel(model.id)}
-                                                                className="p-1 rounded-sm bg-red-500/10 border border-white/10 text-slate-600 hover:text-red-400"
-                                                                title="Delete Model"
-                                                            >
-                                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                                            </button>
-                                                        </div>
+                                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <button
+                                                                    onClick={() => handleStatusChange(model.id, 'active')}
+                                                                    className={`p-1 rounded-sm bg-emerald-500/10 border ${model.status === 'active' ? 'border-emerald-500/50 text-emerald-400' : 'border-white/10 text-slate-600 hover:text-emerald-400'}`}
+                                                                    title="Set Active"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleRestrictionToggle(model.id, model.isRestricted)}
+                                                                    className={`p-1 rounded-sm bg-blue-500/10 border ${model.isRestricted ? 'border-blue-500/50 text-blue-400' : 'border-white/10 text-slate-600 hover:text-blue-400'}`}
+                                                                    title="Toggle Access Restriction"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleStatusChange(model.id, 'suspend')}
+                                                                    className={`p-1 rounded-sm bg-amber-500/10 border ${model.status === 'suspend' ? 'border-amber-500/50 text-amber-400' : 'border-white/10 text-slate-600 hover:text-amber-400'}`}
+                                                                    title="Set Suspended"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleStatusChange(model.id, 'hidden')}
+                                                                    className={`p-1 rounded-sm bg-red-500/10 border ${model.status === 'hidden' ? 'border-red-500/50 text-red-400' : 'border-white/10 text-slate-600 hover:text-red-400'}`}
+                                                                    title="Hide Model"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => openEditModal(model)}
+                                                                    className="p-1 rounded-sm bg-blue-500/10 border border-white/10 text-slate-600 hover:text-blue-400"
+                                                                    title="Edit Model"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteModel(model.id)}
+                                                                    className="p-1 rounded-sm bg-red-500/10 border border-white/10 text-slate-600 hover:text-red-400"
+                                                                    title="Delete Model"
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </>
                                                     ) : (
                                                         <button
                                                             onClick={() => copyToClipboard(model.id)}

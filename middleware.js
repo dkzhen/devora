@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const publicPaths = ['/', '/llm-console', '/register', '/airdrops', '/app-library', '/login', '/auth/google', '/maintenance', '/no-access', '/http-client', '/temp-mail', '/ai-providers', '/docs', '/web3-projects'];
+const publicPaths = ['/', '/llm-console', '/register', '/airdrops', '/app-library', '/login', '/auth/google', '/maintenance', '/no-access', '/http-client', '/temp-mail', '/ai-providers', '/docs', '/web3-projects','/dashboard'];
 
 // Role-restricted pages
 const roleRestrictedPages = {

@@ -7,6 +7,8 @@ import AirdropStatisticsCard from '@/components/AirdropStatisticsCard';
 import TempMailStatisticsCard from '@/components/TempMailStatisticsCard';
 import TempMailActivityCard from '@/components/TempMailActivityCard';
 import TempMailProviderChart from '@/components/TempMailProviderChart';
+import ApiAiStatisticsCard from '@/components/ApiAiStatisticsCard';
+import ApiUsageChart from '@/components/ApiUsageChart';
 import AppLibraryStatsCard from '@/components/AppLibraryStatsCard';
 import AppStorageCard from '@/components/AppStorageCard';
 import MostUpdatedAppsCard from '@/components/MostUpdatedAppsCard';
@@ -27,6 +29,7 @@ export default function Dashboard() {
     const [stats, setStats] = useState(null);
     const [appLibraryStats, setAppLibraryStats] = useState(null);
     const [allAirdrops, setAllAirdrops] = useState([]);
+    const [apiStats, setApiStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const kpiColor = getKPICardColor();
@@ -35,10 +38,11 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const [monitoringRes, appLibraryRes, airdropsRes] = await Promise.all([
+                const [monitoringRes, appLibraryRes, airdropsRes, apiStatsRes] = await Promise.all([
                     fetch(API_ENDPOINTS.MONITORING),
                     fetch(API_ENDPOINTS.APP_STATISTICS),
-                    fetch('/api/airdrops')
+                    fetch('/api/airdrops'),
+                    fetch('/api/api-keys/admin/statistics')
                 ]);
 
                 if (monitoringRes.ok) {
@@ -56,6 +60,11 @@ export default function Dashboard() {
                 if (airdropsRes.ok) {
                     const airdropsData = await airdropsRes.json();
                     setAllAirdrops(airdropsData);
+                }
+
+                if (apiStatsRes.ok) {
+                    const apiData = await apiStatsRes.json();
+                    setApiStats(apiData);
                 }
             } catch (error) {
                 console.error('Failed to fetch stats', error);
@@ -87,8 +96,8 @@ export default function Dashboard() {
                     {/* Row 1 — Global KPI Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <DashboardStatCard
-                            title="Connected Accounts"
-                            value={summary.totalAccounts || 0}
+                            title="Total Users"
+                            value={apiStats?.totalUsers || 0}
                             color={kpiColor}
                             imageIcon={DASHBOARD_ICONS.ACCOUNTS}
                         />
@@ -100,7 +109,28 @@ export default function Dashboard() {
                         />
                     </div>
 
-                    {/* Row 2 — Temp Mail Section */}
+                    {/* Row 2 — API & AI Usage Section */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 via-emerald-600 to-green-600 rounded-full" />
+                            <h2 className="text-sm font-bold text-white uppercase tracking-wide">
+                                API & AI Usage
+                            </h2>
+                        </div>
+                        
+                        {/* First Row: Statistics */}
+                        <ApiAiStatisticsCard 
+                            totalRequests={apiStats?.totalRequests || 0}
+                            totalTokens={apiStats?.totalTokens || 0}
+                            activeKeys={apiStats?.totalKeys || 0}
+                            avgResponseTime={150}
+                        />
+
+                        {/* Second Row: Usage Chart */}
+                        <ApiUsageChart recentHits={apiStats?.recentHits || []} />
+                    </div>
+
+                    {/* Row 3 — Temp Mail Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <div className="w-1 h-6 bg-gradient-to-b from-cyan-500 via-cyan-600 to-blue-600 rounded-full" />
@@ -123,7 +153,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Row 3 — Airdrop Projects Section */}
+                    {/* Row 4 — Airdrop Projects Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <div className="w-1 h-6 bg-gradient-to-b from-purple-500 via-purple-600 to-purple-700 rounded-full" />
@@ -137,7 +167,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* Row 4 — App Library Statistics */}
+                    {/* Row 5 — App Library Statistics */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <div className={`w-1 h-6 bg-gradient-to-b ${DASHBOARD_SECTIONS.APP_LIBRARY.gradient} rounded-full`} />

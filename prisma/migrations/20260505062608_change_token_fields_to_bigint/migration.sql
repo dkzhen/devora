@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `user_api_stats` MODIFY `total_completion_tokens` BIGINT NOT NULL DEFAULT 0,
+    MODIFY `total_prompt_tokens` BIGINT NOT NULL DEFAULT 0,
+    MODIFY `total_tokens` BIGINT NOT NULL DEFAULT 0;

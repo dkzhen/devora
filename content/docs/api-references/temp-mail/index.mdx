@@ -48,7 +48,7 @@ Devora supports two temporary email providers with different feature sets:
 For external API access, include your Devora API Key:
 
 ```http
-X-API-Key: your_api_key_here
+Authorization: Bearer your_api_key_here
 ```
 
 ---
@@ -84,7 +84,7 @@ https://devora.my.id/api/v1/temp-mail
 
 ```bash
 curl -X POST https://devora.my.id/api/v1/temp-mail/accounts \
-  -H "X-API-Key: your_api_key_here" \
+  -H "Authorization: Bearer your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
     "address": "mytest@example.com",
@@ -110,7 +110,7 @@ curl -X POST https://devora.my.id/api/v1/temp-mail/accounts \
 
 ```bash
 curl -X POST https://devora.my.id/api/v1/temp-mail/accounts \
-  -H "X-API-Key: your_api_key_here" \
+  -H "Authorization: Bearer your_api_key_here" \
   -H "Content-Type: application/json" \
   -d '{
     "provider": "moemail",
@@ -138,14 +138,14 @@ This endpoint returns inbox metadata only for both Mail.tm and MoeMail. Use one 
 
 ```bash
 curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 ### 4. Read Full Message
 
 ```bash
 curl -X GET "https://devora.my.id/api/v1/temp-mail/accounts/ACCOUNT_ID/messages/MESSAGE_ID" \
-  -H "X-API-Key: your_api_key_here"
+  -H "Authorization: Bearer your_api_key_here"
 ```
 
 For MoeMail, this returns full `html` and `text` content, matching the Temp Mail UI message reader.
