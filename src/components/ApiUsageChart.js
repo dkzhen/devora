@@ -19,39 +19,37 @@ const THEME = {
 export default function ApiUsageChart({ recentHits = [] }) {
     // Process real data or use sample
     const processData = () => {
+        // Initialize all 24 hours with zero data
+        const allHours = Array.from({ length: 24 }, (_, i) => ({
+            hour: `${i.toString().padStart(2, '0')}:00`,
+            requests: 0,
+            tokens: 0
+        }));
+
         if (recentHits && recentHits.length > 0) {
             // Group by hour
-            const hourlyData = {};
             recentHits.forEach(hit => {
                 const date = new Date(hit.createdAt);
                 const hour = date.getHours();
-                const timeKey = `${hour.toString().padStart(2, '0')}:00`;
                 
-                if (!hourlyData[timeKey]) {
-                    hourlyData[timeKey] = { hour: timeKey, requests: 0, tokens: 0 };
-                }
-                hourlyData[timeKey].requests += 1;
-                hourlyData[timeKey].tokens += Math.round(((hit.promptTokens || 0) + (hit.completionTokens || 0)) / 1000); // Convert to K
+                allHours[hour].requests += 1;
+                allHours[hour].tokens += Math.round(((hit.promptTokens || 0) + (hit.completionTokens || 0)) / 1000); // Convert to K
             });
 
-            const result = Object.values(hourlyData).sort((a, b) => {
-                const aHour = parseInt(a.hour.split(':')[0]);
-                const bHour = parseInt(b.hour.split(':')[0]);
-                return aHour - bHour;
-            });
-
-            if (result.length > 0) return result;
+            return allHours;
         }
 
-        // Fallback to sample data
-        return [
-            { hour: '00:00', requests: 45, tokens: 125 },
-            { hour: '04:00', requests: 32, tokens: 89 },
-            { hour: '08:00', requests: 89, tokens: 280 },
-            { hour: '12:00', requests: 125, tokens: 420 },
-            { hour: '16:00', requests: 98, tokens: 350 },
-            { hour: '20:00', requests: 67, tokens: 210 },
-        ];
+        // Fallback to sample data with all 24 hours
+        return allHours.map((h, i) => {
+            // Add some sample data to specific hours
+            if (i === 0) return { ...h, requests: 45, tokens: 125 };
+            if (i === 4) return { ...h, requests: 32, tokens: 89 };
+            if (i === 8) return { ...h, requests: 89, tokens: 280 };
+            if (i === 12) return { ...h, requests: 125, tokens: 420 };
+            if (i === 16) return { ...h, requests: 98, tokens: 350 };
+            if (i === 20) return { ...h, requests: 67, tokens: 210 };
+            return h;
+        });
     };
 
     const chartData = processData();
@@ -87,40 +85,43 @@ export default function ApiUsageChart({ recentHits = [] }) {
             </div>
 
             {/* Chart Area - Custom HTML/CSS Bars */}
-            <div className="flex-1 flex items-end gap-4 px-4 min-h-[280px]">
+            <div className="flex-1 flex items-end gap-0.5 px-4 min-h-[280px] overflow-x-auto">
                 {chartData.map((data, index) => {
-                    const requestHeight = (data.requests / maxRequests) * 100;
-                    const tokenHeight = (data.tokens / maxTokens) * 100;
+                    const requestHeight = maxRequests > 0 ? (data.requests / maxRequests) * 100 : 0;
+                    const tokenHeight = maxTokens > 0 ? (data.tokens / maxTokens) * 100 : 0;
+                    const showLabel = index % 4 === 0; // Show label every 4 hours
                     
                     return (
-                        <div key={index} className="flex-1 flex flex-col items-center gap-2">
+                        <div key={index} className="flex-1 min-w-[20px] flex flex-col items-center gap-2">
                             {/* Bars Container */}
-                            <div className="w-full flex gap-1 items-end h-48">
+                            <div className="w-full flex gap-0.5 items-end h-48">
                                 {/* Requests Bar */}
                                 <div 
-                                    className="flex-1 bg-emerald-500 rounded-t relative group cursor-pointer"
-                                    style={{ height: `${requestHeight}%` }}
-                                    title={`${data.requests} requests`}
+                                    className="flex-1 bg-emerald-500 rounded-t relative group cursor-pointer transition-all hover:bg-emerald-400"
+                                    style={{ height: `${Math.max(requestHeight, 2)}%`, minHeight: data.requests > 0 ? '4px' : '0' }}
+                                    title={`${data.hour} - ${data.requests} requests`}
                                 >
-                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-slate-900 text-emerald-400 text-[10px] px-2 py-1 rounded whitespace-nowrap">
-                                        {data.requests}
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-slate-900 text-emerald-400 text-[10px] px-2 py-1 rounded whitespace-nowrap z-10 pointer-events-none">
+                                        {data.hour}<br/>{data.requests} req
                                     </div>
                                 </div>
                                 
                                 {/* Tokens Bar */}
                                 <div 
-                                    className="flex-1 bg-blue-500 rounded-t relative group cursor-pointer"
-                                    style={{ height: `${tokenHeight}%` }}
-                                    title={`${data.tokens}K tokens`}
+                                    className="flex-1 bg-blue-500 rounded-t relative group cursor-pointer transition-all hover:bg-blue-400"
+                                    style={{ height: `${Math.max(tokenHeight, 2)}%`, minHeight: data.tokens > 0 ? '4px' : '0' }}
+                                    title={`${data.hour} - ${data.tokens}K tokens`}
                                 >
-                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-slate-900 text-blue-400 text-[10px] px-2 py-1 rounded whitespace-nowrap">
-                                        {data.tokens}K
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-slate-900 text-blue-400 text-[10px] px-2 py-1 rounded whitespace-nowrap z-10 pointer-events-none">
+                                        {data.hour}<br/>{data.tokens}K tok
                                     </div>
                                 </div>
                             </div>
                             
-                            {/* Time Label */}
-                            <span className="text-[10px] text-slate-500 font-mono">{data.hour}</span>
+                            {/* Time Label - Show every 4 hours */}
+                            {showLabel && (
+                                <span className="text-[9px] text-slate-500 font-mono">{data.hour}</span>
+                            )}
                         </div>
                     );
                 })}
