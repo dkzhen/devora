@@ -28,12 +28,25 @@ const parseCurl = (raw) => {
         req.headers.push({ id: uid(), key: '', val: '', enabled: true });
     }
 
-    // Body
-    const bodyMatch = raw.match(/(?:--data(?:-raw|-urlencode)?|-d)\s+['"]([^'"]+)['"]/);
+    // Body - improved to handle JSON objects properly
+    let bodyMatch = raw.match(/(?:--data(?:-raw|-urlencode)?|-d)\s+['"](.+?)['"]\s*(?:-|$)/s);
+    if (!bodyMatch) {
+        // Try without quotes for simple cases
+        bodyMatch = raw.match(/(?:--data(?:-raw|-urlencode)?|-d)\s+([^\s-]+)/);
+    }
     if (bodyMatch) {
         req.bodyType = 'json';
         req.method = req.method === 'GET' ? 'POST' : req.method;
-        req.body = bodyMatch[1];
+        let bodyStr = bodyMatch[1];
+        
+        // Try to parse and pretty-print JSON
+        try {
+            const parsed = JSON.parse(bodyStr);
+            req.body = JSON.stringify(parsed, null, 2);
+        } catch {
+            // If not valid JSON, use as-is
+            req.body = bodyStr;
+        }
     }
 
     return req.url ? req : null;
