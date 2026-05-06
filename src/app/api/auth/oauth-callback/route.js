@@ -5,10 +5,15 @@ import prisma from '@/lib/db';
 
 export async function GET(request) {
     try {
+        // Use BASE_URL based on environment
+        const baseUrl = process.env.NODE_ENV === 'production' 
+            ? process.env.BASE_URL_PROD 
+            : process.env.BASE_URL_DEV;
+        
         const session = await getServerSession();
         
         if (!session || !session.user) {
-            return NextResponse.redirect(new URL('/login?error=oauth_failed', request.url));
+            return NextResponse.redirect(new URL('/login?error=oauth_failed', baseUrl));
         }
 
         // Get user from database
@@ -17,7 +22,7 @@ export async function GET(request) {
         });
 
         if (!user) {
-            return NextResponse.redirect(new URL('/login?error=user_not_found', request.url));
+            return NextResponse.redirect(new URL('/login?error=user_not_found', baseUrl));
         }
 
         // Generate JWT token
@@ -33,7 +38,7 @@ export async function GET(request) {
             .sign(secret);
 
         // Redirect to dashboard with token
-        const response = NextResponse.redirect(new URL('/dashboard', request.url));
+        const response = NextResponse.redirect(new URL('/dashboard', baseUrl));
         
         response.cookies.set({
             name: 'auth_token',
@@ -48,6 +53,9 @@ export async function GET(request) {
         return response;
     } catch (error) {
         console.error('OAuth callback error:', error);
-        return NextResponse.redirect(new URL('/login?error=callback_failed', request.url));
+        const baseUrl = process.env.NODE_ENV === 'production' 
+            ? process.env.BASE_URL_PROD 
+            : process.env.BASE_URL_DEV;
+        return NextResponse.redirect(new URL('/login?error=callback_failed', baseUrl));
     }
 }
